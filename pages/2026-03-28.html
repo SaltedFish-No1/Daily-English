@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>The Ecology of Predators - Interactive Learning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Inter:wght@300;400;500;600&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Slightly cooler, cleaner background for mobile app feel */
+            color: #1e293b;
+            -webkit-tap-highlight-color: transparent; /* Remove blue flash on mobile tap */
+        }
+
+        h1, h2, h3, .serif {
+            font-family: 'Merriweather', serif;
+        }
+
+        /* Mobile safe area padding for bottom nav */
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Responsive chart height */
+        #trophicChart {
+            height: 280px !important;
+        }
+        @media (min-width: 640px) {
+            #trophicChart {
+                height: 400px !important;
+            }
+        }
+
+        /* Enlarged tap target for vocab words */
+        .vocab-word {
+            position: relative;
+            cursor: pointer;
+            color: #16a34a;
+            font-weight: 600;
+            border-bottom: 2px dotted #86efac;
+            transition: all 0.2s ease;
+            padding: 2px 4px; /* Increased padding for easier tapping */
+            margin: 0 -2px;
+            border-radius: 6px;
+        }
+
+        .vocab-word:active, .vocab-active {
+            background-color: #16a34a;
+            color: white;
+            border-bottom-color: transparent;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
+            z-index: 60; /* Higher than overlay to ensure visibility */
+        }
+        
+        @media (min-width: 1024px) {
+            .vocab-word:hover {
+                background-color: #dcfce7;
+            }
+        }
+
+        /* Desktop Tab Styles */
+        .tab-active-desktop {
+            border-bottom: 2px solid #16a34a;
+            color: #16a34a;
+            font-weight: 600;
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Bottom Sheet Blur */
+        .backdrop-blur-custom {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col relative pb-[72px] lg:pb-0"> <!-- Added global padding for mobile bottom nav -->
+
+    <!-- Chosen Palette: Modern App Nature (Slate Backgrounds #f8fafc, Emerald Accents #16a34a, Dark Slate Text #1e293b) -->
+    <!-- Application Structure Plan: TRUE MOBILE-FIRST. 
+         1. Replaced top scrollable tabs with a fixed Bottom Navigation Bar for screens < 1024px. This provides a native app feel and allows easy one-handed operation. 
+         2. Vocabulary panel is a true bottom sheet on mobile, sliding over a blurred overlay. 
+         3. Removed excessive borders/shadows on mobile to maximize screen real estate. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. Using Unicode emojis for icons. -->
+
+    <!-- Header (Simplified for Mobile) -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="py-4 lg:py-6 flex flex-col lg:flex-row justify-between lg:items-center">
+                <div>
+                    <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">The Ecology of Predators</h1>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1 uppercase tracking-wider font-semibold">Interactive Study Module</p>
+                </div>
+                
+                <!-- Desktop Tabs (Hidden on Mobile) -->
+                <nav class="hidden lg:flex space-x-8 mt-4 lg:mt-0" aria-label="Desktop Tabs">
+                    <button onclick="switchTab('article')" id="desktop-tab-article" class="tab-active-desktop whitespace-nowrap py-2 px-1 border-b-2 font-medium text-base transition-colors">
+                        Reading & Vocab
+                    </button>
+                    <button onclick="switchTab('data')" id="desktop-tab-data" class="border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-base transition-colors">
+                        Ecological Impact
+                    </button>
+                    <button onclick="switchTab('quiz')" id="desktop-tab-quiz" class="border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-base transition-colors">
+                        Knowledge Check
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-5xl mx-auto px-0 sm:px-6 lg:px-8 py-0 sm:py-8 w-full relative" id="main-container">
+        
+        <!-- SECTION 1: ARTICLE & VOCAB -->
+        <section id="view-article" class="fade-in grid grid-cols-1 lg:grid-cols-3 gap-0 sm:gap-8 relative h-full">
+            <div class="lg:col-span-2 bg-white sm:rounded-xl sm:shadow-sm sm:border border-gray-100 p-5 sm:p-8 min-h-[80vh] sm:min-h-0">
+                
+                <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100 mb-6 flex items-start gap-3">
+                    <span class="text-xl mt-0.5">💡</span>
+                    <p class="text-slate-700 text-sm leading-relaxed">
+                        Read the article below to understand the shift in ecological perspective. <br>
+                        <strong>Interaction:</strong> Tap the <span class="text-emerald-700 font-bold border-b-2 border-emerald-300 px-1 rounded bg-white">highlighted words</span> to view definitions and translations.
+                    </p>
+                </div>
+
+                <article class="prose prose-base sm:prose-lg text-slate-800 leading-relaxed serif max-w-none">
+                    <h2 class="text-xl sm:text-2xl font-bold mb-5 font-sans text-slate-900 leading-snug">The Misunderstood Predators: Ecology and Human Perception</h2>
+                    
+                    <p class="mb-5">
+                        For centuries, humans have held a rather <span class="vocab-word" data-word="naive">naive</span> view of the natural world, often categorizing animals simply as 'good' or 'bad.' Large <span class="vocab-word" data-word="carnivore">carnivore</span> species, in particular, were historically viewed as a deadly <span class="vocab-word" data-word="plague">plague</span> upon agricultural communities. Early settlers and farmers had to constantly <span class="vocab-word" data-word="confront">confront</span> the threat these top predators posed to their livestock. The sudden, violent <span class="vocab-word" data-word="assault">assault</span> of a wolf pack on a herd of sheep was a <span class="vocab-word" data-word="shocking">shocking</span> and devastating event that reinforced the negative <span class="vocab-word" data-word="identity">identity</span> of these animals as bloodthirsty beasts. Consequently, driven by fear and economic protection, humans hunted many predator populations nearly to extinction, causing several local subspecies to completely <span class="vocab-word" data-word="die out">die out</span>.
+                    </p>
+
+                    <p class="mb-5">
+                        However, modern ecology has provided profound <span class="vocab-word" data-word="insight">insight</span> into the complex web of life, revealing that nature's mechanisms are rarely completely <span class="vocab-word" data-word="benign">benign</span> or entirely <span class="vocab-word" data-word="malicious">malicious</span>. Scientists now understand that top predators play an irreplaceable role in maintaining ecosystem health. A classic example is the reintroduction of gray wolves to Yellowstone National Park in the 1990s. Biologists observed how the presence of these predators actually serves to <span class="vocab-word" data-word="enrich">enrich</span> their environments. By controlling the population of large <span class="vocab-word" data-word="herbivore">herbivores</span> like elk, predators prevent the overgrazing of vegetation. This allows native <span class="vocab-word" data-word="flora">flora</span> and <span class="vocab-word" data-word="fauna">fauna</span> <span class="vocab-word" data-word="biodiversity">biodiversity</span> to <span class="vocab-word" data-word="expand">expand</span> rapidly. This self-regulating system demonstrates a <span class="vocab-word" data-word="superior">superior</span> ecological balance compared to environments lacking top-down regulation, a phenomenon scientifically known as a "trophic cascade."
+                    </p>
+
+                    <p class="mb-5">
+                        Today, modern media and psychological studies help reshape our relationship with the wild. Nature documentaries utilize high-definition technology to <span class="vocab-word" data-word="convey">convey</span> these scientific truths through <span class="vocab-word" data-word="vivid">vivid</span> imagery. These films capture everything from the <span class="vocab-word" data-word="intricate">intricate</span>, almost <span class="vocab-word" data-word="narcotic">narcotic</span> (mesmerizing) beauty of a leopard stalking its prey, to the harsh realities of natural selection. This educational approach is highly <span class="vocab-word" data-word="appealing">appealing</span> to the general public. Furthermore, engaging with nature—whether physically or through these visual mediums—is increasingly recognized by psychologists as a form of eco-<span class="vocab-word" data-word="therapy">therapy</span>. It helps to <span class="vocab-word" data-word="instill">instill</span> a deep respect for wildlife in younger generations, curing historical <span class="vocab-word" data-word="prejudice">prejudices</span> and reminding us of our shared place within the Earth's <span class="vocab-word" data-word="intricate">intricate</span> ecosystems.
+                    </p>
+                </article>
+            </div>
+
+            <!-- Vocabulary Panel Placeholder (Empty on desktop grid) -->
+            <div class="lg:col-span-1 hidden lg:block"></div>
+        </section>
+
+        <!-- SECTION 2: DATA VISUALIZATION -->
+        <section id="view-data" class="hidden fade-in bg-white sm:rounded-xl sm:shadow-sm sm:border border-gray-100 p-5 sm:p-8 min-h-[80vh] sm:min-h-0">
+            <div class="mb-6 sm:mb-8">
+                <h2 class="text-2xl font-bold text-slate-900 mb-3">Visualizing the Trophic Cascade</h2>
+                <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
+                    This chart translates qualitative ecological findings into quantitative data, based on the Yellowstone gray wolf reintroduction model. Tap the graph points to see precise index levels.
+                </p>
+            </div>
+
+            <!-- Chart Container perfectly sized for mobile -->
+            <div class="chart-container w-full bg-slate-50 rounded-xl p-2 sm:p-4 border border-slate-100">
+                <canvas id="trophicChart"></canvas>
+            </div>
+            
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-white text-xs">🐺</div>
+                        <h3 class="font-bold text-slate-800 text-base">1. Catalyst</h3>
+                    </div>
+                    <p class="text-sm text-slate-600">Reintroduced in 1995, top predators steadily grow, establishing top-down regulation.</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 text-xs">🦌</div>
+                        <h3 class="font-bold text-slate-800 text-base">2. Control</h3>
+                    </div>
+                    <p class="text-sm text-slate-600">Faced with predation, overpopulated elk numbers decrease to sustainable levels.</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-xs">🌿</div>
+                        <h3 class="font-bold text-slate-800 text-base">3. Recovery</h3>
+                    </div>
+                    <p class="text-sm text-slate-600">With reduced overgrazing, native vegetation expands, enriching the ecosystem.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: QUIZ -->
+        <section id="view-quiz" class="hidden fade-in w-full">
+            <div class="bg-white sm:rounded-xl sm:shadow-sm sm:border border-gray-100 p-5 sm:p-8 max-w-3xl mx-auto min-h-[80vh] sm:min-h-0">
+                 <div class="mb-6 border-b border-slate-100 pb-5 text-center">
+                    <h2 class="text-2xl font-bold text-slate-900 mb-2">Knowledge Check</h2>
+                    <p class="text-sm text-slate-500">
+                        Test your comprehension of the ecological concepts.
+                    </p>
+                </div>
+
+                <div id="quiz-container">
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-xs sm:text-sm font-bold text-emerald-600 uppercase tracking-wider bg-emerald-50 px-3 py-1 rounded-md" id="quiz-progress">Q 1 / 10</span>
+                        <span class="text-xs sm:text-sm font-bold text-slate-700 bg-slate-100 px-3 py-1 rounded-md" id="quiz-score-display">Score: 0</span>
+                    </div>
+
+                    <div id="question-block" class="mb-6">
+                        <h3 class="text-lg sm:text-xl font-medium text-slate-900 mb-6 serif leading-snug" id="question-text">Loading question...</h3>
+                        <div class="space-y-3 sm:space-y-4" id="options-container">
+                            <!-- Options injected here -->
+                        </div>
+                    </div>
+
+                    <div id="feedback-block" class="hidden p-5 rounded-xl mb-6 text-sm border">
+                        <p id="feedback-text" class="font-bold text-lg mb-2 flex items-center gap-2"></p>
+                        <p id="feedback-rationale" class="text-slate-700 leading-relaxed text-base"></p>
+                    </div>
+
+                    <button id="next-btn" class="hidden w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold py-4 px-6 rounded-xl transition-colors shadow-sm text-lg">
+                        Continue
+                    </button>
+                </div>
+
+                <div id="quiz-results" class="hidden text-center py-10">
+                    <div class="text-6xl mb-6">🏆</div>
+                    <h2 class="text-3xl font-bold text-slate-900 mb-3">Quiz Complete!</h2>
+                    <p class="text-lg text-slate-600 mb-8">You scored <span id="final-score" class="font-bold text-emerald-600 text-2xl mx-1">0</span> out of 10.</p>
+                    <button onclick="initQuiz()" class="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 active:bg-black text-white font-semibold py-4 px-10 rounded-xl transition-colors text-lg">
+                        Retake Quiz
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Vocabulary Panel & Overlay (Moved to root for fixed positioning reliability) -->
+    <div id="mobile-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-custom z-40 hidden lg:hidden transition-opacity opacity-0 duration-300"></div>
+    
+    <div id="vocab-wrapper" class="fixed inset-x-0 bottom-0 z-50 transform translate-y-full transition-transform duration-300 cubic-bezier(0.32, 0.72, 0, 1) lg:top-32 lg:right-[calc(50%-30rem)] lg:left-auto lg:bottom-auto lg:w-80 lg:transform-none lg:transition-none lg:block pb-safe lg:pb-0">
+        <div class="bg-white lg:bg-emerald-50 rounded-t-3xl lg:rounded-xl p-6 pt-10 lg:pt-8 lg:border border-emerald-200 lg:shadow-sm relative h-[60vh] lg:h-auto overflow-y-auto lg:overflow-visible shadow-[0_-20px_40px_-15px_rgba(0,0,0,0.15)] lg:shadow-none" id="vocab-panel">
+            <!-- Mobile Pull Indicator -->
+            <div id="close-vocab-bar" class="absolute top-3 left-1/2 transform -translate-x-1/2 w-12 h-1.5 bg-slate-200 rounded-full lg:hidden cursor-pointer"></div>
+            
+            <!-- Mobile Close Button -->
+            <button id="close-vocab-btn" class="absolute top-4 right-4 bg-slate-100 text-slate-500 hover:bg-slate-200 p-2 rounded-full lg:hidden text-lg leading-none font-bold w-8 h-8 flex items-center justify-center transition-colors">
+                &times;
+            </button>
+
+            <div class="text-center py-12 text-emerald-700 opacity-60 hidden lg:block" id="vocab-placeholder">
+                <div class="text-4xl mb-3">👆</div>
+                <p class="font-medium text-base">Select a highlighted word to view its analysis.</p>
+            </div>
+            
+            <div id="vocab-content" class="hidden fade-in mt-2 lg:mt-0">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation Bar (App-like feel) -->
+    <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 z-40 flex justify-around items-center pb-safe shadow-[0_-5px_15px_-10px_rgba(0,0,0,0.1)]">
+        <button onclick="switchTab('article')" id="mobile-tab-article" class="flex flex-col items-center justify-center w-full py-2.5 text-emerald-600 transition-colors">
+            <span class="text-xl mb-1">📖</span>
+            <span class="text-[10px] font-bold uppercase tracking-wide">Reading</span>
+        </button>
+        <button onclick="switchTab('data')" id="mobile-tab-data" class="flex flex-col items-center justify-center w-full py-2.5 text-slate-400 transition-colors relative">
+            <span class="text-xl mb-1">📊</span>
+            <span class="text-[10px] font-bold uppercase tracking-wide">Data</span>
+        </button>
+        <button onclick="switchTab('quiz')" id="mobile-tab-quiz" class="flex flex-col items-center justify-center w-full py-2.5 text-slate-400 transition-colors">
+            <span class="text-xl mb-1">📝</span>
+            <span class="text-[10px] font-bold uppercase tracking-wide">Quiz</span>
+        </button>
+    </nav>
+
+    <script>
+        // Vocabulary data
+        const vocabData = {
+            "naive": { pos: "adj.", def: "Innocent and lacking complex understanding or experience.", trans: "缺乏经验的，幼稚的，天真的" },
+            "carnivore": { pos: "n.", def: "An animal that feeds on flesh.", trans: "食肉动物" },
+            "plague": { pos: "n.", def: "A destructive or disastrous event/thing; a highly infectious disease.", trans: "灾害，瘟疫" },
+            "confront": { pos: "v.", def: "To face up to and deal with a problem or difficult situation.", trans: "面对，对抗" },
+            "assault": { pos: "n.", def: "A sudden, violent physical or verbal attack.", trans: "袭击，突击" },
+            "shocking": { pos: "adj.", def: "Causing a feeling of surprise and dismay; terrible.", trans: "令人震惊的，极坏的" },
+            "identity": { pos: "n.", def: "The fact of being who or what a person or thing is.", trans: "本身，身份" },
+            "die out": { pos: "phr.", def: "To become completely extinct.", trans: "灭亡，逐渐消失" },
+            "insight": { pos: "n.", def: "A deep understanding of a person or thing.", trans: "洞察力" },
+            "benign": { pos: "adj.", def: "Gentle; kindly; not harmful.", trans: "和蔼的，仁慈的" },
+            "enrich": { pos: "v.", def: "To improve or enhance the quality or value of.", trans: "充实，使丰富" },
+            "expand": { pos: "v.", def: "To become or make larger or more extensive.", trans: "扩大，增加，发展" },
+            "superior": { pos: "adj.", def: "Higher in rank, status, or quality.", trans: "更好的，占优势的" },
+            "convey": { pos: "v.", def: "To make an idea, impression, or feeling known or understandable.", trans: "表达，传递（思想）" },
+            "vivid": { pos: "adj.", def: "Producing powerful feelings or strong, clear images in the mind.", trans: "逼真的，鲜艳的" },
+            "narcotic": { pos: "adj.", def: "Having a mesmerizing, soothing, or sleep-inducing effect.", trans: "麻醉的，催眠的" },
+            "appealing": { pos: "adj.", def: "Attractive or interesting.", trans: "有吸引力的" },
+            "therapy": { pos: "n.", def: "Treatment intended to relieve or heal a disorder.", trans: "治疗，疗法" },
+            "instill": { pos: "v.", def: "To gradually but firmly establish an idea or attitude in a person's mind.", trans: "逐渐灌输" },
+            "malicious": { pos: "adj.", def: "Intending or intended to do harm.", trans: "恶意的，蓄意破坏的" },
+            "herbivore": { pos: "n.", def: "An animal that feeds on plants.", trans: "食草动物" },
+            "flora": { pos: "n.", def: "The plants of a particular region, habitat, or geological period.", trans: "植物群" },
+            "fauna": { pos: "n.", def: "The animals of a particular region, habitat, or geological period.", trans: "动物群" },
+            "biodiversity": { pos: "n.", def: "The variety of plant and animal life in the world or in a particular habitat.", trans: "生物多样性" },
+            "intricate": { pos: "adj.", def: "Very complicated or detailed.", trans: "错综复杂的" },
+            "prejudice": { pos: "n.", def: "Preconceived opinion that is not based on reason or actual experience.", trans: "偏见，成见" }
+        };
+
+        // Quiz Data
+        const quizQuestions = [
+            {
+                q: "In paragraph 1, what is the closest meaning to the word 'naive' as used in the passage?",
+                options: [
+                    { text: "Innocent and lacking complex understanding", correct: true, rationale: "The text points out that humans historically categorized the complex natural world simply as 'good' or 'bad,' which demonstrates a simplistic, inexperienced understanding of ecosystems." },
+                    { text: "Cruel and aggressive", correct: false, rationale: "This phrase better describes the perceived violent actions of the predators during an attack, rather than the cognitive viewpoint held by humans." },
+                    { text: "Advanced and scientific", correct: false, rationale: "This is the opposite of what the passage implies; an advanced and scientific view was only developed later through modern ecology." },
+                    { text: "Natural and untouched", correct: false, rationale: "While this often describes wilderness environments, it does not describe the human attitude or perspective discussed in the first sentence." }
+                ]
+            },
+            {
+                q: "According to the passage, why did early farmers and settlers view large 'carnivores' as a 'plague'?",
+                options: [
+                    { text: "Because they brought deadly diseases to human communities.", correct: false, rationale: "While the word can literally refer to an infectious disease, the passage uses it metaphorically to describe a devastating economic and physical disaster, not a medical outbreak." },
+                    { text: "Because they violently attacked and killed livestock.", correct: true, rationale: "The text explicitly mentions that early settlers had to constantly confront the threat these predators posed to their farm animals, including violent assaults on sheep." },
+                    { text: "Because they consumed all the agricultural crops.", correct: false, rationale: "These animals are meat-eaters, meaning they hunt other animals; the farmers were worried about their herds, not their plant-based crops." },
+                    { text: "Because they caused native flora to die out.", correct: false, rationale: "Modern ecology actually proves the opposite; predators help native plants thrive by controlling the population of herbivores." }
+                ]
+            },
+            {
+                q: "The passage notes that nature's mechanisms are rarely completely 'benign'. Which of the following words is the best antonym for 'benign' in this context?",
+                options: [
+                    { text: "Harmful", correct: true, rationale: "The passage contrasts the target word with 'malicious' (intending to cause harm), indicating that the target word means gentle, kind, or harmless." },
+                    { text: "Beneficial", correct: false, rationale: "This word shares a similar positive meaning with the target word, acting closer to a synonym than an antonym." },
+                    { text: "Complex", correct: false, rationale: "While the web of life is intricate, complexity is not the direct opposite of being gentle or harmless." },
+                    { text: "Shocking", correct: false, rationale: "This describes something that causes great surprise or disgust, which doesn't directly serve as the structural opposite of 'harmless' in the sentence's contrast." }
+                ]
+            },
+            {
+                q: "The reintroduction of gray wolves to Yellowstone National Park is primarily used to illustrate how predators can _____ their environments.",
+                options: [
+                    { text: "confront", correct: false, rationale: "This verb is used earlier in the text to describe humans facing a threat, not the ecological enhancement provided by animals." },
+                    { text: "plague", correct: false, rationale: "This reflects the outdated, negative human perception of predators acting as a disaster, rather than the scientific reality of their positive impact." },
+                    { text: "enrich", correct: true, rationale: "Biologists observed that by regulating herbivore populations, predators allow the ecosystem to flourish, effectively improving and adding value to the habitat." },
+                    { text: "assault", correct: false, rationale: "This refers to the sudden physical attack on prey, which is a singular violent action rather than the overall positive ecological consequence." }
+                ]
+            },
+            {
+                q: "Which of the following statements about a 'trophic cascade' is NOT true according to the passage?",
+                options: [
+                    { text: "It involves top-down regulation by predators.", correct: false, rationale: "The passage explicitly names top-down regulation as the driving force behind this self-regulating system." },
+                    { text: "It leads to the overgrazing of vegetation by herbivores.", correct: true, rationale: "The presence of predators actually prevents herbivores from eating too much vegetation, ensuring plant life can recover and thrive." },
+                    { text: "It allows native biodiversity to expand rapidly.", correct: false, rationale: "The text confirms that controlling herbivore populations gives native flora and fauna the opportunity to grow and spread." },
+                    { text: "It creates a superior ecological balance.", correct: false, rationale: "The author directly states that this natural system demonstrates a better, more functional balance compared to environments lacking predators." }
+                ]
+            }
+        ];
+
+        let currentTabId = 'article';
+        let chartInstance = null;
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questionAnswered = false;
+
+        function switchTab(tabId) {
+            // Desktop Tabs UI Reset
+            document.getElementById(`desktop-tab-${currentTabId}`).classList.remove('tab-active-desktop', 'text-emerald-600');
+            document.getElementById(`desktop-tab-${currentTabId}`).classList.add('border-transparent', 'text-slate-500');
+            
+            // Mobile Tabs UI Reset
+            document.getElementById(`mobile-tab-${currentTabId}`).classList.remove('text-emerald-600');
+            document.getElementById(`mobile-tab-${currentTabId}`).classList.add('text-slate-400');
+            
+            // Hide current view
+            document.getElementById(`view-${currentTabId}`).classList.add('hidden');
+
+            // Activate New Tab Desktop UI
+            document.getElementById(`desktop-tab-${tabId}`).classList.add('tab-active-desktop', 'text-emerald-600');
+            document.getElementById(`desktop-tab-${tabId}`).classList.remove('border-transparent', 'text-slate-500');
+            
+            // Activate New Tab Mobile UI
+            document.getElementById(`mobile-tab-${tabId}`).classList.add('text-emerald-600');
+            document.getElementById(`mobile-tab-${tabId}`).classList.remove('text-slate-400');
+            
+            // Show new view
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+
+            const vocabWrapper = document.getElementById('vocab-wrapper');
+            if (tabId === 'article') {
+                vocabWrapper.classList.add('lg:block');
+            } else {
+                vocabWrapper.classList.remove('lg:block');
+                vocabWrapper.classList.add('lg:hidden');
+            }
+
+            currentTabId = tabId;
+            closeMobileVocabPanel(); // Close sheet if open
+
+            // Initialize components if needed
+            if (tabId === 'data' && !chartInstance) {
+                setTimeout(initChart, 50); // Small timeout to ensure container has dimensions
+            }
+            if (tabId === 'quiz' && currentQuestionIndex === 0 && score === 0 && !questionAnswered) {
+                initQuiz();
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'auto' });
+        }
+
+        /* Mobile Native-feel Bottom Sheet Logic */
+        const vocabWrapper = document.getElementById('vocab-wrapper');
+        const overlay = document.getElementById('mobile-overlay');
+
+        function openMobileVocabPanel() {
+            overlay.classList.remove('hidden');
+            // Trigger reflow
+            void overlay.offsetWidth;
+            overlay.classList.remove('opacity-0');
+            overlay.classList.add('opacity-100');
+            vocabWrapper.classList.remove('translate-y-full');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closeMobileVocabPanel() {
+            vocabWrapper.classList.add('translate-y-full');
+            overlay.classList.remove('opacity-100');
+            overlay.classList.add('opacity-0');
+            
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 300); // Wait for transition
+
+            document.querySelectorAll('.vocab-word').forEach(el => el.classList.remove('vocab-active'));
+        }
+
+        document.getElementById('close-vocab-btn').addEventListener('click', closeMobileVocabPanel);
+        document.getElementById('close-vocab-bar').addEventListener('click', closeMobileVocabPanel);
+        overlay.addEventListener('click', closeMobileVocabPanel);
+
+        // Vocab Click Logic
+        document.querySelectorAll('.vocab-word').forEach(wordEl => {
+            wordEl.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const word = this.getAttribute('data-word');
+                const data = vocabData[word];
+                
+                document.querySelectorAll('.vocab-word').forEach(el => el.classList.remove('vocab-active'));
+                this.classList.add('vocab-active');
+
+                document.getElementById('vocab-placeholder').classList.add('hidden');
+                const contentDiv = document.getElementById('vocab-content');
+                contentDiv.classList.remove('hidden');
+
+                // Rich content formatting
+                contentDiv.innerHTML = `
+                    <div class="flex items-baseline gap-3 mb-2">
+                        <h3 class="text-2xl sm:text-3xl font-bold text-slate-900 capitalize">${word}</h3>
+                        <span class="inline-block bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-md font-mono font-bold">${data.pos}</span>
+                    </div>
+                    <p class="text-slate-600 font-medium mb-6 text-base leading-relaxed">${data.def}</p>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="text-[11px] text-slate-400 uppercase tracking-widest font-bold block mb-1">Chinese Translation</span>
+                        <p class="text-emerald-700 font-bold text-lg">${data.trans}</p>
+                    </div>
+                `;
+
+                if (window.innerWidth < 1024) {
+                    openMobileVocabPanel();
+                }
+            });
+        });
+
+        // Swipe down to close bottom sheet functionality
+        let touchStartY = 0;
+        const vocabPanel = document.getElementById('vocab-panel');
+        
+        vocabPanel.addEventListener('touchstart', e => {
+            touchStartY = e.touches[0].clientY;
+        }, {passive: true});
+        
+        vocabPanel.addEventListener('touchmove', e => {
+            const touchY = e.touches[0].clientY;
+            // If pulling down at the top of the scroll container
+            if (vocabPanel.scrollTop <= 0 && touchY > touchStartY + 50) {
+                closeMobileVocabPanel();
+            }
+        }, {passive: true});
+
+        function initChart() {
+            const ctx = document.getElementById('trophicChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['1994', '1996', '2000', '2005', '2010', '2015'],
+                    datasets: [
+                        {
+                            label: 'Wolves',
+                            data: [0, 20, 45, 70, 95, 100],
+                            borderColor: '#1e293b', // slate-800
+                            backgroundColor: 'rgba(30, 41, 59, 0.05)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#1e293b',
+                            pointRadius: window.innerWidth < 640 ? 4 : 5,
+                            pointHoverRadius: window.innerWidth < 640 ? 6 : 8
+                        },
+                        {
+                            label: 'Elk',
+                            data: [100, 95, 75, 50, 40, 42],
+                            borderColor: '#ef4444', // red-500
+                            backgroundColor: 'transparent',
+                            borderWidth: 3,
+                            borderDash: [5, 5],
+                            tension: 0.4,
+                            pointBackgroundColor: '#ef4444',
+                            pointRadius: window.innerWidth < 640 ? 4 : 5,
+                        },
+                        {
+                            label: 'Flora',
+                            data: [20, 22, 40, 65, 90, 100],
+                            borderColor: '#10b981', // emerald-500
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#10b981',
+                            pointRadius: window.innerWidth < 640 ? 4 : 5,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            align: 'start',
+                            labels: {
+                                usePointStyle: true,
+                                boxWidth: 8,
+                                padding: 15,
+                                font: { family: 'Inter', size: window.innerWidth < 640 ? 11 : 13, weight: '500' },
+                                color: '#475569'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            titleColor: '#0f172a',
+                            bodyColor: '#475569',
+                            borderColor: '#e2e8f0',
+                            borderWidth: 1,
+                            padding: 12,
+                            boxPadding: 6,
+                            titleFont: { size: 14, family: 'Inter', weight: 'bold' },
+                            bodyFont: { size: 13, family: 'Inter' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 110,
+                            title: { display: window.innerWidth >= 640, text: 'Population Index', font: { family: 'Inter', size: 12 } },
+                            grid: { color: '#f1f5f9' },
+                            border: { display: false }
+                        },
+                        x: {
+                            grid: { display: false },
+                            border: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function initQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            questionAnswered = false;
+            document.getElementById('quiz-container').classList.remove('hidden');
+            document.getElementById('quiz-results').classList.add('hidden');
+            updateScoreDisplay();
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            questionAnswered = false;
+            const qData = quizQuestions[currentQuestionIndex];
+            
+            document.getElementById('quiz-progress').innerText = `Q ${currentQuestionIndex + 1} / ${quizQuestions.length}`;
+            document.getElementById('question-text').innerText = qData.q;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            qData.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                // Highly touch-optimized buttons for mobile
+                btn.className = 'w-full text-left p-5 sm:p-6 rounded-xl border-2 border-slate-100 hover:border-emerald-400 hover:bg-emerald-50 active:bg-emerald-100 transition-all font-medium text-slate-700 bg-white text-base sm:text-lg leading-snug shadow-sm';
+                btn.innerText = opt.text;
+                btn.onclick = () => handleAnswer(index, btn);
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('feedback-block').classList.add('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+        }
+
+        function handleAnswer(selectedIndex, btnElement) {
+            if (questionAnswered) return;
+            questionAnswered = true;
+
+            const qData = quizQuestions[currentQuestionIndex];
+            const isCorrect = qData.options[selectedIndex].correct;
+            const rationale = qData.options[selectedIndex].rationale;
+
+            const buttons = document.getElementById('options-container').children;
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].disabled = true;
+                buttons[i].classList.remove('hover:border-emerald-400', 'hover:bg-emerald-50', 'active:bg-emerald-100', 'cursor-pointer', 'shadow-sm');
+                buttons[i].classList.add('opacity-50', 'border-slate-100');
+                
+                if (qData.options[i].correct) {
+                    buttons[i].classList.remove('opacity-50');
+                    buttons[i].classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-900');
+                    buttons[i].innerHTML = `<span class="font-bold mr-2 text-emerald-600 text-xl align-middle">✓</span> <span class="align-middle">${buttons[i].innerText}</span>`;
+                } else if (i === selectedIndex && !isCorrect) {
+                    buttons[i].classList.remove('opacity-50');
+                    buttons[i].classList.add('border-red-400', 'bg-red-50', 'text-red-900');
+                    buttons[i].innerHTML = `<span class="font-bold mr-2 text-red-500 text-xl align-middle">✗</span> <span class="align-middle">${buttons[i].innerText}</span>`;
+                }
+            }
+
+            if (isCorrect) score++;
+            updateScoreDisplay();
+
+            const feedbackBlock = document.getElementById('feedback-block');
+            const feedbackText = document.getElementById('feedback-text');
+            const feedbackRationale = document.getElementById('feedback-rationale');
+
+            feedbackBlock.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-200', 'text-emerald-900', 'bg-red-50', 'border-red-200', 'text-red-900');
+            
+            if (isCorrect) {
+                feedbackBlock.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-900');
+                feedbackText.innerHTML = "<span>🎉</span> Correct!";
+            } else {
+                feedbackBlock.classList.add('bg-red-50', 'border-red-200', 'text-red-900');
+                feedbackText.innerHTML = "<span>💡</span> Incorrect";
+            }
+            
+            feedbackRationale.innerText = rationale;
+            
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.classList.remove('hidden');
+            if (currentQuestionIndex === quizQuestions.length - 1) {
+                nextBtn.innerText = "View Results";
+            } else {
+                nextBtn.innerText = "Next Question";
+            }
+
+            // Scroll slightly so the 'Next' button is clearly visible on small screens
+            if(window.innerWidth < 640) {
+                setTimeout(() => {
+                    nextBtn.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }, 100);
+            }
+        }
+
+        document.getElementById('next-btn').addEventListener('click', () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizQuestions.length) {
+                renderQuestion();
+                window.scrollTo({ top: 0, behavior: 'auto' });
+            } else {
+                showResults();
+            }
+        });
+
+        function updateScoreDisplay() {
+            document.getElementById('quiz-score-display').innerText = `Score: ${score}`;
+        }
+
+        function showResults() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            const resultsDiv = document.getElementById('quiz-results');
+            resultsDiv.classList.remove('hidden');
+            document.getElementById('final-score').innerText = score;
+        }
+
+    </script>
+</body>
+</html>
