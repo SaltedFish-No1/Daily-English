@@ -9,6 +9,7 @@ export default function NotFound() {
       </p>
       <Link
         href="/"
+        replace
         className="rounded-xl bg-emerald-600 px-8 py-3 font-bold text-white shadow-lg shadow-emerald-600/20 transition-colors hover:bg-emerald-700"
       >
         返回首页

@@ -17,6 +17,7 @@ export const LessonBreadcrumb: React.FC<LessonBreadcrumbProps> = ({
         <nav className="flex items-center gap-2 text-[11px] font-bold tracking-widest text-slate-400 uppercase sm:text-xs">
           <Link
             href="/"
+            replace
             className="-ml-1 flex items-center gap-1.5 rounded-lg py-1 pr-2 transition-colors hover:text-emerald-600 active:bg-slate-100"
           >
             <Home size={14} className="sm:size-3" />
