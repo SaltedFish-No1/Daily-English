@@ -3,7 +3,15 @@ import nextTypescript from 'eslint-config-next/typescript';
 
 const eslintConfig = [
   {
-    ignores: ['.next/**', 'out/**', 'node_modules/**', 'eslint.config.mjs'],
+    ignores: [
+      '.next/**',
+      'out/**',
+      'node_modules/**',
+      'eslint.config.mjs',
+      'public/sw.js',
+      'public/workbox-*.js',
+      'public/Daily-English/**',
+    ],
   },
   ...nextCoreWebVitals,
   ...nextTypescript,

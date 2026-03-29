@@ -1,13 +1,18 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { LessonListItem } from '@/types/lesson';
-import { Calendar, ArrowRight } from 'lucide-react';
+import { Calendar, ArrowRight, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
 interface HomeViewProps {
   lessons: LessonListItem[];
+}
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
 }
 
 /**
@@ -17,6 +22,31 @@ interface HomeViewProps {
  * @return 首页视图组件。
  */
 export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
+  const [installEvent, setInstallEvent] =
+    useState<BeforeInstallPromptEvent | null>(null);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault();
+      setInstallEvent(event as BeforeInstallPromptEvent);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    return () => {
+      window.removeEventListener(
+        'beforeinstallprompt',
+        handleBeforeInstallPrompt
+      );
+    };
+  }, []);
+
+  const handleInstall = async () => {
+    if (!installEvent) return;
+    await installEvent.prompt();
+    await installEvent.userChoice;
+    setInstallEvent(null);
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
       <header className="pt-safe sticky top-0 z-50 border-b border-gray-100 bg-white shadow-sm">
@@ -29,9 +59,16 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
               Elevate Your Language
             </p>
           </div>
-          <div className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-100 bg-emerald-50">
-            <span className="text-sm font-bold text-emerald-600">DE</span>
-          </div>
+          <button
+            type="button"
+            onClick={handleInstall}
+            disabled={!installEvent}
+            className="flex h-10 items-center justify-center gap-1.5 rounded-full border border-emerald-100 bg-emerald-50 px-3 text-xs font-bold text-emerald-600 transition-colors enabled:hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-40"
+            title={installEvent ? '安装到本地' : '当前环境不支持一键安装'}
+          >
+            <Download size={14} />
+            安装
+          </button>
         </div>
       </header>
 
