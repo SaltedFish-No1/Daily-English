@@ -73,15 +73,6 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
       </header>
 
       <main className="mx-auto w-full max-w-5xl flex-grow px-5 py-8 sm:py-12">
-        <section className="mb-10 sm:mb-12">
-          <h2 className="mb-3 text-2xl font-bold text-slate-900 sm:text-3xl">
-            最新课程
-          </h2>
-          <p className="max-w-2xl text-base leading-relaxed font-medium text-slate-500 sm:text-lg">
-            通过沉浸式的交互式体验，每日学习地道的英语表达和专业领域知识。
-          </p>
-        </section>
-
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3">
           {lessons.map((lesson, i) => (
             <Link
