@@ -24,28 +24,68 @@ interface BeforeInstallPromptEvent extends Event {
 export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
   const [installEvent, setInstallEvent] =
     useState<BeforeInstallPromptEvent | null>(null);
+  const [isStandalone, setIsStandalone] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    const standaloneByDisplayMode = window.matchMedia(
+      '(display-mode: standalone)'
+    ).matches;
+    const standaloneByNavigator =
+      'standalone' in window.navigator &&
+      Boolean(
+        (window.navigator as Navigator & { standalone?: boolean }).standalone
+      );
+    return standaloneByDisplayMode || standaloneByNavigator;
+  });
+  const [isIOS] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+  });
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (event: Event) => {
       event.preventDefault();
       setInstallEvent(event as BeforeInstallPromptEvent);
     };
+    const handleAppInstalled = () => {
+      setInstallEvent(null);
+      setIsStandalone(true);
+    };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
     return () => {
       window.removeEventListener(
         'beforeinstallprompt',
         handleBeforeInstallPrompt
       );
+      window.removeEventListener('appinstalled', handleAppInstalled);
     };
   }, []);
 
   const handleInstall = async () => {
-    if (!installEvent) return;
-    await installEvent.prompt();
-    await installEvent.userChoice;
-    setInstallEvent(null);
+    if (isStandalone) return;
+    if (installEvent) {
+      await installEvent.prompt();
+      await installEvent.userChoice;
+      setInstallEvent(null);
+      return;
+    }
+    if (isIOS) {
+      window.alert('请使用 Safari 的“分享”按钮，然后选择“添加到主屏幕”。');
+      return;
+    }
+    window.alert('请使用浏览器菜单中的“安装应用”或“添加到桌面”。');
   };
+
+  const isInstallEnabled = !isStandalone && (Boolean(installEvent) || isIOS);
+
+  const installTitle = isStandalone
+    ? '已安装'
+    : isInstallEnabled
+      ? '安装到本地'
+      : '当前浏览器暂未提供安装事件，请使用浏览器菜单安装';
+
+  const installLabel = isStandalone ? '已安装' : '安装';
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
@@ -62,12 +102,12 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
           <button
             type="button"
             onClick={handleInstall}
-            disabled={!installEvent}
+            disabled={isStandalone}
             className="flex h-10 items-center justify-center gap-1.5 rounded-full border border-emerald-100 bg-emerald-50 px-3 text-xs font-bold text-emerald-600 transition-colors enabled:hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-40"
-            title={installEvent ? '安装到本地' : '当前环境不支持一键安装'}
+            title={installTitle}
           >
             <Download size={14} />
-            安装
+            {installLabel}
           </button>
         </div>
       </header>

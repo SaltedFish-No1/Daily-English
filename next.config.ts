@@ -6,7 +6,7 @@ const basePath = isProd ? '/Daily-English' : '';
 const withPWA = withPWAInit({
   dest: 'public',
   register: true,
-  disable: !isProd,
+  disable: false,
   scope: isProd ? '/Daily-English/' : '/',
 });
 
