@@ -2,9 +2,10 @@
 
 import React from 'react';
 import { useLessonStore } from '@/store/useLessonStore';
+import { useUserStore } from '@/store/useUserStore';
 import { useSpeech } from '@/hooks/useSpeech';
 import { VocabEntry, LessonSpeech, LessonUI } from '@/types/lesson';
-import { X, Volume2 } from 'lucide-react';
+import { X, Volume2, Bookmark, BookmarkCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface VocabSheetProps {
@@ -24,11 +25,25 @@ export const VocabSheet: React.FC<VocabSheetProps> = ({
   speech,
   ui,
 }) => {
-  const { selectedWord, setSelectedWord } = useLessonStore();
+  const { selectedWordContext, setSelectedWordContext } = useLessonStore();
+  const { savedWords, upsertVocabOccurrence, removeVocabOccurrence } =
+    useUserStore();
   const { speak } = useSpeech();
+  const selectedWord = selectedWordContext?.word ?? null;
   const isOpen = Boolean(selectedWord);
 
   const currentEntry = selectedWord ? vocab[selectedWord] : null;
+  const normalizedWord = selectedWord?.trim().toLowerCase() ?? '';
+  const currentOccurrences = normalizedWord
+    ? (savedWords[normalizedWord] ?? [])
+    : [];
+  const isSavedAtCurrentPoint =
+    selectedWordContext !== null &&
+    currentOccurrences.some(
+      (item) =>
+        item.lessonSlug === selectedWordContext.lessonSlug &&
+        item.paragraphIndex === selectedWordContext.paragraphIndex
+    );
 
   if (!currentEntry && !isOpen) return null;
 
@@ -39,7 +54,7 @@ export const VocabSheet: React.FC<VocabSheetProps> = ({
    * @return 无返回值。
    */
   const handleClose = () => {
-    setSelectedWord(null);
+    setSelectedWordContext(null);
   };
 
   /**
@@ -52,6 +67,30 @@ export const VocabSheet: React.FC<VocabSheetProps> = ({
     if (selectedWord && speech.enabled) {
       speak(currentEntry?.speakText || selectedWord, speech.lang, speech.rate);
     }
+  };
+
+  const handleSave = () => {
+    if (!selectedWordContext || !currentEntry) return;
+    if (isSavedAtCurrentPoint) {
+      removeVocabOccurrence({
+        word: selectedWordContext.word,
+        lessonSlug: selectedWordContext.lessonSlug,
+        paragraphIndex: selectedWordContext.paragraphIndex,
+      });
+      return;
+    }
+    upsertVocabOccurrence({
+      word: selectedWordContext.word,
+      lessonSlug: selectedWordContext.lessonSlug,
+      lessonTitle: selectedWordContext.lessonTitle,
+      paragraphIndex: selectedWordContext.paragraphIndex,
+      senseSnapshot: {
+        pos: currentEntry.pos,
+        def: currentEntry.def,
+        trans: currentEntry.trans,
+        speakText: currentEntry.speakText,
+      },
+    });
   };
 
   return (
@@ -94,6 +133,22 @@ export const VocabSheet: React.FC<VocabSheetProps> = ({
                     <h3 className="text-2xl leading-tight font-bold text-slate-900 capitalize">
                       {selectedWord}
                     </h3>
+                    <button
+                      onClick={handleSave}
+                      type="button"
+                      title={isSavedAtCurrentPoint ? '取消收藏' : '收藏'}
+                      className={`rounded-xl border p-2.5 transition-all active:scale-95 ${
+                        isSavedAtCurrentPoint
+                          ? 'border-emerald-100 bg-emerald-50 text-emerald-600 hover:bg-emerald-100'
+                          : 'border-emerald-100 bg-emerald-50 text-emerald-600 hover:bg-emerald-100'
+                      }`}
+                    >
+                      {isSavedAtCurrentPoint ? (
+                        <BookmarkCheck size={20} />
+                      ) : (
+                        <Bookmark size={20} />
+                      )}
+                    </button>
                     {speech.enabled && (
                       <button
                         onClick={handleSpeak}

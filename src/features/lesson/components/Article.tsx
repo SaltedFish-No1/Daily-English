@@ -7,6 +7,8 @@ import { LessonArticle } from '@/types/lesson';
 interface ArticleProps {
   article: LessonArticle;
   speechEnabled: boolean;
+  lessonSlug: string;
+  lessonTitle: string;
 }
 
 /**
@@ -15,8 +17,13 @@ interface ArticleProps {
  * @param props 文章内容与界面文案配置。
  * @return 文章阅读视图组件。
  */
-export const Article: React.FC<ArticleProps> = ({ article, speechEnabled }) => {
-  const { selectedWord, setSelectedWord } = useLessonStore();
+export const Article: React.FC<ArticleProps> = ({
+  article,
+  speechEnabled,
+  lessonSlug,
+  lessonTitle,
+}) => {
+  const { selectedWordContext, setSelectedWordContext } = useLessonStore();
   const [showHint, setShowHint] = useState(true);
   const [visibleTranslations, setVisibleTranslations] = useState<
     Record<number, boolean>
@@ -35,10 +42,22 @@ export const Article: React.FC<ArticleProps> = ({ article, speechEnabled }) => {
     const target = e.target as HTMLElement;
     if (target.classList.contains('vocab-word')) {
       const word = target.getAttribute('data-word');
-      if (word === selectedWord) {
-        setSelectedWord(null);
+      const paragraphIndexRaw = target.getAttribute('data-p');
+      const paragraphIndex = Number(paragraphIndexRaw);
+      if (!word || Number.isNaN(paragraphIndex)) return;
+      const isSameSelection =
+        selectedWordContext?.word === word &&
+        selectedWordContext.lessonSlug === lessonSlug &&
+        selectedWordContext.paragraphIndex === paragraphIndex;
+      if (isSameSelection) {
+        setSelectedWordContext(null);
       } else {
-        setSelectedWord(word);
+        setSelectedWordContext({
+          word,
+          lessonSlug,
+          lessonTitle,
+          paragraphIndex,
+        });
       }
     }
   };
@@ -84,15 +103,18 @@ export const Article: React.FC<ArticleProps> = ({ article, speechEnabled }) => {
         </div>
 
         {article.paragraphs.map((p, i) => (
-          <div key={i} className="mb-8">
+          <div key={i} id={`p-${i}`} className="mb-8 scroll-mt-28">
             <p
               className="mb-2"
               dangerouslySetInnerHTML={{
-                __html: p.en.replace(
-                  /data-word="([^"]+)"/g,
-                  (match, word) =>
-                    `${match} class="vocab-word ${word === selectedWord ? 'vocab-active' : ''}"`
-                ),
+                __html: p.en.replace(/data-word="([^"]+)"/g, (match, word) => {
+                  const isActive =
+                    selectedWordContext !== null &&
+                    word === selectedWordContext.word &&
+                    lessonSlug === selectedWordContext.lessonSlug &&
+                    i === selectedWordContext.paragraphIndex;
+                  return `${match} data-p="${i}" class="vocab-word ${isActive ? 'vocab-active' : ''}"`;
+                }),
               }}
             />
             {p.zh && (

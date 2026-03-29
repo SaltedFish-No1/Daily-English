@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { LessonListItem } from '@/types/lesson';
-import { Calendar, ArrowRight, Download } from 'lucide-react';
+import { Calendar, ArrowRight, Download, BookMarked } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useUserStore } from '@/store/useUserStore';
 
 interface HomeViewProps {
   lessons: LessonListItem[];
@@ -29,6 +30,7 @@ interface InstallDialogState {
  * @return 首页视图组件。
  */
 export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
+  const { savedWords } = useUserStore();
   const [installEvent, setInstallEvent] =
     useState<BeforeInstallPromptEvent | null>(null);
   const [isStandalone, setIsStandalone] = useState(() => {
@@ -160,6 +162,26 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
   const installTitle = isStandalone ? '已安装' : '安装到本地';
 
   const installLabel = isStandalone ? '已安装' : '安装';
+  const recentWordEntries = useMemo(() => {
+    return Object.entries(savedWords)
+      .filter(([, occurrences]) => occurrences.length > 0)
+      .map(([word, occurrences]) => {
+        const [firstOccurrence, ...restOccurrences] = occurrences;
+        const latestOccurrence = restOccurrences.reduce(
+          (latest, current) =>
+            current.savedAt > latest.savedAt ? current : latest,
+          firstOccurrence
+        );
+        return { word, latestOccurrence };
+      })
+      .sort((a, b) => b.latestOccurrence.savedAt - a.latestOccurrence.savedAt);
+  }, [savedWords]);
+  const savedWordCount = recentWordEntries.length;
+  const previewCount = Math.min(
+    8,
+    Math.max(2, Math.min(6, savedWordCount || 0))
+  );
+  const recentWords = recentWordEntries.slice(0, previewCount);
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
@@ -187,6 +209,43 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
       </header>
 
       <main className="mx-auto w-full max-w-5xl flex-grow px-5 py-8 sm:py-12">
+        <section className="mb-6 rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm sm:mb-8">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <BookMarked size={18} className="text-emerald-600" />
+              <h2 className="text-base font-bold text-slate-900 sm:text-lg">
+                我的生词库
+              </h2>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
+                {savedWordCount} 词
+              </span>
+              <Link
+                href="/vocab"
+                className="rounded-full bg-emerald-600 px-3 py-1 text-xs font-bold text-white transition-colors hover:bg-emerald-700"
+              >
+                查看生词表
+              </Link>
+            </div>
+          </div>
+          {recentWords.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {recentWords.map(({ word, latestOccurrence }) => (
+                <span
+                  key={`${word}-${latestOccurrence.lessonSlug}-${latestOccurrence.paragraphIndex}`}
+                  className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600 transition-colors hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
+                >
+                  {word}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-slate-500">
+              还没有收藏记录，进入课程点击高亮词后可在词卡里收藏。
+            </p>
+          )}
+        </section>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3">
           {lessons.map((lesson, i) => (
             <Link

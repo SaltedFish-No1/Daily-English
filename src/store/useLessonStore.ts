@@ -1,15 +1,22 @@
 import { create } from 'zustand';
 
+export interface SelectedWordContext {
+  word: string;
+  lessonSlug: string;
+  lessonTitle: string;
+  paragraphIndex: number;
+}
+
 interface LessonState {
   activeTab: string;
   setActiveTab: (tab: string) => void;
-  selectedWord: string | null;
-  setSelectedWord: (word: string | null) => void;
+  selectedWordContext: SelectedWordContext | null;
+  setSelectedWordContext: (context: SelectedWordContext | null) => void;
 }
 
 export const useLessonStore = create<LessonState>((set) => ({
   activeTab: 'article',
   setActiveTab: (tab) => set({ activeTab: tab }),
-  selectedWord: null,
-  setSelectedWord: (word) => set({ selectedWord: word }),
+  selectedWordContext: null,
+  setSelectedWordContext: (context) => set({ selectedWordContext: context }),
 }));

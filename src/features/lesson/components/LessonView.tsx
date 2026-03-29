@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { LessonData } from '@/types/lesson';
 import { useLessonStore } from '@/store/useLessonStore';
+import { useUserStore } from '@/store/useUserStore';
 import { Article } from './Article';
 import { Chart } from './Chart';
 import { Quiz } from './Quiz';
@@ -17,6 +18,13 @@ interface LessonViewProps {
 
 export const LessonView: React.FC<LessonViewProps> = ({ data }) => {
   const { activeTab, setActiveTab } = useLessonStore();
+  const { saveLessonScore } = useUserStore();
+  const handleQuizComplete = useCallback(
+    (score: number) => {
+      saveLessonScore(data.meta.slug, score, data.quiz.questions.length);
+    },
+    [data.meta.slug, data.quiz.questions.length, saveLessonScore]
+  );
 
   const tabs = [
     {
@@ -76,6 +84,8 @@ export const LessonView: React.FC<LessonViewProps> = ({ data }) => {
             <Article
               article={data.article}
               speechEnabled={data.speech.enabled}
+              lessonSlug={data.meta.slug}
+              lessonTitle={data.meta.title}
             />
           </motion.div>
           <motion.div
@@ -100,7 +110,11 @@ export const LessonView: React.FC<LessonViewProps> = ({ data }) => {
             className={activeTab === 'quiz' ? 'block' : 'hidden'}
             aria-hidden={activeTab !== 'quiz'}
           >
-            <Quiz quiz={data.quiz} persistKey={data.meta.slug} />
+            <Quiz
+              quiz={data.quiz}
+              persistKey={data.meta.slug}
+              onComplete={handleQuizComplete}
+            />
           </motion.div>
         </div>
 
