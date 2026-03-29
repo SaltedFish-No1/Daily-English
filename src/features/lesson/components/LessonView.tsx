@@ -8,7 +8,7 @@ import { Chart } from './Chart';
 import { Quiz } from './Quiz';
 import { VocabSheet } from './VocabSheet';
 import { BookOpen, BarChart3, HelpCircle } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { LessonBreadcrumb } from './LessonBreadcrumb';
 
 interface LessonViewProps {
@@ -63,41 +63,42 @@ export const LessonView: React.FC<LessonViewProps> = ({ data }) => {
       {/* Main Content */}
       <main className="mx-auto grid w-full max-w-5xl flex-grow grid-cols-1 gap-8 sm:px-6 sm:py-12 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <AnimatePresence mode="wait">
-            {activeTab === 'article' && (
-              <motion.div
-                key="article"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Article article={data.article} ui={data.ui} />
-              </motion.div>
-            )}
-            {activeTab === 'chart' && (
-              <motion.div
-                key="chart"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Chart chart={data.chart} />
-              </motion.div>
-            )}
-            {activeTab === 'quiz' && (
-              <motion.div
-                key="quiz"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Quiz quiz={data.quiz} />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <motion.div
+            initial={false}
+            animate={{
+              opacity: activeTab === 'article' ? 1 : 0,
+              x: activeTab === 'article' ? 0 : 20,
+            }}
+            transition={{ duration: 0.2 }}
+            className={activeTab === 'article' ? 'block' : 'hidden'}
+            aria-hidden={activeTab !== 'article'}
+          >
+            <Article article={data.article} ui={data.ui} />
+          </motion.div>
+          <motion.div
+            initial={false}
+            animate={{
+              opacity: activeTab === 'chart' ? 1 : 0,
+              x: activeTab === 'chart' ? 0 : 20,
+            }}
+            transition={{ duration: 0.2 }}
+            className={activeTab === 'chart' ? 'block' : 'hidden'}
+            aria-hidden={activeTab !== 'chart'}
+          >
+            <Chart chart={data.chart} />
+          </motion.div>
+          <motion.div
+            initial={false}
+            animate={{
+              opacity: activeTab === 'quiz' ? 1 : 0,
+              x: activeTab === 'quiz' ? 0 : 20,
+            }}
+            transition={{ duration: 0.2 }}
+            className={activeTab === 'quiz' ? 'block' : 'hidden'}
+            aria-hidden={activeTab !== 'quiz'}
+          >
+            <Quiz quiz={data.quiz} persistKey={data.meta.slug} />
+          </motion.div>
         </div>
 
         {/* Desktop Vocab Panel */}
