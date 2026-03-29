@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@theme {
+  --font-merriweather: "Merriweather", serif;
+  --font-inter: "Inter", sans-serif;
+}
+
+:root {
+  --background: #f8fafc;
+  --foreground: #1e293b;
+}
+
+body {
+  font-family: var(--font-inter);
+  background-color: var(--background);
+  color: var(--foreground);
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1, h2, h3, .serif {
+  font-family: var(--font-merriweather);
+}
+
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+.backdrop-blur-custom {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.vocab-word {
+  @apply text-emerald-700 font-bold border-b-2 border-emerald-300 px-0.5 rounded-sm transition-all duration-200 cursor-pointer hover:bg-emerald-50;
+}
+
+.vocab-active {
+  @apply bg-emerald-600! text-white! border-b-transparent! shadow-lg shadow-emerald-600/20 z-10 relative;
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}

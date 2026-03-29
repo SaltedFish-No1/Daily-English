@@ -1,0 +1,15 @@
+import { useCallback } from 'react';
+
+export const useSpeech = () => {
+  const speak = useCallback((word: string, lang = 'en-US', rate = 0.9) => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(word);
+      utterance.lang = lang;
+      utterance.rate = rate;
+      window.speechSynthesis.speak(utterance);
+    }
+  }, []);
+
+  return { speak };
+};
