@@ -15,10 +15,11 @@
     "mobileQuizTabLabel": "Quiz",
     "articleHintHtml": "Read the article below to understand the shift in ecological perspective. <br><strong>Interaction:</strong> Tap the <span class=\"text-emerald-700 font-bold border-b-2 border-emerald-300 px-1 rounded bg-white\">highlighted words</span> to view definitions and translations.",
     "vocabPlaceholderText": "Select a highlighted word to view its analysis.",
-    "translationLabel": "Chinese Translation"
+    "translationLabel": "Chinese Translation",
+    "listenTitle": "Listen pronunciation"
   },
   "speech": {
-    "enabled": false
+    "enabled": true
   },
   "article": {
     "title": "The Misunderstood Predators: Ecology and Human Perception",
