@@ -4,6 +4,7 @@ import React from 'react';
 import { LessonListItem } from '@/types/lesson';
 import { Calendar, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 interface HomeViewProps {
   lessons: LessonListItem[];
@@ -46,56 +47,59 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3">
           {lessons.map((lesson, i) => (
-            <motion.a
+            <Link
               key={lesson.date}
               href={`/lessons/${lesson.date}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
               className="group relative block overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:shadow-xl active:scale-95"
             >
-              <div className="flex h-44 items-center justify-center bg-emerald-50/50 p-6 transition-colors group-hover:bg-emerald-50 sm:h-48 sm:p-8">
-                <div className="text-center">
-                  <span className="mb-2 inline-block rounded-full bg-emerald-100 px-2.5 py-0.5 text-[10px] font-bold tracking-widest text-emerald-700 uppercase">
-                    {lesson.tag}
-                  </span>
-                  <h3 className="text-lg leading-tight font-bold text-slate-900 transition-colors group-hover:text-emerald-900 sm:text-xl">
-                    {lesson.title}
-                  </h3>
-                </div>
-              </div>
-              <div className="p-6">
-                <div className="mb-3 flex items-center justify-between text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-                  <span className="flex items-center gap-1">
-                    <Calendar size={12} />
-                    {lesson.date}
-                  </span>
-                  <span className="flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-500">
-                    <span className="mr-1.5 h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500"></span>
-                    Interactive
-                  </span>
-                </div>
-                <p className="mb-5 line-clamp-2 text-sm leading-relaxed font-medium text-slate-500">
-                  {lesson.summary}
-                </p>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center text-sm font-bold text-emerald-600 transition-transform group-hover:translate-x-1">
-                    立即开始
-                    <ArrowRight size={16} className="ml-1" />
-                  </div>
-                  <div className="flex -space-x-1.5">
-                    {[1, 2, 3].map((j) => (
-                      <div
-                        key={j}
-                        className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-slate-100 text-[8px] font-bold text-slate-400"
-                      >
-                        {j}
-                      </div>
-                    ))}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <div className="flex h-44 items-center justify-center bg-emerald-50/50 p-6 transition-colors group-hover:bg-emerald-50 sm:h-48 sm:p-8">
+                  <div className="text-center">
+                    <span className="mb-2 inline-block rounded-full bg-emerald-100 px-2.5 py-0.5 text-[10px] font-bold tracking-widest text-emerald-700 uppercase">
+                      {lesson.tag}
+                    </span>
+                    <h3 className="text-lg leading-tight font-bold text-slate-900 transition-colors group-hover:text-emerald-900 sm:text-xl">
+                      {lesson.title}
+                    </h3>
                   </div>
                 </div>
-              </div>
-            </motion.a>
+                <div className="p-6">
+                  <div className="mb-3 flex items-center justify-between text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                    <span className="flex items-center gap-1">
+                      <Calendar size={12} />
+                      {lesson.date}
+                    </span>
+                    <span className="flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-500">
+                      <span className="mr-1.5 h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500"></span>
+                      Interactive
+                    </span>
+                  </div>
+                  <p className="mb-5 line-clamp-2 text-sm leading-relaxed font-medium text-slate-500">
+                    {lesson.summary}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center text-sm font-bold text-emerald-600 transition-transform group-hover:translate-x-1">
+                      立即开始
+                      <ArrowRight size={16} className="ml-1" />
+                    </div>
+                    <div className="flex -space-x-1.5">
+                      {[1, 2, 3].map((j) => (
+                        <div
+                          key={j}
+                          className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-slate-100 text-[8px] font-bold text-slate-400"
+                        >
+                          {j}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </Link>
           ))}
         </div>
       </main>
