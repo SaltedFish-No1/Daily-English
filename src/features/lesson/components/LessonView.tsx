@@ -105,7 +105,7 @@ export const LessonView: React.FC<LessonViewProps> = ({ data }) => {
         </div>
 
         {/* Desktop Vocab Panel */}
-        <div className="hidden lg:block">
+        <div className="hidden lg:sticky lg:top-[200px] lg:block lg:h-fit lg:self-start">
           <VocabSheet vocab={data.vocab} speech={data.speech} ui={data.ui} />
         </div>
       </main>
