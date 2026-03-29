@@ -24,48 +24,175 @@
   "article": {
     "title": "The Misunderstood Predators: Ecology and Human Perception",
     "paragraphs": [
-      "For centuries, humans have held a rather <span class=\"vocab-word\" data-word=\"naive\">naive</span> view of the natural world, often categorizing animals simply as 'good' or 'bad.' Large <span class=\"vocab-word\" data-word=\"carnivore\">carnivore</span> species, in particular, were historically viewed as a deadly <span class=\"vocab-word\" data-word=\"plague\">plague</span> upon agricultural communities. Early settlers and farmers had to constantly <span class=\"vocab-word\" data-word=\"confront\">confront</span> the threat these top predators posed to their livestock. The sudden, violent <span class=\"vocab-word\" data-word=\"assault\">assault</span> of a wolf pack on a herd of sheep was a <span class=\"vocab-word\" data-word=\"shocking\">shocking</span> and devastating event that reinforced the negative <span class=\"vocab-word\" data-word=\"identity\">identity</span> of these animals as bloodthirsty beasts. Consequently, driven by fear and economic protection, humans hunted many predator populations nearly to extinction, causing several local subspecies to completely <span class=\"vocab-word\" data-word=\"die out\">die out</span>.",
-      "However, modern ecology has provided profound <span class=\"vocab-word\" data-word=\"insight\">insight</span> into the complex web of life, revealing that nature's mechanisms are rarely completely <span class=\"vocab-word\" data-word=\"benign\">benign</span> or entirely <span class=\"vocab-word\" data-word=\"malicious\">malicious</span>. Scientists now understand that top predators play an irreplaceable role in maintaining ecosystem health. A classic example is the reintroduction of gray wolves to Yellowstone National Park in the 1990s. Biologists observed how the presence of these predators actually serves to <span class=\"vocab-word\" data-word=\"enrich\">enrich</span> their environments. By controlling the population of large <span class=\"vocab-word\" data-word=\"herbivore\">herbivores</span> like elk, predators prevent the overgrazing of vegetation. This allows native <span class=\"vocab-word\" data-word=\"flora\">flora</span> and <span class=\"vocab-word\" data-word=\"fauna\">fauna</span> <span class=\"vocab-word\" data-word=\"biodiversity\">biodiversity</span> to <span class=\"vocab-word\" data-word=\"expand\">expand</span> rapidly. This self-regulating system demonstrates a <span class=\"vocab-word\" data-word=\"superior\">superior</span> ecological balance compared to environments lacking top-down regulation, a phenomenon scientifically known as a \"trophic cascade.\"",
-      "Today, modern media and psychological studies help reshape our relationship with the wild. Nature documentaries utilize high-definition technology to <span class=\"vocab-word\" data-word=\"convey\">convey</span> these scientific truths through <span class=\"vocab-word\" data-word=\"vivid\">vivid</span> imagery. These films capture everything from the <span class=\"vocab-word\" data-word=\"intricate\">intricate</span>, almost <span class=\"vocab-word\" data-word=\"narcotic\">narcotic</span> (mesmerizing) beauty of a leopard stalking its prey, to the harsh realities of natural selection. This educational approach is highly <span class=\"vocab-word\" data-word=\"appealing\">appealing</span> to the general public. Furthermore, engaging with nature—whether physically or through these visual mediums—is increasingly recognized by psychologists as a form of eco-<span class=\"vocab-word\" data-word=\"therapy\">therapy</span>. It helps to <span class=\"vocab-word\" data-word=\"instill\">instill</span> a deep respect for wildlife in younger generations, curing historical <span class=\"vocab-word\" data-word=\"prejudice\">prejudices</span> and reminding us of our shared place within the Earth's <span class=\"vocab-word\" data-word=\"intricate\">intricate</span> ecosystems."
+      {
+        "en": "For centuries, humans have held a rather <span class=\"vocab-word\" data-word=\"naive\">naive</span> view of the natural world, often categorizing animals simply as 'good' or 'bad.' Large <span class=\"vocab-word\" data-word=\"carnivore\">carnivore</span> species, in particular, were historically viewed as a deadly <span class=\"vocab-word\" data-word=\"plague\">plague</span> upon agricultural communities. Early settlers and farmers had to constantly <span class=\"vocab-word\" data-word=\"confront\">confront</span> the threat these top predators posed to their livestock. The sudden, violent <span class=\"vocab-word\" data-word=\"assault\">assault</span> of a wolf pack on a herd of sheep was a <span class=\"vocab-word\" data-word=\"shocking\">shocking</span> and devastating event that reinforced the negative <span class=\"vocab-word\" data-word=\"identity\">identity</span> of these animals as bloodthirsty beasts. Consequently, driven by fear and economic protection, humans hunted many predator populations nearly to extinction, causing several local subspecies to completely <span class=\"vocab-word\" data-word=\"die out\">die out</span>.",
+        "zh": "几个世纪以来，人类对自然界持有相当<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">幼稚<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">naive</span></span>的看法，往往简单地将动物分为‘好’或‘坏’。特别是大型<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">食肉动物<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">carnivore</span></span>物种，在历史上被视为农业社区的致命<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">灾害<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">plague</span></span>。早期的定居者和农民必须不断<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">面对<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">confront</span></span>这些顶级捕食者对他们的牲畜构成的威胁。狼群对羊群的突然、暴力的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">袭击<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">assault</span></span>是一个<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">令人震惊的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">shocking</span></span>和毁灭性的事件，强化了这些动物作为嗜血野兽的负面<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">身份<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">identity</span></span>。因此，在恐惧和经济保护的驱使下，人类将许多捕食者种群猎杀至濒临灭绝，导致几个地方亚种完全<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">灭绝<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">die out</span></span>。"
+      },
+      {
+        "en": "However, modern ecology has provided profound <span class=\"vocab-word\" data-word=\"insight\">insight</span> into the complex web of life, revealing that nature's mechanisms are rarely completely <span class=\"vocab-word\" data-word=\"benign\">benign</span> or entirely <span class=\"vocab-word\" data-word=\"malicious\">malicious</span>. Scientists now understand that top predators play an irreplaceable role in maintaining ecosystem health. A classic example is the reintroduction of gray wolves to Yellowstone National Park in the 1990s. Biologists observed how the presence of these predators actually serves to <span class=\"vocab-word\" data-word=\"enrich\">enrich</span> their environments. By controlling the population of large <span class=\"vocab-word\" data-word=\"herbivore\">herbivores</span> like elk, predators prevent the overgrazing of vegetation. This allows native <span class=\"vocab-word\" data-word=\"flora\">flora</span> and <span class=\"vocab-word\" data-word=\"fauna\">fauna</span> <span class=\"vocab-word\" data-word=\"biodiversity\">biodiversity</span> to <span class=\"vocab-word\" data-word=\"expand\">expand</span> rapidly. This self-regulating system demonstrates a <span class=\"vocab-word\" data-word=\"superior\">superior</span> ecological balance compared to environments lacking top-down regulation, a phenomenon scientifically known as a \"trophic cascade.\"",
+        "zh": "然而，现代生态学提供了对复杂生命网络的深刻<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">洞察<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">insight</span></span>，揭示了自然的机制很少是完全<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">温和的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">benign</span></span>或完全<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">恶意的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">malicious</span></span>。科学家现在了解到，顶级捕食者在维持生态系统健康方面发挥着不可替代的作用。一个经典的例子是20世纪90年代灰狼被重新引入黄石国家公园。生物学家观察到这些捕食者的存在实际上如何有助于<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">丰富<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">enrich</span></span>它们的环境。通过控制像麋鹿这样的大型<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">食草动物<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">herbivore</span></span>的数量，捕食者防止了植被的过度放牧。这使得原生<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">植物<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">flora</span></span>和<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">动物<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">fauna</span></span>的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">生物多样性<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">biodiversity</span></span>得以迅速<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">扩大<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">expand</span></span>。这种自我调节的系统展示了一种比缺乏自上而下调节的环境更<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">优越的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">superior</span></span>生态平衡，这在科学上被称为“营养级联”。"
+      },
+      {
+        "en": "Today, modern media and psychological studies help reshape our relationship with the wild. Nature documentaries utilize high-definition technology to <span class=\"vocab-word\" data-word=\"convey\">convey</span> these scientific truths through <span class=\"vocab-word\" data-word=\"vivid\">vivid</span> imagery. These films capture everything from the <span class=\"vocab-word\" data-word=\"intricate\">intricate</span>, almost <span class=\"vocab-word\" data-word=\"narcotic\">narcotic</span> (mesmerizing) beauty of a leopard stalking its prey, to the harsh realities of natural selection. This educational approach is highly <span class=\"vocab-word\" data-word=\"appealing\">appealing</span> to the general public. Furthermore, engaging with nature—whether physically or through these visual mediums—is increasingly recognized by psychologists as a form of eco-<span class=\"vocab-word\" data-word=\"therapy\">therapy</span>. It helps to <span class=\"vocab-word\" data-word=\"instill\">instill</span> a deep respect for wildlife in younger generations, curing historical <span class=\"vocab-word\" data-word=\"prejudice\">prejudices</span> and reminding us of our shared place within the Earth's <span class=\"vocab-word\" data-word=\"intricate\">intricate</span> ecosystems.",
+        "zh": "如今，现代媒体和心理学研究有助于重塑我们与野外的关系。自然纪录片利用高清技术通过<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">生动的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">vivid</span></span>图像来<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">传达<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">convey</span></span>这些科学真理。这些电影捕捉了从豹子跟踪猎物时<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">错综复杂的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">intricate</span></span>、几乎<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">令人陶醉的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">narcotic</span></span>美丽，到自然选择的残酷现实。这种教育方法对公众极具<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">吸引力<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">appealing</span></span>。此外，参与自然——无论是身体上的还是通过这些视觉媒介——越来越被心理学家视为一种生态<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">疗法<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">therapy</span></span>。它有助于在年轻一代中<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">逐渐灌输<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">instill</span></span>对野生动物的深深尊重，治愈历史<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">偏见<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">prejudice</span></span>，并提醒我们在地球<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">错综复杂的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">intricate</span></span>生态系统中的共同地位。"
+      }
     ]
   },
   "vocab": {
-    "naive": { "pos": "adj.", "def": "Innocent and lacking complex understanding or experience.", "trans": "缺乏经验的，幼稚的，天真的" },
-    "carnivore": { "pos": "n.", "def": "An animal that feeds on flesh.", "trans": "食肉动物" },
-    "plague": { "pos": "n.", "def": "A destructive or disastrous event/thing; a highly infectious disease.", "trans": "灾害，瘟疫" },
-    "confront": { "pos": "v.", "def": "To face up to and deal with a problem or difficult situation.", "trans": "面对，对抗" },
-    "assault": { "pos": "n.", "def": "A sudden, violent physical or verbal attack.", "trans": "袭击，突击" },
-    "shocking": { "pos": "adj.", "def": "Causing a feeling of surprise and dismay; terrible.", "trans": "令人震惊的，极坏的" },
-    "identity": { "pos": "n.", "def": "The fact of being who or what a person or thing is.", "trans": "本身，身份" },
-    "die out": { "pos": "phr.", "def": "To become completely extinct.", "trans": "灭亡，逐渐消失" },
-    "insight": { "pos": "n.", "def": "A deep understanding of a person or thing.", "trans": "洞察力" },
-    "benign": { "pos": "adj.", "def": "Gentle; kindly; not harmful.", "trans": "和蔼的，仁慈的" },
-    "enrich": { "pos": "v.", "def": "To improve or enhance the quality or value of.", "trans": "充实，使丰富" },
-    "expand": { "pos": "v.", "def": "To become or make larger or more extensive.", "trans": "扩大，增加，发展" },
-    "superior": { "pos": "adj.", "def": "Higher in rank, status, or quality.", "trans": "更好的，占优势的" },
-    "convey": { "pos": "v.", "def": "To make an idea, impression, or feeling known or understandable.", "trans": "表达，传递（思想）" },
-    "vivid": { "pos": "adj.", "def": "Producing powerful feelings or strong, clear images in the mind.", "trans": "逼真的，鲜艳的" },
-    "narcotic": { "pos": "adj.", "def": "Having a mesmerizing, soothing, or sleep-inducing effect.", "trans": "麻醉的，催眠的" },
-    "appealing": { "pos": "adj.", "def": "Attractive or interesting.", "trans": "有吸引力的" },
-    "therapy": { "pos": "n.", "def": "Treatment intended to relieve or heal a disorder.", "trans": "治疗，疗法" },
-    "instill": { "pos": "v.", "def": "To gradually but firmly establish an idea or attitude in a person's mind.", "trans": "逐渐灌输" },
-    "malicious": { "pos": "adj.", "def": "Intending or intended to do harm.", "trans": "恶意的，蓄意破坏的" },
-    "herbivore": { "pos": "n.", "def": "An animal that feeds on plants.", "trans": "食草动物" },
-    "flora": { "pos": "n.", "def": "The plants of a particular region, habitat, or geological period.", "trans": "植物群" },
-    "fauna": { "pos": "n.", "def": "The animals of a particular region, habitat, or geological period.", "trans": "动物群" },
-    "biodiversity": { "pos": "n.", "def": "The variety of plant and animal life in the world or in a particular habitat.", "trans": "生物多样性" },
-    "intricate": { "pos": "adj.", "def": "Very complicated or detailed.", "trans": "错综复杂的" },
-    "prejudice": { "pos": "n.", "def": "Preconceived opinion that is not based on reason or actual experience.", "trans": "偏见，成见" }
+    "naive": {
+      "pos": "adj.",
+      "def": "Innocent and lacking complex understanding or experience.",
+      "trans": "缺乏经验的，幼稚的，天真的"
+    },
+    "carnivore": {
+      "pos": "n.",
+      "def": "An animal that feeds on flesh.",
+      "trans": "食肉动物"
+    },
+    "plague": {
+      "pos": "n.",
+      "def": "A destructive or disastrous event/thing; a highly infectious disease.",
+      "trans": "灾害，瘟疫"
+    },
+    "confront": {
+      "pos": "v.",
+      "def": "To face up to and deal with a problem or difficult situation.",
+      "trans": "面对，对抗"
+    },
+    "assault": {
+      "pos": "n.",
+      "def": "A sudden, violent physical or verbal attack.",
+      "trans": "袭击，突击"
+    },
+    "shocking": {
+      "pos": "adj.",
+      "def": "Causing a feeling of surprise and dismay; terrible.",
+      "trans": "令人震惊的，极坏的"
+    },
+    "identity": {
+      "pos": "n.",
+      "def": "The fact of being who or what a person or thing is.",
+      "trans": "本身，身份"
+    },
+    "die out": {
+      "pos": "phr.",
+      "def": "To become completely extinct.",
+      "trans": "灭亡，逐渐消失"
+    },
+    "insight": {
+      "pos": "n.",
+      "def": "A deep understanding of a person or thing.",
+      "trans": "洞察力"
+    },
+    "benign": {
+      "pos": "adj.",
+      "def": "Gentle; kindly; not harmful.",
+      "trans": "和蔼的，仁慈的"
+    },
+    "enrich": {
+      "pos": "v.",
+      "def": "To improve or enhance the quality or value of.",
+      "trans": "充实，使丰富"
+    },
+    "expand": {
+      "pos": "v.",
+      "def": "To become or make larger or more extensive.",
+      "trans": "扩大，增加，发展"
+    },
+    "superior": {
+      "pos": "adj.",
+      "def": "Higher in rank, status, or quality.",
+      "trans": "更好的，占优势的"
+    },
+    "convey": {
+      "pos": "v.",
+      "def": "To make an idea, impression, or feeling known or understandable.",
+      "trans": "表达，传递（思想）"
+    },
+    "vivid": {
+      "pos": "adj.",
+      "def": "Producing powerful feelings or strong, clear images in the mind.",
+      "trans": "逼真的，鲜艳的"
+    },
+    "narcotic": {
+      "pos": "adj.",
+      "def": "Having a mesmerizing, soothing, or sleep-inducing effect.",
+      "trans": "麻醉的，催眠的"
+    },
+    "appealing": {
+      "pos": "adj.",
+      "def": "Attractive or interesting.",
+      "trans": "有吸引力的"
+    },
+    "therapy": {
+      "pos": "n.",
+      "def": "Treatment intended to relieve or heal a disorder.",
+      "trans": "治疗，疗法"
+    },
+    "instill": {
+      "pos": "v.",
+      "def": "To gradually but firmly establish an idea or attitude in a person's mind.",
+      "trans": "逐渐灌输"
+    },
+    "malicious": {
+      "pos": "adj.",
+      "def": "Intending or intended to do harm.",
+      "trans": "恶意的，蓄意破坏的"
+    },
+    "herbivore": {
+      "pos": "n.",
+      "def": "An animal that feeds on plants.",
+      "trans": "食草动物"
+    },
+    "flora": {
+      "pos": "n.",
+      "def": "The plants of a particular region, habitat, or geological period.",
+      "trans": "植物群"
+    },
+    "fauna": {
+      "pos": "n.",
+      "def": "The animals of a particular region, habitat, or geological period.",
+      "trans": "动物群"
+    },
+    "biodiversity": {
+      "pos": "n.",
+      "def": "The variety of plant and animal life in the world or in a particular habitat.",
+      "trans": "生物多样性"
+    },
+    "intricate": {
+      "pos": "adj.",
+      "def": "Very complicated or detailed.",
+      "trans": "错综复杂的"
+    },
+    "prejudice": {
+      "pos": "n.",
+      "def": "Preconceived opinion that is not based on reason or actual experience.",
+      "trans": "偏见，成见"
+    }
   },
   "chart": {
     "type": "line",
     "title": "Visualizing the Trophic Cascade",
     "description": "This chart translates qualitative ecological findings into quantitative data, based on the Yellowstone gray wolf reintroduction model. Tap the graph points to see precise index levels.",
-    "labels": ["1994", "1996", "2000", "2005", "2010", "2015"],
+    "labels": [
+      "1994",
+      "1996",
+      "2000",
+      "2005",
+      "2010",
+      "2015"
+    ],
     "datasets": [
       {
         "label": "Wolves",
-        "data": [0, 20, 45, 70, 95, 100],
+        "data": [
+          0,
+          20,
+          45,
+          70,
+          95,
+          100
+        ],
         "borderColor": "#1e293b",
         "backgroundColor": "rgba(30, 41, 59, 0.05)",
         "borderWidth": 3,
@@ -75,17 +202,34 @@
       },
       {
         "label": "Elk",
-        "data": [100, 95, 75, 50, 40, 42],
+        "data": [
+          100,
+          95,
+          75,
+          50,
+          40,
+          42
+        ],
         "borderColor": "#ef4444",
         "backgroundColor": "transparent",
         "borderWidth": 3,
-        "borderDash": [5, 5],
+        "borderDash": [
+          5,
+          5
+        ],
         "tension": 0.4,
         "pointBackgroundColor": "#ef4444"
       },
       {
         "label": "Flora",
-        "data": [20, 22, 40, 65, 90, 100],
+        "data": [
+          20,
+          22,
+          40,
+          65,
+          90,
+          100
+        ],
         "borderColor": "#10b981",
         "backgroundColor": "rgba(16, 185, 129, 0.1)",
         "borderWidth": 3,
@@ -134,46 +278,186 @@
       {
         "q": "In paragraph 1, what is the closest meaning to the word 'naive' as used in the passage?",
         "options": [
-          { "text": "Innocent and lacking complex understanding", "correct": true, "rationale": "The text points out that humans historically categorized the complex natural world simply as 'good' or 'bad,' which demonstrates a simplistic, inexperienced understanding of ecosystems." },
-          { "text": "Cruel and aggressive", "correct": false, "rationale": "This phrase better describes the perceived violent actions of the predators during an attack, rather than the cognitive viewpoint held by humans." },
-          { "text": "Advanced and scientific", "correct": false, "rationale": "This is the opposite of what the passage implies; an advanced and scientific view was only developed later through modern ecology." },
-          { "text": "Natural and untouched", "correct": false, "rationale": "While this often describes wilderness environments, it does not describe the human attitude or perspective discussed in the first sentence." }
+          {
+            "text": "Innocent and lacking complex understanding",
+            "correct": true,
+            "rationale": {
+              "en": "The text points out that humans historically categorized the complex natural world simply as 'good' or 'bad,' which demonstrates a simplistic, inexperienced understanding of ecosystems.",
+              "zh": "文本指出，人类在历史上简单地将复杂的自然界归类为‘好’或‘坏’，这表明了对生态系统一种过于简单、缺乏经验的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">理解<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">naive</span></span>。"
+            }
+          },
+          {
+            "text": "Cruel and aggressive",
+            "correct": false,
+            "rationale": {
+              "en": "This phrase better describes the perceived violent actions of the predators during an attack, rather than the cognitive viewpoint held by humans.",
+              "zh": "这个短语更好地描述了捕食者在攻击中表现出的感知到的暴力行为，而不是人类持有的认知观点。"
+            }
+          },
+          {
+            "text": "Advanced and scientific",
+            "correct": false,
+            "rationale": {
+              "en": "This is the opposite of what the passage implies; an advanced and scientific view was only developed later through modern ecology.",
+              "zh": "这与文章的暗示相反；先进和科学的观点是在后来通过现代生态学才发展起来的。"
+            }
+          },
+          {
+            "text": "Natural and untouched",
+            "correct": false,
+            "rationale": {
+              "en": "While this often describes wilderness environments, it does not describe the human attitude or perspective discussed in the first sentence.",
+              "zh": "虽然这通常描述荒野环境，但它并没有描述第一句中讨论的人类态度或观点。"
+            }
+          }
         ]
       },
       {
         "q": "According to the passage, why did early farmers and settlers view large 'carnivores' as a 'plague'?",
         "options": [
-          { "text": "Because they brought deadly diseases to human communities.", "correct": false, "rationale": "While the word can literally refer to an infectious disease, the passage uses it metaphorically to describe a devastating economic and physical disaster, not a medical outbreak." },
-          { "text": "Because they violently attacked and killed livestock.", "correct": true, "rationale": "The text explicitly mentions that early settlers had to constantly confront the threat these predators posed to their farm animals, including violent assaults on sheep." },
-          { "text": "Because they consumed all the agricultural crops.", "correct": false, "rationale": "These animals are meat-eaters, meaning they hunt other animals; the farmers were worried about their herds, not their plant-based crops." },
-          { "text": "Because they caused native flora to die out.", "correct": false, "rationale": "Modern ecology actually proves the opposite; predators help native plants thrive by controlling the population of herbivores." }
+          {
+            "text": "Because they brought deadly diseases to human communities.",
+            "correct": false,
+            "rationale": {
+              "en": "While the word can literally refer to an infectious disease, the passage uses it metaphorically to describe a devastating economic and physical disaster, not a medical outbreak.",
+              "zh": "虽然这个词（<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">灾害<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">plague</span></span>）字面上可以指传染病，但文章用它来隐喻描述一种毁灭性的经济和物理灾难，而不是医学爆发。"
+            }
+          },
+          {
+            "text": "Because they violently attacked and killed livestock.",
+            "correct": true,
+            "rationale": {
+              "en": "The text explicitly mentions that early settlers had to constantly confront the threat these predators posed to their farm animals, including violent assaults on sheep.",
+              "zh": "文本明确提到，早期定居者必须不断<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">面对<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">confront</span></span>这些捕食者对他们的农场动物构成的威胁，包括对羊群的暴力袭击。"
+            }
+          },
+          {
+            "text": "Because they consumed all the agricultural crops.",
+            "correct": false,
+            "rationale": {
+              "en": "These animals are meat-eaters, meaning they hunt other animals; the farmers were worried about their herds, not their plant-based crops.",
+              "zh": "这些动物是食肉动物，意味着它们捕食其他动物；农民担心的是他们的畜群，而不是基于植物的农作物。"
+            }
+          },
+          {
+            "text": "Because they caused native flora to die out.",
+            "correct": false,
+            "rationale": {
+              "en": "Modern ecology actually proves the opposite; predators help native plants thrive by controlling the population of herbivores.",
+              "zh": "现代生态学实际上证明了相反的情况；捕食者通过控制食草动物的数量帮助原生植物茁壮成长。"
+            }
+          }
         ]
       },
       {
         "q": "The passage notes that nature's mechanisms are rarely completely 'benign'. Which of the following words is the best antonym for 'benign' in this context?",
         "options": [
-          { "text": "Harmful", "correct": true, "rationale": "The passage contrasts the target word with 'malicious' (intending to cause harm), indicating that the target word means gentle, kind, or harmless." },
-          { "text": "Beneficial", "correct": false, "rationale": "This word shares a similar positive meaning with the target word, acting closer to a synonym than an antonym." },
-          { "text": "Complex", "correct": false, "rationale": "While the web of life is intricate, complexity is not the direct opposite of being gentle or harmless." },
-          { "text": "Shocking", "correct": false, "rationale": "This describes something that causes great surprise or disgust, which doesn't directly serve as the structural opposite of 'harmless' in the sentence's contrast." }
+          {
+            "text": "Harmful",
+            "correct": true,
+            "rationale": {
+              "en": "The passage contrasts the target word with 'malicious' (intending to cause harm), indicating that the target word means gentle, kind, or harmless.",
+              "zh": "文章将目标词（<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">温和的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">benign</span></span>）与‘malicious’（意图造成伤害）进行对比，表明目标词的意思是温和、善良或无害的。"
+            }
+          },
+          {
+            "text": "Beneficial",
+            "correct": false,
+            "rationale": {
+              "en": "This word shares a similar positive meaning with the target word, acting closer to a synonym than an antonym.",
+              "zh": "这个词与目标词有相似的积极含义，更接近同义词而不是反义词。"
+            }
+          },
+          {
+            "text": "Complex",
+            "correct": false,
+            "rationale": {
+              "en": "While the web of life is intricate, complexity is not the direct opposite of being gentle or harmless.",
+              "zh": "虽然生命网络是<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">错综复杂的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">intricate</span></span>，但复杂性并不是温和或无害的直接反义词。"
+            }
+          },
+          {
+            "text": "Shocking",
+            "correct": false,
+            "rationale": {
+              "en": "This describes something that causes great surprise or disgust, which doesn't directly serve as the structural opposite of 'harmless' in the sentence's contrast.",
+              "zh": "这描述了引起极大惊讶或厌恶的事情，在句子的对比中，它不直接作为‘无害’的结构反义词。"
+            }
+          }
         ]
       },
       {
         "q": "The reintroduction of gray wolves to Yellowstone National Park is primarily used to illustrate how predators can _____ their environments.",
         "options": [
-          { "text": "confront", "correct": false, "rationale": "This verb is used earlier in the text to describe humans facing a threat, not the ecological enhancement provided by animals." },
-          { "text": "plague", "correct": false, "rationale": "This reflects the outdated, negative human perception of predators acting as a disaster, rather than the scientific reality of their positive impact." },
-          { "text": "enrich", "correct": true, "rationale": "Biologists observed that by regulating herbivore populations, predators allow the ecosystem to flourish, effectively improving and adding value to the habitat." },
-          { "text": "assault", "correct": false, "rationale": "This refers to the sudden physical attack on prey, which is a singular violent action rather than the overall positive ecological consequence." }
+          {
+            "text": "confront",
+            "correct": false,
+            "rationale": {
+              "en": "This verb is used earlier in the text to describe humans facing a threat, not the ecological enhancement provided by animals.",
+              "zh": "这个<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">动词<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">confront</span></span>在文本前面用来描述人类面临威胁，而不是动物提供的生态改善。"
+            }
+          },
+          {
+            "text": "plague",
+            "correct": false,
+            "rationale": {
+              "en": "This reflects the outdated, negative human perception of predators acting as a disaster, rather than the scientific reality of their positive impact.",
+              "zh": "这反映了过时的、消极的人类认知，即将捕食者视为<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">灾难<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">plague</span></span>，而不是它们产生积极影响的科学现实。"
+            }
+          },
+          {
+            "text": "enrich",
+            "correct": true,
+            "rationale": {
+              "en": "Biologists observed that by regulating herbivore populations, predators allow the ecosystem to flourish, effectively improving and adding value to the habitat.",
+              "zh": "生物学家观察到，通过调节食草动物的数量，捕食者使生态系统得以繁荣，有效地<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">改善<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">enrich</span></span>并增加了栖息地的价值。"
+            }
+          },
+          {
+            "text": "assault",
+            "correct": false,
+            "rationale": {
+              "en": "This refers to the sudden physical attack on prey, which is a singular violent action rather than the overall positive ecological consequence.",
+              "zh": "这指的是对猎物的突然物理<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">攻击<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">assault</span></span>，这是一种单一的暴力行为，而不是整体的积极生态后果。"
+            }
+          }
         ]
       },
       {
         "q": "Which of the following statements about a 'trophic cascade' is NOT true according to the passage?",
         "options": [
-          { "text": "It involves top-down regulation by predators.", "correct": false, "rationale": "The passage explicitly names top-down regulation as the driving force behind this self-regulating system." },
-          { "text": "It leads to the overgrazing of vegetation by herbivores.", "correct": true, "rationale": "The presence of predators actually prevents herbivores from eating too much vegetation, ensuring plant life can recover and thrive." },
-          { "text": "It allows native biodiversity to expand rapidly.", "correct": false, "rationale": "The text confirms that controlling herbivore populations gives native flora and fauna the opportunity to grow and spread." },
-          { "text": "It creates a superior ecological balance.", "correct": false, "rationale": "The author directly states that this natural system demonstrates a better, more functional balance compared to environments lacking predators." }
+          {
+            "text": "It involves top-down regulation by predators.",
+            "correct": false,
+            "rationale": {
+              "en": "The passage explicitly names top-down regulation as the driving force behind this self-regulating system.",
+              "zh": "文章明确将自上而下的调节命名为这种自我调节系统背后的驱动力。"
+            }
+          },
+          {
+            "text": "It leads to the overgrazing of vegetation by herbivores.",
+            "correct": true,
+            "rationale": {
+              "en": "The presence of predators actually prevents herbivores from eating too much vegetation, ensuring plant life can recover and thrive.",
+              "zh": "捕食者的存在实际上防止了食草动物吃掉过多的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">植被<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">overgrazing</span></span>，确保了植物生命能够恢复和繁荣。因此该说法是错误的。"
+            }
+          },
+          {
+            "text": "It allows native biodiversity to expand rapidly.",
+            "correct": false,
+            "rationale": {
+              "en": "The text confirms that controlling herbivore populations gives native flora and fauna the opportunity to grow and spread.",
+              "zh": "文本证实，控制食草动物的数量使原生动植物有生长和传播的机会。"
+            }
+          },
+          {
+            "text": "It creates a superior ecological balance.",
+            "correct": false,
+            "rationale": {
+              "en": "The author directly states that this natural system demonstrates a better, more functional balance compared to environments lacking predators.",
+              "zh": "作者直接声明，与缺乏捕食者的环境相比，这种自然系统展示了更好、功能更强的平衡（superior ecological balance）。"
+            }
+          }
         ]
       }
     ]

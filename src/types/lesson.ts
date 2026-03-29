@@ -15,7 +15,6 @@ export interface LessonUI {
   mobileArticleTabLabel: string;
   mobileDataTabLabel: string;
   mobileQuizTabLabel: string;
-  articleHintHtml: string;
   vocabPlaceholderText: string;
   translationLabel: string;
   listenTitle?: string;
@@ -27,9 +26,14 @@ export interface LessonSpeech {
   rate: number;
 }
 
+export interface Paragraph {
+  en: string;
+  zh: string;
+}
+
 export interface LessonArticle {
-  heading: string;
-  paragraphs: string[];
+  title: string;
+  paragraphs: Paragraph[];
 }
 
 export interface VocabEntry {
@@ -60,10 +64,15 @@ export interface LessonChart {
   insights: ChartInsight[];
 }
 
+export interface QuizRationale {
+  en: string;
+  zh: string;
+}
+
 export interface QuizOption {
   text: string;
   correct: boolean;
-  rationale: string;
+  rationale: QuizRationale;
 }
 
 export interface QuizQuestion {
@@ -75,16 +84,6 @@ export interface LessonQuiz {
   title: string;
   description: string;
   questions: QuizQuestion[];
-  completeTitle?: string;
-  retakeButtonLabel?: string;
-  resultPrefix?: string;
-  resultSuffix?: string;
-  scoreLabel?: string;
-  correctLabel?: string;
-  incorrectLabel?: string;
-  nextButtonLabel?: string;
-  viewResultsButtonLabel?: string;
-  resultsTotal?: number;
 }
 
 export interface LessonData {

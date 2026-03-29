@@ -16,6 +16,7 @@ interface QuizProgressState {
   selectedOption: number | null;
   score: number;
   isFinished: boolean;
+  selectedAnswers: Array<number | null>;
 }
 
 const initialQuizProgress: QuizProgressState = {
@@ -23,11 +24,14 @@ const initialQuizProgress: QuizProgressState = {
   selectedOption: null,
   score: 0,
   isFinished: false,
+  selectedAnswers: [],
 };
 
-export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey }) => {
+export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
   const questions = quiz.questions;
   const storageKey = `daily-english:quiz-progress:${persistKey}`;
+  const [showReview, setShowReview] = useState(false);
+  const [rationaleLang, setRationaleLang] = useState<'en' | 'zh'>('en');
 
   const getInitialProgress = (): QuizProgressState => {
     if (typeof window === 'undefined') return initialQuizProgress;
@@ -53,6 +57,11 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey }) => {
             : null,
         score: parsed.score,
         isFinished: parsed.isFinished,
+        selectedAnswers: Array.isArray(parsed.selectedAnswers)
+          ? parsed.selectedAnswers.map((item) =>
+              typeof item === 'number' ? item : null
+            )
+          : [],
       };
     } catch {
       window.localStorage.removeItem(storageKey);
@@ -75,20 +84,24 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey }) => {
       selectedOption: quizState.selectedOption,
       score: quizState.score,
       isFinished: quizState.isFinished,
+      selectedAnswers: quizState.selectedAnswers,
     };
     window.localStorage.setItem(storageKey, JSON.stringify(payload));
   }, [quizState, storageKey]);
 
+  useEffect(() => {
+    if (!quizState.isFinished) return;
+    onComplete?.(quizState.score);
+  }, [quizState.isFinished, quizState.score, onComplete]);
+
   const labels = {
-    completeTitle: quiz.completeTitle || 'Quiz Complete!',
-    retakeButtonLabel: quiz.retakeButtonLabel || 'Restart Quiz',
-    resultPrefix: quiz.resultPrefix || 'You scored',
-    resultSuffix: quiz.resultSuffix || 'out of',
-    scoreLabel: quiz.scoreLabel || 'Score',
-    correctLabel: quiz.correctLabel || 'Correct!',
-    incorrectLabel: quiz.incorrectLabel || 'Incorrect',
-    nextButtonLabel: quiz.nextButtonLabel || 'Next Question',
-    viewResultsButtonLabel: quiz.viewResultsButtonLabel || 'View Results',
+    completeTitle: '测验完成',
+    retakeButtonLabel: '重新作答',
+    scoreLabel: '得分',
+    correctLabel: '回答正确',
+    incorrectLabel: '回答错误',
+    nextButtonLabel: '下一题',
+    viewResultsButtonLabel: '查看结果',
   };
 
   const handleOptionClick = (idx: number) => {
@@ -98,6 +111,11 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey }) => {
       ...prev,
       selectedOption: idx,
       score: isCorrect ? prev.score + 1 : prev.score,
+      selectedAnswers: [
+        ...prev.selectedAnswers.slice(0, safeCurrentIdx),
+        idx,
+        ...prev.selectedAnswers.slice(safeCurrentIdx + 1),
+      ],
     }));
   };
 
@@ -115,12 +133,105 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey }) => {
 
   const handleRestart = () => {
     setQuizState(initialQuizProgress);
+    setShowReview(false);
     if (typeof window !== 'undefined') {
       window.localStorage.removeItem(storageKey);
     }
   };
 
+  const scorePercent =
+    questions.length > 0
+      ? Math.round((quizState.score / questions.length) * 100)
+      : 0;
+  const scoreFeedback =
+    scorePercent >= 90
+      ? '表现非常优秀，继续保持。'
+      : scorePercent >= 70
+        ? '掌握较好，再复盘错题会更稳。'
+        : scorePercent >= 50
+          ? '基础已建立，建议回看文章后再刷一遍。'
+          : '建议先回顾文章与词汇，再重新练习。';
+
+  const reviewRows = questions.map((question, questionIndex) => {
+    const selected = quizState.selectedAnswers[questionIndex];
+    const selectedOption =
+      typeof selected === 'number' ? question.options[selected] : null;
+    const correctOption =
+      question.options.find((option) => option.correct) ?? question.options[0];
+    const isCorrect = selectedOption?.correct ?? false;
+    return {
+      questionIndex,
+      questionText: question.q,
+      selectedText: selectedOption?.text ?? '未作答',
+      correctText: correctOption.text,
+      rationale: selectedOption?.rationale ?? correctOption.rationale,
+      isCorrect,
+    };
+  });
+
   if (quizState.isFinished) {
+    if (showReview) {
+      return (
+        <div className="min-h-[80vh] border-gray-100 bg-white p-5 sm:min-h-0 sm:rounded-xl sm:border sm:p-8 sm:shadow-sm">
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-slate-900">
+              做题记录与解析
+            </h2>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() =>
+                  setRationaleLang(rationaleLang === 'en' ? 'zh' : 'en')
+                }
+                className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-bold text-slate-600 transition-colors hover:bg-slate-50"
+              >
+                {rationaleLang === 'en' ? '中' : 'En'}
+              </button>
+              <button
+                onClick={() => setShowReview(false)}
+                className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 transition-colors hover:bg-slate-50"
+              >
+                返回成绩
+              </button>
+            </div>
+          </div>
+          <div className="space-y-4">
+            {reviewRows.map((row) => (
+              <div
+                key={row.questionIndex}
+                className={`rounded-2xl border p-5 ${
+                  row.isCorrect
+                    ? 'border-emerald-200 bg-emerald-50'
+                    : 'border-red-200 bg-red-50'
+                }`}
+              >
+                <h3 className="mb-2 text-sm font-bold text-slate-900">
+                  Q{row.questionIndex + 1}. {row.questionText}
+                </h3>
+                <p className="mb-1 text-sm text-slate-700">
+                  你的答案：{row.selectedText}
+                </p>
+                <p className="mb-2 text-sm text-slate-700">
+                  正确答案：{row.correctText}
+                </p>
+                <div className="mt-3 border-t border-slate-200/50 pt-3 text-sm leading-relaxed text-slate-600 italic">
+                  <span className="font-bold text-slate-700 not-italic">
+                    解析：
+                  </span>
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        typeof row.rationale === 'string'
+                          ? row.rationale
+                          : row.rationale[rationaleLang],
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center border-gray-100 bg-white p-8 text-center sm:rounded-xl sm:border sm:shadow-sm">
         <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-full border-4 border-emerald-100 bg-emerald-50">
@@ -131,20 +242,22 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey }) => {
         <h2 className="mb-2 text-3xl font-bold text-slate-900">
           {labels.completeTitle}
         </h2>
-        <p className="mb-8 max-w-sm text-slate-500">
-          {labels.resultPrefix} {quizState.score} {labels.resultSuffix}{' '}
-          {questions.length}.
-          {quizState.score === questions.length
-            ? ' Perfect score!'
-            : ' Keep practicing to improve!'}
-        </p>
-        <button
-          onClick={handleRestart}
-          className="flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-3 font-bold text-white shadow-lg shadow-emerald-600/20 transition-colors hover:bg-emerald-700"
-        >
-          <RotateCcw size={20} />
-          {labels.retakeButtonLabel}
-        </button>
+        <p className="mb-8 max-w-sm text-slate-500">{scoreFeedback}</p>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <button
+            onClick={() => setShowReview(true)}
+            className="rounded-xl border border-slate-200 px-6 py-3 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50"
+          >
+            查看做题记录与解析
+          </button>
+          <button
+            onClick={handleRestart}
+            className="flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-3 font-bold text-white shadow-lg shadow-emerald-600/20 transition-colors hover:bg-emerald-700"
+          >
+            <RotateCcw size={20} />
+            {labels.retakeButtonLabel}
+          </button>
+        </div>
       </div>
     );
   }
@@ -155,7 +268,7 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey }) => {
         <div className="mb-4 flex items-end justify-between">
           <div>
             <span className="mb-2 inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold tracking-widest text-emerald-700 uppercase">
-              Question {safeCurrentIdx + 1} of {questions.length}
+              第 {safeCurrentIdx + 1} 题 / 共 {questions.length} 题
             </span>
             <h2 className="text-xl leading-snug font-bold text-slate-900 sm:text-2xl">
               {quiz.title}
@@ -239,14 +352,31 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey }) => {
                 : 'border border-red-100 bg-red-50 text-red-800'
             }`}
           >
-            <h4 className="mb-1 flex items-center gap-2 font-bold">
-              {currentQuestion.options[quizState.selectedOption].correct
-                ? `✅ ${labels.correctLabel}`
-                : `❌ ${labels.incorrectLabel}`}
-            </h4>
-            <p className="text-sm leading-relaxed italic opacity-90">
-              {currentQuestion.options[quizState.selectedOption].rationale}
-            </p>
+            <div className="mb-2 flex items-center justify-between">
+              <h4 className="flex items-center gap-2 font-bold">
+                {currentQuestion.options[quizState.selectedOption].correct
+                  ? `✅ ${labels.correctLabel}`
+                  : `❌ ${labels.incorrectLabel}`}
+              </h4>
+              <button
+                onClick={() =>
+                  setRationaleLang(rationaleLang === 'en' ? 'zh' : 'en')
+                }
+                className="rounded bg-white/50 px-2 py-1 text-xs font-medium transition-colors hover:bg-white/80"
+              >
+                {rationaleLang === 'en' ? '中' : 'En'}
+              </button>
+            </div>
+            <div
+              className="text-sm leading-relaxed italic opacity-90"
+              dangerouslySetInnerHTML={{
+                __html: (() => {
+                  const rat =
+                    currentQuestion.options[quizState.selectedOption].rationale;
+                  return typeof rat === 'string' ? rat : rat[rationaleLang];
+                })(),
+              }}
+            />
           </motion.div>
         )}
       </AnimatePresence>

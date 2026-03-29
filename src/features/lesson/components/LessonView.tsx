@@ -73,7 +73,10 @@ export const LessonView: React.FC<LessonViewProps> = ({ data }) => {
             className={activeTab === 'article' ? 'block' : 'hidden'}
             aria-hidden={activeTab !== 'article'}
           >
-            <Article article={data.article} ui={data.ui} />
+            <Article
+              article={data.article}
+              speechEnabled={data.speech.enabled}
+            />
           </motion.div>
           <motion.div
             initial={false}
