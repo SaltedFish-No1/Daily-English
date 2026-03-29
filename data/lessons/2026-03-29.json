@@ -1,0 +1,206 @@
+{
+  "meta": {
+    "date": "2026-03-29",
+    "slug": "2026-03-29",
+    "title": "Evolutionary Mismatch",
+    "subtitle": "Biology & Psychology Module",
+    "pageTitle": "Evolutionary Mismatch - Interactive Learning"
+  },
+  "ui": {
+    "desktopArticleTabLabel": "Reading & Vocab",
+    "desktopDataTabLabel": "Health Trends",
+    "desktopQuizTabLabel": "Knowledge Check",
+    "mobileArticleTabLabel": "Reading",
+    "mobileDataTabLabel": "Trends",
+    "mobileQuizTabLabel": "Quiz",
+    "articleHintHtml": "Read the article below to understand the contradiction between our biology and modern life. <br><strong>Interaction:</strong> Tap the <span class=\"text-emerald-700 font-bold border-b-2 border-emerald-300 px-1 rounded bg-white\">highlighted words</span> to view definitions and listen to pronunciation.",
+    "vocabPlaceholderText": "Select a highlighted word to view its analysis.",
+    "translationLabel": "Chinese Translation",
+    "listenTitle": "Listen to pronunciation"
+  },
+  "speech": {
+    "enabled": true,
+    "lang": "en-US",
+    "rate": 0.9,
+    "unsupportedMessage": "Sorry, your browser doesn't support text to speech."
+  },
+  "article": {
+    "title": "The Evolutionary Mismatch of Modern Diets",
+    "paragraphs": [
+      "For most of human history, our early <span class=\"vocab-word\" data-word=\"ancestors\">ancestors</span> <span class=\"vocab-word\" data-word=\"struggled\">struggled</span> to <span class=\"vocab-word\" data-word=\"secure\">secure</span> enough <span class=\"vocab-word\" data-word=\"calories\">calories</span> to survive. In order to <span class=\"vocab-word\" data-word=\"occupy\">occupy</span> diverse and often <span class=\"vocab-word\" data-word=\"harsh\">harsh</span> environments, humans evolved as <span class=\"vocab-word\" data-word=\"adaptable\">adaptable</span> <span class=\"vocab-word\" data-word=\"omnivores\">omnivores</span> and <span class=\"vocab-word\" data-word=\"opportunistic\">opportunistic</span> <span class=\"vocab-word\" data-word=\"carnivore\">carnivores</span>. The primary biological <span class=\"vocab-word\" data-word=\"ambition\">ambition</span> of our species was simple: avoid <span class=\"vocab-word\" data-word=\"starvation\">starvation</span>. To ensure survival, evolution <span class=\"vocab-word\" data-word=\"instill\">instilled</span> in the human brain a <span class=\"vocab-word\" data-word=\"profound\">profound</span> desire for energy-dense foods—specifically those high in sugar, fat, and salt.",
+      "However, in the 21st century, the <span class=\"vocab-word\" data-word=\"scope\">scope</span> of our food environment has rapidly <span class=\"vocab-word\" data-word=\"expand\">expanded</span>. The modern <span class=\"vocab-word\" data-word=\"agricultural\">agricultural</span> and industrial revolution has created an environment of artificial <span class=\"vocab-word\" data-word=\"abundance\">abundance</span>. Supermarkets are filled with highly processed products designed by food scientists to <span class=\"vocab-word\" data-word=\"entice\">entice</span> consumers. With <span class=\"vocab-word\" data-word=\"vivid\">vivid</span> packaging and highly <span class=\"vocab-word\" data-word=\"appealing\">appealing</span> tastes, these products <span class=\"vocab-word\" data-word=\"intentionally\">intentionally</span> <span class=\"vocab-word\" data-word=\"trigger\">trigger</span> our ancient reward systems. While an occasional sweet treat may seem <span class=\"vocab-word\" data-word=\"benign\">benign</span>, the <span class=\"vocab-word\" data-word=\"chronic\">chronic</span> over-<span class=\"vocab-word\" data-word=\"intake\">intake</span> of ultra-processed foods has become a modern health <span class=\"vocab-word\" data-word=\"plague\">plague</span>. This continuous dietary <span class=\"vocab-word\" data-word=\"assault\">assault</span> threatens to <span class=\"vocab-word\" data-word=\"corrupt\">corrupt</span> our natural biological hunger signals. When the body's delicate regulatory systems are overwhelmed, our <span class=\"vocab-word\" data-word=\"metabolism\">metabolism</span> can slip into a state of <span class=\"vocab-word\" data-word=\"physiological\">physiological</span> <span class=\"vocab-word\" data-word=\"anarchy\">anarchy</span>, ultimately acting to <span class=\"vocab-word\" data-word=\"destroy\">destroy</span> our long-term health.",
+      "In stark contrast to this environment of overconsumption, modern societies face a <span class=\"vocab-word\" data-word=\"contradictory\">contradictory</span> <span class=\"vocab-word\" data-word=\"psychological\">psychological</span> crisis. Mass media and the fashion industry constantly <span class=\"vocab-word\" data-word=\"convey\">convey</span> <span class=\"vocab-word\" data-word=\"unrealistic\">unrealistic</span> and hyper-thin standards of beauty. The public is often encouraged to <span class=\"vocab-word\" data-word=\"adore\">adore</span> <span class=\"vocab-word\" data-word=\"digitally\">digitally</span> <span class=\"vocab-word\" data-word=\"altered\">altered</span> images of models, making many individuals feel <span class=\"vocab-word\" data-word=\"doubtful\">doubtful</span> about their own self-worth and body image. This societal pressure can <span class=\"vocab-word\" data-word=\"promote\">promote</span> extreme and unhealthy behaviors. Many people attempt to <span class=\"vocab-word\" data-word=\"restore\">restore</span> a sense of control over their bodies through a <span class=\"vocab-word\" data-word=\"dutiful\">dutiful</span> <span class=\"vocab-word\" data-word=\"adherence\">adherence</span> to extreme fitness <span class=\"vocab-word\" data-word=\"regimens\">regimens</span> or <span class=\"vocab-word\" data-word=\"eccentric\">eccentric</span> starvation diets.",
+      "In severe cases, this psychological pressure <span class=\"vocab-word\" data-word=\"manifests\">manifests</span> as clinical eating disorders, such as <span class=\"vocab-word\" data-word=\"anorexia\">anorexia</span> nervosa, a life-threatening <span class=\"vocab-word\" data-word=\"psychiatric\">psychiatric</span> condition characterized by an intense fear of gaining weight. It is a tragic <span class=\"vocab-word\" data-word=\"paradox\">paradox</span> that while we live in an era with a <span class=\"vocab-word\" data-word=\"superior\">superior</span> abundance of food, millions are starving themselves due to sociocultural pressures. This <span class=\"vocab-word\" data-word=\"phenomenon\">phenomenon</span> suggests a <span class=\"vocab-word\" data-word=\"backward\">backward</span> step in our relationship with <span class=\"vocab-word\" data-word=\"nourishment\">nourishment</span>. To truly achieve well-being, we must recognize this evolutionary <span class=\"vocab-word\" data-word=\"mismatch\">mismatch</span>."
+    ]
+  },
+  "vocab": {
+    "occupy": { "pos": "v.", "def": "To fill or take up a space or time.", "trans": "占据，使忙碌", "speakText": "occupy" },
+    "anarchy": { "pos": "n.", "def": "A state of disorder due to absence or nonrecognition of authority or regulating systems.", "trans": "无政府状态，混乱", "speakText": "anarchy" },
+    "adore": { "pos": "v.", "def": "To love and respect someone deeply.", "trans": "敬慕，崇拜，热爱", "speakText": "adore" },
+    "backward": { "pos": "adj.", "def": "Directed behind or to the rear; reversing progress.", "trans": "向后的，落后的", "speakText": "backward" },
+    "secure": { "pos": "v.", "def": "To succeed in obtaining something, especially with difficulty.", "trans": "保证得到，使安全", "speakText": "secure" },
+    "anorexia": { "pos": "n.", "def": "A lack or loss of appetite for food (as a medical condition).", "trans": "食欲缺乏（厌食症）", "speakText": "anorexia" },
+    "promote": { "pos": "v.", "def": "To further the progress of something; support or actively encourage.", "trans": "促进，推动，提升", "speakText": "promote" },
+    "scope": { "pos": "n.", "def": "The extent of the area or subject matter that something deals with or to which it is relevant.", "trans": "范围，余地，机会", "speakText": "scope" },
+    "eccentric": { "pos": "adj.", "def": "Unconventional and slightly strange.", "trans": "古怪的，异常的", "speakText": "eccentric" },
+    "ambition": { "pos": "n.", "def": "A strong desire and determination to achieve something.", "trans": "雄心，野心", "speakText": "ambition" },
+    "corrupt": { "pos": "v.", "def": "To cause to act dishonestly or to break a natural/healthy process.", "trans": "使腐败，破坏，贪污的", "speakText": "corrupt" },
+    "restore": { "pos": "v.", "def": "To bring back (a previous right, practice, custom, or situation).", "trans": "恢复，修复", "speakText": "restore" },
+    "vivid": { "pos": "adj.", "def": "Producing powerful feelings or strong, clear images in the mind.", "trans": "逼真的，鲜艳的", "speakText": "vivid" },
+    "convey": { "pos": "v.", "def": "To make an idea, impression, or feeling known or understandable to someone.", "trans": "表达，传递（思想，感情）", "speakText": "convey" },
+    "instill": { "pos": "v.", "def": "To gradually but firmly establish an idea or attitude in a person's mind.", "trans": "徐徐滴入，逐渐灌输", "speakText": "instill" },
+    "superior": { "pos": "adj.", "def": "Higher in rank, status, or quality.", "trans": "更好的，占优势的", "speakText": "superior" },
+    "expand": { "pos": "v.", "def": "To become or make larger or more extensive.", "trans": "扩大，增加，发展", "speakText": "expand" },
+    "appealing": { "pos": "adj.", "def": "Attractive or interesting.", "trans": "有吸引力的", "speakText": "appealing" },
+    "plague": { "pos": "n.", "def": "A disastrous event/thing; a contagious disease.", "trans": "灾害，瘟疫，传染病", "speakText": "plague" },
+    "assault": { "pos": "n.", "def": "A physical or figurative attack.", "trans": "袭击，突击，猛烈攻击", "speakText": "assault" },
+    "carnivore": { "pos": "n.", "def": "An animal that feeds on flesh.", "trans": "食肉动物", "speakText": "carnivore" },
+    "benign": { "pos": "adj.", "def": "Gentle; kindly; not harmful to the environment/body.", "trans": "和蔼的，仁慈的（良性的）", "speakText": "benign" },
+    "doubtful": { "pos": "adj.", "def": "Feeling uncertain about something.", "trans": "不确定的，怀疑的", "speakText": "doubtful" },
+    "entice": { "pos": "v.", "def": "To attract or tempt by offering pleasure or advantage.", "trans": "诱使，引诱", "speakText": "entice" },
+    "intake": { "pos": "n.", "def": "An amount of food, air, or another substance taken into the body.", "trans": "摄入量，通风口", "speakText": "intake" },
+    "destroy": { "pos": "v.", "def": "To put an end to the existence of something by damaging or attacking it.", "trans": "破坏，毁坏", "speakText": "destroy" },
+    "dutiful": { "pos": "adj.", "def": "Conscientiously or obediently fulfilling one's duty.", "trans": "顺从的，尽责的", "speakText": "dutiful" },
+    "ancestors": { "pos": "n.", "def": "A person from whom one is descended, usually further back than a grandparent.", "trans": "祖先", "speakText": "ancestors" },
+    "struggled": { "pos": "v.", "def": "Make forceful or violent efforts to get free of restraint or to achieve a goal.", "trans": "挣扎，努力，奋斗", "speakText": "struggled" },
+    "calories": { "pos": "n.", "def": "Units of energy provided by food.", "trans": "卡路里，热量", "speakText": "calories" },
+    "harsh": { "pos": "adj.", "def": "Cruel, severe, or difficult to survive in.", "trans": "严酷的，恶劣的", "speakText": "harsh" },
+    "adaptable": { "pos": "adj.", "def": "Able to adjust to new conditions.", "trans": "适应性强的", "speakText": "adaptable" },
+    "omnivores": { "pos": "n.", "def": "Animals or humans that eat both plants and meat.", "trans": "杂食动物", "speakText": "omnivores" },
+    "opportunistic": { "pos": "adj.", "def": "Exploiting chances offered by immediate circumstances.", "trans": "机会主义的，投机的", "speakText": "opportunistic" },
+    "starvation": { "pos": "n.", "def": "Suffering or death caused by extreme lack of food.", "trans": "饥饿，挨饿", "speakText": "starvation" },
+    "profound": { "pos": "adj.", "def": "Very great or intense; having deep meaning.", "trans": "深刻的，极大的", "speakText": "profound" },
+    "agricultural": { "pos": "adj.", "def": "Relating to farming and growing crops.", "trans": "农业的", "speakText": "agricultural" },
+    "abundance": { "pos": "n.", "def": "A very large quantity of something.", "trans": "充裕，丰富", "speakText": "abundance" },
+    "intentionally": { "pos": "adv.", "def": "Deliberately, on purpose.", "trans": "故意地，有意地", "speakText": "intentionally" },
+    "trigger": { "pos": "v.", "def": "To cause an event or physiological reaction to happen.", "trans": "触发，引起", "speakText": "trigger" },
+    "chronic": { "pos": "adj.", "def": "Persisting for a long time or constantly recurring.", "trans": "慢性的，长期的", "speakText": "chronic" },
+    "metabolism": { "pos": "n.", "def": "The chemical processes in the body that change food into energy.", "trans": "新陈代谢", "speakText": "metabolism" },
+    "physiological": { "pos": "adj.", "def": "Relating to the normal functioning of a living organism.", "trans": "生理学的，生理的", "speakText": "physiological" },
+    "contradictory": { "pos": "adj.", "def": "Mutually opposed or inconsistent.", "trans": "矛盾的，对立的", "speakText": "contradictory" },
+    "psychological": { "pos": "adj.", "def": "Related to the mental and emotional state of a person.", "trans": "心理学的，精神上的", "speakText": "psychological" },
+    "unrealistic": { "pos": "adj.", "def": "Not realistic, practical, or based on facts.", "trans": "不切实际的", "speakText": "unrealistic" },
+    "digitally": { "pos": "adv.", "def": "By means of digital or computer technology.", "trans": "通过数字技术，数码地", "speakText": "digitally" },
+    "altered": { "pos": "v./adj.", "def": "Changed, modified, or adjusted.", "trans": "改变的，修改过的（如修图）", "speakText": "altered" },
+    "adherence": { "pos": "n.", "def": "Attachment or strict commitment to a rule, belief, or plan.", "trans": "坚持，遵守", "speakText": "adherence" },
+    "regimens": { "pos": "n.", "def": "A prescribed course of medical treatment, diet, or exercise.", "trans": "养生法，严格的生活/锻炼计划", "speakText": "regimens" },
+    "manifests": { "pos": "v.", "def": "To show clearly; to appear or become easy to see.", "trans": "显现，表明", "speakText": "manifests" },
+    "psychiatric": { "pos": "adj.", "def": "Relating to mental illness or its medical treatment.", "trans": "精神病学的", "speakText": "psychiatric" },
+    "paradox": { "pos": "n.", "def": "A situation or statement that seems impossible because it contains two opposite facts.", "trans": "悖论，自相矛盾的事物", "speakText": "paradox" },
+    "phenomenon": { "pos": "n.", "def": "A fact or event that is observed to exist or happen.", "trans": "现象", "speakText": "phenomenon" },
+    "nourishment": { "pos": "n.", "def": "The food or other substances necessary for growth, health, and good condition.", "trans": "营养，滋养品", "speakText": "nourishment" },
+    "mismatch": { "pos": "n.", "def": "A failure to correspond, fit, or balance properly.", "trans": "错位，不匹配", "speakText": "mismatch" }
+  },
+  "chart": {
+    "type": "line",
+    "title": "Visualizing the Evolutionary Mismatch",
+    "description": "This chart illustrates the growing gap between our ancient biological caloric needs and the artificial abundance of hyper-palatable processed foods over the last several decades.",
+    "labels": ["1950", "1970", "1990", "2010", "2030 (est)"],
+    "datasets": [
+      {
+        "label": "Biological Caloric Need",
+        "data": [2200, 2150, 2100, 2050, 2000],
+        "borderColor": "#10b981",
+        "backgroundColor": "transparent",
+        "borderWidth": 3,
+        "borderDash": [5, 5],
+        "tension": 0.1,
+        "pointBackgroundColor": "#10b981"
+      },
+      {
+        "label": "Processed Food Calories Available",
+        "data": [2300, 2600, 3100, 3600, 3900],
+        "borderColor": "#f97316",
+        "backgroundColor": "rgba(249, 115, 22, 0.1)",
+        "borderWidth": 3,
+        "tension": 0.4,
+        "fill": true,
+        "pointBackgroundColor": "#f97316"
+      }
+    ],
+    "yBeginAtZero": false,
+    "yMin": 1500,
+    "yMax": 4500,
+    "yAxisTitle": "Calories per Capita (Daily)",
+    "insights": [
+      {
+        "icon": "🧬",
+        "title": "Biological Baseline",
+        "text": "Our evolutionary caloric requirement remains relatively flat, functioning exactly as it did for our hunter-gatherer ancestors.",
+        "tone": "slate"
+      },
+      {
+        "icon": "🍔",
+        "title": "Artificial Abundance",
+        "text": "The availability and consumption of highly processed, energy-dense foods have skyrocketed since the mid-20th century.",
+        "tone": "orange"
+      },
+      {
+        "icon": "⚠️",
+        "title": "The Mismatch Gap",
+        "text": "The growing divergence between the two lines represents the \"mismatch,\" leading to modern metabolic and psychological health plagues.",
+        "tone": "red"
+      }
+    ]
+  },
+  "quiz": {
+    "title": "Knowledge Check",
+    "description": "Test your comprehension of the vocabulary and concepts.",
+    "completeTitle": "Quiz Complete!",
+    "retakeButtonLabel": "Retake Quiz",
+    "resultPrefix": "You scored",
+    "resultSuffix": "out of",
+    "scoreLabel": "Score",
+    "correctLabel": "Correct!",
+    "incorrectLabel": "Incorrect",
+    "nextButtonLabel": "Next Question",
+    "viewResultsButtonLabel": "View Results",
+    "questions": [
+      {
+        "q": "In the first paragraph, what does it mean that humans struggled to 'secure' enough calories?",
+        "options": [
+          { "text": "They wanted to lock up their food in a safe place.", "correct": false, "rationale": "While 'secure' can mean making something safe physically, in this context, it means succeeding in obtaining something essential." },
+          { "text": "They succeeded in obtaining enough food to survive.", "correct": true, "rationale": "Here, 'secure' is used as a verb meaning to manage to get or obtain something (calories), especially when it is difficult." },
+          { "text": "They tried to protect themselves from carnivores.", "correct": false, "rationale": "The sentence is explicitly talking about securing calories, not defending against predators." },
+          { "text": "They felt confident and safe about their diet.", "correct": false, "rationale": "The passage notes they 'struggled', meaning they definitely did not feel confident or safe regarding their food supply." }
+        ]
+      },
+      {
+        "q": "Why does the author refer to the chronic over-intake of processed foods as a 'plague'?",
+        "options": [
+          { "text": "Because highly processed foods contain bacteria that cause infectious diseases.", "correct": false, "rationale": "The text does not mention bacteria; the damage is caused by the metabolic 'anarchy' from poor nutritional balance." },
+          { "text": "Because it acts as a disastrous, widespread health crisis affecting society.", "correct": true, "rationale": "The word 'plague' is used metaphorically to describe a devastating, widespread problem—in this case, the negative health impacts of modern diets." },
+          { "text": "Because it helps to corrupt biological hunger signals.", "correct": false, "rationale": "While it does corrupt hunger signals, the word 'plague' itself specifically emphasizes the widespread, disastrous nature of the consequence." },
+          { "text": "Because it is an ancient disease that has been restored.", "correct": false, "rationale": "The text refers to it as a 'modern health plague', distinguishing it from ancient diseases." }
+        ]
+      },
+      {
+        "q": "Which word best serves as the opposite of 'benign' as used in the second paragraph?",
+        "options": [
+          { "text": "Appealing", "correct": false, "rationale": "'Appealing' means attractive. Something harmful can also be appealing (like sugary food)." },
+          { "text": "Eccentric", "correct": false, "rationale": "'Eccentric' means weird or unconventional, not necessarily harmful or dangerous." },
+          { "text": "Destructive", "correct": true, "rationale": "The text contrasts a 'benign' (harmless) occasional sweet treat with the 'destructive' long-term assault of an ultra-processed diet." },
+          { "text": "Superior", "correct": false, "rationale": "'Superior' means better or higher in rank, not the opposite of harmless." }
+        ]
+      },
+      {
+        "q": "According to the passage, why do some people adopt 'eccentric' starvation diets?",
+        "options": [
+          { "text": "To expand the scope of their culinary experiences.", "correct": false, "rationale": "Starvation diets restrict culinary experiences; they don't expand them." },
+          { "text": "To try and restore a sense of control influenced by media beauty standards.", "correct": true, "rationale": "The text explains that mass media conveys unrealistic beauty standards, prompting people to use extreme (eccentric) diets to restore control over their body image." },
+          { "text": "To instill a profound desire for energy-dense foods.", "correct": false, "rationale": "Evolution instilled that desire; eccentric diets are a modern reaction against weight gain." },
+          { "text": "Because they want to mimic the diet of opportunistic carnivores.", "correct": false, "rationale": "Carnivores are mentioned in the context of ancient evolution, not modern starvation diets." }
+        ]
+      },
+      {
+        "q": "What does the phrase 'slip into anarchy' imply about the body's metabolism in the modern food environment?",
+        "options": [
+          { "text": "The metabolism completely shuts down and dies out.", "correct": false, "rationale": "It doesn't shut down; it loses its natural regulation." },
+          { "text": "The metabolism becomes perfectly efficient and superior.", "correct": false, "rationale": "This contradicts the negative tone of the passage regarding processed foods." },
+          { "text": "The metabolic system loses its natural order and regulation.", "correct": true, "rationale": "'Anarchy' means a state of disorder or lack of a governing system. In this context, the body's regulatory systems are overwhelmed and stop functioning correctly." },
+          { "text": "The metabolism attempts a physical assault on the brain.", "correct": false, "rationale": "This is a misinterpretation of the words 'assault' and 'anarchy' used in the text." }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Daily English - 每日英语学习</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Inter:wght@300;400;500;600&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        h1, h2, h3, .serif {
+            font-family: 'Merriweather', serif;
+        }
+
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .hover-card:hover {
+            transform: translateY(-4px);
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <header class="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm pt-safe">
+        <div class="max-w-5xl mx-auto px-5 py-5 sm:py-6 flex justify-between items-center">
+            <div>
+                <h1 class="text-xl sm:text-3xl font-bold text-slate-900 tracking-tight">Daily English</h1>
+                <p class="text-[10px] sm:text-sm text-slate-400 mt-0.5 uppercase tracking-[0.15em] font-bold">Elevate Your Language</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100">
+                    <span class="text-emerald-600 font-bold text-xs sm:text-sm">DE</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <main class="flex-grow max-w-5xl mx-auto px-5 py-8 sm:py-12 w-full">
+        <div class="mb-10 sm:mb-12">
+            <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">最新课程</h2>
+            <p class="text-slate-500 max-w-2xl text-base sm:text-lg leading-relaxed">
+                通过沉浸式的交互式体验，每日学习地道的英语表达和专业领域知识。
+            </p>
+        </div>
+
+        <!-- Course Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
+            {{LESSON_CARDS_HTML}}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-100 py-10 pb-safe">
+        <div class="max-w-5xl mx-auto px-5 text-center">
+            <p class="text-slate-400 text-[11px] font-medium tracking-wide">
+                © 2026 DAILY ENGLISH · DESIGNED FOR LEARNING
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
