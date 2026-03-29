@@ -7,15 +7,9 @@ import { Article } from './Article';
 import { Chart } from './Chart';
 import { Quiz } from './Quiz';
 import { VocabSheet } from './VocabSheet';
-import {
-  BookOpen,
-  BarChart3,
-  HelpCircle,
-  ChevronRight,
-  Home,
-} from 'lucide-react';
+import { BookOpen, BarChart3, HelpCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Link from 'next/link';
+import { LessonBreadcrumb } from './LessonBreadcrumb';
 
 interface LessonViewProps {
   data: LessonData;
@@ -47,38 +41,27 @@ export const LessonView: React.FC<LessonViewProps> = ({ data }) => {
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
-      {/* Header */}
-      <header className="pt-safe sticky top-0 z-30 border-b border-gray-100 bg-white shadow-sm">
-        <div className="mx-auto max-w-5xl px-5 py-4 sm:py-6">
-          <nav className="mb-3 flex items-center gap-2 text-[11px] font-bold tracking-widest text-slate-400 uppercase sm:mb-4 sm:text-xs">
-            <Link
-              href="/"
-              className="-ml-1 flex items-center gap-1.5 rounded-lg py-1 pr-2 transition-colors hover:text-emerald-600 active:bg-slate-100"
-            >
-              <Home size={14} className="sm:size-3" />
-              <span>首页</span>
-            </Link>
-            <ChevronRight size={12} className="flex-shrink-0 text-slate-300" />
-            <span className="max-w-[150px] truncate text-slate-500 sm:max-w-none">
-              {data.meta.category}
-            </span>
-          </nav>
-
-          <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-            <div className="w-full sm:w-auto">
-              <h1 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
-                {data.meta.title}
-              </h1>
-              <p className="mt-0.5 text-[10px] font-bold tracking-widest text-slate-400 uppercase sm:text-sm">
-                {data.meta.subtitle}
-              </p>
+      <div className="sticky top-0 z-30">
+        {/* Header */}
+        <header className="pt-safe border-b border-gray-100 bg-white shadow-sm">
+          <div className="mx-auto max-w-5xl px-5 py-4 sm:py-6">
+            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+              <div className="w-full sm:w-auto">
+                <h1 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
+                  {data.meta.title}
+                </h1>
+                <p className="mt-0.5 text-[10px] font-bold tracking-widest text-slate-400 uppercase sm:text-sm">
+                  {data.meta.subtitle}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
+        <LessonBreadcrumb category={data.meta.category} />
+      </div>
 
       {/* Main Content */}
-      <main className="mx-auto grid w-full max-w-5xl flex-grow grid-cols-1 gap-8 px-5 py-8 sm:py-12 lg:grid-cols-3">
+      <main className="mx-auto grid w-full max-w-5xl flex-grow grid-cols-1 gap-8 sm:px-6 sm:py-12 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <AnimatePresence mode="wait">
             {activeTab === 'article' && (
