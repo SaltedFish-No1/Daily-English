@@ -5,6 +5,7 @@ import { LessonQuiz } from '@/types/lesson';
 import { ArrowRight, RotateCcw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { QuestionRenderer } from './quiz/QuestionRenderer';
+import { FullScreenCelebration } from './quiz/FullScreenCelebration';
 import {
   AnyQuizQuestion,
   GradeResult,
@@ -48,6 +49,7 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
   const storageKey = `daily-english:quiz-progress:${persistKey}`;
   const [showReview, setShowReview] = useState(false);
   const [rationaleLang, setRationaleLang] = useState<'en' | 'zh'>('en');
+  const [hasLoadedStorage, setHasLoadedStorage] = useState(false);
 
   const getQuestionId = useCallback(
     (question: AnyQuizQuestion, idx: number) => {
@@ -85,19 +87,35 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
     [getQuestionId]
   );
 
-  const getInitialProgress = (): QuizPersistState => {
-    if (typeof window === 'undefined') return initialQuizProgress;
+  const [quizState, setQuizState] =
+    useState<QuizPersistState>(initialQuizProgress);
+  const safeCurrentIdx = Math.min(
+    quizState.currentIdx,
+    Math.max(questions.length - 1, 0)
+  );
+  const currentQuestion = questions[safeCurrentIdx];
+  const currentQuestionId = getQuestionId(currentQuestion, safeCurrentIdx);
+  const currentAnswer = quizState.answers[currentQuestionId];
+  const currentGrade = quizState.grades[currentQuestionId];
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (hasLoadedStorage) return;
     const raw = window.localStorage.getItem(storageKey);
-    if (!raw) return initialQuizProgress;
+    if (!raw) {
+      setHasLoadedStorage(true);
+      return;
+    }
     try {
       const parsed = JSON.parse(raw) as QuizPersistState;
       if (
         typeof parsed.currentIdx !== 'number' ||
         typeof parsed.isFinished !== 'boolean'
       ) {
-        return initialQuizProgress;
+        setHasLoadedStorage(true);
+        return;
       }
-      return {
+      setQuizState({
         currentIdx: Math.min(
           Math.max(parsed.currentIdx, 0),
           Math.max(questions.length - 1, 0)
@@ -111,26 +129,17 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
           parsed.grades && typeof parsed.grades === 'object'
             ? parsed.grades
             : {},
-      };
+      });
     } catch {
       window.localStorage.removeItem(storageKey);
-      return initialQuizProgress;
+    } finally {
+      setHasLoadedStorage(true);
     }
-  };
-
-  const [quizState, setQuizState] =
-    useState<QuizPersistState>(getInitialProgress);
-  const safeCurrentIdx = Math.min(
-    quizState.currentIdx,
-    Math.max(questions.length - 1, 0)
-  );
-  const currentQuestion = questions[safeCurrentIdx];
-  const currentQuestionId = getQuestionId(currentQuestion, safeCurrentIdx);
-  const currentAnswer = quizState.answers[currentQuestionId];
-  const currentGrade = quizState.grades[currentQuestionId];
+  }, [hasLoadedStorage, questions.length, storageKey]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    if (!hasLoadedStorage) return;
     const payload: QuizPersistState = {
       currentIdx: quizState.currentIdx,
       isFinished: quizState.isFinished,
@@ -138,7 +147,7 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
       grades: quizState.grades,
     };
     window.localStorage.setItem(storageKey, JSON.stringify(payload));
-  }, [quizState, storageKey]);
+  }, [hasLoadedStorage, quizState, storageKey]);
 
   useEffect(() => {
     if (!quizState.isFinished) return;
@@ -187,6 +196,7 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
     [computeTotals, questions, quizState.grades]
   );
   const scorePercent = total > 0 ? Math.round((score / total) * 100) : 0;
+  const isPerfectScore = total > 0 && score === total;
   const scoreFeedback =
     scorePercent >= 90
       ? '表现非常优秀，继续保持。'
@@ -485,32 +495,35 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
       );
     }
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center border-gray-100 bg-white p-8 text-center sm:rounded-xl sm:border sm:shadow-sm">
-        <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-full border-4 border-emerald-100 bg-emerald-50">
-          <span className="text-4xl font-bold text-emerald-600">
-            {score}/{total}
-          </span>
+      <>
+        {isPerfectScore ? <FullScreenCelebration /> : null}
+        <div className="flex min-h-[60vh] flex-col items-center justify-center border-gray-100 bg-white p-8 text-center sm:rounded-xl sm:border sm:shadow-sm">
+          <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-full border-4 border-emerald-100 bg-emerald-50">
+            <span className="text-4xl font-bold text-emerald-600">
+              {score}/{total}
+            </span>
+          </div>
+          <h2 className="mb-2 text-3xl font-bold text-slate-900">
+            {labels.completeTitle}
+          </h2>
+          <p className="mb-8 max-w-sm text-slate-500">{scoreFeedback}</p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={() => setShowReview(true)}
+              className="rounded-xl border border-slate-200 px-6 py-3 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50"
+            >
+              查看做题记录与解析
+            </button>
+            <button
+              onClick={handleRestart}
+              className="flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-3 font-bold text-white shadow-lg shadow-emerald-600/20 transition-colors hover:bg-emerald-700"
+            >
+              <RotateCcw size={20} />
+              {labels.retakeButtonLabel}
+            </button>
+          </div>
         </div>
-        <h2 className="mb-2 text-3xl font-bold text-slate-900">
-          {labels.completeTitle}
-        </h2>
-        <p className="mb-8 max-w-sm text-slate-500">{scoreFeedback}</p>
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <button
-            onClick={() => setShowReview(true)}
-            className="rounded-xl border border-slate-200 px-6 py-3 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50"
-          >
-            查看做题记录与解析
-          </button>
-          <button
-            onClick={handleRestart}
-            className="flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-3 font-bold text-white shadow-lg shadow-emerald-600/20 transition-colors hover:bg-emerald-700"
-          >
-            <RotateCcw size={20} />
-            {labels.retakeButtonLabel}
-          </button>
-        </div>
-      </div>
+      </>
     );
   }
 
