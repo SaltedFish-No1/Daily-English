@@ -1,47 +1,98 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { LessonQuiz } from '@/types/lesson';
-import { CheckCircle, XCircle, ArrowRight, RotateCcw } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, RotateCcw } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { QuestionRenderer } from './quiz/QuestionRenderer';
+import {
+  AnyQuizQuestion,
+  GradeResult,
+  ReviewRow,
+  UserAnswer,
+  isIELTSQuestion,
+  toStableQuestionId,
+} from './quiz/types';
+import {
+  gradeCompletion,
+  gradeLegacySingle,
+  gradeMatchingFeatures,
+  gradeMatchingHeadings,
+  gradeMatchingInformation,
+  gradeMultipleChoice,
+  gradeTFNG,
+} from './quiz/grading';
 
 export interface QuizProps {
   quiz: LessonQuiz;
   persistKey: string;
-  onComplete?: (score: number) => void;
+  onComplete?: (score: number, total: number) => void;
 }
 
-interface QuizProgressState {
+interface QuizPersistState {
   currentIdx: number;
-  selectedOption: number | null;
-  score: number;
   isFinished: boolean;
-  selectedAnswers: Array<number | null>;
+  answers: Record<string, UserAnswer>;
+  grades: Record<string, GradeResult>;
 }
 
-const initialQuizProgress: QuizProgressState = {
+const initialQuizProgress: QuizPersistState = {
   currentIdx: 0,
-  selectedOption: null,
-  score: 0,
   isFinished: false,
-  selectedAnswers: [],
+  answers: {},
+  grades: {},
 };
 
 export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
-  const questions = quiz.questions;
+  const questions = quiz.questions as unknown as AnyQuizQuestion[];
   const storageKey = `daily-english:quiz-progress:${persistKey}`;
   const [showReview, setShowReview] = useState(false);
   const [rationaleLang, setRationaleLang] = useState<'en' | 'zh'>('en');
 
-  const getInitialProgress = (): QuizProgressState => {
+  const getQuestionId = useCallback(
+    (question: AnyQuizQuestion, idx: number) => {
+      if (isIELTSQuestion(question)) return question.id;
+      return toStableQuestionId(idx);
+    },
+    []
+  );
+
+  const computeTotals = useCallback(
+    (qs: AnyQuizQuestion[], grades: Record<string, GradeResult>) => {
+      const total = qs.reduce((acc, q, idx) => {
+        const id = getQuestionId(q, idx);
+        const g = grades[id];
+        if (g) return acc + g.maxScore;
+        if (isIELTSQuestion(q)) {
+          switch (q.type) {
+            case 'matching_headings':
+              return acc + q.paragraphs.length;
+            case 'matching_information':
+              return acc + q.items.length;
+            case 'matching_features':
+              return acc + q.statements.length;
+            case 'completion':
+              return acc + q.blanks.length;
+            default:
+              return acc + 1;
+          }
+        }
+        return acc + 1;
+      }, 0);
+      const score = Object.values(grades).reduce((acc, g) => acc + g.score, 0);
+      return { score, total };
+    },
+    [getQuestionId]
+  );
+
+  const getInitialProgress = (): QuizPersistState => {
     if (typeof window === 'undefined') return initialQuizProgress;
     const raw = window.localStorage.getItem(storageKey);
     if (!raw) return initialQuizProgress;
     try {
-      const parsed = JSON.parse(raw) as QuizProgressState;
+      const parsed = JSON.parse(raw) as QuizPersistState;
       if (
         typeof parsed.currentIdx !== 'number' ||
-        typeof parsed.score !== 'number' ||
         typeof parsed.isFinished !== 'boolean'
       ) {
         return initialQuizProgress;
@@ -51,17 +102,15 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
           Math.max(parsed.currentIdx, 0),
           Math.max(questions.length - 1, 0)
         ),
-        selectedOption:
-          typeof parsed.selectedOption === 'number'
-            ? parsed.selectedOption
-            : null,
-        score: parsed.score,
         isFinished: parsed.isFinished,
-        selectedAnswers: Array.isArray(parsed.selectedAnswers)
-          ? parsed.selectedAnswers.map((item) =>
-              typeof item === 'number' ? item : null
-            )
-          : [],
+        answers:
+          parsed.answers && typeof parsed.answers === 'object'
+            ? parsed.answers
+            : {},
+        grades:
+          parsed.grades && typeof parsed.grades === 'object'
+            ? parsed.grades
+            : {},
       };
     } catch {
       window.localStorage.removeItem(storageKey);
@@ -70,29 +119,38 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
   };
 
   const [quizState, setQuizState] =
-    useState<QuizProgressState>(getInitialProgress);
+    useState<QuizPersistState>(getInitialProgress);
   const safeCurrentIdx = Math.min(
     quizState.currentIdx,
     Math.max(questions.length - 1, 0)
   );
   const currentQuestion = questions[safeCurrentIdx];
+  const currentQuestionId = getQuestionId(currentQuestion, safeCurrentIdx);
+  const currentAnswer = quizState.answers[currentQuestionId];
+  const currentGrade = quizState.grades[currentQuestionId];
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const payload: QuizProgressState = {
+    const payload: QuizPersistState = {
       currentIdx: quizState.currentIdx,
-      selectedOption: quizState.selectedOption,
-      score: quizState.score,
       isFinished: quizState.isFinished,
-      selectedAnswers: quizState.selectedAnswers,
+      answers: quizState.answers,
+      grades: quizState.grades,
     };
     window.localStorage.setItem(storageKey, JSON.stringify(payload));
   }, [quizState, storageKey]);
 
   useEffect(() => {
     if (!quizState.isFinished) return;
-    onComplete?.(quizState.score);
-  }, [quizState.isFinished, quizState.score, onComplete]);
+    const { score, total } = computeTotals(questions, quizState.grades);
+    onComplete?.(score, total);
+  }, [
+    computeTotals,
+    onComplete,
+    questions,
+    quizState.grades,
+    quizState.isFinished,
+  ]);
 
   const labels = {
     completeTitle: '测验完成',
@@ -102,21 +160,7 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
     incorrectLabel: '回答错误',
     nextButtonLabel: '下一题',
     viewResultsButtonLabel: '查看结果',
-  };
-
-  const handleOptionClick = (idx: number) => {
-    if (quizState.selectedOption !== null) return;
-    const isCorrect = questions[safeCurrentIdx].options[idx].correct;
-    setQuizState((prev) => ({
-      ...prev,
-      selectedOption: idx,
-      score: isCorrect ? prev.score + 1 : prev.score,
-      selectedAnswers: [
-        ...prev.selectedAnswers.slice(0, safeCurrentIdx),
-        idx,
-        ...prev.selectedAnswers.slice(safeCurrentIdx + 1),
-      ],
-    }));
+    submitButtonLabel: '提交答案',
   };
 
   const handleNext = () => {
@@ -124,7 +168,6 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
       setQuizState((prev) => ({
         ...prev,
         currentIdx: prev.currentIdx + 1,
-        selectedOption: null,
       }));
     } else {
       setQuizState((prev) => ({ ...prev, isFinished: true }));
@@ -139,10 +182,11 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
     }
   };
 
-  const scorePercent =
-    questions.length > 0
-      ? Math.round((quizState.score / questions.length) * 100)
-      : 0;
+  const { score, total } = useMemo(
+    () => computeTotals(questions, quizState.grades),
+    [computeTotals, questions, quizState.grades]
+  );
+  const scorePercent = total > 0 ? Math.round((score / total) * 100) : 0;
   const scoreFeedback =
     scorePercent >= 90
       ? '表现非常优秀，继续保持。'
@@ -152,22 +196,228 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
           ? '基础已建立，建议回看文章后再刷一遍。'
           : '建议先回顾文章与词汇，再重新练习。';
 
-  const reviewRows = questions.map((question, questionIndex) => {
-    const selected = quizState.selectedAnswers[questionIndex];
-    const selectedOption =
-      typeof selected === 'number' ? question.options[selected] : null;
-    const correctOption =
-      question.options.find((option) => option.correct) ?? question.options[0];
-    const isCorrect = selectedOption?.correct ?? false;
-    return {
-      questionIndex,
-      questionText: question.q,
-      selectedText: selectedOption?.text ?? '未作答',
-      correctText: correctOption.text,
-      rationale: selectedOption?.rationale ?? correctOption.rationale,
-      isCorrect,
-    };
-  });
+  const reviewRows = useMemo(() => {
+    return questions.map((question, idx) => {
+      const id = getQuestionId(question, idx);
+      const userAnswer = quizState.answers[id];
+      const grade = quizState.grades[id];
+      const isCorrect = grade?.isCorrect ?? false;
+
+      if (!isIELTSQuestion(question)) {
+        const selectedIndex =
+          userAnswer?.type === 'legacy_single'
+            ? userAnswer.payload.selectedIndex
+            : null;
+        const selected =
+          typeof selectedIndex === 'number'
+            ? question.options[selectedIndex]
+            : null;
+        const correctOption =
+          question.options.find((option) => option.correct) ??
+          question.options[0];
+        return {
+          questionId: id,
+          questionText: question.q,
+          userAnswerText: selected?.text ?? '未作答',
+          correctAnswerText: correctOption?.text ?? '',
+          rationale: selected?.rationale ?? correctOption?.rationale,
+          isCorrect,
+        } satisfies ReviewRow;
+      }
+
+      const q = question;
+      switch (q.type) {
+        case 'tfng': {
+          const selected =
+            userAnswer?.type === 'tfng' ? userAnswer.payload.selected : null;
+          return {
+            questionId: id,
+            questionText: `${q.prompt}：${q.statement}`,
+            userAnswerText: selected ?? '未作答',
+            correctAnswerText: q.answer,
+            rationale: q.rationale,
+            isCorrect,
+          } satisfies ReviewRow;
+        }
+        case 'multiple_choice': {
+          const selectedIds =
+            userAnswer?.type === 'multiple_choice'
+              ? userAnswer.payload.selectedOptionIds
+              : [];
+          const selectedText = selectedIds
+            .map((sid) => q.options.find((o) => o.id === sid)?.text ?? sid)
+            .join('；');
+          const correctText = q.correctOptionIds
+            .map((sid) => q.options.find((o) => o.id === sid)?.text ?? sid)
+            .join('；');
+          return {
+            questionId: id,
+            questionText: q.prompt,
+            userAnswerText: selectedText || '未作答',
+            correctAnswerText: correctText,
+            rationale: q.rationale,
+            isCorrect,
+          } satisfies ReviewRow;
+        }
+        case 'matching_headings': {
+          const mapping =
+            userAnswer?.type === 'matching_headings'
+              ? userAnswer.payload.mapping
+              : {};
+          const userText = q.paragraphs
+            .map((p) => `${p.label}→${mapping[p.id] ?? '∅'}`)
+            .join('；');
+          const correctText = q.paragraphs
+            .map((p) => `${p.label}→${q.answerMap[p.id] ?? '∅'}`)
+            .join('；');
+          return {
+            questionId: id,
+            questionText: q.prompt,
+            userAnswerText: userText || '未作答',
+            correctAnswerText: correctText,
+            rationale: q.rationale,
+            isCorrect,
+          } satisfies ReviewRow;
+        }
+        case 'matching_information': {
+          const mapping =
+            userAnswer?.type === 'matching_information'
+              ? userAnswer.payload.mapping
+              : {};
+          const userText = q.items
+            .map((it) => `${it.id}→${mapping[it.id] ?? '∅'}`)
+            .join('；');
+          const correctText = q.items
+            .map((it) => {
+              const correct = q.answerMap[it.id];
+              const value = Array.isArray(correct)
+                ? correct.join('/')
+                : (correct ?? '∅');
+              return `${it.id}→${value}`;
+            })
+            .join('；');
+          return {
+            questionId: id,
+            questionText: q.prompt,
+            userAnswerText: userText || '未作答',
+            correctAnswerText: correctText,
+            rationale: q.rationale,
+            isCorrect,
+          } satisfies ReviewRow;
+        }
+        case 'matching_features': {
+          const mapping =
+            userAnswer?.type === 'matching_features'
+              ? userAnswer.payload.mapping
+              : {};
+          const userText = q.statements
+            .map((s) => `${s.id}→${mapping[s.id] ?? '∅'}`)
+            .join('；');
+          const correctText = q.statements
+            .map((s) => `${s.id}→${q.answerMap[s.id] ?? '∅'}`)
+            .join('；');
+          return {
+            questionId: id,
+            questionText: q.prompt,
+            userAnswerText: userText || '未作答',
+            correctAnswerText: correctText,
+            rationale: q.rationale,
+            isCorrect,
+          } satisfies ReviewRow;
+        }
+        case 'completion': {
+          const blanks =
+            userAnswer?.type === 'completion' ? userAnswer.payload.blanks : {};
+          const userText = q.blanks
+            .map((b) => `${b.id}=${blanks[b.id] ?? '∅'}`)
+            .join('；');
+          const correctText = q.blanks
+            .map((b) => `${b.id}=${b.acceptedAnswers.join('/')}`)
+            .join('；');
+          return {
+            questionId: id,
+            questionText: q.prompt,
+            userAnswerText: userText || '未作答',
+            correctAnswerText: correctText,
+            rationale: q.rationale,
+            isCorrect,
+          } satisfies ReviewRow;
+        }
+      }
+    });
+  }, [getQuestionId, questions, quizState.answers, quizState.grades]);
+
+  const isAnswerEmpty = (ans: UserAnswer | undefined) => {
+    if (!ans) return true;
+    switch (ans.type) {
+      case 'legacy_single':
+        return ans.payload.selectedIndex === null;
+      case 'tfng':
+        return ans.payload.selected === null;
+      case 'multiple_choice':
+        return ans.payload.selectedOptionIds.length === 0;
+      case 'completion':
+        return Object.values(ans.payload.blanks).every((v) => !v.trim());
+      case 'matching_headings':
+      case 'matching_information':
+      case 'matching_features':
+        return Object.keys(ans.payload.mapping).length === 0;
+    }
+  };
+
+  const gradeCurrentQuestion = () => {
+    const q = currentQuestion;
+    const id = currentQuestionId;
+    const ans = quizState.answers[id];
+
+    if (!isIELTSQuestion(q)) {
+      const selectedIndex =
+        ans?.type === 'legacy_single' ? ans.payload.selectedIndex : null;
+      return gradeLegacySingle(id, q, selectedIndex);
+    }
+
+    switch (q.type) {
+      case 'tfng': {
+        const selected = ans?.type === 'tfng' ? ans.payload.selected : null;
+        return gradeTFNG(q, selected);
+      }
+      case 'multiple_choice': {
+        const selectedOptionIds =
+          ans?.type === 'multiple_choice' ? ans.payload.selectedOptionIds : [];
+        return gradeMultipleChoice(q, selectedOptionIds);
+      }
+      case 'matching_headings': {
+        const mapping =
+          ans?.type === 'matching_headings' ? ans.payload.mapping : {};
+        return gradeMatchingHeadings(q, mapping);
+      }
+      case 'matching_information': {
+        const mapping =
+          ans?.type === 'matching_information' ? ans.payload.mapping : {};
+        return gradeMatchingInformation(q, mapping);
+      }
+      case 'matching_features': {
+        const mapping =
+          ans?.type === 'matching_features' ? ans.payload.mapping : {};
+        return gradeMatchingFeatures(q, mapping);
+      }
+      case 'completion': {
+        const blanks = ans?.type === 'completion' ? ans.payload.blanks : {};
+        return gradeCompletion(q, blanks);
+      }
+    }
+  };
+
+  const handleSubmit = () => {
+    const result = gradeCurrentQuestion();
+    setQuizState((prev) => ({
+      ...prev,
+      grades: {
+        ...prev.grades,
+        [currentQuestionId]: result,
+      },
+    }));
+  };
 
   if (quizState.isFinished) {
     if (showReview) {
@@ -197,7 +447,7 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
           <div className="space-y-4">
             {reviewRows.map((row) => (
               <div
-                key={row.questionIndex}
+                key={row.questionId}
                 className={`rounded-2xl border p-5 ${
                   row.isCorrect
                     ? 'border-emerald-200 bg-emerald-50'
@@ -205,27 +455,29 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
                 }`}
               >
                 <h3 className="mb-2 text-sm font-bold text-slate-900">
-                  Q{row.questionIndex + 1}. {row.questionText}
+                  {row.questionText}
                 </h3>
                 <p className="mb-1 text-sm text-slate-700">
-                  你的答案：{row.selectedText}
+                  你的答案：{row.userAnswerText}
                 </p>
                 <p className="mb-2 text-sm text-slate-700">
-                  正确答案：{row.correctText}
+                  正确答案：{row.correctAnswerText}
                 </p>
-                <div className="mt-3 border-t border-slate-200/50 pt-3 text-sm leading-relaxed text-slate-600 italic">
-                  <span className="font-bold text-slate-700 not-italic">
-                    解析：
-                  </span>
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html:
-                        typeof row.rationale === 'string'
-                          ? row.rationale
-                          : row.rationale[rationaleLang],
-                    }}
-                  />
-                </div>
+                {row.rationale && (
+                  <div className="mt-3 border-t border-slate-200/50 pt-3 text-sm leading-relaxed text-slate-600 italic">
+                    <span className="font-bold text-slate-700 not-italic">
+                      解析：
+                    </span>
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          typeof row.rationale === 'string'
+                            ? row.rationale
+                            : row.rationale[rationaleLang],
+                      }}
+                    />
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -236,7 +488,7 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
       <div className="flex min-h-[60vh] flex-col items-center justify-center border-gray-100 bg-white p-8 text-center sm:rounded-xl sm:border sm:shadow-sm">
         <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-full border-4 border-emerald-100 bg-emerald-50">
           <span className="text-4xl font-bold text-emerald-600">
-            {quizState.score}/{questions.length}
+            {score}/{total}
           </span>
         </div>
         <h2 className="mb-2 text-3xl font-bold text-slate-900">
@@ -275,125 +527,96 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
             </h2>
           </div>
           <div className="text-sm font-bold text-emerald-600">
-            {labels.scoreLabel}: {quizState.score}
+            {labels.scoreLabel}: {score}
           </div>
         </div>
         <p className="text-sm text-slate-500 sm:text-base">
-          {currentQuestion.q}
+          {isIELTSQuestion(currentQuestion)
+            ? currentQuestion.prompt
+            : currentQuestion.q}
         </p>
       </div>
 
-      <div className="mb-8 space-y-4">
-        {currentQuestion.options.map((option, i) => (
-          <button
-            key={i}
-            onClick={() => handleOptionClick(i)}
-            disabled={quizState.selectedOption !== null}
-            className={`flex w-full items-start gap-4 rounded-2xl border-2 p-5 text-left transition-all duration-200 ${
-              quizState.selectedOption === null
-                ? 'border-slate-100 hover:border-emerald-200 hover:bg-emerald-50'
-                : i === quizState.selectedOption
-                  ? option.correct
-                    ? 'border-emerald-500 bg-emerald-50'
-                    : 'border-red-500 bg-red-50'
-                  : option.correct
-                    ? 'border-emerald-500 bg-emerald-50 opacity-60'
-                    : 'border-slate-100 opacity-40'
-            }`}
-          >
-            <div
-              className={`mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border-2 ${
-                quizState.selectedOption === null
-                  ? 'border-slate-300'
-                  : i === quizState.selectedOption
-                    ? option.correct
-                      ? 'border-emerald-500 bg-emerald-500 text-white'
-                      : 'border-red-500 bg-red-500 text-white'
-                    : option.correct
-                      ? 'border-emerald-500 text-emerald-500'
-                      : 'border-slate-200'
-              }`}
-            >
-              {quizState.selectedOption !== null && option.correct ? (
-                <CheckCircle size={14} />
-              ) : null}
-              {quizState.selectedOption === i && !option.correct ? (
-                <XCircle size={14} />
-              ) : null}
-              {quizState.selectedOption === null ? (
-                <span className="text-xs font-bold">
-                  {String.fromCharCode(65 + i)}
-                </span>
-              ) : null}
-            </div>
-            <span
-              className={`text-sm font-medium sm:text-base ${
-                quizState.selectedOption === i
-                  ? option.correct
-                    ? 'text-emerald-900'
-                    : 'text-red-900'
-                  : 'text-slate-700'
-              }`}
-            >
-              {option.text}
-            </span>
-          </button>
-        ))}
+      <div className="mb-8">
+        <QuestionRenderer
+          question={currentQuestion}
+          questionId={currentQuestionId}
+          answer={currentAnswer}
+          disabled={Boolean(currentGrade)}
+          onAnswerChange={(next) =>
+            setQuizState((prev) => ({
+              ...prev,
+              answers: {
+                ...prev.answers,
+                [currentQuestionId]: next,
+              },
+            }))
+          }
+        />
       </div>
 
-      <AnimatePresence>
-        {quizState.selectedOption !== null && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`mb-8 rounded-2xl p-6 ${
-              currentQuestion.options[quizState.selectedOption].correct
-                ? 'border border-emerald-100 bg-emerald-50 text-emerald-800'
-                : 'border border-red-100 bg-red-50 text-red-800'
-            }`}
-          >
-            <div className="mb-2 flex items-center justify-between">
-              <h4 className="flex items-center gap-2 font-bold">
-                {currentQuestion.options[quizState.selectedOption].correct
-                  ? `✅ ${labels.correctLabel}`
-                  : `❌ ${labels.incorrectLabel}`}
-              </h4>
-              <button
-                onClick={() =>
-                  setRationaleLang(rationaleLang === 'en' ? 'zh' : 'en')
-                }
-                className="rounded bg-white/50 px-2 py-1 text-xs font-medium transition-colors hover:bg-white/80"
-              >
-                {rationaleLang === 'en' ? '中' : 'En'}
-              </button>
-            </div>
-            <div
-              className="text-sm leading-relaxed italic opacity-90"
-              dangerouslySetInnerHTML={{
-                __html: (() => {
-                  const rat =
-                    currentQuestion.options[quizState.selectedOption].rationale;
-                  return typeof rat === 'string' ? rat : rat[rationaleLang];
-                })(),
-              }}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {currentGrade && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={`mb-8 rounded-2xl p-6 ${
+            currentGrade.isCorrect
+              ? 'border border-emerald-100 bg-emerald-50 text-emerald-800'
+              : 'border border-red-100 bg-red-50 text-red-800'
+          }`}
+        >
+          <div className="mb-2 flex items-center justify-between">
+            <h4 className="flex items-center gap-2 font-bold">
+              {currentGrade.isCorrect
+                ? `✅ ${labels.correctLabel}`
+                : `❌ ${labels.incorrectLabel}`}
+              <span className="ml-2 text-xs font-bold text-slate-600">
+                {currentGrade.score}/{currentGrade.maxScore}
+              </span>
+            </h4>
+            <button
+              onClick={() =>
+                setRationaleLang(rationaleLang === 'en' ? 'zh' : 'en')
+              }
+              className="rounded bg-white/50 px-2 py-1 text-xs font-medium transition-colors hover:bg-white/80"
+            >
+              {rationaleLang === 'en' ? '中' : 'En'}
+            </button>
+          </div>
+          {(() => {
+            const row = reviewRows.find(
+              (r) => r.questionId === currentQuestionId
+            );
+            if (!row?.rationale) return null;
+            const html =
+              typeof row.rationale === 'string'
+                ? row.rationale
+                : row.rationale[rationaleLang];
+            return (
+              <div
+                className="text-sm leading-relaxed italic opacity-90"
+                dangerouslySetInnerHTML={{ __html: html }}
+              />
+            );
+          })()}
+        </motion.div>
+      )}
 
       <div className="flex justify-end">
         <button
-          onClick={handleNext}
-          disabled={quizState.selectedOption === null}
+          onClick={currentGrade ? handleNext : handleSubmit}
+          disabled={!currentGrade && isAnswerEmpty(currentAnswer)}
           className={`flex items-center gap-2 rounded-xl px-8 py-3 font-bold transition-all ${
-            quizState.selectedOption === null
+            !currentGrade && isAnswerEmpty(currentAnswer)
               ? 'cursor-not-allowed bg-slate-100 text-slate-400'
               : 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20 hover:bg-emerald-700'
           }`}
         >
-          {safeCurrentIdx === questions.length - 1
-            ? labels.viewResultsButtonLabel
-            : labels.nextButtonLabel}
+          {currentGrade
+            ? safeCurrentIdx === questions.length - 1
+              ? labels.viewResultsButtonLabel
+              : labels.nextButtonLabel
+            : labels.submitButtonLabel}
           <ArrowRight size={20} />
         </button>
       </div>

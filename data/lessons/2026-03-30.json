@@ -240,156 +240,190 @@
     "viewResultsButtonLabel": "View Results",
     "questions": [
       {
-        "q": "According to the Kaplans' theory, while urban environments drain our mental energy, spending time in an ________ forest can help to ________ our attention.",
-        "options": [
-          {
-            "text": "ordinary / restore",
-            "correct": true,
-            "rationale": {
-              "en": "The passage states that an 'ordinary' forest does not force stress on the brain, helping to 'restore' mental energy.",
-              "zh": "文章指出，一个‘普通的’（ordinary）森林不会给大脑施加压力，有助于‘恢复’（restore）精神能量。"
-            }
-          },
-          {
-            "text": "eccentric / distract",
-            "correct": false,
-            "rationale": {
-              "en": "Forests are described as ordinary, not eccentric, and their purpose in the theory is to restore attention, not distract it.",
-              "zh": "森林被描述为普通的，而不是古怪的，它们在理论中的作用是恢复注意力，而不是分散注意力。"
-            }
-          },
-          {
-            "text": "intense / approve",
-            "correct": false,
-            "rationale": {
-              "en": "Intense focus is caused by modern life, not a forest environment.",
-              "zh": "高度集中的注意力是由现代生活引起的，而不是森林环境。"
-            }
-          },
-          {
-            "text": "appealing / indulge",
-            "correct": false,
-            "rationale": {
-              "en": "While nature is appealing, the specific mechanism mentioned in the ART theory is 'restoration', not 'indulgence'.",
-              "zh": "虽然大自然很吸引人，但ART理论中提到的具体机制是‘恢复’，而不是‘沉溺’。"
-            }
-          }
+        "id": "q-1",
+        "type": "tfng",
+        "mode": "TFNG",
+        "prompt": "True / False / Not Given",
+        "statement": "Researchers at the University of California, Berkeley, were the first to study the psychological effects of natural environments.",
+        "answer": "NOT_GIVEN",
+        "rationale": {
+          "en": "The passage mentions that UC Berkeley researchers recently explored the emotion of \"awe\" (Paragraph C), and that Rachel and Stephen Kaplan introduced the \"Attention Restoration Theory\" in the 1980s (Paragraph B). However, the text never explicitly states who were the first to study this topic.",
+          "zh": "典型的“无中生有”陷阱。原文确实提到了伯克利大学的研究，也提到了他们在研究自然对心理的影响（敬畏感），但根本没有出现关于“首批 (the first)”的时间排序信息。只要原文没提，哪怕符合常识推断，也必须选 Not Given。"
+        },
+        "evidenceRefs": [
+          "Paragraph B",
+          "Paragraph C"
         ]
       },
       {
-        "q": "The intense focus required by modern city life and the constant use of social media can lead people to ________ in habits that create negative feelings such as ________.",
-        "options": [
+        "id": "q-2",
+        "type": "matching_headings",
+        "prompt": "Choose the correct heading for Paragraph B.",
+        "paragraphs": [
           {
-            "text": "restore / dignity",
-            "correct": false,
-            "rationale": {
-              "en": "Social media habits generally do not restore dignity in this context.",
-              "zh": "在本文语境中，社交媒体习惯通常不能恢复尊严。"
-            }
-          },
-          {
-            "text": "cooperate / awe",
-            "correct": false,
-            "rationale": {
-              "en": "Awe is a positive emotion connected to nature, not a negative feeling from social media.",
-              "zh": "敬畏是与大自然相关的积极情绪，而不是来自社交媒体的消极情绪。"
-            }
-          },
-          {
-            "text": "indulge / jealousy",
-            "correct": true,
-            "rationale": {
-              "en": "The text states that people often 'indulge' in social media, leading to negative emotions like 'jealousy' through comparison.",
-              "zh": "文本指出，人们经常‘沉溺’（indulge）于社交媒体，通过比较导致‘嫉妒’（jealousy）等负面情绪。"
-            }
-          },
-          {
-            "text": "distract / egoist",
-            "correct": false,
-            "rationale": {
-              "en": "While social media distracts, 'egoist' is a noun for a person, not a negative feeling.",
-              "zh": "虽然社交媒体会分散注意力，但‘egoist’（自我主义者）指代的是人，而不是一种负面情绪。"
-            }
+            "id": "pB",
+            "label": "Paragraph B",
+            "textRef": "Paragraph B"
           }
+        ],
+        "headings": [
+          {
+            "id": "i",
+            "text": "The physical benefits of daily forest walks",
+            "isDistractor": true
+          },
+          {
+            "id": "ii",
+            "text": "How natural settings replenish mental fatigue"
+          },
+          {
+            "id": "iii",
+            "text": "The increasing danger of urban noise pollution",
+            "isDistractor": true
+          }
+        ],
+        "answerMap": {
+          "pB": "ii"
+        },
+        "rationale": {
+          "en": "Paragraph B focuses on the \"Attention Restoration Theory,\" comparing human attention to a battery that gets recharged when we rest in nature, away from urban stress. Option (i) focuses on physical benefits, but the paragraph is about mental fatigue and restoration.",
+          "zh": "考察对段落主旨的抓取。B段全段的核心在于阐述大自然如何帮助大脑“恢复能量 (restore our energy)”。干扰项 i 中的 physical (身体的) 偷换了原文的 mental (心理的)；干扰项 iii 只是城市环境的一个细节背景，不是该段主旨。"
+        },
+        "allowReuse": false,
+        "evidenceRefs": [
+          "Paragraph B"
         ]
       },
       {
-        "q": "True or False: Medical professionals generally approve of the idea that outdoor activities are a valid method for improving psychological well-being.",
-        "options": [
+        "id": "q-3",
+        "type": "matching_information",
+        "prompt": "Which paragraph contains the following information?",
+        "items": [
           {
-            "text": "True",
-            "correct": true,
-            "rationale": {
-              "en": "The text explicitly mentions: 'Today, medical professionals broadly approve of spending time outdoors as a standard way to improve mental health.'",
-              "zh": "文本明确提到：‘今天，医疗专业人员广泛认可（approve）将户外活动作为改善心理健康的标准方法。’"
-            }
+            "id": "1",
+            "statement": "A reference to a specific negative emotion triggered by modern technological habits."
+          }
+        ],
+        "targets": [
+          {
+            "id": "A",
+            "label": "Paragraph A"
           },
           {
-            "text": "False",
-            "correct": false,
-            "rationale": {
-              "en": "The statement accurately reflects the passage.",
-              "zh": "该陈述准确反映了文章内容。"
-            }
+            "id": "B",
+            "label": "Paragraph B"
+          },
+          {
+            "id": "C",
+            "label": "Paragraph C"
           }
+        ],
+        "answerMap": {
+          "1": "A"
+        },
+        "rationale": {
+          "en": "Paragraph A explicitly states: \"They often indulge in social media..., a habit that psychologists note can lead to negative emotions like jealousy\". The question paraphrases \"indulge in social media\" as \"modern technological habits\" and keeps the specific emotion as the key locator.",
+          "zh": "考察同义替换的寻读能力。“modern technological habits” 替换了原文的 “indulge in social media”，“specific negative emotion” 对应原文的具体词汇 “jealousy (嫉妒)”。"
+        },
+        "allowReuse": true,
+        "evidenceRefs": [
+          "Paragraph A"
         ]
       },
       {
-        "q": "True or False: When people experience the 'vastness' of nature, they are more likely to act like an egoist and focus exclusively on their own personal problems.",
-        "options": [
+        "id": "q-4",
+        "type": "completion",
+        "subtype": "sentence",
+        "prompt": "Sentence Completion",
+        "instruction": "Choose NO MORE THAN TWO WORDS from the passage for the answer.",
+        "contentTemplate": "According to the Kaplans' theory, human attention functions much like a {{blank1}}, which natural environments have the power to recharge.",
+        "blanks": [
           {
-            "text": "True",
-            "correct": false,
-            "rationale": {
-              "en": "The passage says the exact opposite: people become less selfish and less like an egoist.",
-              "zh": "文章说的恰恰相反：人们变得不那么自私，也不太像自我主义者。"
-            }
-          },
-          {
-            "text": "False",
-            "correct": true,
-            "rationale": {
-              "en": "The text states: 'When someone feels small next to the vastness of nature, they are less likely to act like an egoist.'",
-              "zh": "文本指出：‘当一个人在大自然的广阔（vastness）面前感到渺小时，他们不太可能表现得像个自我主义者（egoist）。’"
-            }
+            "id": "blank1",
+            "acceptedAnswers": [
+              "battery"
+            ],
+            "wordLimit": 2,
+            "caseSensitive": false,
+            "posHint": "noun"
           }
+        ],
+        "rationale": {
+          "en": "In Paragraph B, the text states: \"This theory explains that human attention is like a battery.\" The word \"recharge\" paraphrases the idea of restoring energy.",
+          "zh": "考察定位与语法。题目中的 “functions much like a...” 对应原文的 “...is like a battery”。必须填入单数名词。"
+        },
+        "evidenceRefs": [
+          "Paragraph B"
         ]
       },
       {
-        "q": "What does the University of California, Berkeley research suggest about the peculiar effect of nature on human behavior?",
+        "id": "q-5",
+        "type": "matching_features",
+        "prompt": "Match the following finding with the correct group of people (A, B, or C).",
+        "statements": [
+          {
+            "id": "f1",
+            "text": "Concluded that environments without stressful information allow the brain to rest effectively."
+          }
+        ],
+        "features": [
+          {
+            "id": "A",
+            "label": "Rachel and Stephen Kaplan"
+          },
+          {
+            "id": "B",
+            "label": "University of California, Berkeley researchers"
+          },
+          {
+            "id": "C",
+            "label": "Medical professionals"
+          }
+        ],
+        "answerMap": {
+          "f1": "A"
+        },
+        "rationale": {
+          "en": "Paragraph B presents the Kaplans' Attention Restoration Theory and explains that nature does not force the brain to process stressful information. This finding belongs to the Kaplans (A), not the UC Berkeley \"awe\" study (C paragraph).",
+          "zh": "考察信息归类。原文 B 段是卡普兰夫妇的理论，C 段是伯克利大学的研究。这句话描述的是“注意力恢复”机制，属于卡普兰夫妇的观点（A项），而不是伯克利大学关于“敬畏感”的研究。"
+        },
+        "allowReuse": false,
+        "evidenceRefs": [
+          "Paragraph B"
+        ]
+      },
+      {
+        "id": "q-6",
+        "type": "multiple_choice",
+        "selectionMode": "single",
+        "prompt": "According to the passage, what is the primary social effect of experiencing \"awe\" in nature?",
         "options": [
           {
-            "text": "It makes people slightly more distracted by the environment around them.",
-            "correct": false,
-            "rationale": {
-              "en": "The research focuses on social behavior and awe, not just simple distraction.",
-              "zh": "该研究侧重于社会行为和敬畏，而不仅仅是简单的分心。"
-            }
+            "id": "A",
+            "text": "It makes people want to isolate themselves in forests."
           },
           {
-            "text": "It creates an intense feeling of jealousy towards those who live in rural areas.",
-            "correct": false,
-            "rationale": {
-              "en": "Jealousy is associated with social media in the text, not nature.",
-              "zh": "在文本中，嫉妒与社交媒体有关，而不是大自然。"
-            }
+            "id": "B",
+            "text": "It slightly increases a person's focus on their internal thoughts."
           },
           {
-            "text": "It reduces selfish behaviors and creates a fervent desire to cooperate with others.",
-            "correct": true,
-            "rationale": {
-              "en": "The passage concludes that exposure to natural beauty creates a 'fervent desire to help strangers and cooperate with their community.'",
-              "zh": "文章的结论是，接触自然美景会产生一种‘强烈的（fervent）帮助陌生人和与社区合作（cooperate）的愿望。’"
-            }
+            "id": "C",
+            "text": "It decreases self-centeredness and enhances respect for others."
           },
           {
-            "text": "It helps people maintain their dignity by avoiding social interactions entirely.",
-            "correct": false,
-            "rationale": {
-              "en": "Nature actually encourages more social interaction and connection, not less.",
-              "zh": "大自然实际上鼓励了更多的社会互动和联系，而不是更少。"
-            }
+            "id": "D",
+            "text": "It restores physical energy more efficiently than city living."
           }
+        ],
+        "correctOptionIds": [
+          "C"
+        ],
+        "rationale": {
+          "en": "Paragraph C notes that experiencing awe makes people \"less selfish\" and less likely to act like an \"egoist.\" Instead, they feel a stronger connection to others and greater respect for human dignity. This matches option C.",
+          "zh": "考察深层理解与干扰项排除。C项是原文 “less selfish” 和 “greater respect for human dignity” 的同义改写。A项、B项与原文倾向相反；D项偷换概念，把心理层面的敬畏感与身体能量混为一谈。"
+        },
+        "evidenceRefs": [
+          "Paragraph C"
         ]
       }
     ]

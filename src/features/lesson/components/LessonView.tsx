@@ -20,10 +20,10 @@ export const LessonView: React.FC<LessonViewProps> = ({ data }) => {
   const { activeTab, setActiveTab } = useLessonStore();
   const { saveLessonScore } = useUserStore();
   const handleQuizComplete = useCallback(
-    (score: number) => {
-      saveLessonScore(data.meta.slug, score, data.quiz.questions.length);
+    (score: number, total: number) => {
+      saveLessonScore(data.meta.slug, score, total);
     },
-    [data.meta.slug, data.quiz.questions.length, saveLessonScore]
+    [data.meta.slug, saveLessonScore]
   );
 
   const tabs = [
