@@ -1,6 +1,17 @@
 {
   "lessons": [
     {
+      "date": "2026-03-30",
+      "path": "pages/2026-03-30.html",
+      "title": "The Psychology of Awe",
+      "category": "Psychology & Behavior",
+      "summary": "探讨自然环境如何通过激发敬畏感来治愈现代人的心理疲惫，并促进亲社会行为。",
+      "published": true,
+      "featured": true,
+      "tag": "Psychology",
+      "difficulty": "B2"
+    },
+    {
       "date": "2026-03-29",
       "path": "pages/2026-03-29.html",
       "title": "Evolutionary Mismatch",
@@ -8,7 +19,8 @@
       "summary": "探索我们的生物学本能与现代环境之间的矛盾，从饮食到心理健康。",
       "published": true,
       "featured": true,
-      "tag": "Science & Nature"
+      "tag": "Science & Nature",
+      "difficulty": "C1"
     },
     {
       "date": "2026-03-28",
@@ -18,7 +30,8 @@
       "summary": "探索捕食者与生态系统之间的复杂关系，通过交互式模块学习专业词汇。",
       "published": true,
       "featured": true,
-      "tag": "Ecology"
+      "tag": "Ecology",
+      "difficulty": "C1"
     }
   ]
 }

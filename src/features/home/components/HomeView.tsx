@@ -1,11 +1,15 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { LessonListItem } from '@/types/lesson';
+import { LessonDifficulty, LessonListItem } from '@/types/lesson';
 import { Calendar, ArrowRight, Download, BookMarked } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useUserStore } from '@/store/useUserStore';
+import {
+  CEFRGuideDialog,
+  difficultyClassMap,
+} from '@/features/home/components/CEFRGuideDialog';
 
 interface HomeViewProps {
   lessons: LessonListItem[];
@@ -21,6 +25,11 @@ interface InstallDialogState {
   title: string;
   message: string;
   showConfirm: boolean;
+}
+
+interface DifficultyGuideState {
+  open: boolean;
+  difficulty: LessonDifficulty | null;
 }
 
 /**
@@ -59,6 +68,10 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
     title: '',
     message: '',
     showConfirm: false,
+  });
+  const [difficultyGuide, setDifficultyGuide] = useState<DifficultyGuideState>({
+    open: false,
+    difficulty: null,
   });
 
   useEffect(() => {
@@ -156,6 +169,25 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
       title: '已取消安装',
       message: '你已取消本次安装请求。',
       showConfirm: false,
+    });
+  };
+
+  const openDifficultyGuide = (
+    event: React.MouseEvent<HTMLElement>,
+    difficulty: LessonDifficulty
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setDifficultyGuide({
+      open: true,
+      difficulty,
+    });
+  };
+
+  const closeDifficultyGuide = () => {
+    setDifficultyGuide({
+      open: false,
+      difficulty: null,
     });
   };
 
@@ -274,9 +306,24 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
                       <Calendar size={12} />
                       {lesson.date}
                     </span>
-                    <span className="flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-500">
-                      <span className="mr-1.5 h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500"></span>
-                      Interactive
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      onClick={(event) =>
+                        openDifficultyGuide(event, lesson.difficulty)
+                      }
+                      onKeyDown={(event) => {
+                        if (event.key !== 'Enter' && event.key !== ' ') return;
+                        event.preventDefault();
+                        event.stopPropagation();
+                        setDifficultyGuide({
+                          open: true,
+                          difficulty: lesson.difficulty,
+                        });
+                      }}
+                      className={`cursor-pointer rounded-full px-2 py-0.5 ${difficultyClassMap[lesson.difficulty]}`}
+                    >
+                      {lesson.difficulty}
                     </span>
                   </div>
                   <p className="mb-5 line-clamp-2 text-sm leading-relaxed font-medium text-slate-500">
@@ -345,6 +392,11 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
           </div>
         </div>
       )}
+      <CEFRGuideDialog
+        open={difficultyGuide.open}
+        difficulty={difficultyGuide.difficulty}
+        onClose={closeDifficultyGuide}
+      />
     </div>
   );
 };

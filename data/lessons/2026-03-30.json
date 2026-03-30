@@ -1,0 +1,397 @@
+{
+  "meta": {
+    "date": "2026-03-30",
+    "slug": "2026-03-30",
+    "title": "The Psychology of Awe",
+    "subtitle": "Psychology & Behavior Module",
+    "pageTitle": "The Psychology of Awe - Interactive Learning",
+    "difficulty": "B2"
+  },
+  "ui": {
+    "desktopArticleTabLabel": "Reading & Vocab",
+    "desktopDataTabLabel": "Behavior Trends",
+    "desktopQuizTabLabel": "Knowledge Check",
+    "mobileArticleTabLabel": "Reading",
+    "mobileDataTabLabel": "Trends",
+    "mobileQuizTabLabel": "Quiz",
+    "articleHintHtml": "Read the article below to explore the psychological impact of nature. <br><strong>Interaction:</strong> Tap the <span class=\"text-emerald-700 font-bold border-b-2 border-emerald-300 px-1 rounded bg-white\">highlighted words</span> to view definitions and listen to pronunciation.",
+    "vocabPlaceholderText": "Select a highlighted word to view its analysis.",
+    "translationLabel": "Chinese Translation",
+    "listenTitle": "Listen to pronunciation"
+  },
+  "speech": {
+    "enabled": true,
+    "lang": "en-US",
+    "rate": 0.9,
+    "unsupportedMessage": "Sorry, your browser doesn't support text to speech."
+  },
+  "article": {
+    "title": "The Psychology of Awe: How Nature Changes Our Minds",
+    "paragraphs": [
+      {
+        "en": "In modern society, daily life requires <span class=\"vocab-word\" data-word=\"intense\">intense</span> mental focus. Bright screens, loud traffic, and busy schedules constantly <span class=\"vocab-word\" data-word=\"distract\">distract</span> us from our inner thoughts. Furthermore, as cities grow and <span class=\"vocab-word\" data-word=\"encroach\">encroach</span> upon natural spaces, people spend most of their time indoors. They often <span class=\"vocab-word\" data-word=\"indulge\">indulge</span> in social media, a habit that psychologists note can lead to negative emotions like <span class=\"vocab-word\" data-word=\"jealousy\">jealousy</span> due to social comparison. However, scientific studies suggest that spending time in nature can solve many of these modern psychological problems.",
+        "zh": "在现代社会，日常生活需要<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">高度集中的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">intense</span></span>精神专注。明亮的屏幕、嘈杂的交通和繁忙的日程安排不断地<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">分散<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">distract</span></span>我们对内心想法的注意力。此外，随着城市的发展并<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">蚕食<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">encroach</span></span>自然空间，人们大部分时间都在室内度过。他们经常<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">沉溺<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">indulge</span></span>于社交媒体，心理学家指出，由于社会比较，这种习惯会导致<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">嫉妒<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">jealousy</span></span>等负面情绪。然而，科学研究表明，在自然界中度过时间可以解决许多这些现代心理问题。"
+      },
+      {
+        "en": "In the 1980s, researchers Rachel and Stephen Kaplan introduced the \"Attention <span class=\"vocab-word\" data-word=\"restoration\">Restoration</span> Theory\" (ART), which is now widely accepted in psychology. This theory explains that human attention is like a battery. When we are mentally tired, natural environments can <span class=\"vocab-word\" data-word=\"restore\">restore</span> our energy. Unlike a busy city street, an <span class=\"vocab-word\" data-word=\"ordinary\">ordinary</span> forest or park does not force our brains to process stressful information. There is a <span class=\"vocab-word\" data-word=\"distinct\">distinct</span> difference in how our brains rest in green spaces compared to urban areas. Today, medical professionals broadly <span class=\"vocab-word\" data-word=\"approve\">approve</span> of spending time outdoors as a standard way to improve mental health.",
+        "zh": "在20世纪80年代，研究人员雷切尔和斯蒂芬·卡普兰提出了“注意力<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">恢复<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">restoration</span></span>理论”（ART），该理论现在在心理学界被广泛接受。这个理论解释说，人类的注意力就像一块电池。当我们精神疲惫时，自然环境可以<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">恢复<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">restore</span></span>我们的能量。与繁忙的城市街道不同，一个<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">普通的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">ordinary</span></span>森林或公园不会强迫我们的大脑处理有压力的信息。与城市地区相比，我们的大脑在绿地中休息的方式有<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">明显的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">distinct</span></span>不同。今天，医疗专业人员广泛<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">认可<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">approve</span></span>将户外活动作为改善心理健康的标准方法。"
+      },
+      {
+        "en": "But nature does more than just help us relax; it has a <span class=\"vocab-word\" data-word=\"peculiar\">peculiar</span> and <span class=\"vocab-word\" data-word=\"fascinating\">fascinating</span> effect on our social behavior. Recent research from the University of California, Berkeley, explores the emotion of \"<span class=\"vocab-word\" data-word=\"awe\">awe</span>\"—the feeling we get when we see something huge and amazing, like grand mountains or ancient trees. The researchers found that experiencing awe makes people less <span class=\"vocab-word\" data-word=\"selfish\">selfish</span>. When someone feels small next to the <span class=\"vocab-word\" data-word=\"vastness\">vastness</span> of nature, they are less likely to act like an <span class=\"vocab-word\" data-word=\"egoist\">egoist</span>. Instead of focusing only on their own problems, they feel a stronger connection to others and a greater respect for human <span class=\"vocab-word\" data-word=\"dignity\">dignity</span>.",
+        "zh": "但是，大自然不仅能帮助我们放松；它对我们的社会行为有一种<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">奇特的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">peculiar</span></span>和<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">迷人的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">fascinating</span></span>影响。加州大学伯克利分校最近的研究探索了“<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">敬畏<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">awe</span></span>”的情感——这是当我们看到巨大而惊人的事物时，比如雄伟的山脉或古老的树木，我们所获得的感觉。研究人员发现，体验敬畏会让人变得不那么<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">自私<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">selfish</span></span>。当一个人在大自然的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">广阔<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">vastness</span></span>面前感到渺小时，他们不太可能表现得像个<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">自我主义者<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">egoist</span></span>。他们不再只关注自己的问题，而是感到与他人的联系更紧密，对人类<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">尊严<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">dignity</span></span>的尊重也更深。"
+      },
+      {
+        "en": "The results of these studies are clear: even if a person is only <span class=\"vocab-word\" data-word=\"slightly\">slightly</span> exposed to natural beauty, they often show a more <span class=\"vocab-word\" data-word=\"fervent\">fervent</span> desire to help strangers and <span class=\"vocab-word\" data-word=\"cooperate\">cooperate</span> with their community. In conclusion, the natural world is not just a place for physical exercise. It is a powerful psychological tool that heals our tired minds and makes us better, more connected human beings.",
+        "zh": "这些研究的结果是清楚的：即使一个人只是<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">轻微地<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">slightly</span></span>接触自然美景，他们往往会表现出一种更<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">强烈的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">fervent</span></span>帮助陌生人和与社区<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">合作<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">cooperate</span></span>的愿望。总之，自然界不仅是进行体育锻炼的地方。它是一个强大的心理工具，可以治愈我们疲惫的心灵，让我们成为更好、更有联系的人类。"
+      }
+    ]
+  },
+  "vocab": {
+    "intense": {
+      "pos": "adj.",
+      "def": "Of extreme force, degree, or strength.",
+      "trans": "十分强烈的，高度集中的，紧张的",
+      "speakText": "intense"
+    },
+    "distract": {
+      "pos": "v.",
+      "def": "To prevent someone from giving full attention to something.",
+      "trans": "转移（注意力），分散（思想）",
+      "speakText": "distract"
+    },
+    "encroach": {
+      "pos": "v.",
+      "def": "To advance gradually beyond usual or acceptable limits.",
+      "trans": "侵犯，蚕食",
+      "speakText": "encroach"
+    },
+    "indulge": {
+      "pos": "v.",
+      "def": "To allow oneself to enjoy the pleasure of.",
+      "trans": "沉溺，放纵",
+      "speakText": "indulge"
+    },
+    "jealousy": {
+      "pos": "n.",
+      "def": "The state or feeling of being jealous.",
+      "trans": "嫉妒",
+      "speakText": "jealousy"
+    },
+    "restoration": {
+      "pos": "n.",
+      "def": "The action of returning something to a former owner, place, or condition.",
+      "trans": "恢复，复原",
+      "speakText": "restoration"
+    },
+    "restore": {
+      "pos": "v.",
+      "def": "To bring back (a previous right, practice, custom, or situation).",
+      "trans": "恢复，修复",
+      "speakText": "restore"
+    },
+    "ordinary": {
+      "pos": "adj.",
+      "def": "With no special or distinctive features; normal.",
+      "trans": "普通的，平常的",
+      "speakText": "ordinary"
+    },
+    "distinct": {
+      "pos": "adj.",
+      "def": "Recognizably different in nature from something else of a similar type.",
+      "trans": "截然不同的，明显的",
+      "speakText": "distinct"
+    },
+    "approve": {
+      "pos": "v.",
+      "def": "To officially agree to or accept as satisfactory.",
+      "trans": "赞成，同意，认可",
+      "speakText": "approve"
+    },
+    "peculiar": {
+      "pos": "adj.",
+      "def": "Strange or odd; unusual.",
+      "trans": "特殊的，奇特的",
+      "speakText": "peculiar"
+    },
+    "fascinating": {
+      "pos": "adj.",
+      "def": "Extremely interesting.",
+      "trans": "迷人的，极有吸引力的",
+      "speakText": "fascinating"
+    },
+    "awe": {
+      "pos": "n.",
+      "def": "A feeling of reverential respect mixed with fear or wonder.",
+      "trans": "敬畏，惊叹",
+      "speakText": "awe"
+    },
+    "selfish": {
+      "pos": "adj.",
+      "def": "Lacking consideration for others; concerned chiefly with one's own personal profit or pleasure.",
+      "trans": "自私的",
+      "speakText": "selfish"
+    },
+    "vastness": {
+      "pos": "n.",
+      "def": "Very great extent or size; immensity.",
+      "trans": "巨大，广阔",
+      "speakText": "vastness"
+    },
+    "egoist": {
+      "pos": "n.",
+      "def": "A person who is preoccupied with their own interests; a selfish person.",
+      "trans": "自我主义者",
+      "speakText": "egoist"
+    },
+    "dignity": {
+      "pos": "n.",
+      "def": "The state or quality of being worthy of honor or respect.",
+      "trans": "尊严，庄重",
+      "speakText": "dignity"
+    },
+    "slightly": {
+      "pos": "adv.",
+      "def": "To a small degree; not considerably.",
+      "trans": "轻微地，稍微地",
+      "speakText": "slightly"
+    },
+    "fervent": {
+      "pos": "adj.",
+      "def": "Having or displaying a passionate intensity.",
+      "trans": "炽热的，强烈的",
+      "speakText": "fervent"
+    },
+    "cooperate": {
+      "pos": "v.",
+      "def": "To act jointly; work toward the same end.",
+      "trans": "合作，协作",
+      "speakText": "cooperate"
+    }
+  },
+  "chart": {
+    "type": "bar",
+    "title": "Impact of Environment on Prosocial Behavior",
+    "description": "Based on UC Berkeley research, this chart illustrates the shift in prosocial tendencies (such as willingness to help) after subjects are exposed to awe-inspiring natural environments versus ordinary urban settings.",
+    "labels": [
+      "Willingness to Help",
+      "Sense of Connection",
+      "Focus on Self (Egoism)"
+    ],
+    "datasets": [
+      {
+        "label": "Urban Environment",
+        "data": [
+          45,
+          40,
+          75
+        ],
+        "borderColor": "#f97316",
+        "backgroundColor": "rgba(249, 115, 22, 0.7)",
+        "borderWidth": 1
+      },
+      {
+        "label": "Nature (Awe)",
+        "data": [
+          85,
+          90,
+          30
+        ],
+        "borderColor": "#10b981",
+        "backgroundColor": "rgba(16, 185, 129, 0.7)",
+        "borderWidth": 1
+      }
+    ],
+    "yBeginAtZero": true,
+    "yMin": 0,
+    "yMax": 100,
+    "yAxisTitle": "Self-Reported Score (0-100)",
+    "insights": [
+      {
+        "icon": "🏙️",
+        "title": "Urban Egoism",
+        "text": "In regular urban settings, individuals tend to focus significantly more on their own needs and internal thoughts.",
+        "tone": "orange"
+      },
+      {
+        "icon": "🌲",
+        "title": "Nature's Awe",
+        "text": "Exposure to grand natural elements dramatically boosts a person's desire to cooperate and feel connected to the community.",
+        "tone": "emerald"
+      },
+      {
+        "icon": "🤝",
+        "title": "The Behavioral Shift",
+        "text": "Notice the sharp decrease in selfish focus and the concurrent rise in prosocial behaviors when subjects experience awe.",
+        "tone": "slate"
+      }
+    ]
+  },
+  "quiz": {
+    "title": "Knowledge Check",
+    "description": "Test your comprehension of the B1/B2 vocabulary and the reading passage.",
+    "completeTitle": "Quiz Complete!",
+    "retakeButtonLabel": "Retake Quiz",
+    "resultPrefix": "You scored",
+    "resultSuffix": "out of",
+    "scoreLabel": "Score",
+    "correctLabel": "Correct!",
+    "incorrectLabel": "Incorrect",
+    "nextButtonLabel": "Next Question",
+    "viewResultsButtonLabel": "View Results",
+    "questions": [
+      {
+        "q": "According to the Kaplans' theory, while urban environments drain our mental energy, spending time in an ________ forest can help to ________ our attention.",
+        "options": [
+          {
+            "text": "ordinary / restore",
+            "correct": true,
+            "rationale": {
+              "en": "The passage states that an 'ordinary' forest does not force stress on the brain, helping to 'restore' mental energy.",
+              "zh": "文章指出，一个‘普通的’（ordinary）森林不会给大脑施加压力，有助于‘恢复’（restore）精神能量。"
+            }
+          },
+          {
+            "text": "eccentric / distract",
+            "correct": false,
+            "rationale": {
+              "en": "Forests are described as ordinary, not eccentric, and their purpose in the theory is to restore attention, not distract it.",
+              "zh": "森林被描述为普通的，而不是古怪的，它们在理论中的作用是恢复注意力，而不是分散注意力。"
+            }
+          },
+          {
+            "text": "intense / approve",
+            "correct": false,
+            "rationale": {
+              "en": "Intense focus is caused by modern life, not a forest environment.",
+              "zh": "高度集中的注意力是由现代生活引起的，而不是森林环境。"
+            }
+          },
+          {
+            "text": "appealing / indulge",
+            "correct": false,
+            "rationale": {
+              "en": "While nature is appealing, the specific mechanism mentioned in the ART theory is 'restoration', not 'indulgence'.",
+              "zh": "虽然大自然很吸引人，但ART理论中提到的具体机制是‘恢复’，而不是‘沉溺’。"
+            }
+          }
+        ]
+      },
+      {
+        "q": "The intense focus required by modern city life and the constant use of social media can lead people to ________ in habits that create negative feelings such as ________.",
+        "options": [
+          {
+            "text": "restore / dignity",
+            "correct": false,
+            "rationale": {
+              "en": "Social media habits generally do not restore dignity in this context.",
+              "zh": "在本文语境中，社交媒体习惯通常不能恢复尊严。"
+            }
+          },
+          {
+            "text": "cooperate / awe",
+            "correct": false,
+            "rationale": {
+              "en": "Awe is a positive emotion connected to nature, not a negative feeling from social media.",
+              "zh": "敬畏是与大自然相关的积极情绪，而不是来自社交媒体的消极情绪。"
+            }
+          },
+          {
+            "text": "indulge / jealousy",
+            "correct": true,
+            "rationale": {
+              "en": "The text states that people often 'indulge' in social media, leading to negative emotions like 'jealousy' through comparison.",
+              "zh": "文本指出，人们经常‘沉溺’（indulge）于社交媒体，通过比较导致‘嫉妒’（jealousy）等负面情绪。"
+            }
+          },
+          {
+            "text": "distract / egoist",
+            "correct": false,
+            "rationale": {
+              "en": "While social media distracts, 'egoist' is a noun for a person, not a negative feeling.",
+              "zh": "虽然社交媒体会分散注意力，但‘egoist’（自我主义者）指代的是人，而不是一种负面情绪。"
+            }
+          }
+        ]
+      },
+      {
+        "q": "True or False: Medical professionals generally approve of the idea that outdoor activities are a valid method for improving psychological well-being.",
+        "options": [
+          {
+            "text": "True",
+            "correct": true,
+            "rationale": {
+              "en": "The text explicitly mentions: 'Today, medical professionals broadly approve of spending time outdoors as a standard way to improve mental health.'",
+              "zh": "文本明确提到：‘今天，医疗专业人员广泛认可（approve）将户外活动作为改善心理健康的标准方法。’"
+            }
+          },
+          {
+            "text": "False",
+            "correct": false,
+            "rationale": {
+              "en": "The statement accurately reflects the passage.",
+              "zh": "该陈述准确反映了文章内容。"
+            }
+          }
+        ]
+      },
+      {
+        "q": "True or False: When people experience the 'vastness' of nature, they are more likely to act like an egoist and focus exclusively on their own personal problems.",
+        "options": [
+          {
+            "text": "True",
+            "correct": false,
+            "rationale": {
+              "en": "The passage says the exact opposite: people become less selfish and less like an egoist.",
+              "zh": "文章说的恰恰相反：人们变得不那么自私，也不太像自我主义者。"
+            }
+          },
+          {
+            "text": "False",
+            "correct": true,
+            "rationale": {
+              "en": "The text states: 'When someone feels small next to the vastness of nature, they are less likely to act like an egoist.'",
+              "zh": "文本指出：‘当一个人在大自然的广阔（vastness）面前感到渺小时，他们不太可能表现得像个自我主义者（egoist）。’"
+            }
+          }
+        ]
+      },
+      {
+        "q": "What does the University of California, Berkeley research suggest about the peculiar effect of nature on human behavior?",
+        "options": [
+          {
+            "text": "It makes people slightly more distracted by the environment around them.",
+            "correct": false,
+            "rationale": {
+              "en": "The research focuses on social behavior and awe, not just simple distraction.",
+              "zh": "该研究侧重于社会行为和敬畏，而不仅仅是简单的分心。"
+            }
+          },
+          {
+            "text": "It creates an intense feeling of jealousy towards those who live in rural areas.",
+            "correct": false,
+            "rationale": {
+              "en": "Jealousy is associated with social media in the text, not nature.",
+              "zh": "在文本中，嫉妒与社交媒体有关，而不是大自然。"
+            }
+          },
+          {
+            "text": "It reduces selfish behaviors and creates a fervent desire to cooperate with others.",
+            "correct": true,
+            "rationale": {
+              "en": "The passage concludes that exposure to natural beauty creates a 'fervent desire to help strangers and cooperate with their community.'",
+              "zh": "文章的结论是，接触自然美景会产生一种‘强烈的（fervent）帮助陌生人和与社区合作（cooperate）的愿望。’"
+            }
+          },
+          {
+            "text": "It helps people maintain their dignity by avoiding social interactions entirely.",
+            "correct": false,
+            "rationale": {
+              "en": "Nature actually encourages more social interaction and connection, not less.",
+              "zh": "大自然实际上鼓励了更多的社会互动和联系，而不是更少。"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

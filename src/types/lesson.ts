@@ -6,6 +6,7 @@ export interface LessonMeta {
   slug: string;
   category: string;
   summary: string;
+  difficulty: LessonDifficulty;
 }
 
 export interface LessonUI {
@@ -96,6 +97,8 @@ export interface LessonData {
   quiz: LessonQuiz;
 }
 
+export type LessonDifficulty = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
+
 export interface LessonListItem {
   date: string;
   path: string;
@@ -105,6 +108,7 @@ export interface LessonListItem {
   published: boolean;
   featured: boolean;
   tag: string;
+  difficulty: LessonDifficulty;
 }
 
 export interface LessonsList {
