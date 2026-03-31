@@ -1,6 +1,17 @@
 {
   "lessons": [
     {
+      "date": "2026-03-31",
+      "path": "pages/2026-03-31.html",
+      "title": "Rethinking Animal Play",
+      "category": "Science & Nature",
+      "summary": "探索环境丰富化如何通过“玩具喂食器”激发圈养动物的自然本能，改善它们的心理健康与社会行为。",
+      "published": true,
+      "featured": true,
+      "tag": "Science",
+      "difficulty": "C1"
+    },
+    {
       "date": "2026-03-30",
       "path": "pages/2026-03-30.html",
       "title": "The Psychology of Awe",

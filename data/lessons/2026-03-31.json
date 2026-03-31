@@ -1,0 +1,315 @@
+{
+  "meta": {
+    "date": "2026-03-31",
+    "slug": "2026-03-31",
+    "title": "Rethinking Animal Play",
+    "subtitle": "The Science of Zoo Enrichment",
+    "pageTitle": "Rethinking Animal Play - Interactive Learning",
+    "difficulty": "C1"
+  },
+  "ui": {
+    "desktopArticleTabLabel": "Reading & Vocab",
+    "desktopDataTabLabel": "Enrichment Data",
+    "desktopQuizTabLabel": "Knowledge Check",
+    "mobileArticleTabLabel": "Reading",
+    "mobileDataTabLabel": "Data",
+    "mobileQuizTabLabel": "Quiz",
+    "articleHintHtml": "Read the article below to explore the science of zoo enrichment. <br><strong>Interaction:</strong> Tap the <span class=\"text-emerald-700 font-bold border-b-2 border-emerald-300 px-1 rounded bg-white\">highlighted words</span> to view definitions and listen to pronunciation.",
+    "vocabPlaceholderText": "Select a highlighted word to view its analysis.",
+    "translationLabel": "Chinese Translation",
+    "listenTitle": "Listen to pronunciation"
+  },
+  "speech": {
+    "enabled": true,
+    "lang": "en-US",
+    "rate": 0.9,
+    "unsupportedMessage": "Sorry, your browser doesn't support text to speech."
+  },
+  "article": {
+    "title": "Rethinking Animal Play: The Science of Zoo Enrichment",
+    "paragraphs": [
+      {
+        "en": "Keeping wild animals in <span class=\"vocab-word\" data-word=\"captivity\">captivity</span> has always been a complex scientific issue. While modern zoos aim to protect species that human activities <span class=\"vocab-word\" data-word=\"endanger\">endanger</span> in the wild, providing a healthy mental state for these animals is highly challenging. In the past, people naturally believed that putting animals in <span class=\"vocab-word\" data-word=\"lavish\">lavish</span> enclosures with plenty of free food would <span class=\"vocab-word\" data-word=\"ease\">ease</span> their lives and make them happy. However, animal psychologists now <span class=\"vocab-word\" data-word=\"confirm\">confirm</span> that this idea can easily <span class=\"vocab-word\" data-word=\"misguide\">misguide</span> the public. A completely effortless life actually harms an animal’s mental well-being, leading to severe boredom and stress.",
+        "zh": "将野生动物圈养(captivity)一直是一个复杂的科学问题。虽然现代动物园旨在保护在野外受到人类活动濒危(endanger)的物种，但为这些动物提供健康的心理状态却极具挑战性。过去，人们自然而然地认为，把动物放在拥有充足免费食物的奢华(lavish)围栏里，会减轻(ease)它们的生活压力并让它们快乐。然而，动物心理学家现在证实(confirm)，这种想法很容易误导(misguide)公众。完全不费吹灰之力的生活实际上会损害动物的心理健康，导致严重的无聊和压力。"
+      },
+      {
+        "en": "To <span class=\"vocab-word\" data-word=\"alleviate\">alleviate</span> this stress, scientists introduced a concept called \"environmental enrichment.\" The primary goal is to <span class=\"vocab-word\" data-word=\"motivate\">motivate</span> animals to use their natural survival instincts, just as they would in the forest. Surprisingly, the most <span class=\"vocab-word\" data-word=\"effective\">effective</span> enrichment tools are not expensive technological devices. Zoo keepers often use clean, safe materials that might otherwise go to a local <span class=\"vocab-word\" data-word=\"landfill\">landfill</span>, such as cardboard boxes, old clothes, or plastic pipes. Instead of treating these items as useless <span class=\"vocab-word\" data-word=\"trash\">trash</span>, caretakers creatively <span class=\"vocab-word\" data-word=\"craft\">craft</span> them into complex \"<span class=\\\"vocab-word\\\" data-word=\\\"puzzle feeders\\\">puzzle feeders</span>\".",
+        "zh": "为了缓解(alleviate)这种压力，科学家引入了一个叫做“环境丰富化”的概念。主要目标是激发(motivate)动物使用它们自然的生存本能，就像它们在森林里一样。令人惊讶的是，最有效(effective)的丰富化工具并不是昂贵的技术设备。动物园饲养员经常使用可能原本会被送往当地垃圾填埋场(landfill)的干净、安全的材料，比如纸箱、旧衣服或塑料管。看护者并没有将这些物品视为无用的垃圾(trash)，而是创造性地将它们制作(craft)成复杂的“玩具喂食器”。"
+      },
+      {
+        "en": "These puzzles require animals to work for their meals. For example, monkeys might be given a wooden box where they must use sticks to <span class=\"vocab-word\" data-word=\"probe\">probe</span> hidden holes to find sweet treats. This mental workout keeps their brains active. Furthermore, social learning plays a huge role. When one clever individual figures out how to open a puzzle, its <span class=\"vocab-word\" data-word=\"peers\">peers</span> will watch closely and copy the behavior. This social interaction not only passes on knowledge but also strengthens group <span class=\"vocab-word\" data-word=\"loyalty\">loyalty</span> and emotional bonds, perfectly mirroring how wild groups operate.",
+        "zh": "这些谜题要求动物为它们的食物付出努力。例如，猴子可能会得到一个木箱，它们必须用棍子去探测(probe)隐藏的洞才能找到甜食。这种脑力锻炼使它们的大脑保持活跃。此外，社会学习也发挥着巨大作用。当一个聪明的个体弄清楚如何打开谜题时，它的同伴(peers)会密切注视并模仿这种行为。这种社会互动不仅传递了知识，而且加强了群体忠诚度(loyalty)和情感纽带，完美地反映了野生群体的运作方式。"
+      },
+      {
+        "en": "Ultimately, allowing animals to take <span class=\"vocab-word\" data-word=\"charge\">charge</span> of their own daily activities makes them significantly healthier. It proves a counter-intuitive philosophical point: a perfect, stress-free life without challenges is not always a good life. By introducing small, manageable difficulties, scientists help captive animals maintain their wild and brilliant minds.",
+        "zh": "最终，允许动物掌控(charge)自己的日常活动使它们变得更加健康。它证明了一个反直觉的哲学观点：没有挑战的完美、无压力的生活并不总是好生活。通过引入小的、可控的困难，科学家帮助被圈养的动物保持它们狂野而聪明的大脑。"
+      }
+    ]
+  },
+  "vocab": {
+    "captivity": {
+      "pos": "n.",
+      "def": "The condition of being imprisoned or confined.",
+      "trans": "圈养，囚禁",
+      "speakText": "captivity"
+    },
+    "endanger": {
+      "pos": "v.",
+      "def": "Put (someone or something) at risk of danger.",
+      "trans": "危及，使濒危",
+      "speakText": "endanger"
+    },
+    "lavish": {
+      "pos": "adj.",
+      "def": "Sumptuously rich, elaborate, or luxurious.",
+      "trans": "奢华的，极其丰富的",
+      "speakText": "lavish"
+    },
+    "ease": {
+      "pos": "v.",
+      "def": "Make (something unpleasant or intense) less serious or severe.",
+      "trans": "减轻，缓解",
+      "speakText": "ease"
+    },
+    "confirm": {
+      "pos": "v.",
+      "def": "Establish the truth or correctness of.",
+      "trans": "确认，证实",
+      "speakText": "confirm"
+    },
+    "misguide": {
+      "pos": "v.",
+      "def": "Mislead.",
+      "trans": "误导",
+      "speakText": "misguide"
+    },
+    "alleviate": {
+      "pos": "v.",
+      "def": "Make (suffering, deficiency, or a problem) less severe.",
+      "trans": "缓解，减轻",
+      "speakText": "alleviate"
+    },
+    "motivate": {
+      "pos": "v.",
+      "def": "Provide (someone) with a motive for doing something.",
+      "trans": "激发，促使",
+      "speakText": "motivate"
+    },
+    "effective": {
+      "pos": "adj.",
+      "def": "Successful in producing a desired or intended result.",
+      "trans": "有效的",
+      "speakText": "effective"
+    },
+    "landfill": {
+      "pos": "n.",
+      "def": "A place to dispose of refuse and other waste material.",
+      "trans": "垃圾填埋场",
+      "speakText": "landfill"
+    },
+    "trash": {
+      "pos": "n.",
+      "def": "Discarded matter; refuse.",
+      "trans": "垃圾，废物",
+      "speakText": "trash"
+    },
+    "craft": {
+      "pos": "v.",
+      "def": "Exercise skill in making (something).",
+      "trans": "精心制作",
+      "speakText": "craft"
+    },
+    "probe": {
+      "pos": "v.",
+      "def": "Physically explore or examine (something) with the hands or an instrument.",
+      "trans": "探查，探测",
+      "speakText": "probe"
+    },
+    "peers": {
+      "pos": "n.",
+      "def": "A person of the same age, status, or ability as another specified person.",
+      "trans": "同辈，同伴",
+      "speakText": "peers"
+    },
+    "loyalty": {
+      "pos": "n.",
+      "def": "A strong feeling of support or allegiance.",
+      "trans": "忠诚度",
+      "speakText": "loyalty"
+    },
+    "charge": {
+      "pos": "n.",
+      "def": "Responsibility for the care or control of someone or something.",
+      "trans": "负责，掌控 (如: take charge of)",
+      "speakText": "charge"
+    },
+    "puzzle feeders": {
+      "pos": "n.",
+      "def": "Devices that require animals to solve a problem or perform a task to obtain food, used for environmental enrichment.",
+      "trans": "玩具喂食器，益智喂食器",
+      "speakText": "puzzle feeders"
+    }
+  },
+  "chart": {
+    "type": "bar",
+    "title": "Impact of Enrichment on Captive Animals",
+    "description": "Comparison of animal well-being indicators between standard lavish enclosures (free food) and enriched environments (puzzle feeders).",
+    "labels": [
+      "Boredom & Stress",
+      "Brain Activity",
+      "Social Interaction"
+    ],
+    "datasets": [
+      {
+        "label": "Lavish Enclosure (Free Food)",
+        "data": [
+          85,
+          30,
+          40
+        ],
+        "borderColor": "#f43f5e",
+        "backgroundColor": "rgba(244, 63, 94, 0.7)"
+      },
+      {
+        "label": "Enriched Environment (Puzzles)",
+        "data": [
+          20,
+          85,
+          90
+        ],
+        "borderColor": "#10b981",
+        "backgroundColor": "rgba(16, 185, 129, 0.7)"
+      }
+    ],
+    "yBeginAtZero": true,
+    "yMin": 0,
+    "yMax": 100,
+    "yAxisTitle": "Observed Frequency Score (0-100)",
+    "insights": [
+      {
+        "icon": "🧠",
+        "title": "Mental Stimulation",
+        "text": "Puzzle feeders significantly boost brain activity by forcing animals to use their natural instincts."
+      },
+      {
+        "icon": "📉",
+        "title": "Stress Reduction",
+        "text": "An effortless life leads to high stress, whereas manageable challenges dramatically reduce boredom."
+      }
+    ]
+  },
+  "quiz": {
+    "title": "Knowledge Check",
+    "description": "Test your comprehension of the reading passage.",
+    "completeTitle": "Quiz Complete!",
+    "retakeButtonLabel": "Retake Quiz",
+    "resultPrefix": "You scored",
+    "resultSuffix": "out of",
+    "scoreLabel": "Score",
+    "correctLabel": "Correct!",
+    "incorrectLabel": "Incorrect",
+    "nextButtonLabel": "Next Question",
+    "viewResultsButtonLabel": "View Results",
+    "questions": [
+      {
+        "id": "q-1",
+        "type": "tfng",
+        "mode": "TFNG",
+        "prompt": "True / False / Not Given",
+        "statement": "Providing captive animals with an effortless life in lavish enclosures is a scientifically proven way to improve their mental health.",
+        "answer": "FALSE",
+        "rationale": {
+          "en": "Paragraph A states: 'A completely effortless life actually harms an animal’s mental well-being...' The statement contradicts the text.",
+          "zh": "【反义词陷阱】原文 Paragraph A 明确指出“完全不费吹灰之力的生活实际上会损害 (harms) 动物的心理健康”，而题目中使用了 improve (改善)，意思完全相反。"
+        },
+        "evidenceRefs": [
+          "Paragraph A"
+        ]
+      },
+      {
+        "id": "q-2",
+        "type": "tfng",
+        "mode": "TFNG",
+        "prompt": "True / False / Not Given",
+        "statement": "Monkeys are generally faster at solving puzzle feeders than other social animals in zoos.",
+        "answer": "NOT_GIVEN",
+        "rationale": {
+          "en": "Paragraph C mentions monkeys solving puzzle feeders and social animals copying behavior, but it never compares the speed between monkeys and other animals.",
+          "zh": "【无中生有】原文 Paragraph C 提到了猴子 (monkeys) 和解谜 (solving puzzle feeders)，但绝对没有比较“猴子比其他动物更快 (faster)”。"
+        },
+        "evidenceRefs": [
+          "Paragraph C"
+        ]
+      },
+      {
+        "id": "q-3",
+        "type": "multiple_choice",
+        "selectionMode": "single",
+        "prompt": "According to Paragraph A, what is the modern scientific view on giving animals 'free food'?",
+        "options": [
+          {
+            "id": "A",
+            "text": "It effectively eases the daily lives of animals, making them behave naturally."
+          },
+          {
+            "id": "B",
+            "text": "It misguides animals into forgetting how to interact with their peers."
+          },
+          {
+            "id": "C",
+            "text": "It is less beneficial for an animal's psychological health than previously thought."
+          },
+          {
+            "id": "D",
+            "text": "It is the primary reason why certain wild species become endangered."
+          }
+        ],
+        "correctOptionIds": [
+          "C"
+        ],
+        "rationale": {
+          "en": "Paragraph A explains that scientists confirm the idea of free food easing lives misguides the public, and it actually harms mental well-being. 'Less beneficial' matches 'harms'.",
+          "zh": "【同义替换】正确项C 'less beneficial' 完美对应了原文的 'harms' 和打破过去的错误认知。干扰项A包含原词 'ease'，干扰项B包含原词 'misguide'，但均属于偷换概念。"
+        },
+        "evidenceRefs": [
+          "Paragraph A"
+        ]
+      },
+      {
+        "id": "q-4",
+        "type": "completion",
+        "subtype": "summary",
+        "prompt": "Summary Completion",
+        "instruction": "Complete the summary below. Choose ONE WORD ONLY from the passage for each answer.",
+        "contentTemplate": "Social Learning in Zoos\n\nPuzzle feeders do more than just feed animals; they encourage social behavior. When an animal successfully solves a puzzle, other individuals, known as their {{blank1}}, observe and imitate this success. Researchers note that this shared activity is highly beneficial, as it builds deeper emotional connections and increases group {{blank2}} within the animal community.",
+        "blanks": [
+          {
+            "id": "blank1",
+            "acceptedAnswers": [
+              "peers"
+            ],
+            "wordLimit": 1,
+            "caseSensitive": false,
+            "posHint": "noun"
+          },
+          {
+            "id": "blank2",
+            "acceptedAnswers": [
+              "loyalty"
+            ],
+            "wordLimit": 1,
+            "caseSensitive": false,
+            "posHint": "noun"
+          }
+        ],
+        "rationale": {
+          "en": "For blank 1, 'other individuals' matches 'its peers' in Paragraph C. For blank 2, 'increases group' matches 'strengthens group loyalty' in Paragraph C.",
+          "zh": "【语法与替换解析】第一空：题目 'other individuals, known as their...' 对应原文 'its peers'（它的同伴）。第二空：题目 'increases group ______' 对应原文 'strengthens group loyalty'，strengthen 等于 increase，所以填 loyalty。"
+        },
+        "evidenceRefs": [
+          "Paragraph C"
+        ]
+      }
+    ]
+  }
+}

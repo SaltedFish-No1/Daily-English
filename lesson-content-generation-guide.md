@@ -214,3 +214,26 @@
   "correctOptionIds": ["C"]
 }
 ```
+
+---
+
+## 5. 课程列表更新 (lessons.json)
+
+当完成一篇新课程的 JSON 文件（例如 `data/lessons/2026-03-31.json`）后，**必须同步更新根目录下的索引文件 `data/lessons.json`**。否则新课程将不会显示在首页列表中。
+
+在 `lessons.json` 的 `lessons` 数组中添加一条新记录，字段需与课程 JSON 的 `meta` 对应：
+
+```json
+{
+  "date": "2026-03-31",
+  "path": "pages/2026-03-31.html",
+  "title": "新文章的标题",
+  "category": "文章所属分类 (如: Science & Nature)",
+  "summary": "在首页列表展示的简短中文摘要",
+  "published": true,
+  "featured": true,
+  "tag": "文章标签",
+  "difficulty": "C1"
+}
+```
+*注：新增记录通常放置在数组的最前面，以保证最新的文章显示在首页最上方。`difficulty` 字段用于在首页展示 CEFR 分级标签。*
