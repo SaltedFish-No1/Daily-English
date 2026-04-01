@@ -1,0 +1,404 @@
+{
+  "meta": {
+    "date": "2026-04-01",
+    "slug": "2026-04-01",
+    "title": "The Brainless Urban Planner",
+    "subtitle": "Biology & Technology Module",
+    "pageTitle": "The Brainless Urban Planner - Interactive Learning",
+    "difficulty": "C1"
+  },
+  "ui": {
+    "desktopArticleTabLabel": "Reading & Vocab",
+    "desktopDataTabLabel": "Efficiency Data",
+    "desktopQuizTabLabel": "Knowledge Check",
+    "mobileArticleTabLabel": "Reading",
+    "mobileDataTabLabel": "Data",
+    "mobileQuizTabLabel": "Quiz",
+    "articleHintHtml": "Read the article below to explore how a brainless organism solves complex problems. <br><strong>Interaction:</strong> Tap the <span class=\"text-emerald-700 font-bold border-b-2 border-emerald-300 px-1 rounded bg-white\">highlighted words</span> to view definitions and listen to pronunciation.",
+    "vocabPlaceholderText": "Select a highlighted word to view its analysis.",
+    "translationLabel": "Chinese Translation",
+    "listenTitle": "Listen to pronunciation"
+  },
+  "speech": {
+    "enabled": true,
+    "lang": "en-US",
+    "rate": 0.9,
+    "unsupportedMessage": "Sorry, your browser doesn't support text to speech."
+  },
+  "article": {
+    "title": "The Brainless Urban Planner: What Slime Molds Teach Us",
+    "paragraphs": [
+      {
+        "en": "When we think of intelligence, we usually picture a complex brain. Therefore, looking at a yellow, jelly-like blob moving slowly across a forest floor creates the <span class=\"vocab-word\" data-word=\"illusion\">illusion</span> that it is a simple, mindless <span class=\"vocab-word\" data-word=\"organism\">organism</span>. This creature is the <span class=\"vocab-word\" data-word=\"slime mold\">slime mold</span>. Despite its appearance, it has a complex life cycle, including a <span class=\"vocab-word\" data-word=\"sexual\">sexual</span> reproduction phase with <span class=\"vocab-word\" data-word=\"multiple\">multiple</span> mating types. In the wild, it lives in a harsh environment. To survive, it must engage in <span class=\"vocab-word\" data-word=\"fierce\">fierce</span> competition with other microorganisms to find and <span class=\"vocab-word\" data-word=\"consume\">consume</span> <span class=\"vocab-word\" data-word=\"decaying\">decaying</span> leaves and bacteria.",
+        "zh": "当我们想到智能时，通常会想象一个复杂的大脑。因此，看着一团黄色的胶状物在森林地面上缓慢移动，会产生一种错觉(illusion)，认为它是一种简单的、没有头脑的生物(organism)。这种生物就是黏菌(slime mold)。尽管它的外表如此，但它有一个复杂的生命周期，包括一个有多种(multiple)交配类型的有性(sexual)繁殖阶段。在野外，它生活在恶劣的环境中。为了生存，它必须与其他微生物进行激烈(fierce)的竞争，以寻找并消耗(consume)腐烂的(decaying)树叶和细菌。"
+      },
+      {
+        "en": "Scientists have long been fascinated by the <span class=\"vocab-word\" data-word=\"novelty\">novelty</span> of the slime mold's behavior, particularly the <span class=\"vocab-word\" data-word=\"dominant\">dominant</span> species used in laboratories, Physarum polycephalum. Researchers <span class=\"vocab-word\" data-word=\"treasure\">treasure</span> this organism because, despite having no central nervous system, it displays remarkable problem-solving skills. When placed in an environment of resource <span class=\"vocab-word\" data-word=\"poverty\">poverty</span>, where food is <span class=\"vocab-word\" data-word=\"scarce\">scarce</span>, the slime mold becomes an expert explorer. If scientists place it in a maze with food (usually oat flakes) at the exits, the mold will quickly spread everywhere. However, once it finds the food, it will completely <span class=\"vocab-word\" data-word=\"disregard\">disregard</span> all the dead ends and pull its body back to form the single shortest, most efficient route between the food sources.",
+        "zh": "科学家长期以来一直对黏菌行为的新奇性(novelty)着迷，特别是在实验室中使用的占主导地位的(dominant)物种——多头绒泡菌。研究人员非常珍视(treasure)这种生物，因为尽管它没有中枢神经系统，但它展现出了卓越的解决问题的能力。当把它放置在一个食物匮乏(scarce)的贫困(poverty)环境中时，黏菌会成为一个探险专家。如果科学家把它放在一个出口处有食物（通常是燕麦片）的迷宫里，黏菌会迅速蔓延到各个角落。然而，一旦它找到食物，它就会完全无视(disregard)所有的死胡同，把身体缩回，在食物源之间形成一条单一的最短、最有效的路线。"
+      },
+      {
+        "en": "The most famous experiment demonstrating this biological magic took place in Japan. Researchers placed oat flakes on a map to represent the major cities around Tokyo, and put the slime mold in the center. Within a few days, the organism grew a network of tubes connecting the food. Astoundingly, this brainless blob managed to accurately <span class=\"vocab-word\" data-word=\"emulate\">emulate</span> the layout of the actual Tokyo railway system—a network that took human engineers decades to design. Unlike human societies, which are divided into various <span class=\"vocab-word\" data-word=\"ethnic\">ethnic</span> groups and require complex political negotiations to build public projects, the slime mold naturally and peacefully calculates the most mathematically perfect routes.",
+        "zh": "证明这种生物魔力的最著名的实验发生在日本。研究人员将燕麦片放在地图上代表东京周边主要城市的位置，并将黏菌放在中心。几天之内，该生物生长出了连接食物的管状网络。令人震惊的是，这团没有头脑的胶状物竟然准确地模仿(emulate)了实际东京铁路系统的布局——这是一个人类工程师花了数十年才设计出来的网络。与分为各种种族(ethnic)群体、需要复杂的政治谈判来建设公共项目的人类社会不同，黏菌自然、和平地计算出数学上最完美的路线。"
+      },
+      {
+        "en": "The <span class=\"vocab-word\" data-word=\"implication\">implication</span> of this research is massive. While a single-celled organism obviously cannot participate in human <span class=\"vocab-word\" data-word=\"athletics\">athletics</span> or build actual skyscrapers, its biological <span class=\"vocab-word\" data-word=\"algorithm\">algorithm</span> can <span class=\"vocab-word\" data-word=\"foster\">foster</span> innovative ideas in computer science and urban planning. Today, engineers are studying how to use the slime mold's logic to design smarter electrical grids, optimize traffic systems to <span class=\"vocab-word\" data-word=\"contain\">contain</span> traffic jams, and even plan underground <span class=\"vocab-word\" data-word=\"sewage\">sewage</span> networks. By observing nature, we might find the most efficient ways to build the cities of our future.",
+        "zh": "这项研究的影响(implication)是巨大的。虽然单细胞生物显然不能参加人类的体育运动(athletics)或建造真正的摩天大楼，但它的生物算法(algorithm)可以促进(foster)计算机科学和城市规划领域的创新思想。如今，工程师们正在研究如何利用黏菌的逻辑来设计更智能的电网、优化交通系统以遏制(contain)交通拥堵，甚至规划地下污水(sewage)网络。通过观察自然，我们或许能找到建设未来城市的最有效方法。"
+      }
+    ]
+  },
+  "vocab": {
+    "illusion": {
+      "pos": "n.",
+      "def": "A false idea or belief; a deceptive appearance or impression.",
+      "trans": "错觉，幻觉",
+      "speakText": "illusion"
+    },
+    "slime mold": {
+      "pos": "n.",
+      "def": "A simple organism that consists of an acellular mass of creeping jellylike protoplasm.",
+      "trans": "黏菌",
+      "speakText": "slime mold"
+    },
+    "organism": {
+      "pos": "n.",
+      "def": "An individual animal, plant, or single-celled life form.",
+      "trans": "生物，有机体",
+      "speakText": "organism"
+    },
+    "sexual": {
+      "pos": "adj.",
+      "def": "Relating to the instincts, physiological processes, and activities connected with physical attraction or intimate physical contact between individuals.",
+      "trans": "有性的，性别的",
+      "speakText": "sexual"
+    },
+    "multiple": {
+      "pos": "adj.",
+      "def": "Having or involving several parts, elements, or members.",
+      "trans": "多种的，多个的",
+      "speakText": "multiple"
+    },
+    "fierce": {
+      "pos": "adj.",
+      "def": "Having or displaying an intense or ferocious aggressiveness.",
+      "trans": "激烈的，凶猛的",
+      "speakText": "fierce"
+    },
+    "consume": {
+      "pos": "v.",
+      "def": "To eat, drink, or ingest (food or drink).",
+      "trans": "消耗，吃掉",
+      "speakText": "consume"
+    },
+    "decaying": {
+      "pos": "adj.",
+      "def": "Rotting or decomposing through the action of bacteria and fungi.",
+      "trans": "腐烂的",
+      "speakText": "decaying"
+    },
+    "novelty": {
+      "pos": "n.",
+      "def": "The quality of being new, original, or unusual.",
+      "trans": "新奇事物，新颖性",
+      "speakText": "novelty"
+    },
+    "dominant": {
+      "pos": "adj.",
+      "def": "Most important, powerful, or influential.",
+      "trans": "占主导地位的，支配的",
+      "speakText": "dominant"
+    },
+    "treasure": {
+      "pos": "v.",
+      "def": "Keep carefully (a valuable or valued item); value highly.",
+      "trans": "珍视，珍爱",
+      "speakText": "treasure"
+    },
+    "poverty": {
+      "pos": "n.",
+      "def": "The state of being extremely poor; a lack of something.",
+      "trans": "贫困，匮乏",
+      "speakText": "poverty"
+    },
+    "scarce": {
+      "pos": "adj.",
+      "def": "(especially of food, money, or some other resource) insufficient for the demand.",
+      "trans": "缺乏的，不足的",
+      "speakText": "scarce"
+    },
+    "disregard": {
+      "pos": "v.",
+      "def": "Pay no attention to; ignore.",
+      "trans": "忽视，无视",
+      "speakText": "disregard"
+    },
+    "emulate": {
+      "pos": "v.",
+      "def": "Match or surpass (a person or achievement), typically by imitation.",
+      "trans": "模仿，仿真，赶超",
+      "speakText": "emulate"
+    },
+    "ethnic": {
+      "pos": "adj.",
+      "def": "Relating to a population subgroup with a common national or cultural tradition.",
+      "trans": "种族的，民族的",
+      "speakText": "ethnic"
+    },
+    "implication": {
+      "pos": "n.",
+      "def": "The conclusion that can be drawn from something although it is not explicitly stated; a likely consequence.",
+      "trans": "可能产生的影响，暗指，意义",
+      "speakText": "implication"
+    },
+    "athletics": {
+      "pos": "n.",
+      "def": "Physical sports and games of any kind.",
+      "trans": "体育运动，田径运动",
+      "speakText": "athletics"
+    },
+    "algorithm": {
+      "pos": "n.",
+      "def": "A process or set of rules to be followed in calculations or other problem-solving operations.",
+      "trans": "算法，计算程序",
+      "speakText": "algorithm"
+    },
+    "foster": {
+      "pos": "v.",
+      "def": "Encourage or promote the development of (something, typically something regarded as good).",
+      "trans": "促进，培养，鼓励",
+      "speakText": "foster"
+    },
+    "contain": {
+      "pos": "v.",
+      "def": "Control or restrain (oneself or a feeling); prevent from spreading.",
+      "trans": "遏制，控制，包含",
+      "speakText": "contain"
+    },
+    "sewage": {
+      "pos": "n.",
+      "def": "Waste water and excrement conveyed in sewers.",
+      "trans": "污水，污物",
+      "speakText": "sewage"
+    }
+  },
+  "chart": {
+    "type": "bar",
+    "title": "Efficiency in Network Design: Slime Mold vs. Human Engineers",
+    "description": "A theoretical comparison of network design approaches between biological algorithms (slime mold) and traditional human engineering methods in a controlled laboratory setting.",
+    "labels": [
+      "Time to Optimize",
+      "Route Efficiency",
+      "Resource Cost"
+    ],
+    "datasets": [
+      {
+        "label": "Slime Mold Algorithm",
+        "data": [
+          15,
+          98,
+          5
+        ],
+        "borderColor": "#eab308",
+        "backgroundColor": "rgba(234, 179, 8, 0.7)"
+      },
+      {
+        "label": "Human Engineering (Traditional)",
+        "data": [
+          85,
+          90,
+          95
+        ],
+        "borderColor": "#3b82f6",
+        "backgroundColor": "rgba(59, 130, 246, 0.7)"
+      }
+    ],
+    "yBeginAtZero": true,
+    "yMin": 0,
+    "yMax": 100,
+    "yAxisTitle": "Relative Score (0-100)",
+    "insights": [
+      {
+        "icon": "🦠",
+        "title": "Rapid Optimization",
+        "text": "The slime mold finds the most mathematically perfect route in a fraction of the time, disregarding dead ends instantly."
+      },
+      {
+        "icon": "🏗️",
+        "title": "Resource Heavy",
+        "text": "Human engineering often requires massive resource costs due to political, geographical, and social complexities."
+      }
+    ]
+  },
+  "quiz": {
+    "title": "Knowledge Check",
+    "description": "Test your comprehension of the reading passage.",
+    "completeTitle": "Quiz Complete!",
+    "retakeButtonLabel": "Retake Quiz",
+    "resultPrefix": "You scored",
+    "resultSuffix": "out of",
+    "scoreLabel": "Score",
+    "correctLabel": "Correct!",
+    "incorrectLabel": "Incorrect",
+    "nextButtonLabel": "Next Question",
+    "viewResultsButtonLabel": "View Results",
+    "questions": [
+      {
+        "id": "q-1",
+        "type": "matching_headings",
+        "prompt": "Choose the correct heading for Paragraph B from the list of headings below.",
+        "paragraphs": [
+          {
+            "id": "pB",
+            "label": "Paragraph B",
+            "textRef": "Paragraph B"
+          }
+        ],
+        "headings": [
+          {
+            "id": "i",
+            "text": "The complex reproduction cycle of slime molds",
+            "isDistractor": true
+          },
+          {
+            "id": "ii",
+            "text": "How resource shortages trigger spatial intelligence"
+          },
+          {
+            "id": "iii",
+            "text": "The failure of slime molds to find food in a maze",
+            "isDistractor": true
+          },
+          {
+            "id": "iv",
+            "text": "Why scientists feed oat flakes to brainless organisms",
+            "isDistractor": true
+          }
+        ],
+        "answerMap": {
+          "pB": "ii"
+        },
+        "rationale": {
+          "en": "Paragraph B focuses on how slime molds, when placed in an environment of 'resource poverty', demonstrate remarkable spatial intelligence by finding the shortest route through a maze.",
+          "zh": "【出题者意图】：测试你是否能看到“森林”而非仅仅看到“树木”（主旨提取）。段落 B 的核心在于说明黏菌在“食物匮乏（resource poverty / scarce）”时展现出的“走迷宫找最短路径（spatial intelligence）”的能力。如果选了 iv，就掉进了“原词干扰”陷阱。"
+        },
+        "allowReuse": false,
+        "evidenceRefs": [
+          "Paragraph B"
+        ]
+      },
+      {
+        "id": "q-2",
+        "type": "matching_information",
+        "prompt": "Which paragraph contains the following information?",
+        "items": [
+          {
+            "id": "1",
+            "statement": "A comparison between the biological efficiency of the organism and the complicated nature of human urban development."
+          }
+        ],
+        "targets": [
+          {
+            "id": "A",
+            "label": "Paragraph A"
+          },
+          {
+            "id": "B",
+            "label": "Paragraph B"
+          },
+          {
+            "id": "C",
+            "label": "Paragraph C"
+          },
+          {
+            "id": "D",
+            "label": "Paragraph D"
+          }
+        ],
+        "answerMap": {
+          "1": "C"
+        },
+        "rationale": {
+          "en": "Paragraph C contrasts the slime mold's peaceful mathematical calculation with human societies, which require 'complex political negotiations to build public projects'.",
+          "zh": "【出题者意图】：测试“高强度搜索”与“意义转述”的能力。题干中的 'complicated nature of human urban development' 对应 Paragraph C 中的 'Unlike human societies... require complex political negotiations to build public projects'。"
+        },
+        "allowReuse": true,
+        "evidenceRefs": [
+          "Paragraph C"
+        ]
+      },
+      {
+        "id": "q-3",
+        "type": "tfng",
+        "mode": "TFNG",
+        "prompt": "True / False / Not Given",
+        "statement": "Scientists believe that slime molds will eventually replace human engineers in designing urban transportation systems.",
+        "answer": "NOT_GIVEN",
+        "rationale": {
+          "en": "Paragraph D states that the biological algorithm can 'foster innovative ideas', but it never mentions that slime molds will 'replace' human engineers.",
+          "zh": "【出题者意图】：专治过度推断。原文提到人类可以使用它的逻辑来启发 (foster) 计算机科学和城市规划，但完全没有提到它会“取代 (replace)”人类工程师。只要原文没出现这个相对动作，一律是 Not Given。"
+        },
+        "evidenceRefs": [
+          "Paragraph D"
+        ]
+      },
+      {
+        "id": "q-4",
+        "type": "completion",
+        "subtype": "sentence",
+        "prompt": "Sentence Completion",
+        "instruction": "Choose NO MORE THAN TWO WORDS from the passage for the answer.",
+        "contentTemplate": "In order to efficiently connect food sources in a maze, the slime mold will abandon and {{blank1}} any routes that do not lead to a reward.",
+        "blanks": [
+          {
+            "id": "blank1",
+            "acceptedAnswers": [
+              "disregard"
+            ],
+            "wordLimit": 2,
+            "caseSensitive": false
+          }
+        ],
+        "rationale": {
+          "en": "Paragraph B states: 'it will completely disregard all the dead ends'. 'Routes that do not lead to a reward' is a paraphrase of 'dead ends'.",
+          "zh": "【出题者意图】：测试对语法结构的敏感度及“同义替换”的识别。题干中 'routes that do not lead to a reward' 就是对 'dead ends' 的同义解释，由 and 并列的动词 abandon 提示需要填入 disregard（无视/抛弃）。"
+        },
+        "evidenceRefs": [
+          "Paragraph B"
+        ]
+      },
+      {
+        "id": "q-5",
+        "type": "multiple_choice",
+        "selectionMode": "single",
+        "prompt": "What is the writer's main point in Paragraph D?",
+        "options": [
+          {
+            "id": "A",
+            "text": "Slime molds are capable of engaging in athletic competitions if trained properly."
+          },
+          {
+            "id": "B",
+            "text": "Human cities are currently poorly designed because engineers did not study biology."
+          },
+          {
+            "id": "C",
+            "text": "The problem-solving methods of slime molds can inspire practical solutions for modern human infrastructure."
+          },
+          {
+            "id": "D",
+            "text": "Engineers should use slime molds to physically build underground sewage and electrical systems."
+          }
+        ],
+        "correctOptionIds": [
+          "C"
+        ],
+        "rationale": {
+          "en": "Paragraph D explains how engineers are studying the slime mold's logic to design smarter electrical grids and traffic systems.",
+          "zh": "【出题者意图】：测试深层理解与排除法。选项 C 完美概括了主旨。选项 A 用了原词 athletics，但原文说的是不能参加；选项 D 属于“字面误解”，原文是借鉴算法 (logic)，而不是让黏菌去物理建造 (physically build)。"
+        },
+        "evidenceRefs": [
+          "Paragraph D"
+        ]
+      }
+    ]
+  }
+}

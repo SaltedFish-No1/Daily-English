@@ -1,6 +1,17 @@
 {
   "lessons": [
     {
+      "date": "2026-04-01",
+      "path": "pages/2026-04-01.html",
+      "title": "The Brainless Urban Planner",
+      "category": "Biology & Technology",
+      "summary": "没有大脑的黏菌如何通过其独特的生物算法解决城市规划的复杂空间问题。",
+      "published": true,
+      "featured": true,
+      "tag": "Biology",
+      "difficulty": "C1"
+    },
+    {
       "date": "2026-03-31",
       "path": "pages/2026-03-31.html",
       "title": "Rethinking Animal Play",
