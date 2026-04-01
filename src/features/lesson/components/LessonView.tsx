@@ -69,7 +69,7 @@ export const LessonView: React.FC<LessonViewProps> = ({ data }) => {
       </div>
 
       {/* Main Content */}
-      <main className="mx-auto grid w-full max-w-5xl flex-grow grid-cols-1 gap-8 sm:px-6 sm:py-12 lg:grid-cols-3">
+      <main className="mx-auto grid w-full max-w-5xl flex-grow grid-cols-1 gap-8 sm:px-6 sm:py-12 lg:grid-cols-3 lg:pl-24 xl:pl-6">
         <div className="lg:col-span-2">
           <motion.div
             initial={false}
@@ -130,7 +130,7 @@ export const LessonView: React.FC<LessonViewProps> = ({ data }) => {
       </div>
 
       {/* Bottom Nav */}
-      <nav className="pb-safe fixed inset-x-0 bottom-0 z-40 flex items-center justify-around border-t border-slate-100 bg-white px-6 py-4 sm:hidden">
+      <nav className="pb-safe fixed inset-x-0 bottom-0 z-40 flex items-center justify-around border-t border-slate-100 bg-white px-6 py-4 lg:hidden">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -150,7 +150,7 @@ export const LessonView: React.FC<LessonViewProps> = ({ data }) => {
       </nav>
 
       {/* Desktop Sidebar (Floating Tabs) */}
-      <div className="fixed top-1/2 left-8 z-20 hidden -translate-y-1/2 flex-col gap-4 sm:flex">
+      <div className="fixed top-1/2 left-8 z-20 hidden -translate-y-1/2 flex-col gap-4 lg:flex">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -167,7 +167,7 @@ export const LessonView: React.FC<LessonViewProps> = ({ data }) => {
         ))}
       </div>
 
-      <footer className="border-t border-slate-100 bg-white py-12 pb-24 text-center sm:pb-12">
+      <footer className="border-t border-slate-100 bg-white py-12 pb-24 text-center lg:pb-12">
         <p className="text-xs font-bold tracking-widest text-slate-400 uppercase">
           © 2026 DAILY ENGLISH · DESIGNED FOR LEARNING
         </p>
