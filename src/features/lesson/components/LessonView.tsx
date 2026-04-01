@@ -130,7 +130,7 @@ export const LessonView: React.FC<LessonViewProps> = ({ data }) => {
       </div>
 
       {/* Bottom Nav */}
-      <nav className="pb-safe fixed inset-x-0 bottom-0 z-40 flex items-center justify-around border-t border-slate-100 bg-white px-6 py-4 lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-around border-t border-slate-100 bg-white px-6 pt-4 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] lg:hidden">
         {tabs.map((tab) => (
           <button
             key={tab.id}
