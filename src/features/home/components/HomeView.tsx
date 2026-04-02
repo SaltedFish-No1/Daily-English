@@ -327,7 +327,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
                     </span>
                   </div>
                   <p className="mb-5 line-clamp-2 text-sm leading-relaxed font-medium text-slate-500">
-                    {lesson.summary}
+                    {lesson.teaser}
                   </p>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center text-sm font-bold text-emerald-600 transition-transform group-hover:translate-x-1">

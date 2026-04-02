@@ -104,7 +104,7 @@ export interface LessonListItem {
   path: string;
   title: string;
   category: string;
-  summary: string;
+  teaser: string;
   published: boolean;
   featured: boolean;
   tag: string;
