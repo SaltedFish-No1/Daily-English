@@ -1,0 +1,391 @@
+{
+  "meta": {
+    "date": "2026-04-02",
+    "slug": "2026-04-02",
+    "title": "The Evolutionary Advantage of Lying",
+    "subtitle": "Evolutionary Psychology Module",
+    "pageTitle": "The Evolutionary Advantage of Lying - Interactive Learning",
+    "category": "Psychology & Evolution",
+    "summary": "从“马基雅维利式智能假说”出发，理解欺骗如何推动人类大脑、道德规范与艺术想象力的共同进化。",
+    "difficulty": "C1"
+  },
+  "ui": {
+    "desktopArticleTabLabel": "Reading & Vocab",
+    "desktopDataTabLabel": "Strategy Data",
+    "desktopQuizTabLabel": "Knowledge Check",
+    "mobileArticleTabLabel": "Reading",
+    "mobileDataTabLabel": "Data",
+    "mobileQuizTabLabel": "Quiz",
+    "articleHintHtml": "Read the article below to explore how deception may have shaped human intelligence, morality, and creativity. <br><strong>Interaction:</strong> Tap the <span class=\"text-emerald-700 font-bold border-b-2 border-emerald-300 px-1 rounded bg-white\">highlighted words</span> to view definitions and listen to pronunciation.",
+    "vocabPlaceholderText": "Select a highlighted word to view its analysis.",
+    "translationLabel": "Chinese Translation",
+    "listenTitle": "Listen to pronunciation"
+  },
+  "speech": {
+    "enabled": true,
+    "lang": "en-US",
+    "rate": 0.9,
+    "unsupportedMessage": "Sorry, your browser doesn't support text to speech."
+  },
+  "article": {
+    "title": "The Evolutionary Advantage of Lying",
+    "paragraphs": [
+      {
+        "en": "For a long time, scientists have wondered why the human brain is so <span class=\"vocab-word\" data-word=\"exceptionally\">exceptionally</span> large. According to the \"<span class=\"vocab-word\" data-word=\"Machiavellian\">Machiavellian</span> Intelligence Hypothesis,\" a widely accepted theory in evolutionary biology, our brain size did not merely evolve to invent primitive tools or survive an environmental <span class=\"vocab-word\" data-word=\"menace\">menace</span> like harsh weather. Instead, it evolved to manage complex social relationships. Early human ancestors relied heavily on group <span class=\"vocab-word\" data-word=\"cohesion\">cohesion</span> to survive. Living in large tribes, however, meant individuals had to constantly compete with their own group members for limited food and resources.",
+        "zh": "长期以来，科学家一直在追问：为什么人类的大脑会如此<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">异常地<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">exceptionally</span></span>庞大？根据进化生物学中广为接受的“<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">马基雅维利式<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">Machiavellian</span></span>智能假说”，我们的大脑并不只是为了发明原始工具，或在严酷天气这类环境<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">威胁<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">menace</span></span>下生存而进化出来的。相反，它更主要是为了应对复杂的社会关系。早期人类祖先高度依赖群体<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">凝聚力<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">cohesion</span></span>才能存活。然而，生活在大型部落里也意味着，个体必须持续与同群成员竞争有限的食物与资源。"
+      },
+      {
+        "en": "In this competitive environment, <span class=\"vocab-word\" data-word=\"deception\">deception</span> became an incredibly powerful survival tool. While the idea of lying to one's friends might sound <span class=\"vocab-word\" data-word=\"sinister\">sinister</span>, the ability to trick others was a crucial <span class=\"vocab-word\" data-word=\"cognitive\">cognitive</span> <span class=\"vocab-word\" data-word=\"mutation\">mutation</span>. To process these complex social calculations, the human brain had to mutate and expand over generations. Instead of <span class=\"vocab-word\" data-word=\"resort to\">resorting to</span> physical violence or destructive acts like <span class=\"vocab-word\" data-word=\"arson\">arson</span> to destroy rivals, early humans learned to manipulate their peers. This allowed them to gain resources without directly having to <span class=\"vocab-word\" data-word=\"infringe\">infringe</span> upon the physical safety of the group. A notable outcome of this evolutionary process is that humans became experts at both creating lies and detecting them.",
+        "zh": "在这样的竞争环境里，<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">欺骗<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">deception</span></span>逐渐成为一种极其强大的生存工具。虽然对朋友撒谎听上去多少有些<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">阴险<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">sinister</span></span>，但欺骗他人的能力其实是一种关键的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">认知<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">cognitive</span></span><span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">突变<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">mutation</span></span>。为了处理这些复杂的社会计算，人类大脑不得不在代际演化中不断扩张。早期人类并没有<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">诉诸于<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">resort to</span></span>肢体暴力，或以<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">纵火<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">arson</span></span>这类破坏性手段去消灭对手，而是学会了操纵自己的同伴。这样一来，他们就能在不直接<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">侵犯<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">infringe</span></span>群体人身安全的前提下获取资源。这一进化过程带来的一个显著结果是：人类既擅长制造谎言，也擅长识破谎言。"
+      },
+      {
+        "en": "Of course, if everyone lied constantly, society would collapse. To maintain a steady social structure, human cultures developed strong moral systems. From a young age, parents strive to <span class=\"vocab-word\" data-word=\"inculcate\">inculcate</span> the value of honesty in their children and heavily criticize dishonest behavior. These social rules help individuals control their selfish <span class=\"vocab-word\" data-word=\"urge\">urge</span> to cheat. However, deception did not disappear; it simply became more sophisticated. Today, a person might use a stylish appearance to look naturally trustworthy, or a politician might use convincing words to <span class=\"vocab-word\" data-word=\"enlist\">enlist</span> the support of millions, hiding their true intentions behind a charming smile.",
+        "zh": "当然，如果每个人都不断撒谎，社会很快就会崩溃。为了维持稳定的社会结构，人类文化逐渐发展出强有力的道德体系。从小，父母就努力向孩子<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">灌输<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">inculcate</span></span>诚实的价值，并严厉批评不诚实的行为。这些社会规范帮助个体压制自己自私的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">冲动<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">urge</span></span>，不至于轻易作弊。然而，欺骗并没有消失，它只是变得更加精致、更加隐蔽。今天，一个人可能会借助时髦得体的外表让自己看起来自然可信；政治人物也可能借助极具说服力的话语去<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">争取<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">enlist</span></span>数百万人的支持，并把真实意图隐藏在一个迷人的微笑之后。"
+      },
+      {
+        "en": "This constant, invisible battle between trickery and truth can <span class=\"vocab-word\" data-word=\"bewilder\">bewilder</span> sociologists, yet it has an unexpectedly beautiful side. The exact same brain circuits that allow us to tell a lie also allow us to imagine things that do not exist. Therefore, when we enjoy our <span class=\"vocab-word\" data-word=\"leisure\">leisure</span> time reading a <span class=\"vocab-word\" data-word=\"fiction\">fiction</span> novel or watching a movie, we are actually engaging with a form of harmless, <span class=\"vocab-word\" data-word=\"consensual\">consensual</span> deception. Without the evolutionary need to deceive, human art and storytelling might never have existed.",
+        "zh": "这种诡计与真相之间持续不断、却又难以察觉的较量，确实会让社会学家感到<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">困惑<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">bewilder</span></span>，但它也有一种出人意料的美感。因为正是那些让我们能够说谎的大脑回路，也让我们具备了想象不存在之物的能力。所以，当我们在<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">闲暇<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">leisure</span></span>时光里阅读<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">虚构作品<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">fiction</span></span>或观看电影时，其实正在参与一种无害且<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">双方默许的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">consensual</span></span>欺骗。如果没有进化中对欺骗能力的需求，人类的艺术与叙事传统也许根本不会诞生。"
+      }
+    ]
+  },
+  "vocab": {
+    "exceptionally": {
+      "pos": "adv.",
+      "def": "To an unusual degree; extremely.",
+      "trans": "异常地，格外地",
+      "speakText": "exceptionally"
+    },
+    "Machiavellian": {
+      "pos": "adj.",
+      "def": "Using clever, often manipulative methods to gain power or advantage.",
+      "trans": "马基雅维利主义的，擅长权谋的",
+      "speakText": "Machiavellian"
+    },
+    "menace": {
+      "pos": "n.",
+      "def": "A possible danger or threat.",
+      "trans": "威胁，危险事物",
+      "speakText": "menace"
+    },
+    "cohesion": {
+      "pos": "n.",
+      "def": "The action or state of forming a united whole.",
+      "trans": "凝聚力，团结",
+      "speakText": "cohesion"
+    },
+    "deception": {
+      "pos": "n.",
+      "def": "The act of making someone believe something that is not true.",
+      "trans": "欺骗，蒙骗",
+      "speakText": "deception"
+    },
+    "sinister": {
+      "pos": "adj.",
+      "def": "Giving the impression that something harmful or evil is happening.",
+      "trans": "阴险的，不祥的",
+      "speakText": "sinister"
+    },
+    "cognitive": {
+      "pos": "adj.",
+      "def": "Relating to thinking, understanding, learning, and remembering.",
+      "trans": "认知的",
+      "speakText": "cognitive"
+    },
+    "mutation": {
+      "pos": "n.",
+      "def": "A change in genes or structure that can produce new characteristics.",
+      "trans": "突变，变异",
+      "speakText": "mutation"
+    },
+    "resort to": {
+      "pos": "phr. v.",
+      "def": "To use or adopt a method, especially an extreme one, because other options are unavailable.",
+      "trans": "诉诸于，采取",
+      "speakText": "resort to"
+    },
+    "arson": {
+      "pos": "n.",
+      "def": "The criminal act of deliberately setting fire to property.",
+      "trans": "纵火",
+      "speakText": "arson"
+    },
+    "infringe": {
+      "pos": "v.",
+      "def": "To limit or violate something such as a right, freedom, or rule.",
+      "trans": "侵犯，违反",
+      "speakText": "infringe"
+    },
+    "inculcate": {
+      "pos": "v.",
+      "def": "To teach an idea, attitude, or habit by repeated instruction.",
+      "trans": "反复灌输，谆谆教诲",
+      "speakText": "inculcate"
+    },
+    "urge": {
+      "pos": "n.",
+      "def": "A strong desire or impulse to do something.",
+      "trans": "冲动，强烈欲望",
+      "speakText": "urge"
+    },
+    "enlist": {
+      "pos": "v.",
+      "def": "To obtain help, support, or participation from someone.",
+      "trans": "争取，招募",
+      "speakText": "enlist"
+    },
+    "bewilder": {
+      "pos": "v.",
+      "def": "To confuse someone completely.",
+      "trans": "使困惑，使迷惑",
+      "speakText": "bewilder"
+    },
+    "leisure": {
+      "pos": "n.",
+      "def": "Time when you are not working and can relax or do things you enjoy.",
+      "trans": "闲暇，空闲时间",
+      "speakText": "leisure"
+    },
+    "fiction": {
+      "pos": "n.",
+      "def": "Literature that describes imaginary events and people.",
+      "trans": "虚构作品，小说",
+      "speakText": "fiction"
+    },
+    "consensual": {
+      "pos": "adj.",
+      "def": "Agreed to by all the people involved.",
+      "trans": "双方同意的，两厢情愿的",
+      "speakText": "consensual"
+    }
+  },
+  "chart": {
+    "type": "line",
+    "title": "Two Survival Strategies: Force vs. Deception",
+    "description": "A theoretical comparison inspired by the passage, showing why strategic deception could outperform direct aggression in social groups while still requiring moral rules to keep society stable.",
+    "labels": [
+      "Direct Violence",
+      "Resource Access",
+      "Social Stability",
+      "Creative Potential"
+    ],
+    "datasets": [
+      {
+        "label": "Physical Aggression Strategy",
+        "data": [
+          88,
+          36,
+          18,
+          10
+        ],
+        "borderColor": "#f97316",
+        "backgroundColor": "rgba(249, 115, 22, 0.18)"
+      },
+      {
+        "label": "Strategic Deception Strategy",
+        "data": [
+          24,
+          82,
+          56,
+          84
+        ],
+        "borderColor": "#10b981",
+        "backgroundColor": "rgba(16, 185, 129, 0.18)"
+      }
+    ],
+    "yBeginAtZero": true,
+    "yMin": 0,
+    "yMax": 100,
+    "yAxisTitle": "Relative Influence Score (0-100)",
+    "insights": [
+      {
+        "icon": "🧠",
+        "title": "Social Intelligence Pressure",
+        "text": "The passage suggests that managing alliances, trust, and deception placed stronger pressure on brain growth than simple environmental danger."
+      },
+      {
+        "icon": "⚖️",
+        "title": "Morality as a Counterweight",
+        "text": "Because widespread lying would destroy cooperation, human cultures had to build strong norms that reward honesty and punish cheating."
+      },
+      {
+        "icon": "🎭",
+        "title": "Creativity as a Byproduct",
+        "text": "The same cognitive machinery that supports lying may also support fiction, storytelling, and other imaginative arts."
+      }
+    ]
+  },
+  "quiz": {
+    "title": "Knowledge Check",
+    "description": "Test your comprehension of the reading passage.",
+    "completeTitle": "Quiz Complete!",
+    "retakeButtonLabel": "Retake Quiz",
+    "resultPrefix": "You scored",
+    "resultSuffix": "out of",
+    "scoreLabel": "Score",
+    "correctLabel": "Correct!",
+    "incorrectLabel": "Incorrect",
+    "nextButtonLabel": "Next Question",
+    "viewResultsButtonLabel": "View Results",
+    "questions": [
+      {
+        "id": "q-1",
+        "type": "matching_headings",
+        "prompt": "Choose the correct heading for Paragraph C from the list of headings below.",
+        "paragraphs": [
+          {
+            "id": "pC",
+            "label": "Paragraph C",
+            "textRef": "Paragraph C"
+          }
+        ],
+        "headings": [
+          {
+            "id": "i",
+            "text": "The biological reasons for larger brain sizes",
+            "isDistractor": true
+          },
+          {
+            "id": "ii",
+            "text": "How societies manage the instinct to lie"
+          },
+          {
+            "id": "iii",
+            "text": "The destructive consequences of physical violence",
+            "isDistractor": true
+          },
+          {
+            "id": "iv",
+            "text": "Why modern politicians always tell the truth",
+            "isDistractor": true
+          }
+        ],
+        "answerMap": {
+          "pC": "ii"
+        },
+        "rationale": {
+          "en": "Paragraph C explains that societies use moral education and social criticism to control dishonest impulses and preserve stability.",
+          "zh": "【出题者意图】：测试你是否能概括段落主旨。段落 C 的核心在于说明社会为了维持稳定，如何通过道德教育与社会规范来管理撒谎本能，并让这种本能以更隐蔽、更高级的方式存在。"
+        },
+        "allowReuse": false,
+        "evidenceRefs": [
+          "Paragraph C"
+        ]
+      },
+      {
+        "id": "q-2",
+        "type": "completion",
+        "subtype": "sentence",
+        "prompt": "Sentence Completion",
+        "instruction": "Choose NO MORE THAN TWO WORDS from the passage for the answer.",
+        "contentTemplate": "According to the Machiavellian Intelligence Hypothesis, early humans developed larger brains to handle complicated {{blank1}} rather than just environmental threats.",
+        "blanks": [
+          {
+            "id": "blank1",
+            "acceptedAnswers": [
+              "social relationships"
+            ],
+            "wordLimit": 2,
+            "caseSensitive": false
+          }
+        ],
+        "rationale": {
+          "en": "Paragraph A states that the brain evolved to manage 'complex social relationships' rather than only environmental dangers.",
+          "zh": "【出题者意图】：测试语法结构敏感度及同义替换。题干中的 handle 对应原文的 manage，environmental threats 对应 environmental menace，答案直接来自 Paragraph A 的 social relationships。"
+        },
+        "evidenceRefs": [
+          "Paragraph A"
+        ]
+      },
+      {
+        "id": "q-3",
+        "type": "tfng",
+        "mode": "TFNG",
+        "prompt": "True / False / Not Given",
+        "statement": "Modern politicians are generally better at using deception than our early human ancestors.",
+        "answer": "NOT_GIVEN",
+        "rationale": {
+          "en": "The passage mentions both early humans and modern politicians using deception, but it never compares which group is better at it.",
+          "zh": "【出题者意图】：测试对“事实边界”的精准把握。原文提到了现代政客会用语言争取支持，也提到了早期人类会进行欺骗，但没有进行跨时代的能力比较，因此只能选 Not Given。"
+        },
+        "evidenceRefs": [
+          "Paragraph B",
+          "Paragraph C"
+        ]
+      },
+      {
+        "id": "q-4",
+        "type": "matching_information",
+        "prompt": "Which paragraph contains the following information?",
+        "items": [
+          {
+            "id": "1",
+            "statement": "An explanation of how people can use their physical appearance as a deceptive strategy."
+          }
+        ],
+        "targets": [
+          {
+            "id": "A",
+            "label": "Paragraph A"
+          },
+          {
+            "id": "B",
+            "label": "Paragraph B"
+          },
+          {
+            "id": "C",
+            "label": "Paragraph C"
+          },
+          {
+            "id": "D",
+            "label": "Paragraph D"
+          }
+        ],
+        "answerMap": {
+          "1": "C"
+        },
+        "rationale": {
+          "en": "Paragraph C says that a person may use a stylish appearance to seem naturally trustworthy.",
+          "zh": "【出题者意图】：测试高强度搜索与意义转述。题干中的 physical appearance 对应 Paragraph C 中的 stylish appearance，定位非常明确。"
+        },
+        "allowReuse": true,
+        "evidenceRefs": [
+          "Paragraph C"
+        ]
+      },
+      {
+        "id": "q-5",
+        "type": "multiple_choice",
+        "selectionMode": "single",
+        "prompt": "What is the writer's main point regarding human art in Paragraph D?",
+        "options": [
+          {
+            "id": "A",
+            "text": "Art is primarily used by scientists to understand how the brain works."
+          },
+          {
+            "id": "B",
+            "text": "Engaging with art is a beneficial byproduct of our evolutionary ability to lie."
+          },
+          {
+            "id": "C",
+            "text": "Modern movies and novels cause people to become bewildered during their free time."
+          },
+          {
+            "id": "D",
+            "text": "Storytelling is a form of dangerous deception that threatens social cohesion."
+          }
+        ],
+        "correctOptionIds": [
+          "B"
+        ],
+        "rationale": {
+          "en": "Paragraph D argues that the same brain circuits used for deception also make fiction, art, and storytelling possible.",
+          "zh": "【出题者意图】：测试深层理解与排除法。Paragraph D 明确指出，让我们能够撒谎的大脑回路，同样让我们能够想象不存在的事物，因此艺术可以被看作进化出欺骗能力后的一个无害副产品。"
+        },
+        "evidenceRefs": [
+          "Paragraph D"
+        ]
+      }
+    ]
+  }
+}

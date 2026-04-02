@@ -1,6 +1,17 @@
 {
   "lessons": [
     {
+      "date": "2026-04-02",
+      "path": "pages/2026-04-02.html",
+      "title": "The Evolutionary Advantage of Lying",
+      "category": "Psychology & Evolution",
+      "summary": "从“马基雅维利式智能假说”出发，理解欺骗如何推动人类大脑、道德规范与艺术想象力的共同进化。",
+      "published": true,
+      "featured": true,
+      "tag": "Psychology",
+      "difficulty": "C1"
+    },
+    {
       "date": "2026-04-01",
       "path": "pages/2026-04-01.html",
       "title": "The Brainless Urban Planner",
