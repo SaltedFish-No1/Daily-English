@@ -1,6 +1,6 @@
-# Daily English 内容生产指南（Schema v2）
+# Daily English 内容生产指南（Schema v2.1）
 
-本文档基于当前课程详情协议 v2，为教研、内容运营和 AI 内容生产链路提供统一的数据生成标准。
+本文档基于当前课程详情协议 v2.1，为教研、内容运营和 AI 内容生产链路提供统一的数据生成标准。
 
 ---
 
@@ -10,7 +10,7 @@
 
 ```json
 {
-  "schemaVersion": "2.0",
+  "schemaVersion": "2.1",
   "meta": {
     "title": "文章主标题"
   },
@@ -18,7 +18,7 @@
     "enabled": true
   },
   "article": { ... },
-  "vocab": [ ... ],
+  "focusWords": [ ... ],
   "chart": { ... },
   "quiz": { ... }
 }
@@ -26,14 +26,14 @@
 
 说明：
 
-- `schemaVersion` 必须固定为 `"2.0"`
+- `schemaVersion` 必须固定为 `"2.1"`
 - 课程概览信息如分类、摘要、难度，不放在 lesson 详情文件里，而是维护在 `data/lessons.json`
 
 ---
 
 ## 2. 文章模块（Article）
 
-新版文章模块采用“纯文本 + 标注数组”结构，不允许在英文正文中写 HTML 标签。
+新版文章模块采用纯文本结构，不允许在英文正文中写 HTML 标签，也不再维护单词 offset。
 
 ```json
 "article": {
@@ -41,16 +41,7 @@
   "paragraphs": [
     {
       "id": "p1",
-      "en": {
-        "text": "In modern society, daily life requires intense mental focus.",
-        "highlights": [
-          {
-            "start": 39,
-            "end": 46,
-            "key": "intense"
-          }
-        ]
-      },
+      "en": "In modern society, daily life requires intense mental focus.",
       "zh": "在现代社会，日常生活需要高度集中的精神专注。"
     }
   ]
@@ -60,53 +51,33 @@
 字段要求：
 
 - `id`：段落唯一标识，建议从 `p1` 开始递增
-- `en.text`：英文纯文本正文
-- `en.highlights`：需要高亮的词汇区间
+- `en`：英文纯文本正文
 - `zh`：中文翻译纯文本
-
-高亮规则：
-
-- `start` 和 `end` 为字符区间，采用左闭右开
-- `0 <= start < end <= text.length`
-- 同一段内高亮区间不得重叠
-- `key` 必须在 `vocab[].key` 中存在
 
 ---
 
-## 3. 核心词汇（Vocabulary）
+## 3. 重点词（Focus Words）
 
-`vocab` 在 v2 中改为数组结构，每一项都带有显式 `key`。
+`focusWords` 用于表达“本课重点词”，它只负责高亮与查询归一化，不保存完整词典释义。
 
 ```json
-"vocab": [
+"focusWords": [
   {
     "key": "intense",
-    "lemma": "intense",
-    "forms": ["intense"],
-    "pos": "adj.",
-    "def": "Of extreme force, degree, or strength.",
-    "trans": "十分强烈的，高度集中的，紧张的",
-    "speakText": "intense",
-    "notes": "可用于描述注意力、竞争与情绪强度。"
+    "forms": ["intense"]
   }
 ]
 ```
 
 字段说明：
 
-- `key`：词条主键，供 `article.en.highlights[].key` 引用
-- `lemma`：词元，可选
-- `forms`：常见变体，可选
-- `pos`：词性，必填
-- `def`：英文释义，必填
-- `trans`：中文释义，必填
-- `speakText`：发音文本，可选
-- `notes`：教学备注，可选
+- `key`：归一化后的查询词主键
+- `forms`：正文中可能出现的词形，用于运行时高亮和点击归一
 
-生成要求：
-
-- `vocab[].key` 必须唯一
-- 不允许存在未被正文高亮引用的词条
+- `focusWords[].key` 必须唯一
+- `forms.length >= 1`
+- `forms` 内部不可重复
+- `forms` 至少应覆盖正文中的实际出现形式
 
 ---
 

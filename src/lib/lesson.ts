@@ -1,4 +1,4 @@
-import { LessonData, VocabEntry } from '@/types/lesson';
+import { FocusWord, LessonData } from '@/types/lesson';
 
 const isRecord = (value: unknown): value is Record<string, unknown> => {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -20,26 +20,19 @@ const isStringArray = (value: unknown): value is string[] => {
   return Array.isArray(value) && value.every(isString);
 };
 
-const isVocabEntry = (value: unknown): value is VocabEntry => {
+const isFocusWord = (value: unknown): value is FocusWord => {
   if (!isRecord(value)) return false;
   if (!isString(value.key)) return false;
-  if (!isString(value.pos)) return false;
-  if (!isString(value.def)) return false;
-  if (!isString(value.trans)) return false;
-  if (value.lemma !== undefined && !isString(value.lemma)) return false;
-  if (value.forms !== undefined && !isStringArray(value.forms)) return false;
-  if (value.speakText !== undefined && !isString(value.speakText)) return false;
-  if (value.notes !== undefined && typeof value.notes !== 'string')
-    return false;
+  if (!isStringArray(value.forms) || value.forms.length === 0) return false;
 
   return true;
 };
 
 export const validateLessonData = (value: unknown): LessonData | null => {
   if (!isRecord(value)) return null;
-  if (value.schemaVersion !== '2.0') return null;
+  if (value.schemaVersion !== '2.1') return null;
 
-  const { meta, speech, article, vocab, chart, quiz } = value;
+  const { meta, speech, article, focusWords, chart, quiz } = value;
 
   if (!isRecord(meta) || !isString(meta.title)) return null;
   if (!isRecord(speech) || !isBoolean(speech.enabled)) return null;
@@ -50,17 +43,30 @@ export const validateLessonData = (value: unknown): LessonData | null => {
   }
 
   if (
-    !Array.isArray(vocab) ||
-    vocab.length === 0 ||
-    !vocab.every(isVocabEntry)
+    !Array.isArray(focusWords) ||
+    focusWords.length === 0 ||
+    !focusWords.every(isFocusWord)
   ) {
     return null;
   }
 
-  const vocabKeySet = new Set<string>();
-  for (const entry of vocab) {
-    if (vocabKeySet.has(entry.key)) return null;
-    vocabKeySet.add(entry.key);
+  const focusWordKeySet = new Set<string>();
+  const formSet = new Set<string>();
+  for (const focusWord of focusWords) {
+    const normalizedKey = focusWord.key.trim().toLowerCase();
+    if (!normalizedKey || focusWordKeySet.has(normalizedKey)) return null;
+    focusWordKeySet.add(normalizedKey);
+
+    const normalizedForms = focusWord.forms.map((form) =>
+      form.trim().toLowerCase()
+    );
+    if (normalizedForms.some((form) => !form)) return null;
+    if (new Set(normalizedForms).size !== normalizedForms.length) return null;
+
+    for (const form of normalizedForms) {
+      if (formSet.has(form)) return null;
+      formSet.add(form);
+    }
   }
 
   for (const paragraph of article.paragraphs) {
@@ -72,30 +78,7 @@ export const validateLessonData = (value: unknown): LessonData | null => {
       return null;
     }
 
-    if (!isRecord(paragraph.en) || !isString(paragraph.en.text)) return null;
-    if (!Array.isArray(paragraph.en.highlights)) return null;
-
-    let lastEnd = -1;
-    for (const highlight of paragraph.en.highlights) {
-      if (!isRecord(highlight)) return null;
-      if (
-        !isNumber(highlight.start) ||
-        !isNumber(highlight.end) ||
-        !isString(highlight.key)
-      ) {
-        return null;
-      }
-      if (
-        highlight.start < 0 ||
-        highlight.start >= highlight.end ||
-        highlight.end > paragraph.en.text.length ||
-        highlight.start < lastEnd ||
-        !vocabKeySet.has(highlight.key)
-      ) {
-        return null;
-      }
-      lastEnd = highlight.end;
-    }
+    if (!isString(paragraph.en) || /<[^>]+>/.test(paragraph.en)) return null;
   }
 
   if (

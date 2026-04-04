@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
+import { buildRenderableTokens } from '@/lib/focusWords';
 import { useLessonStore } from '@/store/useLessonStore';
-import { ArticleHighlight, LessonArticle } from '@/types/lesson';
+import { FocusWord, LessonArticle } from '@/types/lesson';
 
 interface ArticleProps {
   article: LessonArticle;
+  focusWords: FocusWord[];
   speechEnabled: boolean;
   lessonSlug: string;
   lessonTitle: string;
@@ -19,6 +21,7 @@ interface ArticleProps {
  */
 export const Article: React.FC<ArticleProps> = ({
   article,
+  focusWords,
   speechEnabled,
   lessonSlug,
   lessonTitle,
@@ -29,32 +32,18 @@ export const Article: React.FC<ArticleProps> = ({
     Record<number, boolean>
   >({});
   const articleHintHtml = speechEnabled
-    ? '阅读下方文章，理解核心观点。<br><strong>交互提示：</strong>点击<span class="text-emerald-700 font-bold border-b-2 border-emerald-300 px-1 rounded bg-white">高亮词汇</span>可查看释义并播放发音。'
-    : '阅读下方文章，理解核心观点。<br><strong>交互提示：</strong>点击<span class="text-emerald-700 font-bold border-b-2 border-emerald-300 px-1 rounded bg-white">高亮词汇</span>可查看释义与中文翻译。';
+    ? '阅读下方文章，理解核心观点。<br><strong>交互提示：</strong>点击任意英文单词可查询英文词典，<span class="text-emerald-700 font-bold border-b-2 border-emerald-300 px-1 rounded bg-white">高亮词汇</span>为本课重点词，并支持播放发音。'
+    : '阅读下方文章，理解核心观点。<br><strong>交互提示：</strong>点击任意英文单词可查询英文词典，<span class="text-emerald-700 font-bold border-b-2 border-emerald-300 px-1 rounded bg-white">高亮词汇</span>为本课重点词。';
 
-  const getRenderableHighlights = (
-    highlights: ArticleHighlight[],
-    text: string
+  const handleWordSelect = (
+    surface: string,
+    query: string,
+    paragraphIndex: number,
+    isFocusWord: boolean
   ) => {
-    const sorted = [...highlights].sort((a, b) => a.start - b.start);
-    const renderable: ArticleHighlight[] = [];
-    let lastEnd = 0;
-
-    for (const highlight of sorted) {
-      const { start, end } = highlight;
-      if (start < lastEnd || start < 0 || end > text.length || start >= end) {
-        continue;
-      }
-      renderable.push(highlight);
-      lastEnd = end;
-    }
-
-    return renderable;
-  };
-
-  const handleWordSelect = (word: string, paragraphIndex: number) => {
     const isSameSelection =
-      selectedWordContext?.word === word &&
+      selectedWordContext?.surface === surface &&
+      selectedWordContext.query === query &&
       selectedWordContext.lessonSlug === lessonSlug &&
       selectedWordContext.paragraphIndex === paragraphIndex;
     if (isSameSelection) {
@@ -63,52 +52,58 @@ export const Article: React.FC<ArticleProps> = ({
     }
 
     setSelectedWordContext({
-      word,
+      surface,
+      query,
+      isFocusWord,
       lessonSlug,
       lessonTitle,
       paragraphIndex,
     });
   };
 
-  const renderAnnotatedText = (
-    text: string,
-    highlights: ArticleHighlight[],
-    paragraphIndex: number
-  ) => {
-    const nodes: React.ReactNode[] = [];
-    let cursor = 0;
-
-    for (const highlight of getRenderableHighlights(highlights, text)) {
-      if (highlight.start > cursor) {
-        nodes.push(text.slice(cursor, highlight.start));
+  const renderInteractiveText = (text: string, paragraphIndex: number) => {
+    return buildRenderableTokens(text, focusWords).map((token, tokenIndex) => {
+      if (token.type === 'text' || !token.query) {
+        return (
+          <React.Fragment key={`${paragraphIndex}-${tokenIndex}-text`}>
+            {token.text}
+          </React.Fragment>
+        );
       }
 
-      const surface = text.slice(highlight.start, highlight.end);
+      const query = token.query;
+
       const isActive =
         selectedWordContext !== null &&
-        highlight.key === selectedWordContext.word &&
+        selectedWordContext.surface === token.text &&
+        selectedWordContext.query === query &&
         lessonSlug === selectedWordContext.lessonSlug &&
         paragraphIndex === selectedWordContext.paragraphIndex;
 
-      nodes.push(
+      return (
         <button
-          key={`${paragraphIndex}-${highlight.start}-${highlight.key}`}
+          key={`${paragraphIndex}-${tokenIndex}-${query}-${token.text}`}
           type="button"
-          onClick={() => handleWordSelect(highlight.key, paragraphIndex)}
-          className={`vocab-word ${isActive ? 'vocab-active' : ''}`}
+          onClick={() =>
+            handleWordSelect(
+              token.text,
+              query,
+              paragraphIndex,
+              token.isFocusWord
+            )
+          }
+          className={
+            token.isFocusWord
+              ? `vocab-word ${isActive ? 'vocab-active' : ''}`
+              : `rounded-sm px-0.5 text-inherit transition-colors hover:bg-slate-100 ${
+                  isActive ? 'bg-slate-100 text-slate-900' : ''
+                }`
+          }
         >
-          {surface}
+          {token.text}
         </button>
       );
-
-      cursor = highlight.end;
-    }
-
-    if (cursor < text.length) {
-      nodes.push(text.slice(cursor));
-    }
-
-    return nodes;
+    });
   };
 
   const toggleTranslation = (index: number) => {
@@ -150,9 +145,7 @@ export const Article: React.FC<ArticleProps> = ({
 
         {article.paragraphs.map((p, i) => (
           <div key={p.id} id={`p-${i}`} className="mb-8 scroll-mt-28">
-            <p className="mb-2">
-              {renderAnnotatedText(p.en.text, p.en.highlights, i)}
-            </p>
+            <p className="mb-2">{renderInteractiveText(p.en, i)}</p>
             {p.zh && (
               <div className="mb-2 flex justify-end">
                 <button

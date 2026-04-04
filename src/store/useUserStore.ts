@@ -1,20 +1,28 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import {
+  fetchDictionaryEntries,
+  normalizeDictionaryQuery,
+} from '@/lib/dictionary';
+import { DictionaryCacheRecord } from '@/types/dictionary';
 
 export interface VocabOccurrence {
   lessonSlug: string;
   lessonTitle?: string;
   paragraphIndex: number;
   savedAt: number;
+  surface?: string;
   senseSnapshot: {
+    headword?: string;
     pos?: string;
     def?: string;
-    trans?: string;
-    speakText?: string;
+    phonetic?: string;
+    audio?: string;
   };
 }
 
 export type SavedVocabIndex = Record<string, VocabOccurrence[]>;
+export type DictionaryCacheIndex = Record<string, DictionaryCacheRecord>;
 
 export interface LessonHistory {
   slug: string;
@@ -25,12 +33,14 @@ export interface LessonHistory {
 
 interface UserState {
   savedWords: SavedVocabIndex;
+  dictionaryCache: DictionaryCacheIndex;
   history: Record<string, LessonHistory>;
   upsertVocabOccurrence: (params: {
     word: string;
     lessonSlug: string;
     lessonTitle?: string;
     paragraphIndex: number;
+    surface?: string;
     senseSnapshot: VocabOccurrence['senseSnapshot'];
   }) => void;
   removeVocabOccurrence: (params: {
@@ -39,19 +49,26 @@ interface UserState {
     paragraphIndex: number;
   }) => void;
   removeWord: (word: string) => void;
+  setDictionaryCacheRecord: (
+    word: string,
+    record: DictionaryCacheRecord
+  ) => void;
+  fetchDictionaryRecord: (word: string, force?: boolean) => Promise<void>;
   saveLessonScore: (slug: string, score: number, total: number) => void;
 }
 
 export const useUserStore = create<UserState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       savedWords: {},
+      dictionaryCache: {},
       history: {},
       upsertVocabOccurrence: ({
         word,
         lessonSlug,
         lessonTitle,
         paragraphIndex,
+        surface,
         senseSnapshot,
       }) =>
         set((state) => {
@@ -69,6 +86,7 @@ export const useUserStore = create<UserState>()(
             lessonTitle,
             paragraphIndex,
             savedAt: Date.now(),
+            surface,
             senseSnapshot,
           };
 
@@ -130,6 +148,51 @@ export const useUserStore = create<UserState>()(
             savedWords: rest,
           };
         }),
+      setDictionaryCacheRecord: (word, record) =>
+        set((state) => ({
+          dictionaryCache: {
+            ...state.dictionaryCache,
+            [word.trim().toLowerCase()]: record,
+          },
+        })),
+      fetchDictionaryRecord: async (word, force = false) => {
+        const key = normalizeDictionaryQuery(word);
+        if (!key) return;
+
+        const currentRecord = get().dictionaryCache[key];
+        if (
+          currentRecord &&
+          currentRecord.status !== 'error' &&
+          currentRecord.status !== 'loading' &&
+          !force
+        ) {
+          return;
+        }
+
+        set((state) => ({
+          dictionaryCache: {
+            ...state.dictionaryCache,
+            [key]: {
+              fetchedAt: Date.now(),
+              data: currentRecord?.data ?? null,
+              status: 'loading',
+            },
+          },
+        }));
+
+        const result = await fetchDictionaryEntries(key);
+
+        set((state) => ({
+          dictionaryCache: {
+            ...state.dictionaryCache,
+            [key]: {
+              fetchedAt: Date.now(),
+              data: result.data,
+              status: result.status,
+            },
+          },
+        }));
+      },
       saveLessonScore: (slug, score, total) =>
         set((state) => ({
           history: {

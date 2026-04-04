@@ -1,7 +1,9 @@
 import { create } from 'zustand';
 
 export interface SelectedWordContext {
-  word: string;
+  surface: string;
+  query: string;
+  isFocusWord: boolean;
   lessonSlug: string;
   lessonTitle: string;
   paragraphIndex: number;

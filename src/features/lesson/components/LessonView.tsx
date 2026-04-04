@@ -89,6 +89,7 @@ export const LessonView: React.FC<LessonViewProps> = ({
           >
             <Article
               article={data.article}
+              focusWords={data.focusWords}
               speechEnabled={data.speech.enabled}
               lessonSlug={lessonSlug}
               lessonTitle={overview.title}
@@ -126,13 +127,13 @@ export const LessonView: React.FC<LessonViewProps> = ({
 
         {/* Desktop Vocab Panel */}
         <div className="hidden lg:sticky lg:top-[200px] lg:block lg:h-fit lg:self-start">
-          <VocabSheet vocab={data.vocab} speech={data.speech} />
+          <VocabSheet speech={data.speech} />
         </div>
       </main>
 
       {/* Mobile Vocab Sheet */}
       <div className="lg:hidden">
-        <VocabSheet vocab={data.vocab} speech={data.speech} />
+        <VocabSheet speech={data.speech} />
       </div>
 
       {/* Bottom Nav */}

@@ -1,4 +1,4 @@
-export type LessonSchemaVersion = '2.0';
+export type LessonSchemaVersion = '2.1';
 
 export interface LessonMeta {
   title: string;
@@ -8,37 +8,20 @@ export interface LessonSpeech {
   enabled: boolean;
 }
 
-export interface ArticleHighlight {
-  start: number;
-  end: number;
+export interface FocusWord {
   key: string;
-}
-
-export interface AnnotatedText {
-  text: string;
-  highlights: ArticleHighlight[];
+  forms: string[];
 }
 
 export interface Paragraph {
   id: string;
-  en: AnnotatedText;
+  en: string;
   zh: string;
 }
 
 export interface LessonArticle {
   title: string;
   paragraphs: Paragraph[];
-}
-
-export interface VocabEntry {
-  key: string;
-  lemma?: string;
-  forms?: string[];
-  pos: string;
-  def: string;
-  trans: string;
-  speakText?: string;
-  notes?: string;
 }
 
 export interface ChartDataset {
@@ -89,7 +72,7 @@ export interface LessonData {
   meta: LessonMeta;
   speech: LessonSpeech;
   article: LessonArticle;
-  vocab: VocabEntry[];
+  focusWords: FocusWord[];
   chart: LessonChart;
   quiz: LessonQuiz;
 }

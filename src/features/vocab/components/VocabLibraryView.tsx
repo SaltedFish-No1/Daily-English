@@ -10,9 +10,11 @@ interface VocabCardItem {
   word: string;
   latestSavedAt: number;
   latestSense: {
+    headword?: string;
     pos?: string;
     def?: string;
-    trans?: string;
+    phonetic?: string;
+    audio?: string;
   };
   occurrences: Array<{
     lessonSlug: string;
@@ -48,9 +50,11 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
           word,
           latestSavedAt: latest.savedAt,
           latestSense: {
+            headword: latest.senseSnapshot.headword,
             pos: latest.senseSnapshot.pos,
             def: latest.senseSnapshot.def,
-            trans: latest.senseSnapshot.trans,
+            phonetic: latest.senseSnapshot.phonetic,
+            audio: latest.senseSnapshot.audio,
           },
           occurrences: sortedOccurrences.map((item) => ({
             lessonSlug: item.lessonSlug,
@@ -93,11 +97,28 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
                 <div className="mb-3 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <h2 className="text-lg font-bold text-slate-900 capitalize">
-                      {card.word}
+                      {card.latestSense.headword || card.word}
                     </h2>
                     <button
                       type="button"
-                      onClick={() => speak(card.word, 'en-US', 0.9)}
+                      onClick={() => {
+                        if (card.latestSense.audio) {
+                          const audio = new Audio(card.latestSense.audio);
+                          void audio.play().catch(() => {
+                            speak(
+                              card.latestSense.headword || card.word,
+                              'en-US',
+                              0.9
+                            );
+                          });
+                          return;
+                        }
+                        speak(
+                          card.latestSense.headword || card.word,
+                          'en-US',
+                          0.9
+                        );
+                      }}
                       className="rounded-lg border border-emerald-100 bg-emerald-50 p-1.5 text-emerald-600 transition-colors hover:bg-emerald-100"
                     >
                       <Volume2 size={14} />
@@ -125,16 +146,13 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
                       最新释义
                     </div>
                     <div className="text-xs text-slate-600">
-                      {card.latestSense.pos || ''}
+                      {[card.latestSense.pos, card.latestSense.phonetic]
+                        .filter(Boolean)
+                        .join(' · ')}
                     </div>
                     <div className="mt-1 text-sm text-slate-700">
                       {card.latestSense.def || ''}
                     </div>
-                    {card.latestSense.trans && (
-                      <div className="mt-1 text-sm font-medium text-emerald-700">
-                        {card.latestSense.trans}
-                      </div>
-                    )}
                   </div>
                 )}
 

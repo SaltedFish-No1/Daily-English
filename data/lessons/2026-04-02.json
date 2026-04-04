@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "2.0",
+  "schemaVersion": "2.1",
   "meta": {
     "title": "The Evolutionary Advantage of Lying"
   },
@@ -11,258 +11,134 @@
     "paragraphs": [
       {
         "id": "p1",
-        "en": {
-          "text": "For a long time, scientists have wondered why the human brain is so exceptionally large. According to the \"Machiavellian Intelligence Hypothesis,\" a widely accepted theory in evolutionary biology, our brain size did not merely evolve to invent primitive tools or survive an environmental menace like harsh weather. Instead, it evolved to manage complex social relationships. Early human ancestors relied heavily on group cohesion to survive. Living in large tribes, however, meant individuals had to constantly compete with their own group members for limited food and resources.",
-          "highlights": [
-            {
-              "start": 68,
-              "end": 81,
-              "key": "exceptionally"
-            },
-            {
-              "start": 107,
-              "end": 120,
-              "key": "Machiavellian"
-            },
-            {
-              "start": 288,
-              "end": 294,
-              "key": "menace"
-            },
-            {
-              "start": 421,
-              "end": 429,
-              "key": "cohesion"
-            }
-          ]
-        },
+        "en": "For a long time, scientists have wondered why the human brain is so exceptionally large. According to the \"Machiavellian Intelligence Hypothesis,\" a widely accepted theory in evolutionary biology, our brain size did not merely evolve to invent primitive tools or survive an environmental menace like harsh weather. Instead, it evolved to manage complex social relationships. Early human ancestors relied heavily on group cohesion to survive. Living in large tribes, however, meant individuals had to constantly compete with their own group members for limited food and resources.",
         "zh": "长期以来，科学家一直在追问：为什么人类的大脑会如此异常地庞大？根据进化生物学中广为接受的“马基雅维利式智能假说”，我们的大脑并不只是为了发明原始工具，或在严酷天气这类环境威胁下生存而进化出来的。相反，它更主要是为了应对复杂的社会关系。早期人类祖先高度依赖群体凝聚力才能存活。然而，生活在大型部落里也意味着，个体必须持续与同群成员竞争有限的食物与资源。"
       },
       {
         "id": "p2",
-        "en": {
-          "text": "In this competitive environment, deception became an incredibly powerful survival tool. While the idea of lying to one's friends might sound sinister, the ability to trick others was a crucial cognitive mutation. To process these complex social calculations, the human brain had to mutate and expand over generations. Instead of resorting to physical violence or destructive acts like arson to destroy rivals, early humans learned to manipulate their peers. This allowed them to gain resources without directly having to infringe upon the physical safety of the group. A notable outcome of this evolutionary process is that humans became experts at both creating lies and detecting them.",
-          "highlights": [
-            {
-              "start": 33,
-              "end": 42,
-              "key": "deception"
-            },
-            {
-              "start": 141,
-              "end": 149,
-              "key": "sinister"
-            },
-            {
-              "start": 193,
-              "end": 202,
-              "key": "cognitive"
-            },
-            {
-              "start": 203,
-              "end": 211,
-              "key": "mutation"
-            },
-            {
-              "start": 329,
-              "end": 341,
-              "key": "resort to"
-            },
-            {
-              "start": 385,
-              "end": 390,
-              "key": "arson"
-            },
-            {
-              "start": 521,
-              "end": 529,
-              "key": "infringe"
-            }
-          ]
-        },
+        "en": "In this competitive environment, deception became an incredibly powerful survival tool. While the idea of lying to one's friends might sound sinister, the ability to trick others was a crucial cognitive mutation. To process these complex social calculations, the human brain had to mutate and expand over generations. Instead of resorting to physical violence or destructive acts like arson to destroy rivals, early humans learned to manipulate their peers. This allowed them to gain resources without directly having to infringe upon the physical safety of the group. A notable outcome of this evolutionary process is that humans became experts at both creating lies and detecting them.",
         "zh": "在这样的竞争环境里，欺骗逐渐成为一种极其强大的生存工具。虽然对朋友撒谎听上去多少有些阴险，但欺骗他人的能力其实是一种关键的认知突变。为了处理这些复杂的社会计算，人类大脑不得不在代际演化中不断扩张。早期人类并没有诉诸于肢体暴力，或以纵火这类破坏性手段去消灭对手，而是学会了操纵自己的同伴。这样一来，他们就能在不直接侵犯群体人身安全的前提下获取资源。这一进化过程带来的一个显著结果是：人类既擅长制造谎言，也擅长识破谎言。"
       },
       {
         "id": "p3",
-        "en": {
-          "text": "Of course, if everyone lied constantly, society would collapse. To maintain a steady social structure, human cultures developed strong moral systems. From a young age, parents strive to inculcate the value of honesty in their children and heavily criticize dishonest behavior. These social rules help individuals control their selfish urge to cheat. However, deception did not disappear; it simply became more sophisticated. Today, a person might use a stylish appearance to look naturally trustworthy, or a politician might use convincing words to enlist the support of millions, hiding their true intentions behind a charming smile.",
-          "highlights": [
-            {
-              "start": 186,
-              "end": 195,
-              "key": "inculcate"
-            },
-            {
-              "start": 335,
-              "end": 339,
-              "key": "urge"
-            },
-            {
-              "start": 549,
-              "end": 555,
-              "key": "enlist"
-            }
-          ]
-        },
+        "en": "Of course, if everyone lied constantly, society would collapse. To maintain a steady social structure, human cultures developed strong moral systems. From a young age, parents strive to inculcate the value of honesty in their children and heavily criticize dishonest behavior. These social rules help individuals control their selfish urge to cheat. However, deception did not disappear; it simply became more sophisticated. Today, a person might use a stylish appearance to look naturally trustworthy, or a politician might use convincing words to enlist the support of millions, hiding their true intentions behind a charming smile.",
         "zh": "当然，如果每个人都不断撒谎，社会很快就会崩溃。为了维持稳定的社会结构，人类文化逐渐发展出强有力的道德体系。从小，父母就努力向孩子灌输诚实的价值，并严厉批评不诚实的行为。这些社会规范帮助个体压制自己自私的冲动，不至于轻易作弊。然而，欺骗并没有消失，它只是变得更加精致、更加隐蔽。今天，一个人可能会借助时髦得体的外表让自己看起来自然可信；政治人物也可能借助极具说服力的话语去争取数百万人的支持，并把真实意图隐藏在一个迷人的微笑之后。"
       },
       {
         "id": "p4",
-        "en": {
-          "text": "This constant, invisible battle between trickery and truth can bewilder sociologists, yet it has an unexpectedly beautiful side. The exact same brain circuits that allow us to tell a lie also allow us to imagine things that do not exist. Therefore, when we enjoy our leisure time reading a fiction novel or watching a movie, we are actually engaging with a form of harmless, consensual deception. Without the evolutionary need to deceive, human art and storytelling might never have existed.",
-          "highlights": [
-            {
-              "start": 63,
-              "end": 71,
-              "key": "bewilder"
-            },
-            {
-              "start": 267,
-              "end": 274,
-              "key": "leisure"
-            },
-            {
-              "start": 290,
-              "end": 297,
-              "key": "fiction"
-            },
-            {
-              "start": 375,
-              "end": 385,
-              "key": "consensual"
-            }
-          ]
-        },
+        "en": "This constant, invisible battle between trickery and truth can bewilder sociologists, yet it has an unexpectedly beautiful side. The exact same brain circuits that allow us to tell a lie also allow us to imagine things that do not exist. Therefore, when we enjoy our leisure time reading a fiction novel or watching a movie, we are actually engaging with a form of harmless, consensual deception. Without the evolutionary need to deceive, human art and storytelling might never have existed.",
         "zh": "这种诡计与真相之间持续不断、却又难以察觉的较量，确实会让社会学家感到困惑，但它也有一种出人意料的美感。因为正是那些让我们能够说谎的大脑回路，也让我们具备了想象不存在之物的能力。所以，当我们在闲暇时光里阅读虚构作品或观看电影时，其实正在参与一种无害且双方默许的欺骗。如果没有进化中对欺骗能力的需求，人类的艺术与叙事传统也许根本不会诞生。"
       }
     ]
   },
-  "vocab": [
+  "focusWords": [
     {
       "key": "exceptionally",
-      "pos": "adv.",
-      "def": "To an unusual degree; extremely.",
-      "trans": "异常地，格外地",
-      "speakText": "exceptionally"
+      "forms": [
+        "exceptionally"
+      ]
     },
     {
-      "key": "Machiavellian",
-      "pos": "adj.",
-      "def": "Using clever, often manipulative methods to gain power or advantage.",
-      "trans": "马基雅维利主义的，擅长权谋的",
-      "speakText": "Machiavellian"
+      "key": "machiavellian",
+      "forms": [
+        "machiavellian"
+      ]
     },
     {
       "key": "menace",
-      "pos": "n.",
-      "def": "A possible danger or threat.",
-      "trans": "威胁，危险事物",
-      "speakText": "menace"
+      "forms": [
+        "menace"
+      ]
     },
     {
       "key": "cohesion",
-      "pos": "n.",
-      "def": "The action or state of forming a united whole.",
-      "trans": "凝聚力，团结",
-      "speakText": "cohesion"
+      "forms": [
+        "cohesion"
+      ]
     },
     {
       "key": "deception",
-      "pos": "n.",
-      "def": "The act of making someone believe something that is not true.",
-      "trans": "欺骗，蒙骗",
-      "speakText": "deception"
+      "forms": [
+        "deception"
+      ]
     },
     {
       "key": "sinister",
-      "pos": "adj.",
-      "def": "Giving the impression that something harmful or evil is happening.",
-      "trans": "阴险的，不祥的",
-      "speakText": "sinister"
+      "forms": [
+        "sinister"
+      ]
     },
     {
       "key": "cognitive",
-      "pos": "adj.",
-      "def": "Relating to thinking, understanding, learning, and remembering.",
-      "trans": "认知的",
-      "speakText": "cognitive"
+      "forms": [
+        "cognitive"
+      ]
     },
     {
       "key": "mutation",
-      "pos": "n.",
-      "def": "A change in genes or structure that can produce new characteristics.",
-      "trans": "突变，变异",
-      "speakText": "mutation"
+      "forms": [
+        "mutation"
+      ]
     },
     {
       "key": "resort to",
-      "pos": "phr. v.",
-      "def": "To use or adopt a method, especially an extreme one, because other options are unavailable.",
-      "trans": "诉诸于，采取",
-      "speakText": "resort to"
+      "forms": [
+        "resorting to"
+      ]
     },
     {
       "key": "arson",
-      "pos": "n.",
-      "def": "The criminal act of deliberately setting fire to property.",
-      "trans": "纵火",
-      "speakText": "arson"
+      "forms": [
+        "arson"
+      ]
     },
     {
       "key": "infringe",
-      "pos": "v.",
-      "def": "To limit or violate something such as a right, freedom, or rule.",
-      "trans": "侵犯，违反",
-      "speakText": "infringe"
+      "forms": [
+        "infringe"
+      ]
     },
     {
       "key": "inculcate",
-      "pos": "v.",
-      "def": "To teach an idea, attitude, or habit by repeated instruction.",
-      "trans": "反复灌输，谆谆教诲",
-      "speakText": "inculcate"
+      "forms": [
+        "inculcate"
+      ]
     },
     {
       "key": "urge",
-      "pos": "n.",
-      "def": "A strong desire or impulse to do something.",
-      "trans": "冲动，强烈欲望",
-      "speakText": "urge"
+      "forms": [
+        "urge"
+      ]
     },
     {
       "key": "enlist",
-      "pos": "v.",
-      "def": "To obtain help, support, or participation from someone.",
-      "trans": "争取，招募",
-      "speakText": "enlist"
+      "forms": [
+        "enlist"
+      ]
     },
     {
       "key": "bewilder",
-      "pos": "v.",
-      "def": "To confuse someone completely.",
-      "trans": "使困惑，使迷惑",
-      "speakText": "bewilder"
+      "forms": [
+        "bewilder"
+      ]
     },
     {
       "key": "leisure",
-      "pos": "n.",
-      "def": "Time when you are not working and can relax or do things you enjoy.",
-      "trans": "闲暇，空闲时间",
-      "speakText": "leisure"
+      "forms": [
+        "leisure"
+      ]
     },
     {
       "key": "fiction",
-      "pos": "n.",
-      "def": "Literature that describes imaginary events and people.",
-      "trans": "虚构作品，小说",
-      "speakText": "fiction"
+      "forms": [
+        "fiction"
+      ]
     },
     {
       "key": "consensual",
-      "pos": "adj.",
-      "def": "Agreed to by all the people involved.",
-      "trans": "双方同意的，两厢情愿的",
-      "speakText": "consensual"
+      "forms": [
+        "consensual"
+      ]
     }
   ],
   "chart": {

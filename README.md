@@ -121,7 +121,7 @@ pnpm format
 
 ```json
 {
-  "schemaVersion": "2.0",
+  "schemaVersion": "2.1",
   "meta": {
     "title": "Lesson Title"
   },
@@ -133,27 +133,15 @@ pnpm format
     "paragraphs": [
       {
         "id": "p1",
-        "en": {
-          "text": "English paragraph with sample.",
-          "highlights": [
-            {
-              "start": 23,
-              "end": 29,
-              "key": "sample"
-            }
-          ]
-        },
+        "en": "English paragraph with sample.",
         "zh": "对应中文翻译。"
       }
     ]
   },
-  "vocab": [
+  "focusWords": [
     {
       "key": "sample",
-      "pos": "n.",
-      "def": "an example",
-      "trans": "示例",
-      "speakText": "sample"
+      "forms": ["sample"]
     }
   ],
   "chart": {
