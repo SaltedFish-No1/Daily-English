@@ -8,20 +8,29 @@ import { Metadata } from 'next';
 const lessonsDir = path.join(process.cwd(), 'data', 'lessons');
 const lessonsListPath = path.join(process.cwd(), 'data', 'lessons.json');
 
-const readLessonsList = (): LessonsList => {
-  return JSON.parse(fs.readFileSync(lessonsListPath, 'utf8'));
+const readLessonsList = (): LessonsList | null => {
+  try {
+    return JSON.parse(fs.readFileSync(lessonsListPath, 'utf8'));
+  } catch {
+    return null;
+  }
 };
 
 const findLessonOverview = (slug: string): LessonListItem | null => {
-  const { lessons } = readLessonsList();
-  return lessons.find((lesson) => lesson.date === slug) ?? null;
+  const list = readLessonsList();
+  if (!list) return null;
+  return list.lessons.find((lesson) => lesson.date === slug) ?? null;
 };
 
 const readLessonData = (slug: string): LessonData | null => {
   const filePath = path.join(lessonsDir, `${slug}.json`);
   if (!fs.existsSync(filePath)) return null;
 
-  return validateLessonData(JSON.parse(fs.readFileSync(filePath, 'utf8')));
+  try {
+    return validateLessonData(JSON.parse(fs.readFileSync(filePath, 'utf8')));
+  } catch {
+    return null;
+  }
 };
 
 export async function generateMetadata({

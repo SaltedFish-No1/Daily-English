@@ -5,6 +5,9 @@ import {
   normalizeDictionaryQuery,
 } from '@/lib/dictionary';
 import { DictionaryCacheRecord } from '@/types/dictionary';
+import { QuizPersistState } from '@/features/lesson/components/quiz/types';
+
+const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 export interface VocabOccurrence {
   lessonSlug: string;
@@ -55,6 +58,9 @@ interface UserState {
   ) => void;
   fetchDictionaryRecord: (word: string, force?: boolean) => Promise<void>;
   saveLessonScore: (slug: string, score: number, total: number) => void;
+  quizProgress: Record<string, QuizPersistState>;
+  setQuizProgress: (key: string, state: QuizPersistState) => void;
+  clearQuizProgress: (key: string) => void;
 }
 
 export const useUserStore = create<UserState>()(
@@ -63,6 +69,7 @@ export const useUserStore = create<UserState>()(
       savedWords: {},
       dictionaryCache: {},
       history: {},
+      quizProgress: {},
       upsertVocabOccurrence: ({
         word,
         lessonSlug,
@@ -160,14 +167,12 @@ export const useUserStore = create<UserState>()(
         if (!key) return;
 
         const currentRecord = get().dictionaryCache[key];
-        if (
-          currentRecord &&
-          currentRecord.status !== 'error' &&
-          currentRecord.status !== 'loading' &&
-          !force
-        ) {
-          return;
-        }
+        const isStale =
+          !currentRecord ||
+          currentRecord.status === 'error' ||
+          currentRecord.status === 'loading' ||
+          Date.now() - currentRecord.fetchedAt > CACHE_TTL_MS;
+        if (!isStale && !force) return;
 
         set((state) => ({
           dictionaryCache: {
@@ -205,6 +210,16 @@ export const useUserStore = create<UserState>()(
             },
           },
         })),
+      setQuizProgress: (key, state) =>
+        set((prev) => ({
+          quizProgress: { ...prev.quizProgress, [key]: state },
+        })),
+      clearQuizProgress: (key) =>
+        set((prev) => {
+          const next = { ...prev.quizProgress };
+          delete next[key];
+          return { quizProgress: next };
+        }),
     }),
     {
       name: 'daily-english-user-storage',

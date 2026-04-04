@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "format": "prettier --write .",
+    "test": "vitest run",
     "prepare": "husky"
   },
   "dependencies": {
@@ -42,7 +43,8 @@
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4.2.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.9"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
