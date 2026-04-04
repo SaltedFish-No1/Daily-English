@@ -10,9 +10,10 @@
     },
     {
       "name": "Next.js Production Preview",
-      "runtimeExecutable": "/Users/superq/Library/pnpm/pnpm",
-      "runtimeArgs": ["start"],
-      "port": 3000
+      "runtimeExecutable": "/Users/superq/.nvm/versions/node/v22.19.0/bin/node",
+      "runtimeArgs": ["node_modules/next/dist/bin/next", "dev", "--webpack"],
+      "port": 3001,
+      "autoPort": true
     }
   ]
 }

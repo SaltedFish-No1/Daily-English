@@ -10,8 +10,18 @@ import {
 } from '@/lib/dictionary';
 import { DictionaryCacheRecord } from '@/types/dictionary';
 import { QuizPersistState } from '@/types/quiz';
+import { supabase } from '@/lib/supabase';
+import { useAuthStore } from '@/store/useAuthStore';
 
 const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+/**
+ * @author SaltedFish-No1
+ * @description 获取当前登录用户 ID，未登录返回 null。
+ */
+function getAuthUserId(): string | null {
+  return useAuthStore.getState().user?.id ?? null;
+}
 
 export interface VocabOccurrence {
   lessonSlug: string;
@@ -108,6 +118,34 @@ export const useUserStore = create<UserState>()(
             occurrences.push(nextOccurrence);
           }
 
+          // 云端同步：已登录时后台写入
+          const userId = getAuthUserId();
+          if (userId) {
+            supabase
+              .from('saved_words')
+              .upsert(
+                {
+                  user_id: userId,
+                  word: key,
+                  lesson_slug: lessonSlug,
+                  lesson_title: lessonTitle ?? null,
+                  paragraph_index: paragraphIndex,
+                  saved_at: Date.now(),
+                  surface: surface ?? null,
+                  sense_headword: senseSnapshot.headword ?? null,
+                  sense_pos: senseSnapshot.pos ?? null,
+                  sense_def: senseSnapshot.def ?? null,
+                  sense_phonetic: senseSnapshot.phonetic ?? null,
+                  sense_audio: senseSnapshot.audio ?? null,
+                },
+                { onConflict: 'user_id,word,lesson_slug,paragraph_index' }
+              )
+              .then(({ error }) => {
+                if (error)
+                  console.error('[CloudSync] saved_words upsert:', error);
+              });
+          }
+
           return {
             savedWords: {
               ...state.savedWords,
@@ -131,6 +169,23 @@ export const useUserStore = create<UserState>()(
           if (nextOccurrences.length === occurrences.length) {
             return state;
           }
+
+          // 云端同步：删除对应记录
+          const userId = getAuthUserId();
+          if (userId) {
+            supabase
+              .from('saved_words')
+              .delete()
+              .eq('user_id', userId)
+              .eq('word', key)
+              .eq('lesson_slug', lessonSlug)
+              .eq('paragraph_index', paragraphIndex)
+              .then(({ error }) => {
+                if (error)
+                  console.error('[CloudSync] saved_words delete:', error);
+              });
+          }
+
           if (nextOccurrences.length === 0) {
             const rest = Object.fromEntries(
               Object.entries(state.savedWords).filter(
@@ -152,6 +207,21 @@ export const useUserStore = create<UserState>()(
         set((state) => {
           const key = word.trim().toLowerCase();
           if (!state.savedWords[key]) return state;
+
+          // 云端同步：删除该词所有记录
+          const userId = getAuthUserId();
+          if (userId) {
+            supabase
+              .from('saved_words')
+              .delete()
+              .eq('user_id', userId)
+              .eq('word', key)
+              .then(({ error }) => {
+                if (error)
+                  console.error('[CloudSync] saved_words delete word:', error);
+              });
+          }
+
           const rest = Object.fromEntries(
             Object.entries(state.savedWords).filter(
               ([entryKey]) => entryKey !== key
@@ -206,23 +276,71 @@ export const useUserStore = create<UserState>()(
         }));
       },
       saveLessonScore: (slug, score, total) =>
-        set((state) => ({
-          history: {
-            ...state.history,
-            [slug]: {
-              slug,
-              score,
-              total,
-              completedAt: Date.now(),
+        set((state) => {
+          const userId = getAuthUserId();
+          if (userId) {
+            supabase
+              .from('lesson_history')
+              .upsert(
+                {
+                  user_id: userId,
+                  slug,
+                  score,
+                  total,
+                  completed_at: Date.now(),
+                },
+                { onConflict: 'user_id,slug' }
+              )
+              .then(({ error }) => {
+                if (error)
+                  console.error('[CloudSync] lesson_history upsert:', error);
+              });
+          }
+          return {
+            history: {
+              ...state.history,
+              [slug]: {
+                slug,
+                score,
+                total,
+                completedAt: Date.now(),
+              },
             },
-          },
-        })),
+          };
+        }),
       setQuizProgress: (key, state) =>
-        set((prev) => ({
-          quizProgress: { ...prev.quizProgress, [key]: state },
-        })),
+        set((prev) => {
+          const userId = getAuthUserId();
+          if (userId) {
+            supabase
+              .from('quiz_progress')
+              .upsert(
+                { user_id: userId, persist_key: key, state },
+                { onConflict: 'user_id,persist_key' }
+              )
+              .then(({ error }) => {
+                if (error)
+                  console.error('[CloudSync] quiz_progress upsert:', error);
+              });
+          }
+          return {
+            quizProgress: { ...prev.quizProgress, [key]: state },
+          };
+        }),
       clearQuizProgress: (key) =>
         set((prev) => {
+          const userId = getAuthUserId();
+          if (userId) {
+            supabase
+              .from('quiz_progress')
+              .delete()
+              .eq('user_id', userId)
+              .eq('persist_key', key)
+              .then(({ error }) => {
+                if (error)
+                  console.error('[CloudSync] quiz_progress delete:', error);
+              });
+          }
           const next = { ...prev.quizProgress };
           delete next[key];
           return { quizProgress: next };

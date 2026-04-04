@@ -15,6 +15,7 @@ import { VocabSheet } from './VocabSheet';
 import { BookOpen, BarChart3, HelpCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { LessonBreadcrumb } from './LessonBreadcrumb';
+import { UserMenu } from '@/features/auth/components/UserMenu';
 
 interface LessonViewProps {
   data: LessonData;
@@ -72,6 +73,7 @@ export const LessonView: React.FC<LessonViewProps> = ({
                   {overview.category} · {overview.difficulty}
                 </p>
               </div>
+              <UserMenu />
             </div>
           </div>
         </header>

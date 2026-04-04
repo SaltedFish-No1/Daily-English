@@ -9,6 +9,7 @@ import { useMemo, useState } from 'react';
 import { useUserStore } from '@/store/useUserStore';
 import { useSpeech } from '@/hooks/useSpeech';
 import { BookMarked, Volume2, Check } from 'lucide-react';
+import { UserMenu } from '@/features/auth/components/UserMenu';
 
 interface VocabCardItem {
   word: string;
@@ -81,12 +82,15 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
               我的生词表
             </h1>
           </div>
-          <Link
-            href="/"
-            className="rounded-full border border-slate-200 px-3 py-1 text-xs font-bold text-slate-600 transition-colors hover:bg-slate-50"
-          >
-            返回首页
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/"
+              className="rounded-full border border-slate-200 px-3 py-1 text-xs font-bold text-slate-600 transition-colors hover:bg-slate-50"
+            >
+              返回首页
+            </Link>
+            <UserMenu />
+          </div>
         </div>
       </header>
 
