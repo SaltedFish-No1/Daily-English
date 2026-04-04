@@ -1,8 +1,27 @@
 import fs from 'fs';
 import path from 'path';
 import { LessonView } from '@/features/lesson/components/LessonView';
-import { LessonData } from '@/types/lesson';
+import { LessonData, LessonListItem, LessonsList } from '@/types/lesson';
 import { Metadata } from 'next';
+
+const lessonsDir = path.join(process.cwd(), 'data', 'lessons');
+const lessonsListPath = path.join(process.cwd(), 'data', 'lessons.json');
+
+const readLessonsList = (): LessonsList => {
+  return JSON.parse(fs.readFileSync(lessonsListPath, 'utf8'));
+};
+
+const findLessonOverview = (slug: string): LessonListItem | null => {
+  const { lessons } = readLessonsList();
+  return lessons.find((lesson) => lesson.date === slug) ?? null;
+};
+
+const readLessonData = (slug: string): LessonData | null => {
+  const filePath = path.join(lessonsDir, `${slug}.json`);
+  if (!fs.existsSync(filePath)) return null;
+
+  return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+};
 
 export async function generateMetadata({
   params,
@@ -10,18 +29,17 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const filePath = path.join(process.cwd(), 'data', 'lessons', `${slug}.json`);
-  if (!fs.existsSync(filePath)) return { title: 'Lesson Not Found' };
+  const data = readLessonData(slug);
+  const overview = findLessonOverview(slug);
+  if (!data) return { title: 'Lesson Not Found' };
 
-  const data: LessonData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
   return {
     title: `${data.meta.title} - Daily English`,
-    description: data.meta.summary,
+    description: overview?.teaser ?? data.article.title,
   };
 }
 
 export async function generateStaticParams() {
-  const lessonsDir = path.join(process.cwd(), 'data', 'lessons');
   const files = fs.readdirSync(lessonsDir);
 
   return files
@@ -37,14 +55,12 @@ export default async function LessonPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const filePath = path.join(process.cwd(), 'data', 'lessons', `${slug}.json`);
+  const data = readLessonData(slug);
+  const overview = findLessonOverview(slug);
 
-  if (!fs.existsSync(filePath)) {
+  if (!data || !overview) {
     return <div>Lesson not found</div>;
   }
 
-  const fileContent = fs.readFileSync(filePath, 'utf8');
-  const data: LessonData = JSON.parse(fileContent);
-
-  return <LessonView data={data} />;
+  return <LessonView data={data} lessonSlug={slug} overview={overview} />;
 }

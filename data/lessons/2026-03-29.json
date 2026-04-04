@@ -1,29 +1,9 @@
 {
   "meta": {
-    "date": "2026-03-29",
-    "slug": "2026-03-29",
-    "title": "Evolutionary Mismatch",
-    "subtitle": "Biology & Psychology Module",
-    "pageTitle": "Evolutionary Mismatch - Interactive Learning",
-    "difficulty": "C1"
-  },
-  "ui": {
-    "desktopArticleTabLabel": "Reading & Vocab",
-    "desktopDataTabLabel": "Health Trends",
-    "desktopQuizTabLabel": "Knowledge Check",
-    "mobileArticleTabLabel": "Reading",
-    "mobileDataTabLabel": "Trends",
-    "mobileQuizTabLabel": "Quiz",
-    "articleHintHtml": "Read the article below to understand the contradiction between our biology and modern life. <br><strong>Interaction:</strong> Tap the <span class=\"text-emerald-700 font-bold border-b-2 border-emerald-300 px-1 rounded bg-white\">highlighted words</span> to view definitions and listen to pronunciation.",
-    "vocabPlaceholderText": "Select a highlighted word to view its analysis.",
-    "translationLabel": "Chinese Translation",
-    "listenTitle": "Listen to pronunciation"
+    "title": "Evolutionary Mismatch"
   },
   "speech": {
-    "enabled": true,
-    "lang": "en-US",
-    "rate": 0.9,
-    "unsupportedMessage": "Sorry, your browser doesn't support text to speech."
+    "enabled": true
   },
   "article": {
     "title": "The Evolutionary Mismatch of Modern Diets",
@@ -459,16 +439,6 @@
   },
   "quiz": {
     "title": "Knowledge Check",
-    "description": "Test your comprehension of the vocabulary and concepts.",
-    "completeTitle": "Quiz Complete!",
-    "retakeButtonLabel": "Retake Quiz",
-    "resultPrefix": "You scored",
-    "resultSuffix": "out of",
-    "scoreLabel": "Score",
-    "correctLabel": "Correct!",
-    "incorrectLabel": "Incorrect",
-    "nextButtonLabel": "Next Question",
-    "viewResultsButtonLabel": "View Results",
     "questions": [
       {
         "q": "In the first paragraph, what does it mean that humans struggled to 'secure' enough calories?",

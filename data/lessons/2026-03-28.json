@@ -1,23 +1,6 @@
 {
   "meta": {
-    "date": "2026-03-28",
-    "slug": "2026-03-28",
-    "title": "The Ecology of Predators",
-    "subtitle": "Interactive Study Module",
-    "pageTitle": "The Ecology of Predators - Interactive Learning",
-    "difficulty": "C1"
-  },
-  "ui": {
-    "desktopArticleTabLabel": "Reading & Vocab",
-    "desktopDataTabLabel": "Ecological Impact",
-    "desktopQuizTabLabel": "Knowledge Check",
-    "mobileArticleTabLabel": "Reading",
-    "mobileDataTabLabel": "Data",
-    "mobileQuizTabLabel": "Quiz",
-    "articleHintHtml": "Read the article below to understand the shift in ecological perspective. <br><strong>Interaction:</strong> Tap the <span class=\"text-emerald-700 font-bold border-b-2 border-emerald-300 px-1 rounded bg-white\">highlighted words</span> to view definitions and translations.",
-    "vocabPlaceholderText": "Select a highlighted word to view its analysis.",
-    "translationLabel": "Chinese Translation",
-    "listenTitle": "Listen pronunciation"
+    "title": "The Ecology of Predators"
   },
   "speech": {
     "enabled": true
@@ -265,16 +248,6 @@
   },
   "quiz": {
     "title": "Knowledge Check",
-    "description": "Test your comprehension of the ecological concepts.",
-    "completeTitle": "Quiz Complete!",
-    "retakeButtonLabel": "Retake Quiz",
-    "resultPrefix": "You scored",
-    "resultSuffix": "out of",
-    "scoreLabel": "Score",
-    "correctLabel": "Correct!",
-    "incorrectLabel": "Incorrect",
-    "nextButtonLabel": "Next Question",
-    "viewResultsButtonLabel": "View Results",
     "questions": [
       {
         "q": "In paragraph 1, what is the closest meaning to the word 'naive' as used in the passage?",

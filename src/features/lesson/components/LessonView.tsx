@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback } from 'react';
-import { LessonData } from '@/types/lesson';
+import { LessonData, LessonListItem } from '@/types/lesson';
 import { useLessonStore } from '@/store/useLessonStore';
 import { useUserStore } from '@/store/useUserStore';
 import { Article } from './Article';
@@ -14,35 +14,41 @@ import { LessonBreadcrumb } from './LessonBreadcrumb';
 
 interface LessonViewProps {
   data: LessonData;
+  lessonSlug: string;
+  overview: LessonListItem;
 }
 
-export const LessonView: React.FC<LessonViewProps> = ({ data }) => {
+export const LessonView: React.FC<LessonViewProps> = ({
+  data,
+  lessonSlug,
+  overview,
+}) => {
   const { activeTab, setActiveTab } = useLessonStore();
   const { saveLessonScore } = useUserStore();
   const handleQuizComplete = useCallback(
     (score: number, total: number) => {
-      saveLessonScore(data.meta.slug, score, total);
+      saveLessonScore(lessonSlug, score, total);
     },
-    [data.meta.slug, saveLessonScore]
+    [lessonSlug, saveLessonScore]
   );
 
   const tabs = [
     {
       id: 'article',
-      desktopLabel: data.ui.desktopArticleTabLabel,
-      mobileLabel: data.ui.mobileArticleTabLabel,
+      desktopLabel: '阅读',
+      mobileLabel: '阅读',
       icon: BookOpen,
     },
     {
       id: 'chart',
-      desktopLabel: data.ui.desktopDataTabLabel,
-      mobileLabel: data.ui.mobileDataTabLabel,
+      desktopLabel: '图表',
+      mobileLabel: '图表',
       icon: BarChart3,
     },
     {
       id: 'quiz',
-      desktopLabel: data.ui.desktopQuizTabLabel,
-      mobileLabel: data.ui.mobileQuizTabLabel,
+      desktopLabel: '测验',
+      mobileLabel: '测验',
       icon: HelpCircle,
     },
   ];
@@ -59,13 +65,13 @@ export const LessonView: React.FC<LessonViewProps> = ({ data }) => {
                   {data.meta.title}
                 </h1>
                 <p className="mt-0.5 text-[10px] font-bold tracking-widest text-slate-400 uppercase sm:text-sm">
-                  {data.meta.subtitle}
+                  {overview.category} · {overview.difficulty}
                 </p>
               </div>
             </div>
           </div>
         </header>
-        <LessonBreadcrumb category={data.meta.category} />
+        <LessonBreadcrumb category={overview.category} />
       </div>
 
       {/* Main Content */}
@@ -84,8 +90,8 @@ export const LessonView: React.FC<LessonViewProps> = ({ data }) => {
             <Article
               article={data.article}
               speechEnabled={data.speech.enabled}
-              lessonSlug={data.meta.slug}
-              lessonTitle={data.meta.title}
+              lessonSlug={lessonSlug}
+              lessonTitle={overview.title}
             />
           </motion.div>
           <motion.div
@@ -112,7 +118,7 @@ export const LessonView: React.FC<LessonViewProps> = ({ data }) => {
           >
             <Quiz
               quiz={data.quiz}
-              persistKey={data.meta.slug}
+              persistKey={lessonSlug}
               onComplete={handleQuizComplete}
             />
           </motion.div>
@@ -120,13 +126,13 @@ export const LessonView: React.FC<LessonViewProps> = ({ data }) => {
 
         {/* Desktop Vocab Panel */}
         <div className="hidden lg:sticky lg:top-[200px] lg:block lg:h-fit lg:self-start">
-          <VocabSheet vocab={data.vocab} speech={data.speech} ui={data.ui} />
+          <VocabSheet vocab={data.vocab} speech={data.speech} />
         </div>
       </main>
 
       {/* Mobile Vocab Sheet */}
       <div className="lg:hidden">
-        <VocabSheet vocab={data.vocab} speech={data.speech} ui={data.ui} />
+        <VocabSheet vocab={data.vocab} speech={data.speech} />
       </div>
 
       {/* Bottom Nav */}

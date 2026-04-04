@@ -1,30 +1,9 @@
 export interface LessonMeta {
   title: string;
-  subtitle: string;
-  pageTitle: string;
-  date: string;
-  slug: string;
-  category: string;
-  summary: string;
-  difficulty: LessonDifficulty;
-}
-
-export interface LessonUI {
-  desktopArticleTabLabel: string;
-  desktopDataTabLabel: string;
-  desktopQuizTabLabel: string;
-  mobileArticleTabLabel: string;
-  mobileDataTabLabel: string;
-  mobileQuizTabLabel: string;
-  vocabPlaceholderText: string;
-  translationLabel: string;
-  listenTitle?: string;
 }
 
 export interface LessonSpeech {
   enabled: boolean;
-  lang: string;
-  rate: number;
 }
 
 export interface Paragraph {
@@ -83,13 +62,11 @@ export interface QuizQuestion {
 
 export interface LessonQuiz {
   title: string;
-  description: string;
-  questions: QuizQuestion[];
+  questions: unknown[];
 }
 
 export interface LessonData {
   meta: LessonMeta;
-  ui: LessonUI;
   speech: LessonSpeech;
   article: LessonArticle;
   vocab: Record<string, VocabEntry>;

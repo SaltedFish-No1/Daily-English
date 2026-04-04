@@ -1,29 +1,9 @@
 {
   "meta": {
-    "date": "2026-03-31",
-    "slug": "2026-03-31",
-    "title": "Rethinking Animal Play",
-    "subtitle": "The Science of Zoo Enrichment",
-    "pageTitle": "Rethinking Animal Play - Interactive Learning",
-    "difficulty": "B2"
-  },
-  "ui": {
-    "desktopArticleTabLabel": "Reading & Vocab",
-    "desktopDataTabLabel": "Enrichment Data",
-    "desktopQuizTabLabel": "Knowledge Check",
-    "mobileArticleTabLabel": "Reading",
-    "mobileDataTabLabel": "Data",
-    "mobileQuizTabLabel": "Quiz",
-    "articleHintHtml": "Read the article below to explore the science of zoo enrichment. <br><strong>Interaction:</strong> Tap the <span class=\"text-emerald-700 font-bold border-b-2 border-emerald-300 px-1 rounded bg-white\">highlighted words</span> to view definitions and listen to pronunciation.",
-    "vocabPlaceholderText": "Select a highlighted word to view its analysis.",
-    "translationLabel": "Chinese Translation",
-    "listenTitle": "Listen to pronunciation"
+    "title": "Rethinking Animal Play"
   },
   "speech": {
-    "enabled": true,
-    "lang": "en-US",
-    "rate": 0.9,
-    "unsupportedMessage": "Sorry, your browser doesn't support text to speech."
+    "enabled": true
   },
   "article": {
     "title": "Rethinking Animal Play: The Science of Zoo Enrichment",
@@ -200,16 +180,6 @@
   },
   "quiz": {
     "title": "Knowledge Check",
-    "description": "Test your comprehension of the reading passage.",
-    "completeTitle": "Quiz Complete!",
-    "retakeButtonLabel": "Retake Quiz",
-    "resultPrefix": "You scored",
-    "resultSuffix": "out of",
-    "scoreLabel": "Score",
-    "correctLabel": "Correct!",
-    "incorrectLabel": "Incorrect",
-    "nextButtonLabel": "Next Question",
-    "viewResultsButtonLabel": "View Results",
     "questions": [
       {
         "id": "q-1",

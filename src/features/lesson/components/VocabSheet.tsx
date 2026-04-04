@@ -4,14 +4,13 @@ import React from 'react';
 import { useLessonStore } from '@/store/useLessonStore';
 import { useUserStore } from '@/store/useUserStore';
 import { useSpeech } from '@/hooks/useSpeech';
-import { VocabEntry, LessonSpeech, LessonUI } from '@/types/lesson';
+import { VocabEntry, LessonSpeech } from '@/types/lesson';
 import { X, Volume2, Bookmark, BookmarkCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface VocabSheetProps {
   vocab: Record<string, VocabEntry>;
   speech: LessonSpeech;
-  ui: LessonUI;
 }
 
 /**
@@ -20,11 +19,7 @@ interface VocabSheetProps {
  * @param props 词汇、发音与文案配置。
  * @return 生词弹层组件。
  */
-export const VocabSheet: React.FC<VocabSheetProps> = ({
-  vocab,
-  speech,
-  ui,
-}) => {
+export const VocabSheet: React.FC<VocabSheetProps> = ({ vocab, speech }) => {
   const { selectedWordContext, setSelectedWordContext } = useLessonStore();
   const { savedWords, upsertVocabOccurrence, removeVocabOccurrence } =
     useUserStore();
@@ -65,7 +60,7 @@ export const VocabSheet: React.FC<VocabSheetProps> = ({
    */
   const handleSpeak = () => {
     if (selectedWord && speech.enabled) {
-      speak(currentEntry?.speakText || selectedWord, speech.lang, speech.rate);
+      speak(currentEntry?.speakText || selectedWord);
     }
   };
 
@@ -152,7 +147,7 @@ export const VocabSheet: React.FC<VocabSheetProps> = ({
                     {speech.enabled && (
                       <button
                         onClick={handleSpeak}
-                        title={ui.listenTitle}
+                        title="播放发音"
                         className="rounded-xl border border-emerald-100 bg-emerald-50 p-2.5 text-emerald-600 shadow-sm transition-all hover:bg-emerald-100 active:scale-95"
                       >
                         <Volume2 size={20} />
@@ -176,7 +171,7 @@ export const VocabSheet: React.FC<VocabSheetProps> = ({
 
                     <div className="border-t border-slate-100 pt-4">
                       <span className="mb-2 block text-sm font-medium text-slate-400">
-                        {ui.translationLabel}
+                        中文释义
                       </span>
                       <p className="serif text-2xl font-bold text-emerald-700">
                         {currentEntry.trans}
@@ -188,7 +183,7 @@ export const VocabSheet: React.FC<VocabSheetProps> = ({
                 <div className="hidden py-12 text-center text-emerald-700 opacity-60 lg:block">
                   <div className="mb-3 text-4xl">👆</div>
                   <p className="text-base font-medium">
-                    {ui.vocabPlaceholderText}
+                    点击正文中的高亮词汇，查看释义并收藏到生词库
                   </p>
                 </div>
               )}

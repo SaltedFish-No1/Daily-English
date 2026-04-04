@@ -1,29 +1,9 @@
 {
   "meta": {
-    "date": "2026-04-01",
-    "slug": "2026-04-01",
-    "title": "The Brainless Urban Planner",
-    "subtitle": "Biology & Technology Module",
-    "pageTitle": "The Brainless Urban Planner - Interactive Learning",
-    "difficulty": "C1"
-  },
-  "ui": {
-    "desktopArticleTabLabel": "Reading & Vocab",
-    "desktopDataTabLabel": "Efficiency Data",
-    "desktopQuizTabLabel": "Knowledge Check",
-    "mobileArticleTabLabel": "Reading",
-    "mobileDataTabLabel": "Data",
-    "mobileQuizTabLabel": "Quiz",
-    "articleHintHtml": "Read the article below to explore how a brainless organism solves complex problems. <br><strong>Interaction:</strong> Tap the <span class=\"text-emerald-700 font-bold border-b-2 border-emerald-300 px-1 rounded bg-white\">highlighted words</span> to view definitions and listen to pronunciation.",
-    "vocabPlaceholderText": "Select a highlighted word to view its analysis.",
-    "translationLabel": "Chinese Translation",
-    "listenTitle": "Listen to pronunciation"
+    "title": "The Brainless Urban Planner"
   },
   "speech": {
-    "enabled": true,
-    "lang": "en-US",
-    "rate": 0.9,
-    "unsupportedMessage": "Sorry, your browser doesn't support text to speech."
+    "enabled": true
   },
   "article": {
     "title": "The Brainless Urban Planner: What Slime Molds Teach Us",
@@ -230,16 +210,6 @@
   },
   "quiz": {
     "title": "Knowledge Check",
-    "description": "Test your comprehension of the reading passage.",
-    "completeTitle": "Quiz Complete!",
-    "retakeButtonLabel": "Retake Quiz",
-    "resultPrefix": "You scored",
-    "resultSuffix": "out of",
-    "scoreLabel": "Score",
-    "correctLabel": "Correct!",
-    "incorrectLabel": "Incorrect",
-    "nextButtonLabel": "Next Question",
-    "viewResultsButtonLabel": "View Results",
     "questions": [
       {
         "id": "q-1",
