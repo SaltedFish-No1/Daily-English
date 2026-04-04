@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @description 段落标题匹配题视图。
+ */
+
 import React, { useMemo } from 'react';
 import { MatchingHeadingsQuestion } from '../types';
 

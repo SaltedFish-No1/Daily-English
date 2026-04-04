@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @description 信息匹配题视图。
+ */
+
 import React, { useMemo } from 'react';
 import { MatchingInformationQuestion } from '../types';
 

@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @description 信息匹配题评分，支持多正确答案。
+ */
+
 import { GradeResult, MatchingInformationQuestion } from '../types';
 
 export const gradeMatchingInformation = (

@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @description CEFR 等级说明弹窗，含金字塔可视化与能力矩阵。
+ */
+
 import React from 'react';
 import { LessonDifficulty } from '@/types/lesson';
 

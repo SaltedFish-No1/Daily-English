@@ -1,3 +1,7 @@
+/**
+ * @description 课程页面会话状态：当前标签页与选中单词上下文。
+ */
+
 import { create } from 'zustand';
 
 export interface SelectedWordContext {

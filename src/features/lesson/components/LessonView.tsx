@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @description 课程详情页布局，编排阅读、图表与测验标签页。
+ */
+
 import React, { useCallback } from 'react';
 import { LessonData, LessonListItem } from '@/types/lesson';
 import { useLessonStore } from '@/store/useLessonStore';

@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @description 答案文本规范化：空白合并、大小写折叠与字数统计。
+ */
+
 export const normalizeText = (value: string) => {
   return value.trim().replace(/\s+/g, ' ');
 };

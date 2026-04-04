@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @description 图表渲染组件，基于 Chart.js 呈现数据可视化及洞察。
+ */
+
 import React, { useMemo } from 'react';
 import {
   Chart as ChartJS,

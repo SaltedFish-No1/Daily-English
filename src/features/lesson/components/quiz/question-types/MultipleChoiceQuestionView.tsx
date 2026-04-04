@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @description 单选/多选题视图。
+ */
+
 import React from 'react';
 import { MultipleChoiceQuestion } from '../types';
 

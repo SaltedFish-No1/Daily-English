@@ -1,3 +1,7 @@
+/**
+ * @description 重点词分词器：将正文按重点词表拆分为可交互 token 序列。
+ */
+
 import { FocusWord } from '@/types/lesson';
 import { normalizeDictionaryQuery } from '@/lib/dictionary';
 
@@ -69,6 +73,8 @@ export const createFocusWordMap = (focusWords: FocusWord[]) => {
   return formToKey;
 };
 
+// 两步分词器：先用最长优先的正则按重点词边界断句，再将非重点段拆为单词和间隔。
+// 采用游标递进避免遗漏两个重点词之间的普通文本。
 export const buildRenderableTokens = (
   text: string,
   focusWords: FocusWord[]

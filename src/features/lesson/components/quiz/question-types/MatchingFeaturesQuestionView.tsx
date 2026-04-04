@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @description 特征匹配题视图。
+ */
+
 import React, { useMemo } from 'react';
 import { MatchingFeaturesQuestion } from '../types';
 

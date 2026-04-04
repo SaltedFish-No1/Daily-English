@@ -1,3 +1,7 @@
+/**
+ * @description 词典领域类型：条目、释义、音标与缓存记录。
+ */
+
 export interface DictionaryDefinition {
   definition: string;
   example?: string;

@@ -1,3 +1,7 @@
+/**
+ * @description 课程数据领域类型：文章、图表、测验题型与列表元数据。
+ */
+
 export type LessonSchemaVersion = '2.1';
 
 export interface LessonMeta {
