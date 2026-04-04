@@ -9,11 +9,13 @@ import { FullScreenCelebration } from './quiz/FullScreenCelebration';
 import {
   AnyQuizQuestion,
   GradeResult,
+  QuizPersistState,
   ReviewRow,
   UserAnswer,
   isIELTSQuestion,
   toStableQuestionId,
 } from './quiz/types';
+import { useUserStore } from '@/store/useUserStore';
 import {
   gradeCompletion,
   gradeLegacySingle,
@@ -30,13 +32,6 @@ export interface QuizProps {
   onComplete?: (score: number, total: number) => void;
 }
 
-interface QuizPersistState {
-  currentIdx: number;
-  isFinished: boolean;
-  answers: Record<string, UserAnswer>;
-  grades: Record<string, GradeResult>;
-}
-
 const initialQuizProgress: QuizPersistState = {
   currentIdx: 0,
   isFinished: false,
@@ -45,11 +40,11 @@ const initialQuizProgress: QuizPersistState = {
 };
 
 export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
-  const questions = quiz.questions as unknown as AnyQuizQuestion[];
-  const storageKey = `daily-english:quiz-progress:${persistKey}`;
+  const questions = quiz.questions;
   const [showReview, setShowReview] = useState(false);
   const [rationaleLang, setRationaleLang] = useState<'en' | 'zh'>('en');
-  const [hasLoadedStorage, setHasLoadedStorage] = useState(false);
+  const setQuizProgress = useUserStore((s) => s.setQuizProgress);
+  const clearQuizProgress = useUserStore((s) => s.clearQuizProgress);
 
   const getQuestionId = useCallback(
     (question: AnyQuizQuestion, idx: number) => {
@@ -87,8 +82,27 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
     [getQuestionId]
   );
 
-  const [quizState, setQuizState] =
-    useState<QuizPersistState>(initialQuizProgress);
+  const [quizState, setQuizState] = useState<QuizPersistState>(() => {
+    const saved = useUserStore.getState().quizProgress[persistKey];
+    if (
+      !saved ||
+      typeof saved.currentIdx !== 'number' ||
+      typeof saved.isFinished !== 'boolean'
+    ) {
+      return initialQuizProgress;
+    }
+    return {
+      currentIdx: Math.min(
+        Math.max(saved.currentIdx, 0),
+        Math.max(questions.length - 1, 0)
+      ),
+      isFinished: saved.isFinished,
+      answers:
+        saved.answers && typeof saved.answers === 'object' ? saved.answers : {},
+      grades:
+        saved.grades && typeof saved.grades === 'object' ? saved.grades : {},
+    };
+  });
   const safeCurrentIdx = Math.min(
     quizState.currentIdx,
     Math.max(questions.length - 1, 0)
@@ -99,55 +113,8 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
   const currentGrade = quizState.grades[currentQuestionId];
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    if (hasLoadedStorage) return;
-    const raw = window.localStorage.getItem(storageKey);
-    if (!raw) {
-      setHasLoadedStorage(true);
-      return;
-    }
-    try {
-      const parsed = JSON.parse(raw) as QuizPersistState;
-      if (
-        typeof parsed.currentIdx !== 'number' ||
-        typeof parsed.isFinished !== 'boolean'
-      ) {
-        setHasLoadedStorage(true);
-        return;
-      }
-      setQuizState({
-        currentIdx: Math.min(
-          Math.max(parsed.currentIdx, 0),
-          Math.max(questions.length - 1, 0)
-        ),
-        isFinished: parsed.isFinished,
-        answers:
-          parsed.answers && typeof parsed.answers === 'object'
-            ? parsed.answers
-            : {},
-        grades:
-          parsed.grades && typeof parsed.grades === 'object'
-            ? parsed.grades
-            : {},
-      });
-    } catch {
-      window.localStorage.removeItem(storageKey);
-    } finally {
-      setHasLoadedStorage(true);
-    }
-  }, [hasLoadedStorage, questions.length, storageKey]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    if (!hasLoadedStorage) return;
-    const payload: QuizPersistState = {
-      currentIdx: quizState.currentIdx,
-      isFinished: quizState.isFinished,
-      answers: quizState.answers,
-      grades: quizState.grades,
-    };
-    window.localStorage.setItem(storageKey, JSON.stringify(payload));
-  }, [hasLoadedStorage, quizState, storageKey]);
+    setQuizProgress(persistKey, quizState);
+  }, [persistKey, quizState, setQuizProgress]);
 
   useEffect(() => {
     if (!quizState.isFinished) return;
@@ -186,9 +153,7 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
   const handleRestart = () => {
     setQuizState(initialQuizProgress);
     setShowReview(false);
-    if (typeof window !== 'undefined') {
-      window.localStorage.removeItem(storageKey);
-    }
+    clearQuizProgress(persistKey);
   };
 
   const { score, total } = useMemo(

@@ -1,5 +1,3 @@
-'use client';
-
 import { QuizRationale } from '@/types/lesson';
 
 export type IELTSQuestionType =
@@ -171,3 +169,10 @@ export const isIELTSQuestion = (q: AnyQuizQuestion): q is IELTSQuestion => {
 };
 
 export const toStableQuestionId = (idx: number) => `q-${idx + 1}`;
+
+export interface QuizPersistState {
+  currentIdx: number;
+  isFinished: boolean;
+  answers: Record<string, UserAnswer>;
+  grades: Record<string, GradeResult>;
+}

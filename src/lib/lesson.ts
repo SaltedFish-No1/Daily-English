@@ -1,5 +1,44 @@
 import { FocusWord, LessonData } from '@/types/lesson';
 
+// ---------------------------------------------------------------------------
+// Schema migration
+// ---------------------------------------------------------------------------
+
+const CURRENT_SCHEMA_VERSION = '2.1';
+
+type MigratorFn = (data: Record<string, unknown>) => Record<string, unknown>;
+
+/**
+ * Add an entry here whenever the schema version is bumped.
+ * Key = the FROM version; the function should return data at the next version.
+ *
+ * Example for a future 2.1 → 2.2 migration:
+ *   '2.1': (data) => ({ ...data, schemaVersion: '2.2', newField: 'default' }),
+ */
+const MIGRATIONS: Record<string, MigratorFn> = {};
+
+/**
+ * Walks the migration chain until the data reaches CURRENT_SCHEMA_VERSION,
+ * or returns null if the version is unknown / the chain is broken.
+ */
+const migrateToCurrentVersion = (
+  value: Record<string, unknown>
+): Record<string, unknown> | null => {
+  let current = value;
+  for (let step = 0; step < 20; step++) {
+    if (current.schemaVersion === CURRENT_SCHEMA_VERSION) return current;
+    if (typeof current.schemaVersion !== 'string') return null;
+    const migrator = MIGRATIONS[current.schemaVersion];
+    if (!migrator) return null;
+    current = migrator(current);
+  }
+  return null; // exceeded max migration steps
+};
+
+// ---------------------------------------------------------------------------
+// Type guards
+// ---------------------------------------------------------------------------
+
 const isRecord = (value: unknown): value is Record<string, unknown> => {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 };
@@ -30,9 +69,11 @@ const isFocusWord = (value: unknown): value is FocusWord => {
 
 export const validateLessonData = (value: unknown): LessonData | null => {
   if (!isRecord(value)) return null;
-  if (value.schemaVersion !== '2.1') return null;
 
-  const { meta, speech, article, focusWords, chart, quiz } = value;
+  const migrated = migrateToCurrentVersion(value);
+  if (!migrated) return null;
+
+  const { meta, speech, article, focusWords, chart, quiz } = migrated;
 
   if (!isRecord(meta) || !isString(meta.title)) return null;
   if (!isRecord(speech) || !isBoolean(speech.enabled)) return null;
@@ -127,5 +168,5 @@ export const validateLessonData = (value: unknown): LessonData | null => {
     return null;
   }
 
-  return value as unknown as LessonData;
+  return migrated as unknown as LessonData;
 };

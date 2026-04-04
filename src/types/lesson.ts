@@ -46,25 +46,138 @@ export interface LessonChart {
   insights: ChartInsight[];
 }
 
+// ---------------------------------------------------------------------------
+// Shared quiz types — live here so LessonQuiz can reference them without
+// creating circular imports between @/types/lesson and feature modules.
+// ---------------------------------------------------------------------------
+
 export interface QuizRationale {
   en: string;
   zh: string;
 }
 
-export interface QuizOption {
-  text: string;
-  correct: boolean;
-  rationale: QuizRationale;
+// --- IELTS question types ---------------------------------------------------
+
+export type IELTSQuestionType =
+  | 'tfng'
+  | 'matching_headings'
+  | 'matching_information'
+  | 'completion'
+  | 'matching_features'
+  | 'multiple_choice';
+
+export interface BaseIELTSQuestion {
+  id: string;
+  type: IELTSQuestionType;
+  prompt: string;
+  rationale?: QuizRationale;
+  skillTags?: string[];
+  difficultyWeight?: number;
+  evidenceRefs?: string[];
 }
 
-export interface QuizQuestion {
-  q: string;
-  options: QuizOption[];
+export type TFNGLabel = 'TRUE' | 'FALSE' | 'NOT_GIVEN';
+export type YNNGLabel = 'YES' | 'NO' | 'NOT_GIVEN';
+
+export interface TFNGQuestion extends BaseIELTSQuestion {
+  type: 'tfng';
+  mode: 'TFNG' | 'YNNG';
+  statement: string;
+  answer: TFNGLabel | YNNGLabel;
+  trapType?: 'negation' | 'antonym' | 'exclusive' | 'inference_gap';
 }
+
+export interface MatchingHeadingOption {
+  id: string;
+  text: string;
+  isDistractor?: boolean;
+}
+
+export interface MatchingHeadingsQuestion extends BaseIELTSQuestion {
+  type: 'matching_headings';
+  paragraphs: Array<{ id: string; label: string; textRef?: string }>;
+  headings: MatchingHeadingOption[];
+  answerMap: Record<string, string>;
+  allowReuse?: boolean;
+}
+
+export interface MatchingInformationQuestion extends BaseIELTSQuestion {
+  type: 'matching_information';
+  items: Array<{ id: string; statement: string }>;
+  targets: Array<{ id: string; label: string }>;
+  answerMap: Record<string, string | string[]>;
+  allowReuse?: boolean;
+}
+
+export interface CompletionBlank {
+  id: string;
+  acceptedAnswers: string[];
+  wordLimit?: number;
+  caseSensitive?: boolean;
+  posHint?: string;
+}
+
+export interface CompletionQuestion extends BaseIELTSQuestion {
+  type: 'completion';
+  subtype: 'summary' | 'sentence' | 'table' | 'flowchart';
+  instruction: string;
+  contentTemplate: string;
+  blanks: CompletionBlank[];
+}
+
+export interface MatchingFeaturesQuestion extends BaseIELTSQuestion {
+  type: 'matching_features';
+  statements: Array<{ id: string; text: string }>;
+  features: Array<{ id: string; label: string }>;
+  answerMap: Record<string, string>;
+  allowReuse?: boolean;
+}
+
+export interface MultipleChoiceQuestion extends BaseIELTSQuestion {
+  type: 'multiple_choice';
+  selectionMode: 'single' | 'multiple';
+  options: Array<{ id: string; text: string }>;
+  correctOptionIds: string[];
+  distractorMeta?: Array<{
+    optionId: string;
+    trapType:
+      | 'surface_match'
+      | 'reversed_causality'
+      | 'overstatement'
+      | 'concept_swap';
+  }>;
+}
+
+export type IELTSQuestion =
+  | TFNGQuestion
+  | MatchingHeadingsQuestion
+  | MatchingInformationQuestion
+  | CompletionQuestion
+  | MatchingFeaturesQuestion
+  | MultipleChoiceQuestion;
+
+// --- Legacy question format -------------------------------------------------
+
+export interface LegacyQuizQuestion {
+  q: string;
+  options: Array<{
+    text: string;
+    correct: boolean;
+    rationale: QuizRationale;
+  }>;
+}
+
+export type AnyQuizQuestion = IELTSQuestion | LegacyQuizQuestion;
+
+/** Type guard — available here so lesson data consumers don't need a feature import. */
+export const isIELTSQuestion = (q: AnyQuizQuestion): q is IELTSQuestion =>
+  typeof (q as IELTSQuestion).type === 'string';
+
+// ---------------------------------------------------------------------------
 
 export interface LessonQuiz {
   title: string;
-  questions: unknown[];
+  questions: AnyQuizQuestion[];
 }
 
 export interface LessonData {

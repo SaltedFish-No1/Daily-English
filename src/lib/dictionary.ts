@@ -151,6 +151,8 @@ export const mapDictionaryEntries = (
   return entries.length > 0 ? entries : null;
 };
 
+const FETCH_TIMEOUT_MS = 5000;
+
 export const fetchDictionaryEntries = async (word: string) => {
   const normalizedWord = normalizeDictionaryQuery(word);
   if (!normalizedWord) {
@@ -160,10 +162,15 @@ export const fetchDictionaryEntries = async (word: string) => {
     };
   }
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
   try {
     const response = await fetch(
-      `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(normalizedWord)}`
+      `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(normalizedWord)}`,
+      { signal: controller.signal }
     );
+    clearTimeout(timeoutId);
 
     if (response.status === 404) {
       return {
@@ -194,6 +201,7 @@ export const fetchDictionaryEntries = async (word: string) => {
       data,
     };
   } catch {
+    clearTimeout(timeoutId);
     return {
       status: 'error' as const,
       data: null,
