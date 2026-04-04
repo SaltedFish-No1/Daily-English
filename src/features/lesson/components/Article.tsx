@@ -35,6 +35,7 @@ export const Article: React.FC<ArticleProps> = ({
     ? '阅读下方文章，理解核心观点。<br><strong>交互提示：</strong>点击任意英文单词可查询英文词典，<span class="text-emerald-700 font-bold border-b-2 border-emerald-300 px-1 rounded bg-white">高亮词汇</span>为本课重点词，并支持播放发音。'
     : '阅读下方文章，理解核心观点。<br><strong>交互提示：</strong>点击任意英文单词可查询英文词典，<span class="text-emerald-700 font-bold border-b-2 border-emerald-300 px-1 rounded bg-white">高亮词汇</span>为本课重点词。';
 
+  // 切换逻辑：点击同一词同一位置则取消选中（关闭词卡），否则打开新词。
   const handleWordSelect = (
     surface: string,
     query: string,

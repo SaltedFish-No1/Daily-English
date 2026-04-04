@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @description 多选题评分，使用集合运算判断精确匹配。
+ */
+
 import { GradeResult, MultipleChoiceQuestion } from '../types';
 
 const unique = (arr: string[]) => Array.from(new Set(arr));

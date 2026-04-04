@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @description 题目渲染分发器，根据题型委托给对应视图组件。
+ */
+
 import React from 'react';
 import { questionRendererRegistry } from './registry';
 import {
@@ -75,6 +79,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
     );
   }
 
+  // 从 UserAnswer 联合体提取题型载荷并包装 onChange 回调，分发给注册的题型视图。
   const q: IELTSQuestion = question;
   switch (q.type) {
     case 'tfng': {

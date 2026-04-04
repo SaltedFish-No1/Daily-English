@@ -1,3 +1,7 @@
+/**
+ * @description 测验领域类型定义：题型、答案、评分结果与持久化状态。
+ */
+
 import { QuizRationale } from '@/types/lesson';
 
 export type IELTSQuestionType =
@@ -170,9 +174,4 @@ export const isIELTSQuestion = (q: AnyQuizQuestion): q is IELTSQuestion => {
 
 export const toStableQuestionId = (idx: number) => `q-${idx + 1}`;
 
-export interface QuizPersistState {
-  currentIdx: number;
-  isFinished: boolean;
-  answers: Record<string, UserAnswer>;
-  grades: Record<string, GradeResult>;
-}
+export type { QuizPersistState } from '@/types/quiz';

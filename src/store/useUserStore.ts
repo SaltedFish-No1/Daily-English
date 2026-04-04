@@ -1,3 +1,7 @@
+/**
+ * @description 用户持久化状态：生词收藏、词典缓存、课程历史与测验进度。
+ */
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import {
@@ -5,7 +9,7 @@ import {
   normalizeDictionaryQuery,
 } from '@/lib/dictionary';
 import { DictionaryCacheRecord } from '@/types/dictionary';
-import { QuizPersistState } from '@/features/lesson/components/quiz/types';
+import { QuizPersistState } from '@/types/quiz';
 
 const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -70,6 +74,7 @@ export const useUserStore = create<UserState>()(
       dictionaryCache: {},
       history: {},
       quizProgress: {},
+      // 不可变更新 savedWords 索引：按 (lessonSlug, paragraphIndex) 查找已有记录并更新，或追加新记录。
       upsertVocabOccurrence: ({
         word,
         lessonSlug,
@@ -110,6 +115,7 @@ export const useUserStore = create<UserState>()(
             },
           };
         }),
+      // 删除特定出处记录；若该词的出处列表清空则删除整个词条以保持索引整洁。
       removeVocabOccurrence: ({ word, lessonSlug, paragraphIndex }) =>
         set((state) => {
           const key = word.trim().toLowerCase();
@@ -162,6 +168,7 @@ export const useUserStore = create<UserState>()(
             [word.trim().toLowerCase()]: record,
           },
         })),
+      // TTL 缓存（7天）词典查询：先设 loading 占位防止并发请求，完成后替换为真实数据���
       fetchDictionaryRecord: async (word, force = false) => {
         const key = normalizeDictionaryQuery(word);
         if (!key) return;

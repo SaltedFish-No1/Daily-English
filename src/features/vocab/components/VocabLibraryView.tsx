@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @description 生词本全览页面，展示收藏词汇卡片与出处链接。
+ */
+
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { useUserStore } from '@/store/useUserStore';

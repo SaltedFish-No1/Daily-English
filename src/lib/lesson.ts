@@ -1,3 +1,7 @@
+/**
+ * @description 课程 JSON 数据校验与 schema 迁移。
+ */
+
 import { FocusWord, LessonData } from '@/types/lesson';
 
 // ---------------------------------------------------------------------------
@@ -67,6 +71,7 @@ const isFocusWord = (value: unknown): value is FocusWord => {
   return true;
 };
 
+// 防御性校验链：先迁移 schema 至当前版本，再逐字段验证，首次失败即返回 null（fail-fast）。
 export const validateLessonData = (value: unknown): LessonData | null => {
   if (!isRecord(value)) return null;
 
@@ -91,6 +96,7 @@ export const validateLessonData = (value: unknown): LessonData | null => {
     return null;
   }
 
+  // 校验重点词唯一性：key 不可重复，form 跨词条全局不可重复。
   const focusWordKeySet = new Set<string>();
   const formSet = new Set<string>();
   for (const focusWord of focusWords) {
@@ -119,6 +125,7 @@ export const validateLessonData = (value: unknown): LessonData | null => {
       return null;
     }
 
+    // 拒绝英文段落中的 HTML 标签，防止注入。
     if (!isString(paragraph.en) || /<[^>]+>/.test(paragraph.en)) return null;
   }
 

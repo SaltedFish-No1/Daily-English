@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @description 满分庆祝动画，使用 canvas-confetti 渲染礼花效果。
+ */
+
 import React, { useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 

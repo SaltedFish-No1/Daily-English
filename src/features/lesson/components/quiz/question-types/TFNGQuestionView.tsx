@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @description 判断正误（TRUE/FALSE/NOT GIVEN）题视图。
+ */
+
 import React from 'react';
 import { TFNGLabel, TFNGQuestion, YNNGLabel } from '../types';
 

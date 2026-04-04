@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @description 旧版单选题评分。
+ */
+
 import { GradeResult, LegacyQuizQuestion } from '../types';
 
 export const gradeLegacySingle = (

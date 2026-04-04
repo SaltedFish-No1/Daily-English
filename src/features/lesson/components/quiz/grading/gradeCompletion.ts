@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @description 填空题评分：逐空比对，支持大小写与字数限制。
+ */
+
 import {
   countWords,
   normalizeText,

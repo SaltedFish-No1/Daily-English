@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { LessonDifficulty, LessonListItem } from '@/types/lesson';
 import { Calendar, ArrowRight, Download, BookMarked } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -10,21 +10,10 @@ import {
   CEFRGuideDialog,
   difficultyClassMap,
 } from '@/features/home/components/CEFRGuideDialog';
+import { usePWAInstall } from '@/hooks/usePWAInstall';
 
 interface HomeViewProps {
   lessons: LessonListItem[];
-}
-
-interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
-}
-
-interface InstallDialogState {
-  open: boolean;
-  title: string;
-  message: string;
-  showConfirm: boolean;
 }
 
 interface DifficultyGuideState {
@@ -40,137 +29,20 @@ interface DifficultyGuideState {
  */
 export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
   const { savedWords } = useUserStore();
-  const [installEvent, setInstallEvent] =
-    useState<BeforeInstallPromptEvent | null>(null);
-  const [isStandalone, setIsStandalone] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    const standaloneByDisplayMode = window.matchMedia(
-      '(display-mode: standalone)'
-    ).matches;
-    const standaloneByNavigator =
-      'standalone' in window.navigator &&
-      Boolean(
-        (window.navigator as Navigator & { standalone?: boolean }).standalone
-      );
-    return standaloneByDisplayMode || standaloneByNavigator;
-  });
-  const [isIOS] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
-  });
-  const [isSafari] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    const ua = window.navigator.userAgent;
-    return /safari/i.test(ua) && !/crios|fxios|edgios|opios/i.test(ua);
-  });
-  const [installDialog, setInstallDialog] = useState<InstallDialogState>({
-    open: false,
-    title: '',
-    message: '',
-    showConfirm: false,
-  });
+  const {
+    isStandalone,
+    installDialog,
+    installTitle,
+    installLabel,
+    handleInstall,
+    closeInstallDialog,
+    confirmInstall,
+  } = usePWAInstall();
+
   const [difficultyGuide, setDifficultyGuide] = useState<DifficultyGuideState>({
     open: false,
     difficulty: null,
   });
-
-  useEffect(() => {
-    const handleBeforeInstallPrompt = (event: Event) => {
-      event.preventDefault();
-      setInstallEvent(event as BeforeInstallPromptEvent);
-    };
-    const handleAppInstalled = () => {
-      setInstallEvent(null);
-      setIsStandalone(true);
-    };
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    window.addEventListener('appinstalled', handleAppInstalled);
-    return () => {
-      window.removeEventListener(
-        'beforeinstallprompt',
-        handleBeforeInstallPrompt
-      );
-      window.removeEventListener('appinstalled', handleAppInstalled);
-    };
-  }, []);
-
-  const handleInstall = async () => {
-    if (isStandalone) {
-      setInstallDialog({
-        open: true,
-        title: '已安装',
-        message: 'Magic English 已经安装到本地。',
-        showConfirm: false,
-      });
-      return;
-    }
-    if (!installEvent) {
-      if (isIOS && !isSafari) {
-        setInstallDialog({
-          open: true,
-          title: '请切换 Safari',
-          message:
-            'iOS 上 Edge/Chrome 不支持网页安装入口，请使用 Safari 打开后，通过“分享 -> 添加到主屏幕”安装。',
-          showConfirm: false,
-        });
-        return;
-      }
-      if (isIOS && isSafari) {
-        setInstallDialog({
-          open: true,
-          title: '手动安装',
-          message: '请在 Safari 中点击“分享”按钮，然后选择“添加到主屏幕”。',
-          showConfirm: false,
-        });
-        return;
-      }
-      setInstallDialog({
-        open: true,
-        title: '暂不可直接安装',
-        message:
-          '当前浏览器暂未触发安装事件，请使用浏览器菜单中的“安装应用”入口。',
-        showConfirm: false,
-      });
-      return;
-    }
-    setInstallDialog({
-      open: true,
-      title: '确认安装',
-      message: '确认安装 Magic English 到本地吗？',
-      showConfirm: true,
-    });
-  };
-
-  const closeInstallDialog = () => {
-    setInstallDialog((prev) => ({ ...prev, open: false }));
-  };
-
-  const confirmInstall = async () => {
-    if (!installEvent) {
-      closeInstallDialog();
-      return;
-    }
-    closeInstallDialog();
-    await installEvent.prompt();
-    const choice = await installEvent.userChoice;
-    setInstallEvent(null);
-    if (choice.outcome === 'accepted') {
-      setInstallDialog({
-        open: true,
-        title: '安装请求已提交',
-        message: '系统正在完成安装流程，请稍候。',
-        showConfirm: false,
-      });
-      return;
-    }
-    setInstallDialog({
-      open: true,
-      title: '已取消安装',
-      message: '你已取消本次安装请求。',
-      showConfirm: false,
-    });
-  };
 
   const openDifficultyGuide = (
     event: React.MouseEvent<HTMLElement>,
@@ -191,9 +63,6 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
     });
   };
 
-  const installTitle = isStandalone ? '已安装' : '安装到本地';
-
-  const installLabel = isStandalone ? '已安装' : '安装';
   const recentWordEntries = useMemo(() => {
     return Object.entries(savedWords)
       .filter(([, occurrences]) => occurrences.length > 0)

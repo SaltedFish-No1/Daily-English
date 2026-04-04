@@ -1,3 +1,7 @@
+/**
+ * @description 词典 API 客户端：请求 dictionaryapi.dev 并规范化返回数据。
+ */
+
 import { DictionaryEntry, DictionaryPhonetic } from '@/types/dictionary';
 
 interface DictionaryApiPhonetic {

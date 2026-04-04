@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @description 段落标题匹配题评分。
+ */
+
 import { GradeResult, MatchingHeadingsQuestion } from '../types';
 
 export const gradeMatchingHeadings = (

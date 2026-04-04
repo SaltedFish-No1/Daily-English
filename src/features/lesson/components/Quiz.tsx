@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @description 测验引擎组件，管理答题流程、评分与成绩回顾。
+ */
+
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { LessonQuiz } from '@/types/lesson';
 import { ArrowRight, RotateCcw } from 'lucide-react';
@@ -8,23 +12,17 @@ import { QuestionRenderer } from './quiz/QuestionRenderer';
 import { FullScreenCelebration } from './quiz/FullScreenCelebration';
 import {
   AnyQuizQuestion,
-  GradeResult,
   QuizPersistState,
-  ReviewRow,
-  UserAnswer,
   isIELTSQuestion,
   toStableQuestionId,
 } from './quiz/types';
 import { useUserStore } from '@/store/useUserStore';
+import { buildReviewRows } from './quiz/buildReviewRows';
 import {
-  gradeCompletion,
-  gradeLegacySingle,
-  gradeMatchingFeatures,
-  gradeMatchingHeadings,
-  gradeMatchingInformation,
-  gradeMultipleChoice,
-  gradeTFNG,
-} from './quiz/grading';
+  computeTotals,
+  gradeQuestion,
+  isAnswerEmpty,
+} from './quiz/quizHelpers';
 
 export interface QuizProps {
   quiz: LessonQuiz;
@@ -52,34 +50,6 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
       return toStableQuestionId(idx);
     },
     []
-  );
-
-  const computeTotals = useCallback(
-    (qs: AnyQuizQuestion[], grades: Record<string, GradeResult>) => {
-      const total = qs.reduce((acc, q, idx) => {
-        const id = getQuestionId(q, idx);
-        const g = grades[id];
-        if (g) return acc + g.maxScore;
-        if (isIELTSQuestion(q)) {
-          switch (q.type) {
-            case 'matching_headings':
-              return acc + q.paragraphs.length;
-            case 'matching_information':
-              return acc + q.items.length;
-            case 'matching_features':
-              return acc + q.statements.length;
-            case 'completion':
-              return acc + q.blanks.length;
-            default:
-              return acc + 1;
-          }
-        }
-        return acc + 1;
-      }, 0);
-      const score = Object.values(grades).reduce((acc, g) => acc + g.score, 0);
-      return { score, total };
-    },
-    [getQuestionId]
   );
 
   const [quizState, setQuizState] = useState<QuizPersistState>(() => {
@@ -118,10 +88,14 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
 
   useEffect(() => {
     if (!quizState.isFinished) return;
-    const { score, total } = computeTotals(questions, quizState.grades);
+    const { score, total } = computeTotals(
+      questions,
+      quizState.grades,
+      getQuestionId
+    );
     onComplete?.(score, total);
   }, [
-    computeTotals,
+    getQuestionId,
     onComplete,
     questions,
     quizState.grades,
@@ -130,7 +104,7 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
 
   const labels = {
     completeTitle: '测验完成',
-    retakeButtonLabel: '重新作答',
+    retakeButtonLabel: '重新��答',
     scoreLabel: '得分',
     correctLabel: '回答正确',
     incorrectLabel: '回答错误',
@@ -157,8 +131,8 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
   };
 
   const { score, total } = useMemo(
-    () => computeTotals(questions, quizState.grades),
-    [computeTotals, questions, quizState.grades]
+    () => computeTotals(questions, quizState.grades, getQuestionId),
+    [getQuestionId, questions, quizState.grades]
   );
   const scorePercent = total > 0 ? Math.round((score / total) * 100) : 0;
   const isPerfectScore = total > 0 && score === total;
@@ -171,220 +145,23 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
           ? '基础已建立，建议回看文章后再刷一遍。'
           : '建议先回顾文章与词汇，再重新练习。';
 
-  const reviewRows = useMemo(() => {
-    return questions.map((question, idx) => {
-      const id = getQuestionId(question, idx);
-      const userAnswer = quizState.answers[id];
-      const grade = quizState.grades[id];
-      const isCorrect = grade?.isCorrect ?? false;
-
-      if (!isIELTSQuestion(question)) {
-        const selectedIndex =
-          userAnswer?.type === 'legacy_single'
-            ? userAnswer.payload.selectedIndex
-            : null;
-        const selected =
-          typeof selectedIndex === 'number'
-            ? question.options[selectedIndex]
-            : null;
-        const correctOption =
-          question.options.find((option) => option.correct) ??
-          question.options[0];
-        return {
-          questionId: id,
-          questionText: question.q,
-          userAnswerText: selected?.text ?? '未作答',
-          correctAnswerText: correctOption?.text ?? '',
-          rationale: selected?.rationale ?? correctOption?.rationale,
-          isCorrect,
-        } satisfies ReviewRow;
-      }
-
-      const q = question;
-      switch (q.type) {
-        case 'tfng': {
-          const selected =
-            userAnswer?.type === 'tfng' ? userAnswer.payload.selected : null;
-          return {
-            questionId: id,
-            questionText: `${q.prompt}：${q.statement}`,
-            userAnswerText: selected ?? '未作答',
-            correctAnswerText: q.answer,
-            rationale: q.rationale,
-            isCorrect,
-          } satisfies ReviewRow;
-        }
-        case 'multiple_choice': {
-          const selectedIds =
-            userAnswer?.type === 'multiple_choice'
-              ? userAnswer.payload.selectedOptionIds
-              : [];
-          const selectedText = selectedIds
-            .map((sid) => q.options.find((o) => o.id === sid)?.text ?? sid)
-            .join('；');
-          const correctText = q.correctOptionIds
-            .map((sid) => q.options.find((o) => o.id === sid)?.text ?? sid)
-            .join('；');
-          return {
-            questionId: id,
-            questionText: q.prompt,
-            userAnswerText: selectedText || '未作答',
-            correctAnswerText: correctText,
-            rationale: q.rationale,
-            isCorrect,
-          } satisfies ReviewRow;
-        }
-        case 'matching_headings': {
-          const mapping =
-            userAnswer?.type === 'matching_headings'
-              ? userAnswer.payload.mapping
-              : {};
-          const userText = q.paragraphs
-            .map((p) => `${p.label}→${mapping[p.id] ?? '∅'}`)
-            .join('；');
-          const correctText = q.paragraphs
-            .map((p) => `${p.label}→${q.answerMap[p.id] ?? '∅'}`)
-            .join('；');
-          return {
-            questionId: id,
-            questionText: q.prompt,
-            userAnswerText: userText || '未作答',
-            correctAnswerText: correctText,
-            rationale: q.rationale,
-            isCorrect,
-          } satisfies ReviewRow;
-        }
-        case 'matching_information': {
-          const mapping =
-            userAnswer?.type === 'matching_information'
-              ? userAnswer.payload.mapping
-              : {};
-          const userText = q.items
-            .map((it) => `${it.id}→${mapping[it.id] ?? '∅'}`)
-            .join('；');
-          const correctText = q.items
-            .map((it) => {
-              const correct = q.answerMap[it.id];
-              const value = Array.isArray(correct)
-                ? correct.join('/')
-                : (correct ?? '∅');
-              return `${it.id}→${value}`;
-            })
-            .join('；');
-          return {
-            questionId: id,
-            questionText: q.prompt,
-            userAnswerText: userText || '未作答',
-            correctAnswerText: correctText,
-            rationale: q.rationale,
-            isCorrect,
-          } satisfies ReviewRow;
-        }
-        case 'matching_features': {
-          const mapping =
-            userAnswer?.type === 'matching_features'
-              ? userAnswer.payload.mapping
-              : {};
-          const userText = q.statements
-            .map((s) => `${s.id}→${mapping[s.id] ?? '∅'}`)
-            .join('；');
-          const correctText = q.statements
-            .map((s) => `${s.id}→${q.answerMap[s.id] ?? '∅'}`)
-            .join('；');
-          return {
-            questionId: id,
-            questionText: q.prompt,
-            userAnswerText: userText || '未作答',
-            correctAnswerText: correctText,
-            rationale: q.rationale,
-            isCorrect,
-          } satisfies ReviewRow;
-        }
-        case 'completion': {
-          const blanks =
-            userAnswer?.type === 'completion' ? userAnswer.payload.blanks : {};
-          const userText = q.blanks
-            .map((b) => `${b.id}=${blanks[b.id] ?? '∅'}`)
-            .join('；');
-          const correctText = q.blanks
-            .map((b) => `${b.id}=${b.acceptedAnswers.join('/')}`)
-            .join('；');
-          return {
-            questionId: id,
-            questionText: q.prompt,
-            userAnswerText: userText || '未作答',
-            correctAnswerText: correctText,
-            rationale: q.rationale,
-            isCorrect,
-          } satisfies ReviewRow;
-        }
-      }
-    });
-  }, [getQuestionId, questions, quizState.answers, quizState.grades]);
-
-  const isAnswerEmpty = (ans: UserAnswer | undefined) => {
-    if (!ans) return true;
-    switch (ans.type) {
-      case 'legacy_single':
-        return ans.payload.selectedIndex === null;
-      case 'tfng':
-        return ans.payload.selected === null;
-      case 'multiple_choice':
-        return ans.payload.selectedOptionIds.length === 0;
-      case 'completion':
-        return Object.values(ans.payload.blanks).every((v) => !v.trim());
-      case 'matching_headings':
-      case 'matching_information':
-      case 'matching_features':
-        return Object.keys(ans.payload.mapping).length === 0;
-    }
-  };
-
-  const gradeCurrentQuestion = () => {
-    const q = currentQuestion;
-    const id = currentQuestionId;
-    const ans = quizState.answers[id];
-
-    if (!isIELTSQuestion(q)) {
-      const selectedIndex =
-        ans?.type === 'legacy_single' ? ans.payload.selectedIndex : null;
-      return gradeLegacySingle(id, q, selectedIndex);
-    }
-
-    switch (q.type) {
-      case 'tfng': {
-        const selected = ans?.type === 'tfng' ? ans.payload.selected : null;
-        return gradeTFNG(q, selected);
-      }
-      case 'multiple_choice': {
-        const selectedOptionIds =
-          ans?.type === 'multiple_choice' ? ans.payload.selectedOptionIds : [];
-        return gradeMultipleChoice(q, selectedOptionIds);
-      }
-      case 'matching_headings': {
-        const mapping =
-          ans?.type === 'matching_headings' ? ans.payload.mapping : {};
-        return gradeMatchingHeadings(q, mapping);
-      }
-      case 'matching_information': {
-        const mapping =
-          ans?.type === 'matching_information' ? ans.payload.mapping : {};
-        return gradeMatchingInformation(q, mapping);
-      }
-      case 'matching_features': {
-        const mapping =
-          ans?.type === 'matching_features' ? ans.payload.mapping : {};
-        return gradeMatchingFeatures(q, mapping);
-      }
-      case 'completion': {
-        const blanks = ans?.type === 'completion' ? ans.payload.blanks : {};
-        return gradeCompletion(q, blanks);
-      }
-    }
-  };
+  const reviewRows = useMemo(
+    () =>
+      buildReviewRows(
+        questions,
+        getQuestionId,
+        quizState.answers,
+        quizState.grades
+      ),
+    [getQuestionId, questions, quizState.answers, quizState.grades]
+  );
 
   const handleSubmit = () => {
-    const result = gradeCurrentQuestion();
+    const result = gradeQuestion(
+      currentQuestion,
+      currentQuestionId,
+      quizState.answers[currentQuestionId]
+    );
     setQuizState((prev) => ({
       ...prev,
       grades: {

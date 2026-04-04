@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @description 判断正误题评分。
+ */
+
 import { GradeResult, TFNGQuestion } from '../types';
 
 export const gradeTFNG = (

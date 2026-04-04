@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @description 课程面包屑导航组件。
+ */
+
 import React from 'react';
 import Link from 'next/link';
 import { ChevronRight, Home } from 'lucide-react';
