@@ -3,6 +3,7 @@
 import React, { useMemo } from 'react';
 import {
   Chart as ChartJS,
+  BarElement,
   CategoryScale,
   LinearScale,
   PointElement,
@@ -12,10 +13,11 @@ import {
   Legend,
   Filler,
 } from 'chart.js';
-import { Line } from 'react-chartjs-2';
+import { Bar, Line } from 'react-chartjs-2';
 import { LessonChart } from '@/types/lesson';
 
 ChartJS.register(
+  BarElement,
   CategoryScale,
   LinearScale,
   PointElement,
@@ -83,10 +85,11 @@ export const Chart: React.FC<ChartProps> = ({ chart }) => {
       labels: chart.labels,
       datasets: chart.datasets.map((ds) => ({
         ...ds,
-        tension: 0.4,
-        pointRadius: 4,
-        pointHoverRadius: 6,
+        tension: chart.type === 'line' ? 0.4 : 0,
+        pointRadius: chart.type === 'line' ? 4 : 0,
+        pointHoverRadius: chart.type === 'line' ? 6 : 0,
         borderWidth: 3,
+        borderRadius: chart.type === 'bar' ? 10 : 0,
       })),
     }),
     [chart]
@@ -104,7 +107,11 @@ export const Chart: React.FC<ChartProps> = ({ chart }) => {
       </div>
 
       <div className="mb-10 h-[300px] w-full sm:h-[400px]">
-        <Line options={options} data={data} />
+        {chart.type === 'bar' ? (
+          <Bar options={options} data={data} />
+        ) : (
+          <Line options={options} data={data} />
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

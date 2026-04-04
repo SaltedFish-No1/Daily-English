@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useLessonStore } from '@/store/useLessonStore';
-import { LessonArticle } from '@/types/lesson';
+import { ArticleHighlight, LessonArticle } from '@/types/lesson';
 
 interface ArticleProps {
   article: LessonArticle;
@@ -32,34 +32,83 @@ export const Article: React.FC<ArticleProps> = ({
     ? '阅读下方文章，理解核心观点。<br><strong>交互提示：</strong>点击<span class="text-emerald-700 font-bold border-b-2 border-emerald-300 px-1 rounded bg-white">高亮词汇</span>可查看释义并播放发音。'
     : '阅读下方文章，理解核心观点。<br><strong>交互提示：</strong>点击<span class="text-emerald-700 font-bold border-b-2 border-emerald-300 px-1 rounded bg-white">高亮词汇</span>可查看释义与中文翻译。';
 
-  /**
-   * @author SuperQ
-   * @description 处理高亮单词点击并切换当前选中状态。
-   * @param e React 鼠标事件对象。
-   * @return 无返回值。
-   */
-  const handleWordClick = (e: React.MouseEvent) => {
-    const target = e.target as HTMLElement;
-    if (target.classList.contains('vocab-word')) {
-      const word = target.getAttribute('data-word');
-      const paragraphIndexRaw = target.getAttribute('data-p');
-      const paragraphIndex = Number(paragraphIndexRaw);
-      if (!word || Number.isNaN(paragraphIndex)) return;
-      const isSameSelection =
-        selectedWordContext?.word === word &&
-        selectedWordContext.lessonSlug === lessonSlug &&
-        selectedWordContext.paragraphIndex === paragraphIndex;
-      if (isSameSelection) {
-        setSelectedWordContext(null);
-      } else {
-        setSelectedWordContext({
-          word,
-          lessonSlug,
-          lessonTitle,
-          paragraphIndex,
-        });
+  const getRenderableHighlights = (
+    highlights: ArticleHighlight[],
+    text: string
+  ) => {
+    const sorted = [...highlights].sort((a, b) => a.start - b.start);
+    const renderable: ArticleHighlight[] = [];
+    let lastEnd = 0;
+
+    for (const highlight of sorted) {
+      const { start, end } = highlight;
+      if (start < lastEnd || start < 0 || end > text.length || start >= end) {
+        continue;
       }
+      renderable.push(highlight);
+      lastEnd = end;
     }
+
+    return renderable;
+  };
+
+  const handleWordSelect = (word: string, paragraphIndex: number) => {
+    const isSameSelection =
+      selectedWordContext?.word === word &&
+      selectedWordContext.lessonSlug === lessonSlug &&
+      selectedWordContext.paragraphIndex === paragraphIndex;
+    if (isSameSelection) {
+      setSelectedWordContext(null);
+      return;
+    }
+
+    setSelectedWordContext({
+      word,
+      lessonSlug,
+      lessonTitle,
+      paragraphIndex,
+    });
+  };
+
+  const renderAnnotatedText = (
+    text: string,
+    highlights: ArticleHighlight[],
+    paragraphIndex: number
+  ) => {
+    const nodes: React.ReactNode[] = [];
+    let cursor = 0;
+
+    for (const highlight of getRenderableHighlights(highlights, text)) {
+      if (highlight.start > cursor) {
+        nodes.push(text.slice(cursor, highlight.start));
+      }
+
+      const surface = text.slice(highlight.start, highlight.end);
+      const isActive =
+        selectedWordContext !== null &&
+        highlight.key === selectedWordContext.word &&
+        lessonSlug === selectedWordContext.lessonSlug &&
+        paragraphIndex === selectedWordContext.paragraphIndex;
+
+      nodes.push(
+        <button
+          key={`${paragraphIndex}-${highlight.start}-${highlight.key}`}
+          type="button"
+          onClick={() => handleWordSelect(highlight.key, paragraphIndex)}
+          className={`vocab-word ${isActive ? 'vocab-active' : ''}`}
+        >
+          {surface}
+        </button>
+      );
+
+      cursor = highlight.end;
+    }
+
+    if (cursor < text.length) {
+      nodes.push(text.slice(cursor));
+    }
+
+    return nodes;
   };
 
   const toggleTranslation = (index: number) => {
@@ -92,10 +141,7 @@ export const Article: React.FC<ArticleProps> = ({
         </div>
       )}
 
-      <article
-        className="prose prose-base sm:prose-lg serif max-w-none leading-relaxed text-slate-800"
-        onClick={handleWordClick}
-      >
+      <article className="prose prose-base sm:prose-lg serif max-w-none leading-relaxed text-slate-800">
         <div className="mb-6 flex items-start justify-between gap-4 sm:items-center">
           <h2 className="m-0 font-sans text-xl leading-snug font-bold text-slate-900 sm:text-2xl">
             {article.title}
@@ -103,20 +149,10 @@ export const Article: React.FC<ArticleProps> = ({
         </div>
 
         {article.paragraphs.map((p, i) => (
-          <div key={i} id={`p-${i}`} className="mb-8 scroll-mt-28">
-            <p
-              className="mb-2"
-              dangerouslySetInnerHTML={{
-                __html: p.en.replace(/data-word="([^"]+)"/g, (match, word) => {
-                  const isActive =
-                    selectedWordContext !== null &&
-                    word === selectedWordContext.word &&
-                    lessonSlug === selectedWordContext.lessonSlug &&
-                    i === selectedWordContext.paragraphIndex;
-                  return `${match} data-p="${i}" class="vocab-word ${isActive ? 'vocab-active' : ''}"`;
-                }),
-              }}
-            />
+          <div key={p.id} id={`p-${i}`} className="mb-8 scroll-mt-28">
+            <p className="mb-2">
+              {renderAnnotatedText(p.en.text, p.en.highlights, i)}
+            </p>
             {p.zh && (
               <div className="mb-2 flex justify-end">
                 <button
@@ -136,10 +172,9 @@ export const Article: React.FC<ArticleProps> = ({
               </div>
             )}
             {visibleTranslations[i] && p.zh && (
-              <p
-                className="mt-3 rounded-lg border border-slate-100 bg-slate-50 p-4 font-sans text-base leading-relaxed text-slate-600"
-                dangerouslySetInnerHTML={{ __html: p.zh }}
-              />
+              <p className="mt-3 rounded-lg border border-slate-100 bg-slate-50 p-4 font-sans text-base leading-relaxed text-slate-600">
+                {p.zh}
+              </p>
             )}
           </div>
         ))}

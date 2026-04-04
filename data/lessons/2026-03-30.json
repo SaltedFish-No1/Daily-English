@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "2.0",
   "meta": {
     "title": "The Psychology of Awe"
   },
@@ -9,145 +10,285 @@
     "title": "The Psychology of Awe: How Nature Changes Our Minds",
     "paragraphs": [
       {
-        "en": "In modern society, daily life requires <span class=\"vocab-word\" data-word=\"intense\">intense</span> mental focus. Bright screens, loud traffic, and busy schedules constantly <span class=\"vocab-word\" data-word=\"distract\">distract</span> us from our inner thoughts. Furthermore, as cities grow and <span class=\"vocab-word\" data-word=\"encroach\">encroach</span> upon natural spaces, people spend most of their time indoors. They often <span class=\"vocab-word\" data-word=\"indulge\">indulge</span> in social media, a habit that psychologists note can lead to negative emotions like <span class=\"vocab-word\" data-word=\"jealousy\">jealousy</span> due to social comparison. However, scientific studies suggest that spending time in nature can solve many of these modern psychological problems.",
-        "zh": "在现代社会，日常生活需要<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">高度集中的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">intense</span></span>精神专注。明亮的屏幕、嘈杂的交通和繁忙的日程安排不断地<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">分散<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">distract</span></span>我们对内心想法的注意力。此外，随着城市的发展并<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">蚕食<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">encroach</span></span>自然空间，人们大部分时间都在室内度过。他们经常<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">沉溺<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">indulge</span></span>于社交媒体，心理学家指出，由于社会比较，这种习惯会导致<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">嫉妒<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">jealousy</span></span>等负面情绪。然而，科学研究表明，在自然界中度过时间可以解决许多这些现代心理问题。"
+        "id": "p1",
+        "en": {
+          "text": "In modern society, daily life requires intense mental focus. Bright screens, loud traffic, and busy schedules constantly distract us from our inner thoughts. Furthermore, as cities grow and encroach upon natural spaces, people spend most of their time indoors. They often indulge in social media, a habit that psychologists note can lead to negative emotions like jealousy due to social comparison. However, scientific studies suggest that spending time in nature can solve many of these modern psychological problems.",
+          "highlights": [
+            {
+              "start": 39,
+              "end": 46,
+              "key": "intense"
+            },
+            {
+              "start": 121,
+              "end": 129,
+              "key": "distract"
+            },
+            {
+              "start": 190,
+              "end": 198,
+              "key": "encroach"
+            },
+            {
+              "start": 272,
+              "end": 279,
+              "key": "indulge"
+            },
+            {
+              "start": 364,
+              "end": 372,
+              "key": "jealousy"
+            }
+          ]
+        },
+        "zh": "在现代社会，日常生活需要高度集中的精神专注。明亮的屏幕、嘈杂的交通和繁忙的日程安排不断地分散我们对内心想法的注意力。此外，随着城市的发展并蚕食自然空间，人们大部分时间都在室内度过。他们经常沉溺于社交媒体，心理学家指出，由于社会比较，这种习惯会导致嫉妒等负面情绪。然而，科学研究表明，在自然界中度过时间可以解决许多这些现代心理问题。"
       },
       {
-        "en": "In the 1980s, researchers Rachel and Stephen Kaplan introduced the \"Attention <span class=\"vocab-word\" data-word=\"restoration\">Restoration</span> Theory\" (ART), which is now widely accepted in psychology. This theory explains that human attention is like a battery. When we are mentally tired, natural environments can <span class=\"vocab-word\" data-word=\"restore\">restore</span> our energy. Unlike a busy city street, an <span class=\"vocab-word\" data-word=\"ordinary\">ordinary</span> forest or park does not force our brains to process stressful information. There is a <span class=\"vocab-word\" data-word=\"distinct\">distinct</span> difference in how our brains rest in green spaces compared to urban areas. Today, medical professionals broadly <span class=\"vocab-word\" data-word=\"approve\">approve</span> of spending time outdoors as a standard way to improve mental health.",
-        "zh": "在20世纪80年代，研究人员雷切尔和斯蒂芬·卡普兰提出了“注意力<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">恢复<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">restoration</span></span>理论”（ART），该理论现在在心理学界被广泛接受。这个理论解释说，人类的注意力就像一块电池。当我们精神疲惫时，自然环境可以<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">恢复<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">restore</span></span>我们的能量。与繁忙的城市街道不同，一个<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">普通的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">ordinary</span></span>森林或公园不会强迫我们的大脑处理有压力的信息。与城市地区相比，我们的大脑在绿地中休息的方式有<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">明显的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">distinct</span></span>不同。今天，医疗专业人员广泛<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">认可<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">approve</span></span>将户外活动作为改善心理健康的标准方法。"
+        "id": "p2",
+        "en": {
+          "text": "In the 1980s, researchers Rachel and Stephen Kaplan introduced the \"Attention Restoration Theory\" (ART), which is now widely accepted in psychology. This theory explains that human attention is like a battery. When we are mentally tired, natural environments can restore our energy. Unlike a busy city street, an ordinary forest or park does not force our brains to process stressful information. There is a distinct difference in how our brains rest in green spaces compared to urban areas. Today, medical professionals broadly approve of spending time outdoors as a standard way to improve mental health.",
+          "highlights": [
+            {
+              "start": 78,
+              "end": 89,
+              "key": "restoration"
+            },
+            {
+              "start": 263,
+              "end": 270,
+              "key": "restore"
+            },
+            {
+              "start": 313,
+              "end": 321,
+              "key": "ordinary"
+            },
+            {
+              "start": 408,
+              "end": 416,
+              "key": "distinct"
+            },
+            {
+              "start": 529,
+              "end": 536,
+              "key": "approve"
+            }
+          ]
+        },
+        "zh": "在20世纪80年代，研究人员雷切尔和斯蒂芬·卡普兰提出了“注意力恢复理论”（ART），该理论现在在心理学界被广泛接受。这个理论解释说，人类的注意力就像一块电池。当我们精神疲惫时，自然环境可以恢复我们的能量。与繁忙的城市街道不同，一个普通的森林或公园不会强迫我们的大脑处理有压力的信息。与城市地区相比，我们的大脑在绿地中休息的方式有明显的不同。今天，医疗专业人员广泛认可将户外活动作为改善心理健康的标准方法。"
       },
       {
-        "en": "But nature does more than just help us relax; it has a <span class=\"vocab-word\" data-word=\"peculiar\">peculiar</span> and <span class=\"vocab-word\" data-word=\"fascinating\">fascinating</span> effect on our social behavior. Recent research from the University of California, Berkeley, explores the emotion of \"<span class=\"vocab-word\" data-word=\"awe\">awe</span>\"—the feeling we get when we see something huge and amazing, like grand mountains or ancient trees. The researchers found that experiencing awe makes people less <span class=\"vocab-word\" data-word=\"selfish\">selfish</span>. When someone feels small next to the <span class=\"vocab-word\" data-word=\"vastness\">vastness</span> of nature, they are less likely to act like an <span class=\"vocab-word\" data-word=\"egoist\">egoist</span>. Instead of focusing only on their own problems, they feel a stronger connection to others and a greater respect for human <span class=\"vocab-word\" data-word=\"dignity\">dignity</span>.",
-        "zh": "但是，大自然不仅能帮助我们放松；它对我们的社会行为有一种<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">奇特的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">peculiar</span></span>和<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">迷人的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">fascinating</span></span>影响。加州大学伯克利分校最近的研究探索了“<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">敬畏<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">awe</span></span>”的情感——这是当我们看到巨大而惊人的事物时，比如雄伟的山脉或古老的树木，我们所获得的感觉。研究人员发现，体验敬畏会让人变得不那么<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">自私<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">selfish</span></span>。当一个人在大自然的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">广阔<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">vastness</span></span>面前感到渺小时，他们不太可能表现得像个<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">自我主义者<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">egoist</span></span>。他们不再只关注自己的问题，而是感到与他人的联系更紧密，对人类<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">尊严<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">dignity</span></span>的尊重也更深。"
+        "id": "p3",
+        "en": {
+          "text": "But nature does more than just help us relax; it has a peculiar and fascinating effect on our social behavior. Recent research from the University of California, Berkeley, explores the emotion of \"awe\"—the feeling we get when we see something huge and amazing, like grand mountains or ancient trees. The researchers found that experiencing awe makes people less selfish. When someone feels small next to the vastness of nature, they are less likely to act like an egoist. Instead of focusing only on their own problems, they feel a stronger connection to others and a greater respect for human dignity.",
+          "highlights": [
+            {
+              "start": 55,
+              "end": 63,
+              "key": "peculiar"
+            },
+            {
+              "start": 68,
+              "end": 79,
+              "key": "fascinating"
+            },
+            {
+              "start": 197,
+              "end": 200,
+              "key": "awe"
+            },
+            {
+              "start": 362,
+              "end": 369,
+              "key": "selfish"
+            },
+            {
+              "start": 408,
+              "end": 416,
+              "key": "vastness"
+            },
+            {
+              "start": 464,
+              "end": 470,
+              "key": "egoist"
+            },
+            {
+              "start": 594,
+              "end": 601,
+              "key": "dignity"
+            }
+          ]
+        },
+        "zh": "但是，大自然不仅能帮助我们放松；它对我们的社会行为有一种奇特的和迷人的影响。加州大学伯克利分校最近的研究探索了“敬畏”的情感——这是当我们看到巨大而惊人的事物时，比如雄伟的山脉或古老的树木，我们所获得的感觉。研究人员发现，体验敬畏会让人变得不那么自私。当一个人在大自然的广阔面前感到渺小时，他们不太可能表现得像个自我主义者。他们不再只关注自己的问题，而是感到与他人的联系更紧密，对人类尊严的尊重也更深。"
       },
       {
-        "en": "The results of these studies are clear: even if a person is only <span class=\"vocab-word\" data-word=\"slightly\">slightly</span> exposed to natural beauty, they often show a more <span class=\"vocab-word\" data-word=\"fervent\">fervent</span> desire to help strangers and <span class=\"vocab-word\" data-word=\"cooperate\">cooperate</span> with their community. In conclusion, the natural world is not just a place for physical exercise. It is a powerful psychological tool that heals our tired minds and makes us better, more connected human beings.",
-        "zh": "这些研究的结果是清楚的：即使一个人只是<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">轻微地<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">slightly</span></span>接触自然美景，他们往往会表现出一种更<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">强烈的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">fervent</span></span>帮助陌生人和与社区<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">合作<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">cooperate</span></span>的愿望。总之，自然界不仅是进行体育锻炼的地方。它是一个强大的心理工具，可以治愈我们疲惫的心灵，让我们成为更好、更有联系的人类。"
+        "id": "p4",
+        "en": {
+          "text": "The results of these studies are clear: even if a person is only slightly exposed to natural beauty, they often show a more fervent desire to help strangers and cooperate with their community. In conclusion, the natural world is not just a place for physical exercise. It is a powerful psychological tool that heals our tired minds and makes us better, more connected human beings.",
+          "highlights": [
+            {
+              "start": 65,
+              "end": 73,
+              "key": "slightly"
+            },
+            {
+              "start": 124,
+              "end": 131,
+              "key": "fervent"
+            },
+            {
+              "start": 161,
+              "end": 170,
+              "key": "cooperate"
+            }
+          ]
+        },
+        "zh": "这些研究的结果是清楚的：即使一个人只是轻微地接触自然美景，他们往往会表现出一种更强烈的帮助陌生人和与社区合作的愿望。总之，自然界不仅是进行体育锻炼的地方。它是一个强大的心理工具，可以治愈我们疲惫的心灵，让我们成为更好、更有联系的人类。"
       }
     ]
   },
-  "vocab": {
-    "intense": {
+  "vocab": [
+    {
+      "key": "intense",
       "pos": "adj.",
       "def": "Of extreme force, degree, or strength.",
       "trans": "十分强烈的，高度集中的，紧张的",
       "speakText": "intense"
     },
-    "distract": {
+    {
+      "key": "distract",
       "pos": "v.",
       "def": "To prevent someone from giving full attention to something.",
       "trans": "转移（注意力），分散（思想）",
       "speakText": "distract"
     },
-    "encroach": {
+    {
+      "key": "encroach",
       "pos": "v.",
       "def": "To advance gradually beyond usual or acceptable limits.",
       "trans": "侵犯，蚕食",
       "speakText": "encroach"
     },
-    "indulge": {
+    {
+      "key": "indulge",
       "pos": "v.",
       "def": "To allow oneself to enjoy the pleasure of.",
       "trans": "沉溺，放纵",
       "speakText": "indulge"
     },
-    "jealousy": {
+    {
+      "key": "jealousy",
       "pos": "n.",
       "def": "The state or feeling of being jealous.",
       "trans": "嫉妒",
       "speakText": "jealousy"
     },
-    "restoration": {
+    {
+      "key": "restoration",
       "pos": "n.",
       "def": "The action of returning something to a former owner, place, or condition.",
       "trans": "恢复，复原",
       "speakText": "restoration"
     },
-    "restore": {
+    {
+      "key": "restore",
       "pos": "v.",
       "def": "To bring back (a previous right, practice, custom, or situation).",
       "trans": "恢复，修复",
       "speakText": "restore"
     },
-    "ordinary": {
+    {
+      "key": "ordinary",
       "pos": "adj.",
       "def": "With no special or distinctive features; normal.",
       "trans": "普通的，平常的",
       "speakText": "ordinary"
     },
-    "distinct": {
+    {
+      "key": "distinct",
       "pos": "adj.",
       "def": "Recognizably different in nature from something else of a similar type.",
       "trans": "截然不同的，明显的",
       "speakText": "distinct"
     },
-    "approve": {
+    {
+      "key": "approve",
       "pos": "v.",
       "def": "To officially agree to or accept as satisfactory.",
       "trans": "赞成，同意，认可",
       "speakText": "approve"
     },
-    "peculiar": {
+    {
+      "key": "peculiar",
       "pos": "adj.",
       "def": "Strange or odd; unusual.",
       "trans": "特殊的，奇特的",
       "speakText": "peculiar"
     },
-    "fascinating": {
+    {
+      "key": "fascinating",
       "pos": "adj.",
       "def": "Extremely interesting.",
       "trans": "迷人的，极有吸引力的",
       "speakText": "fascinating"
     },
-    "awe": {
+    {
+      "key": "awe",
       "pos": "n.",
       "def": "A feeling of great respect and wonder, especially when something feels vast or powerful.",
       "trans": "敬畏；惊叹（面对宏大、强大或神圣事物的感觉）",
       "speakText": "awe"
     },
-    "selfish": {
+    {
+      "key": "selfish",
       "pos": "adj.",
       "def": "Lacking consideration for others; concerned chiefly with one's own personal profit or pleasure.",
       "trans": "自私的",
       "speakText": "selfish"
     },
-    "vastness": {
+    {
+      "key": "vastness",
       "pos": "n.",
       "def": "Very great extent or size; immensity.",
       "trans": "巨大，广阔",
       "speakText": "vastness"
     },
-    "egoist": {
+    {
+      "key": "egoist",
       "pos": "n.",
       "def": "A person who is preoccupied with their own interests; a selfish person.",
       "trans": "自我主义者",
       "speakText": "egoist"
     },
-    "dignity": {
+    {
+      "key": "dignity",
       "pos": "n.",
       "def": "The state or quality of being worthy of honor or respect.",
       "trans": "尊严，庄重",
       "speakText": "dignity"
     },
-    "slightly": {
+    {
+      "key": "slightly",
       "pos": "adv.",
       "def": "To a small degree; not considerably.",
       "trans": "轻微地，稍微地",
       "speakText": "slightly"
     },
-    "fervent": {
+    {
+      "key": "fervent",
       "pos": "adj.",
       "def": "Having or displaying a passionate intensity.",
       "trans": "炽热的，强烈的",
       "speakText": "fervent"
     },
-    "cooperate": {
+    {
+      "key": "cooperate",
       "pos": "v.",
       "def": "To act jointly; work toward the same end.",
       "trans": "合作，协作",
       "speakText": "cooperate"
     }
-  },
+  ],
   "chart": {
     "type": "bar",
     "title": "Impact of Environment on Prosocial Behavior",

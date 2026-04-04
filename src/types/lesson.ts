@@ -1,3 +1,5 @@
+export type LessonSchemaVersion = '2.0';
+
 export interface LessonMeta {
   title: string;
 }
@@ -6,8 +8,20 @@ export interface LessonSpeech {
   enabled: boolean;
 }
 
+export interface ArticleHighlight {
+  start: number;
+  end: number;
+  key: string;
+}
+
+export interface AnnotatedText {
+  text: string;
+  highlights: ArticleHighlight[];
+}
+
 export interface Paragraph {
-  en: string;
+  id: string;
+  en: AnnotatedText;
   zh: string;
 }
 
@@ -17,10 +31,14 @@ export interface LessonArticle {
 }
 
 export interface VocabEntry {
+  key: string;
+  lemma?: string;
+  forms?: string[];
   pos: string;
   def: string;
   trans: string;
   speakText?: string;
+  notes?: string;
 }
 
 export interface ChartDataset {
@@ -37,6 +55,7 @@ export interface ChartInsight {
 }
 
 export interface LessonChart {
+  type: 'line' | 'bar';
   title: string;
   description: string;
   labels: string[];
@@ -66,10 +85,11 @@ export interface LessonQuiz {
 }
 
 export interface LessonData {
+  schemaVersion: LessonSchemaVersion;
   meta: LessonMeta;
   speech: LessonSpeech;
   article: LessonArticle;
-  vocab: Record<string, VocabEntry>;
+  vocab: VocabEntry[];
   chart: LessonChart;
   quiz: LessonQuiz;
 }

@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "2.0",
   "meta": {
     "title": "Evolutionary Mismatch"
   },
@@ -9,361 +10,717 @@
     "title": "The Evolutionary Mismatch of Modern Diets",
     "paragraphs": [
       {
-        "en": "For most of human history, our early <span class=\"vocab-word\" data-word=\"ancestors\">ancestors</span> <span class=\"vocab-word\" data-word=\"struggled\">struggled</span> to <span class=\"vocab-word\" data-word=\"secure\">secure</span> enough <span class=\"vocab-word\" data-word=\"calories\">calories</span> to survive. In order to <span class=\"vocab-word\" data-word=\"occupy\">occupy</span> diverse and often <span class=\"vocab-word\" data-word=\"harsh\">harsh</span> environments, humans evolved as <span class=\"vocab-word\" data-word=\"adaptable\">adaptable</span> <span class=\"vocab-word\" data-word=\"omnivores\">omnivores</span> and <span class=\"vocab-word\" data-word=\"opportunistic\">opportunistic</span> <span class=\"vocab-word\" data-word=\"carnivore\">carnivores</span>. The primary biological <span class=\"vocab-word\" data-word=\"ambition\">ambition</span> of our species was simple: avoid <span class=\"vocab-word\" data-word=\"starvation\">starvation</span>. To ensure survival, evolution <span class=\"vocab-word\" data-word=\"instill\">instilled</span> in the human brain a <span class=\"vocab-word\" data-word=\"profound\">profound</span> desire for energy-dense foods—specifically those high in sugar, fat, and salt.",
-        "zh": "在人类历史的大部分时间里，我们早期的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">祖先<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">ancestors</span></span>为了生存而<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">努力<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">struggled</span></span><span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">获取<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">secure</span></span>足够的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">卡路里<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">calories</span></span>。为了<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">占据<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">occupy</span></span>多样化且通常<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">恶劣的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">harsh</span></span>环境，人类进化成了<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">适应性强的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">adaptable</span></span><span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">杂食动物<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">omnivores</span></span>和<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">机会主义的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">opportunistic</span></span><span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">食肉动物<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">carnivores</span></span>。我们物种的主要生物学<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">野心<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">ambition</span></span>很简单：避免<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">饥饿<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">starvation</span></span>。为了确保生存，进化在人类大脑中<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">灌输了<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">instilled</span></span>对高能量食物的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">深刻<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">profound</span></span>渴望——特别是那些高糖、高脂肪和高盐的食物。"
+        "id": "p1",
+        "en": {
+          "text": "For most of human history, our early ancestors struggled to secure enough calories to survive. In order to occupy diverse and often harsh environments, humans evolved as adaptable omnivores and opportunistic carnivores. The primary biological ambition of our species was simple: avoid starvation. To ensure survival, evolution instilled in the human brain a profound desire for energy-dense foods—specifically those high in sugar, fat, and salt.",
+          "highlights": [
+            {
+              "start": 37,
+              "end": 46,
+              "key": "ancestors"
+            },
+            {
+              "start": 47,
+              "end": 56,
+              "key": "struggled"
+            },
+            {
+              "start": 60,
+              "end": 66,
+              "key": "secure"
+            },
+            {
+              "start": 74,
+              "end": 82,
+              "key": "calories"
+            },
+            {
+              "start": 107,
+              "end": 113,
+              "key": "occupy"
+            },
+            {
+              "start": 132,
+              "end": 137,
+              "key": "harsh"
+            },
+            {
+              "start": 170,
+              "end": 179,
+              "key": "adaptable"
+            },
+            {
+              "start": 180,
+              "end": 189,
+              "key": "omnivores"
+            },
+            {
+              "start": 194,
+              "end": 207,
+              "key": "opportunistic"
+            },
+            {
+              "start": 208,
+              "end": 218,
+              "key": "carnivore"
+            },
+            {
+              "start": 243,
+              "end": 251,
+              "key": "ambition"
+            },
+            {
+              "start": 285,
+              "end": 295,
+              "key": "starvation"
+            },
+            {
+              "start": 327,
+              "end": 336,
+              "key": "instill"
+            },
+            {
+              "start": 358,
+              "end": 366,
+              "key": "profound"
+            }
+          ]
+        },
+        "zh": "在人类历史的大部分时间里，我们早期的祖先为了生存而努力获取足够的卡路里。为了占据多样化且通常恶劣的环境，人类进化成了适应性强的杂食动物和机会主义的食肉动物。我们物种的主要生物学野心很简单：避免饥饿。为了确保生存，进化在人类大脑中灌输了对高能量食物的深刻渴望——特别是那些高糖、高脂肪和高盐的食物。"
       },
       {
-        "en": "However, in the 21st century, the <span class=\"vocab-word\" data-word=\"scope\">scope</span> of our food environment has rapidly <span class=\"vocab-word\" data-word=\"expand\">expanded</span>. The modern <span class=\"vocab-word\" data-word=\"agricultural\">agricultural</span> and industrial revolution has created an environment of artificial <span class=\"vocab-word\" data-word=\"abundance\">abundance</span>. Supermarkets are filled with highly processed products designed by food scientists to <span class=\"vocab-word\" data-word=\"entice\">entice</span> consumers. With <span class=\"vocab-word\" data-word=\"vivid\">vivid</span> packaging and highly <span class=\"vocab-word\" data-word=\"appealing\">appealing</span> tastes, these products <span class=\"vocab-word\" data-word=\"intentionally\">intentionally</span> <span class=\"vocab-word\" data-word=\"trigger\">trigger</span> our ancient reward systems. While an occasional sweet treat may seem <span class=\"vocab-word\" data-word=\"benign\">benign</span>, the <span class=\"vocab-word\" data-word=\"chronic\">chronic</span> over-<span class=\"vocab-word\" data-word=\"intake\">intake</span> of ultra-processed foods has become a modern health <span class=\"vocab-word\" data-word=\"plague\">plague</span>. This continuous dietary <span class=\"vocab-word\" data-word=\"assault\">assault</span> threatens to <span class=\"vocab-word\" data-word=\"corrupt\">corrupt</span> our natural biological hunger signals. When the body's delicate regulatory systems are overwhelmed, our <span class=\"vocab-word\" data-word=\"metabolism\">metabolism</span> can slip into a state of <span class=\"vocab-word\" data-word=\"physiological\">physiological</span> <span class=\"vocab-word\" data-word=\"anarchy\">anarchy</span>, ultimately acting to <span class=\"vocab-word\" data-word=\"destroy\">destroy</span> our long-term health.",
-        "zh": "然而，在21世纪，我们食物环境的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">范围<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">scope</span></span>迅速<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">扩大<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">expanded</span></span>。现代<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">农业<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">agricultural</span></span>和工业革命创造了一个人造<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">丰裕<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">abundance</span></span>的环境。超市里充满了食品科学家设计的为了<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">诱惑<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">entice</span></span>消费者的高度加工产品。凭借<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">生动的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">vivid</span></span>包装和极具<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">吸引力的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">appealing</span></span>口味，这些产品<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">有意地<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">intentionally</span></span><span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">触发<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">trigger</span></span>了我们古老的奖励系统。虽然偶尔的甜食似乎是<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">无害的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">benign</span></span>，但超加工食品的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">慢性<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">chronic</span></span>过度<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">摄入<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">intake</span></span>已成为现代健康<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">灾难<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">plague</span></span>。这种持续的饮食<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">冲击<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">assault</span></span>威胁着要<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">破坏<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">corrupt</span></span>我们自然的生物饥饿信号。当身体微妙的调节系统被压垮时，我们的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">新陈代谢<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">metabolism</span></span>就会滑入一种<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">生理的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">physiological</span></span><span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">无政府状态<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">anarchy</span></span>，最终<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">破坏<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">destroy</span></span>我们的长期健康。"
+        "id": "p2",
+        "en": {
+          "text": "However, in the 21st century, the scope of our food environment has rapidly expanded. The modern agricultural and industrial revolution has created an environment of artificial abundance. Supermarkets are filled with highly processed products designed by food scientists to entice consumers. With vivid packaging and highly appealing tastes, these products intentionally trigger our ancient reward systems. While an occasional sweet treat may seem benign, the chronic over-intake of ultra-processed foods has become a modern health plague. This continuous dietary assault threatens to corrupt our natural biological hunger signals. When the body's delicate regulatory systems are overwhelmed, our metabolism can slip into a state of physiological anarchy, ultimately acting to destroy our long-term health.",
+          "highlights": [
+            {
+              "start": 34,
+              "end": 39,
+              "key": "scope"
+            },
+            {
+              "start": 76,
+              "end": 84,
+              "key": "expand"
+            },
+            {
+              "start": 97,
+              "end": 109,
+              "key": "agricultural"
+            },
+            {
+              "start": 177,
+              "end": 186,
+              "key": "abundance"
+            },
+            {
+              "start": 274,
+              "end": 280,
+              "key": "entice"
+            },
+            {
+              "start": 297,
+              "end": 302,
+              "key": "vivid"
+            },
+            {
+              "start": 324,
+              "end": 333,
+              "key": "appealing"
+            },
+            {
+              "start": 357,
+              "end": 370,
+              "key": "intentionally"
+            },
+            {
+              "start": 371,
+              "end": 378,
+              "key": "trigger"
+            },
+            {
+              "start": 448,
+              "end": 454,
+              "key": "benign"
+            },
+            {
+              "start": 460,
+              "end": 467,
+              "key": "chronic"
+            },
+            {
+              "start": 473,
+              "end": 479,
+              "key": "intake"
+            },
+            {
+              "start": 532,
+              "end": 538,
+              "key": "plague"
+            },
+            {
+              "start": 564,
+              "end": 571,
+              "key": "assault"
+            },
+            {
+              "start": 585,
+              "end": 592,
+              "key": "corrupt"
+            },
+            {
+              "start": 697,
+              "end": 707,
+              "key": "metabolism"
+            },
+            {
+              "start": 733,
+              "end": 746,
+              "key": "physiological"
+            },
+            {
+              "start": 747,
+              "end": 754,
+              "key": "anarchy"
+            },
+            {
+              "start": 777,
+              "end": 784,
+              "key": "destroy"
+            }
+          ]
+        },
+        "zh": "然而，在21世纪，我们食物环境的范围迅速扩大。现代农业和工业革命创造了一个人造丰裕的环境。超市里充满了食品科学家设计的为了诱惑消费者的高度加工产品。凭借生动的包装和极具吸引力的口味，这些产品有意地触发了我们古老的奖励系统。虽然偶尔的甜食似乎是无害的，但超加工食品的慢性过度摄入已成为现代健康灾难。这种持续的饮食冲击威胁着要破坏我们自然的生物饥饿信号。当身体微妙的调节系统被压垮时，我们的新陈代谢就会滑入一种生理的无政府状态，最终破坏我们的长期健康。"
       },
       {
-        "en": "In stark contrast to this environment of overconsumption, modern societies face a <span class=\"vocab-word\" data-word=\"contradictory\">contradictory</span> <span class=\"vocab-word\" data-word=\"psychological\">psychological</span> crisis. Mass media and the fashion industry constantly <span class=\"vocab-word\" data-word=\"convey\">convey</span> <span class=\"vocab-word\" data-word=\"unrealistic\">unrealistic</span> and hyper-thin standards of beauty. The public is often encouraged to <span class=\"vocab-word\" data-word=\"adore\">adore</span> <span class=\"vocab-word\" data-word=\"digitally\">digitally</span> <span class=\"vocab-word\" data-word=\"altered\">altered</span> images of models, making many individuals feel <span class=\"vocab-word\" data-word=\"doubtful\">doubtful</span> about their own self-worth and body image. This societal pressure can <span class=\"vocab-word\" data-word=\"promote\">promote</span> extreme and unhealthy behaviors. Many people attempt to <span class=\"vocab-word\" data-word=\"restore\">restore</span> a sense of control over their bodies through a <span class=\"vocab-word\" data-word=\"dutiful\">dutiful</span> <span class=\"vocab-word\" data-word=\"adherence\">adherence</span> to extreme fitness <span class=\"vocab-word\" data-word=\"regimens\">regimens</span> or <span class=\"vocab-word\" data-word=\"eccentric\">eccentric</span> starvation diets.",
-        "zh": "与这种过度消费的环境形成鲜明对比的是，现代社会面临着一种<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">矛盾的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">contradictory</span></span><span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">心理<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">psychological</span></span>危机。大众媒体和时尚产业不断<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">传达<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">convey</span></span><span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">不切实际的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">unrealistic</span></span>和极度骨感的审美标准。公众经常被鼓励去<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">敬慕<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">adore</span></span>经过<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">数字<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">digitally</span></span><span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">修改的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">altered</span></span>模特图像，这让许多人对自己的自我价值和身体形象感到<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">怀疑<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">doubtful</span></span>。这种社会压力会<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">促进<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">promote</span></span>极端和不健康的行为。许多人试图通过<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">顺从地<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">dutiful</span></span><span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">坚持<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">adherence</span></span>极端健身<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">计划<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">regimens</span></span>或<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">古怪的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">eccentric</span></span>饥饿饮食来<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">恢复<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">restore</span></span>对他们身体的控制感。"
+        "id": "p3",
+        "en": {
+          "text": "In stark contrast to this environment of overconsumption, modern societies face a contradictory psychological crisis. Mass media and the fashion industry constantly convey unrealistic and hyper-thin standards of beauty. The public is often encouraged to adore digitally altered images of models, making many individuals feel doubtful about their own self-worth and body image. This societal pressure can promote extreme and unhealthy behaviors. Many people attempt to restore a sense of control over their bodies through a dutiful adherence to extreme fitness regimens or eccentric starvation diets.",
+          "highlights": [
+            {
+              "start": 82,
+              "end": 95,
+              "key": "contradictory"
+            },
+            {
+              "start": 96,
+              "end": 109,
+              "key": "psychological"
+            },
+            {
+              "start": 165,
+              "end": 171,
+              "key": "convey"
+            },
+            {
+              "start": 172,
+              "end": 183,
+              "key": "unrealistic"
+            },
+            {
+              "start": 254,
+              "end": 259,
+              "key": "adore"
+            },
+            {
+              "start": 260,
+              "end": 269,
+              "key": "digitally"
+            },
+            {
+              "start": 270,
+              "end": 277,
+              "key": "altered"
+            },
+            {
+              "start": 325,
+              "end": 333,
+              "key": "doubtful"
+            },
+            {
+              "start": 404,
+              "end": 411,
+              "key": "promote"
+            },
+            {
+              "start": 468,
+              "end": 475,
+              "key": "restore"
+            },
+            {
+              "start": 523,
+              "end": 530,
+              "key": "dutiful"
+            },
+            {
+              "start": 531,
+              "end": 540,
+              "key": "adherence"
+            },
+            {
+              "start": 560,
+              "end": 568,
+              "key": "regimens"
+            },
+            {
+              "start": 572,
+              "end": 581,
+              "key": "eccentric"
+            }
+          ]
+        },
+        "zh": "与这种过度消费的环境形成鲜明对比的是，现代社会面临着一种矛盾的心理危机。大众媒体和时尚产业不断传达不切实际的和极度骨感的审美标准。公众经常被鼓励去敬慕经过数字修改的模特图像，这让许多人对自己的自我价值和身体形象感到怀疑。这种社会压力会促进极端和不健康的行为。许多人试图通过顺从地坚持极端健身计划或古怪的饥饿饮食来恢复对他们身体的控制感。"
       },
       {
-        "en": "In severe cases, this psychological pressure <span class=\"vocab-word\" data-word=\"manifests\">manifests</span> as clinical eating disorders, such as <span class=\"vocab-word\" data-word=\"anorexia\">anorexia</span> nervosa, a life-threatening <span class=\"vocab-word\" data-word=\"psychiatric\">psychiatric</span> condition characterized by an intense fear of gaining weight. It is a tragic <span class=\"vocab-word\" data-word=\"paradox\">paradox</span> that while we live in an era with a <span class=\"vocab-word\" data-word=\"superior\">superior</span> abundance of food, millions are starving themselves due to sociocultural pressures. This <span class=\"vocab-word\" data-word=\"phenomenon\">phenomenon</span> suggests a <span class=\"vocab-word\" data-word=\"backward\">backward</span> step in our relationship with <span class=\"vocab-word\" data-word=\"nourishment\">nourishment</span>. To truly achieve well-being, we must recognize this evolutionary <span class=\"vocab-word\" data-word=\"mismatch\">mismatch</span>.",
-        "zh": "在严重的情况下，这种心理压力<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">表现为<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">manifests</span></span>临床饮食失调，如神经性<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">厌食症<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">anorexia</span></span>，这是一种以强烈害怕体重增加为特征的危及生命的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">精神病学<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">psychiatric</span></span>状况。这是一个可悲的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">悖论<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">paradox</span></span>，虽然我们生活在一个食物极其<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">丰富的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">superior</span></span>时代，但数以百万计的人由于社会文化压力而正在挨饿。这种<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">现象<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">phenomenon</span></span>表明我们在与<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">营养<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">nourishment</span></span>的关系上<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">后退<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">backward</span></span>了一步。为了真正实现幸福，我们必须认识到这种进化上的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">错位<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">mismatch</span></span>。"
+        "id": "p4",
+        "en": {
+          "text": "In severe cases, this psychological pressure manifests as clinical eating disorders, such as anorexia nervosa, a life-threatening psychiatric condition characterized by an intense fear of gaining weight. It is a tragic paradox that while we live in an era with a superior abundance of food, millions are starving themselves due to sociocultural pressures. This phenomenon suggests a backward step in our relationship with nourishment. To truly achieve well-being, we must recognize this evolutionary mismatch.",
+          "highlights": [
+            {
+              "start": 45,
+              "end": 54,
+              "key": "manifests"
+            },
+            {
+              "start": 93,
+              "end": 101,
+              "key": "anorexia"
+            },
+            {
+              "start": 130,
+              "end": 141,
+              "key": "psychiatric"
+            },
+            {
+              "start": 219,
+              "end": 226,
+              "key": "paradox"
+            },
+            {
+              "start": 263,
+              "end": 271,
+              "key": "superior"
+            },
+            {
+              "start": 361,
+              "end": 371,
+              "key": "phenomenon"
+            },
+            {
+              "start": 383,
+              "end": 391,
+              "key": "backward"
+            },
+            {
+              "start": 422,
+              "end": 433,
+              "key": "nourishment"
+            },
+            {
+              "start": 500,
+              "end": 508,
+              "key": "mismatch"
+            }
+          ]
+        },
+        "zh": "在严重的情况下，这种心理压力表现为临床饮食失调，如神经性厌食症，这是一种以强烈害怕体重增加为特征的危及生命的精神病学状况。这是一个可悲的悖论，虽然我们生活在一个食物极其丰富的时代，但数以百万计的人由于社会文化压力而正在挨饿。这种现象表明我们在与营养的关系上后退了一步。为了真正实现幸福，我们必须认识到这种进化上的错位。"
       }
     ]
   },
-  "vocab": {
-    "occupy": {
+  "vocab": [
+    {
+      "key": "occupy",
       "pos": "v.",
       "def": "To fill or take up a space or time.",
       "trans": "占据，使忙碌",
       "speakText": "occupy"
     },
-    "anarchy": {
+    {
+      "key": "anarchy",
       "pos": "n.",
       "def": "A state of disorder due to absence or nonrecognition of authority or regulating systems.",
       "trans": "无政府状态，混乱",
       "speakText": "anarchy"
     },
-    "adore": {
+    {
+      "key": "adore",
       "pos": "v.",
       "def": "To love and respect someone deeply.",
       "trans": "敬慕，崇拜，热爱",
       "speakText": "adore"
     },
-    "backward": {
+    {
+      "key": "backward",
       "pos": "adj.",
       "def": "Directed behind or to the rear; reversing progress.",
       "trans": "向后的，落后的",
       "speakText": "backward"
     },
-    "secure": {
+    {
+      "key": "secure",
       "pos": "v.",
       "def": "To succeed in obtaining something, especially with difficulty.",
       "trans": "保证得到，使安全",
       "speakText": "secure"
     },
-    "anorexia": {
+    {
+      "key": "anorexia",
       "pos": "n.",
       "def": "A lack or loss of appetite for food (as a medical condition).",
       "trans": "食欲缺乏（厌食症）",
       "speakText": "anorexia"
     },
-    "promote": {
+    {
+      "key": "promote",
       "pos": "v.",
       "def": "To further the progress of something; support or actively encourage.",
       "trans": "促进，推动，提升",
       "speakText": "promote"
     },
-    "scope": {
+    {
+      "key": "scope",
       "pos": "n.",
       "def": "The extent of the area or subject matter that something deals with or to which it is relevant.",
       "trans": "范围，余地，机会",
       "speakText": "scope"
     },
-    "eccentric": {
+    {
+      "key": "eccentric",
       "pos": "adj.",
       "def": "Unconventional and slightly strange.",
       "trans": "古怪的，异常的",
       "speakText": "eccentric"
     },
-    "ambition": {
+    {
+      "key": "ambition",
       "pos": "n.",
       "def": "A strong desire and determination to achieve something.",
       "trans": "雄心，野心",
       "speakText": "ambition"
     },
-    "corrupt": {
+    {
+      "key": "corrupt",
       "pos": "v.",
       "def": "To cause to act dishonestly or to break a natural/healthy process.",
       "trans": "使腐败，破坏，贪污的",
       "speakText": "corrupt"
     },
-    "restore": {
+    {
+      "key": "restore",
       "pos": "v.",
       "def": "To bring back (a previous right, practice, custom, or situation).",
       "trans": "恢复，修复",
       "speakText": "restore"
     },
-    "vivid": {
+    {
+      "key": "vivid",
       "pos": "adj.",
       "def": "Producing powerful feelings or strong, clear images in the mind.",
       "trans": "逼真的，鲜艳的",
       "speakText": "vivid"
     },
-    "convey": {
+    {
+      "key": "convey",
       "pos": "v.",
       "def": "To make an idea, impression, or feeling known or understandable to someone.",
       "trans": "表达，传递（思想，感情）",
       "speakText": "convey"
     },
-    "instill": {
+    {
+      "key": "instill",
       "pos": "v.",
       "def": "To gradually but firmly establish an idea or attitude in a person's mind.",
       "trans": "徐徐滴入，逐渐灌输",
       "speakText": "instill"
     },
-    "superior": {
+    {
+      "key": "superior",
       "pos": "adj.",
       "def": "Higher in rank, status, or quality.",
       "trans": "更好的，占优势的",
       "speakText": "superior"
     },
-    "expand": {
+    {
+      "key": "expand",
       "pos": "v.",
       "def": "To become or make larger or more extensive.",
       "trans": "扩大，增加，发展",
       "speakText": "expand"
     },
-    "appealing": {
+    {
+      "key": "appealing",
       "pos": "adj.",
       "def": "Attractive or interesting.",
       "trans": "有吸引力的",
       "speakText": "appealing"
     },
-    "plague": {
+    {
+      "key": "plague",
       "pos": "n.",
       "def": "A disastrous event/thing; a contagious disease.",
       "trans": "灾害，瘟疫，传染病",
       "speakText": "plague"
     },
-    "assault": {
+    {
+      "key": "assault",
       "pos": "n.",
       "def": "A physical or figurative attack.",
       "trans": "袭击，突击，猛烈攻击",
       "speakText": "assault"
     },
-    "carnivore": {
+    {
+      "key": "carnivore",
       "pos": "n.",
       "def": "An animal that feeds on flesh.",
       "trans": "食肉动物",
       "speakText": "carnivore"
     },
-    "benign": {
+    {
+      "key": "benign",
       "pos": "adj.",
       "def": "Gentle; kindly; not harmful to the environment/body.",
       "trans": "和蔼的，仁慈的（良性的）",
       "speakText": "benign"
     },
-    "doubtful": {
+    {
+      "key": "doubtful",
       "pos": "adj.",
       "def": "Feeling uncertain about something.",
       "trans": "不确定的，怀疑的",
       "speakText": "doubtful"
     },
-    "entice": {
+    {
+      "key": "entice",
       "pos": "v.",
       "def": "To attract or tempt by offering pleasure or advantage.",
       "trans": "诱使，引诱",
       "speakText": "entice"
     },
-    "intake": {
+    {
+      "key": "intake",
       "pos": "n.",
       "def": "An amount of food, air, or another substance taken into the body.",
       "trans": "摄入量，通风口",
       "speakText": "intake"
     },
-    "destroy": {
+    {
+      "key": "destroy",
       "pos": "v.",
       "def": "To put an end to the existence of something by damaging or attacking it.",
       "trans": "破坏，毁坏",
       "speakText": "destroy"
     },
-    "dutiful": {
+    {
+      "key": "dutiful",
       "pos": "adj.",
       "def": "Conscientiously or obediently fulfilling one's duty.",
       "trans": "顺从的，尽责的",
       "speakText": "dutiful"
     },
-    "ancestors": {
+    {
+      "key": "ancestors",
       "pos": "n.",
       "def": "A person from whom one is descended, usually further back than a grandparent.",
       "trans": "祖先",
       "speakText": "ancestors"
     },
-    "struggled": {
+    {
+      "key": "struggled",
       "pos": "v.",
       "def": "Make forceful or violent efforts to get free of restraint or to achieve a goal.",
       "trans": "挣扎，努力，奋斗",
       "speakText": "struggled"
     },
-    "calories": {
+    {
+      "key": "calories",
       "pos": "n.",
       "def": "Units of energy provided by food.",
       "trans": "卡路里，热量",
       "speakText": "calories"
     },
-    "harsh": {
+    {
+      "key": "harsh",
       "pos": "adj.",
       "def": "Cruel, severe, or difficult to survive in.",
       "trans": "严酷的，恶劣的",
       "speakText": "harsh"
     },
-    "adaptable": {
+    {
+      "key": "adaptable",
       "pos": "adj.",
       "def": "Able to adjust to new conditions.",
       "trans": "适应性强的",
       "speakText": "adaptable"
     },
-    "omnivores": {
+    {
+      "key": "omnivores",
       "pos": "n.",
       "def": "Animals or humans that eat both plants and meat.",
       "trans": "杂食动物",
       "speakText": "omnivores"
     },
-    "opportunistic": {
+    {
+      "key": "opportunistic",
       "pos": "adj.",
       "def": "Exploiting chances offered by immediate circumstances.",
       "trans": "机会主义的，投机的",
       "speakText": "opportunistic"
     },
-    "starvation": {
+    {
+      "key": "starvation",
       "pos": "n.",
       "def": "Suffering or death caused by extreme lack of food.",
       "trans": "饥饿，挨饿",
       "speakText": "starvation"
     },
-    "profound": {
+    {
+      "key": "profound",
       "pos": "adj.",
       "def": "Very great or intense; having deep meaning.",
       "trans": "深刻的，极大的",
       "speakText": "profound"
     },
-    "agricultural": {
+    {
+      "key": "agricultural",
       "pos": "adj.",
       "def": "Relating to farming and growing crops.",
       "trans": "农业的",
       "speakText": "agricultural"
     },
-    "abundance": {
+    {
+      "key": "abundance",
       "pos": "n.",
       "def": "A very large quantity of something.",
       "trans": "充裕，丰富",
       "speakText": "abundance"
     },
-    "intentionally": {
+    {
+      "key": "intentionally",
       "pos": "adv.",
       "def": "Deliberately, on purpose.",
       "trans": "故意地，有意地",
       "speakText": "intentionally"
     },
-    "trigger": {
+    {
+      "key": "trigger",
       "pos": "v.",
       "def": "To cause an event or physiological reaction to happen.",
       "trans": "触发，引起",
       "speakText": "trigger"
     },
-    "chronic": {
+    {
+      "key": "chronic",
       "pos": "adj.",
       "def": "Persisting for a long time or constantly recurring.",
       "trans": "慢性的，长期的",
       "speakText": "chronic"
     },
-    "metabolism": {
+    {
+      "key": "metabolism",
       "pos": "n.",
       "def": "The chemical processes in the body that change food into energy.",
       "trans": "新陈代谢",
       "speakText": "metabolism"
     },
-    "physiological": {
+    {
+      "key": "physiological",
       "pos": "adj.",
       "def": "Relating to the normal functioning of a living organism.",
       "trans": "生理学的，生理的",
       "speakText": "physiological"
     },
-    "contradictory": {
+    {
+      "key": "contradictory",
       "pos": "adj.",
       "def": "Mutually opposed or inconsistent.",
       "trans": "矛盾的，对立的",
       "speakText": "contradictory"
     },
-    "psychological": {
+    {
+      "key": "psychological",
       "pos": "adj.",
       "def": "Related to the mental and emotional state of a person.",
       "trans": "心理学的，精神上的",
       "speakText": "psychological"
     },
-    "unrealistic": {
+    {
+      "key": "unrealistic",
       "pos": "adj.",
       "def": "Not realistic, practical, or based on facts.",
       "trans": "不切实际的",
       "speakText": "unrealistic"
     },
-    "digitally": {
+    {
+      "key": "digitally",
       "pos": "adv.",
       "def": "By means of digital or computer technology.",
       "trans": "通过数字技术，数码地",
       "speakText": "digitally"
     },
-    "altered": {
+    {
+      "key": "altered",
       "pos": "v./adj.",
       "def": "Changed, modified, or adjusted.",
       "trans": "改变的，修改过的（如修图）",
       "speakText": "altered"
     },
-    "adherence": {
+    {
+      "key": "adherence",
       "pos": "n.",
       "def": "Attachment or strict commitment to a rule, belief, or plan.",
       "trans": "坚持，遵守",
       "speakText": "adherence"
     },
-    "regimens": {
+    {
+      "key": "regimens",
       "pos": "n.",
       "def": "A prescribed course of medical treatment, diet, or exercise.",
       "trans": "养生法，严格的生活/锻炼计划",
       "speakText": "regimens"
     },
-    "manifests": {
+    {
+      "key": "manifests",
       "pos": "v.",
       "def": "To show clearly; to appear or become easy to see.",
       "trans": "显现，表明",
       "speakText": "manifests"
     },
-    "psychiatric": {
+    {
+      "key": "psychiatric",
       "pos": "adj.",
       "def": "Relating to mental illness or its medical treatment.",
       "trans": "精神病学的",
       "speakText": "psychiatric"
     },
-    "paradox": {
+    {
+      "key": "paradox",
       "pos": "n.",
       "def": "A situation or statement that seems impossible because it contains two opposite facts.",
       "trans": "悖论，自相矛盾的事物",
       "speakText": "paradox"
     },
-    "phenomenon": {
+    {
+      "key": "phenomenon",
       "pos": "n.",
       "def": "A fact or event that is observed to exist or happen.",
       "trans": "现象",
       "speakText": "phenomenon"
     },
-    "nourishment": {
+    {
+      "key": "nourishment",
       "pos": "n.",
       "def": "The food or other substances necessary for growth, health, and good condition.",
       "trans": "营养，滋养品",
       "speakText": "nourishment"
     },
-    "mismatch": {
+    {
+      "key": "mismatch",
       "pos": "n.",
       "def": "A failure to correspond, fit, or balance properly.",
       "trans": "错位，不匹配",
       "speakText": "mismatch"
     }
-  },
+  ],
   "chart": {
     "type": "line",
     "title": "Visualizing the Evolutionary Mismatch",

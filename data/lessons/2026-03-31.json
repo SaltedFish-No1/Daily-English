@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "2.0",
   "meta": {
     "title": "Rethinking Animal Play"
   },
@@ -9,127 +10,244 @@
     "title": "Rethinking Animal Play: The Science of Zoo Enrichment",
     "paragraphs": [
       {
-        "en": "Keeping wild animals in <span class=\"vocab-word\" data-word=\"captivity\">captivity</span> has always been a complex scientific issue. While modern zoos aim to protect species that human activities <span class=\"vocab-word\" data-word=\"endanger\">endanger</span> in the wild, providing a healthy mental state for these animals is highly challenging. In the past, people naturally believed that putting animals in <span class=\"vocab-word\" data-word=\"lavish\">lavish</span> enclosures with plenty of free food would <span class=\"vocab-word\" data-word=\"ease\">ease</span> their lives and make them happy. However, animal psychologists now <span class=\"vocab-word\" data-word=\"confirm\">confirm</span> that this idea can easily <span class=\"vocab-word\" data-word=\"misguide\">misguide</span> the public. A completely effortless life actually harms an animal’s mental well-being, leading to severe boredom and stress.",
-        "zh": "将野生动物置于<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">圈养环境<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">captivity</span></span>中，一直是一个复杂的科学议题。虽然现代动物园致力于保护那些在野外因人类活动而受到<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">威胁<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">endanger</span></span>的物种，但要让这些动物保持健康的心理状态却极具挑战。过去，人们很自然地认为，只要把动物安置在<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">奢华<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">lavish</span></span>的围栏里，再提供充足且免费的食物，就能<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">缓解<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">ease</span></span>它们的生活压力，让它们过得幸福。然而，动物心理学家如今已经<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">证实<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">confirm</span></span>，这种想法很容易<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">误导<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">misguide</span></span>公众。事实上，一种毫不费力的生活反而会损害动物的心理健康，带来严重的无聊与压力。"
+        "id": "p1",
+        "en": {
+          "text": "Keeping wild animals in captivity has always been a complex scientific issue. While modern zoos aim to protect species that human activities endanger in the wild, providing a healthy mental state for these animals is highly challenging. In the past, people naturally believed that putting animals in lavish enclosures with plenty of free food would ease their lives and make them happy. However, animal psychologists now confirm that this idea can easily misguide the public. A completely effortless life actually harms an animal’s mental well-being, leading to severe boredom and stress.",
+          "highlights": [
+            {
+              "start": 24,
+              "end": 33,
+              "key": "captivity"
+            },
+            {
+              "start": 141,
+              "end": 149,
+              "key": "endanger"
+            },
+            {
+              "start": 300,
+              "end": 306,
+              "key": "lavish"
+            },
+            {
+              "start": 349,
+              "end": 353,
+              "key": "ease"
+            },
+            {
+              "start": 421,
+              "end": 428,
+              "key": "confirm"
+            },
+            {
+              "start": 455,
+              "end": 463,
+              "key": "misguide"
+            }
+          ]
+        },
+        "zh": "将野生动物置于圈养环境中，一直是一个复杂的科学议题。虽然现代动物园致力于保护那些在野外因人类活动而受到威胁的物种，但要让这些动物保持健康的心理状态却极具挑战。过去，人们很自然地认为，只要把动物安置在奢华的围栏里，再提供充足且免费的食物，就能缓解它们的生活压力，让它们过得幸福。然而，动物心理学家如今已经证实，这种想法很容易误导公众。事实上，一种毫不费力的生活反而会损害动物的心理健康，带来严重的无聊与压力。"
       },
       {
-        "en": "To <span class=\"vocab-word\" data-word=\"alleviate\">alleviate</span> this stress, scientists introduced a concept called \"environmental enrichment.\" The primary goal is to <span class=\"vocab-word\" data-word=\"motivate\">motivate</span> animals to use their natural survival instincts, just as they would in the forest. Surprisingly, the most <span class=\"vocab-word\" data-word=\"effective\">effective</span> enrichment tools are not expensive technological devices. Zoo keepers often use clean, safe materials that might otherwise go to a local <span class=\"vocab-word\" data-word=\"landfill\">landfill</span>, such as cardboard boxes, old clothes, or plastic pipes. Instead of treating these items as useless <span class=\"vocab-word\" data-word=\"trash\">trash</span>, caretakers creatively <span class=\"vocab-word\" data-word=\"craft\">craft</span> them into complex \"<span class=\\\"vocab-word\\\" data-word=\\\"puzzle feeders\\\">puzzle feeders</span>\".",
-        "zh": "为了<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">缓解<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">alleviate</span></span>这种压力，科学家提出了“环境丰富化”这一概念。它的首要目标，是<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">激发<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">motivate</span></span>动物重新使用自身原有的生存本能，就像它们在森林中那样。令人惊讶的是，最<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">有效<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">effective</span></span>的丰富化工具，并不是昂贵的高科技设备。动物园饲养员常常会使用那些原本可能被送往<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">垃圾填埋场<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">landfill</span></span>的干净、安全材料，比如纸箱、旧衣服或塑料管。照护人员并不会把这些东西当作无用的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">垃圾<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">trash</span></span>，而是创造性地将它们<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">制作成<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">craft</span></span>复杂的“<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">玩具喂食器<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">puzzle feeders</span></span>”。"
+        "id": "p2",
+        "en": {
+          "text": "To alleviate this stress, scientists introduced a concept called \"environmental enrichment.\" The primary goal is to motivate animals to use their natural survival instincts, just as they would in the forest. Surprisingly, the most effective enrichment tools are not expensive technological devices. Zoo keepers often use clean, safe materials that might otherwise go to a local landfill, such as cardboard boxes, old clothes, or plastic pipes. Instead of treating these items as useless trash, caretakers creatively craft them into complex \"puzzle feeders\".",
+          "highlights": [
+            {
+              "start": 3,
+              "end": 12,
+              "key": "alleviate"
+            },
+            {
+              "start": 116,
+              "end": 124,
+              "key": "motivate"
+            },
+            {
+              "start": 231,
+              "end": 240,
+              "key": "effective"
+            },
+            {
+              "start": 378,
+              "end": 386,
+              "key": "landfill"
+            },
+            {
+              "start": 487,
+              "end": 492,
+              "key": "trash"
+            },
+            {
+              "start": 516,
+              "end": 521,
+              "key": "craft"
+            }
+          ]
+        },
+        "zh": "为了缓解这种压力，科学家提出了“环境丰富化”这一概念。它的首要目标，是激发动物重新使用自身原有的生存本能，就像它们在森林中那样。令人惊讶的是，最有效的丰富化工具，并不是昂贵的高科技设备。动物园饲养员常常会使用那些原本可能被送往垃圾填埋场的干净、安全材料，比如纸箱、旧衣服或塑料管。照护人员并不会把这些东西当作无用的垃圾，而是创造性地将它们制作成复杂的“玩具喂食器”。"
       },
       {
-        "en": "These puzzles require animals to work for their meals. For example, monkeys might be given a wooden box where they must use sticks to <span class=\"vocab-word\" data-word=\"probe\">probe</span> hidden holes to find sweet treats. This mental workout keeps their brains active. Furthermore, social learning plays a huge role. When one clever individual figures out how to open a puzzle, its <span class=\"vocab-word\" data-word=\"peers\">peers</span> will watch closely and copy the behavior. This social interaction not only passes on knowledge but also strengthens group <span class=\"vocab-word\" data-word=\"loyalty\">loyalty</span> and emotional bonds, perfectly mirroring how wild groups operate.",
-        "zh": "这些谜题要求动物必须为获得食物付出努力。比如，猴子可能会拿到一个木箱，它们必须用木棍去<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">探查<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">probe</span></span>隐藏的小洞，才能找到甜食。这样的脑力锻炼能让它们的大脑保持活跃。此外，社会学习也在其中发挥着巨大作用。当一个聪明的个体率先弄明白如何打开谜题时，它的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">同伴<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">peers</span></span>就会仔细观察并模仿这种行为。这种社会互动不仅传播了知识，也强化了群体的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">忠诚关系<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">loyalty</span></span>与情感纽带，恰好映照出野外群体原本的运作方式。"
+        "id": "p3",
+        "en": {
+          "text": "These puzzles require animals to work for their meals. For example, monkeys might be given a wooden box where they must use sticks to probe hidden holes to find sweet treats. This mental workout keeps their brains active. Furthermore, social learning plays a huge role. When one clever individual figures out how to open a puzzle, its peers will watch closely and copy the behavior. This social interaction not only passes on knowledge but also strengthens group loyalty and emotional bonds, perfectly mirroring how wild groups operate.",
+          "highlights": [
+            {
+              "start": 134,
+              "end": 139,
+              "key": "probe"
+            },
+            {
+              "start": 335,
+              "end": 340,
+              "key": "peers"
+            },
+            {
+              "start": 463,
+              "end": 470,
+              "key": "loyalty"
+            }
+          ]
+        },
+        "zh": "这些谜题要求动物必须为获得食物付出努力。比如，猴子可能会拿到一个木箱，它们必须用木棍去探查隐藏的小洞，才能找到甜食。这样的脑力锻炼能让它们的大脑保持活跃。此外，社会学习也在其中发挥着巨大作用。当一个聪明的个体率先弄明白如何打开谜题时，它的同伴就会仔细观察并模仿这种行为。这种社会互动不仅传播了知识，也强化了群体的忠诚关系与情感纽带，恰好映照出野外群体原本的运作方式。"
       },
       {
-        "en": "Ultimately, allowing animals to take <span class=\"vocab-word\" data-word=\"charge\">charge</span> of their own daily activities makes them significantly healthier. It proves a counter-intuitive philosophical point: a perfect, stress-free life without challenges is not always a good life. By introducing small, manageable difficulties, scientists help captive animals maintain their wild and brilliant minds.",
-        "zh": "归根结底，让动物重新<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">掌控<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">charge</span></span>自己的日常活动，会让它们明显更健康。这也证明了一个有些反直觉的哲学判断：一种毫无挑战、毫无压力的完美生活，并不总是一种真正的好生活。通过引入小而可控的困难，科学家得以帮助圈养动物维持那种属于野性的、灵敏而聪慧的心智。"
+        "id": "p4",
+        "en": {
+          "text": "Ultimately, allowing animals to take charge of their own daily activities makes them significantly healthier. It proves a counter-intuitive philosophical point: a perfect, stress-free life without challenges is not always a good life. By introducing small, manageable difficulties, scientists help captive animals maintain their wild and brilliant minds.",
+          "highlights": [
+            {
+              "start": 37,
+              "end": 43,
+              "key": "charge"
+            }
+          ]
+        },
+        "zh": "归根结底，让动物重新掌控自己的日常活动，会让它们明显更健康。这也证明了一个有些反直觉的哲学判断：一种毫无挑战、毫无压力的完美生活，并不总是一种真正的好生活。通过引入小而可控的困难，科学家得以帮助圈养动物维持那种属于野性的、灵敏而聪慧的心智。"
       }
     ]
   },
-  "vocab": {
-    "captivity": {
+  "vocab": [
+    {
+      "key": "captivity",
       "pos": "n.",
       "def": "The condition of being imprisoned or confined.",
       "trans": "圈养，囚禁",
       "speakText": "captivity"
     },
-    "endanger": {
+    {
+      "key": "endanger",
       "pos": "v.",
       "def": "Put (someone or something) at risk of danger.",
       "trans": "危及，使濒危",
       "speakText": "endanger"
     },
-    "lavish": {
+    {
+      "key": "lavish",
       "pos": "adj.",
       "def": "Sumptuously rich, elaborate, or luxurious.",
       "trans": "奢华的，极其丰富的",
       "speakText": "lavish"
     },
-    "ease": {
+    {
+      "key": "ease",
       "pos": "v.",
       "def": "Make (something unpleasant or intense) less serious or severe.",
       "trans": "减轻，缓解",
       "speakText": "ease"
     },
-    "confirm": {
+    {
+      "key": "confirm",
       "pos": "v.",
       "def": "Establish the truth or correctness of.",
       "trans": "确认，证实",
       "speakText": "confirm"
     },
-    "misguide": {
+    {
+      "key": "misguide",
       "pos": "v.",
       "def": "Mislead.",
       "trans": "误导",
       "speakText": "misguide"
     },
-    "alleviate": {
+    {
+      "key": "alleviate",
       "pos": "v.",
       "def": "Make (suffering, deficiency, or a problem) less severe.",
       "trans": "缓解，减轻",
       "speakText": "alleviate"
     },
-    "motivate": {
+    {
+      "key": "motivate",
       "pos": "v.",
       "def": "Provide (someone) with a motive for doing something.",
       "trans": "激发，促使",
       "speakText": "motivate"
     },
-    "effective": {
+    {
+      "key": "effective",
       "pos": "adj.",
       "def": "Successful in producing a desired or intended result.",
       "trans": "有效的",
       "speakText": "effective"
     },
-    "landfill": {
+    {
+      "key": "landfill",
       "pos": "n.",
       "def": "A place to dispose of refuse and other waste material.",
       "trans": "垃圾填埋场",
       "speakText": "landfill"
     },
-    "trash": {
+    {
+      "key": "trash",
       "pos": "n.",
       "def": "Discarded matter; refuse.",
       "trans": "垃圾，废物",
       "speakText": "trash"
     },
-    "craft": {
+    {
+      "key": "craft",
       "pos": "v.",
       "def": "Exercise skill in making (something).",
       "trans": "精心制作",
       "speakText": "craft"
     },
-    "probe": {
+    {
+      "key": "probe",
       "pos": "v.",
       "def": "Physically explore or examine (something) with the hands or an instrument.",
       "trans": "探查，探测",
       "speakText": "probe"
     },
-    "peers": {
+    {
+      "key": "peers",
       "pos": "n.",
       "def": "A person of the same age, status, or ability as another specified person.",
       "trans": "同辈，同伴",
       "speakText": "peers"
     },
-    "loyalty": {
+    {
+      "key": "loyalty",
       "pos": "n.",
       "def": "A strong feeling of support or allegiance.",
       "trans": "忠诚度",
       "speakText": "loyalty"
     },
-    "charge": {
+    {
+      "key": "charge",
       "pos": "n.",
       "def": "Responsibility for the care or control of someone or something.",
       "trans": "负责，掌控 (如: take charge of)",
       "speakText": "charge"
     },
-    "puzzle feeders": {
+    {
+      "key": "puzzle feeders",
       "pos": "n.",
       "def": "Devices that require animals to solve a problem or perform a task to obtain food, used for environmental enrichment.",
       "trans": "玩具喂食器，益智喂食器",
       "speakText": "puzzle feeders"
     }
-  },
+  ],
   "chart": {
     "type": "bar",
     "title": "Impact of Enrichment on Captive Animals",

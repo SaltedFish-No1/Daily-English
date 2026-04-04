@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useLessonStore } from '@/store/useLessonStore';
 import { useUserStore } from '@/store/useUserStore';
 import { useSpeech } from '@/hooks/useSpeech';
@@ -9,7 +9,7 @@ import { X, Volume2, Bookmark, BookmarkCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface VocabSheetProps {
-  vocab: Record<string, VocabEntry>;
+  vocab: VocabEntry[];
   speech: LessonSpeech;
 }
 
@@ -27,7 +27,14 @@ export const VocabSheet: React.FC<VocabSheetProps> = ({ vocab, speech }) => {
   const selectedWord = selectedWordContext?.word ?? null;
   const isOpen = Boolean(selectedWord);
 
-  const currentEntry = selectedWord ? vocab[selectedWord] : null;
+  const vocabMap = useMemo(() => {
+    return vocab.reduce<Record<string, VocabEntry>>((acc, entry) => {
+      acc[entry.key] = entry;
+      return acc;
+    }, {});
+  }, [vocab]);
+
+  const currentEntry = selectedWord ? vocabMap[selectedWord] : null;
   const normalizedWord = selectedWord?.trim().toLowerCase() ?? '';
   const currentOccurrences = normalizedWord
     ? (savedWords[normalizedWord] ?? [])

@@ -1,95 +1,172 @@
-# Daily English 内容生产指南 (JSON 数据结构详解)
+# Daily English 内容生产指南（Schema v2）
 
-本文档基于工程实际类型定义（`src/types/lesson.ts` 与 `src/features/lesson/components/quiz/types.ts`）以及规范范本（`2026-03-30.json`），为教研和内容运营团队提供详尽的数据生成标准。
+本文档基于当前课程详情协议 v2，为教研、内容运营和 AI 内容生产链路提供统一的数据生成标准。
 
 ---
 
-## 1. 根数据结构 (Root Structure)
+## 1. 根数据结构
 
-每个课程文件是一个 JSON 对象，包含多个核心模块。**请注意字段的层级与命名，切勿随意更改。**
+每个课程详情文件位于 `data/lessons/<date>.json`，采用以下结构：
 
 ```json
 {
+  "schemaVersion": "2.0",
   "meta": {
-    "date": "2026-03-30",
-    "slug": "2026-03-30",
-    "title": "文章主标题",
-    "subtitle": "副标题/模块名称",
-    "pageTitle": "网页Title",
-    "difficulty": "B2" 
+    "title": "文章主标题"
   },
-  "ui": { ... },
-  "speech": { ... },
+  "speech": {
+    "enabled": true
+  },
   "article": { ... },
-  "vocab": { ... },
+  "vocab": [ ... ],
   "chart": { ... },
   "quiz": { ... }
 }
 ```
-*注：`difficulty` 必须是 `"A1" | "A2" | "B1" | "B2" | "C1" | "C2"` 之一。*
+
+说明：
+
+- `schemaVersion` 必须固定为 `"2.0"`
+- 课程概览信息如分类、摘要、难度，不放在 lesson 详情文件里，而是维护在 `data/lessons.json`
 
 ---
 
-## 2. 文章模块 (Article)
+## 2. 文章模块（Article）
 
-文章由标题和双语段落数组构成。在英文段落中，可以使用 `<span class="vocab-word" data-word="word">word</span>` 语法来高亮核心词汇。
+新版文章模块采用“纯文本 + 标注数组”结构，不允许在英文正文中写 HTML 标签。
 
 ```json
 "article": {
   "title": "The Psychology of Awe: How Nature Changes Our Minds",
   "paragraphs": [
     {
-      "en": "In modern society, daily life requires <span class=\"vocab-word\" data-word=\"intense\">intense</span> mental focus.",
+      "id": "p1",
+      "en": {
+        "text": "In modern society, daily life requires intense mental focus.",
+        "highlights": [
+          {
+            "start": 39,
+            "end": 46,
+            "key": "intense"
+          }
+        ]
+      },
       "zh": "在现代社会，日常生活需要高度集中的精神专注。"
     }
   ]
 }
 ```
 
+字段要求：
+
+- `id`：段落唯一标识，建议从 `p1` 开始递增
+- `en.text`：英文纯文本正文
+- `en.highlights`：需要高亮的词汇区间
+- `zh`：中文翻译纯文本
+
+高亮规则：
+
+- `start` 和 `end` 为字符区间，采用左闭右开
+- `0 <= start < end <= text.length`
+- 同一段内高亮区间不得重叠
+- `key` 必须在 `vocab[].key` 中存在
+
 ---
 
-## 3. 核心词汇 (Vocabulary)
+## 3. 核心词汇（Vocabulary）
 
-`vocab` 是一个**键值对对象 (Object)**，键名必须与文章中 `data-word` 对应。
+`vocab` 在 v2 中改为数组结构，每一项都带有显式 `key`。
 
 ```json
-"vocab": {
-  "intense": {
+"vocab": [
+  {
+    "key": "intense",
+    "lemma": "intense",
+    "forms": ["intense"],
     "pos": "adj.",
     "def": "Of extreme force, degree, or strength.",
     "trans": "十分强烈的，高度集中的，紧张的",
-    "speakText": "intense"
+    "speakText": "intense",
+    "notes": "可用于描述注意力、竞争与情绪强度。"
   }
-}
+]
 ```
+
+字段说明：
+
+- `key`：词条主键，供 `article.en.highlights[].key` 引用
+- `lemma`：词元，可选
+- `forms`：常见变体，可选
+- `pos`：词性，必填
+- `def`：英文释义，必填
+- `trans`：中文释义，必填
+- `speakText`：发音文本，可选
+- `notes`：教学备注，可选
+
+生成要求：
+
+- `vocab[].key` 必须唯一
+- 不允许存在未被正文高亮引用的词条
 
 ---
 
-## 4. 课后测验 (Quiz) 与雅思 6 大题型配置
+## 4. 图表模块（Chart）
 
-测验模块由外层配置和 `questions` 数组组成。
+图表模块保留为课程内容的一部分，支持 `line` 与 `bar` 两种类型。
+
+```json
+"chart": {
+  "type": "line",
+  "title": "Visualizing the Evolutionary Mismatch",
+  "description": "This chart illustrates the growing gap between ancient needs and modern abundance.",
+  "labels": ["1950", "1970", "1990", "2010"],
+  "datasets": [
+    {
+      "label": "Biological Need",
+      "data": [40, 40, 40, 40],
+      "borderColor": "#0f766e",
+      "backgroundColor": "rgba(15,118,110,0.15)"
+    }
+  ],
+  "insights": [
+    {
+      "icon": "📈",
+      "title": "Mismatch Gap",
+      "text": "Modern food availability rises faster than biological need."
+    }
+  ]
+}
+```
+
+字段要求：
+
+- `type`：必须是 `"line"` 或 `"bar"`
+- `labels.length` 必须等于每个 dataset 的 `data.length`
+
+---
+
+## 5. 测验模块（Quiz）与雅思 6 大题型配置
+
+测验模块只保留内容字段，不再包含按钮文案、结果页文案等 UI 配置。
 
 ```json
 "quiz": {
   "title": "Knowledge Check",
-  "description": "Test your comprehension of the reading passage.",
   "questions": [ ... ]
 }
 ```
 
-### 4.0 题目通用字段 (Base Fields)
-所有题目都必须包含以下基础字段：
-- `id`: 字符串，唯一标识（如 `"q-1"`）。
-- `type`: 题目类型标识。
-- `prompt`: 题目指导语或大标题。
-- `rationale`: 答案解析，必须包含 `en` 和 `zh` 双语。
-- `evidenceRefs`: （可选）字符串数组，用于指明出处段落（如 `["Paragraph B"]`）。
+### 5.0 通用字段
 
-### 4.1 判断题 (True/False/Not Given 或 Yes/No/Not Given)
-- **type**: `"tfng"`
-- **mode**: `"TFNG"` 或 `"YNNG"`
-- **statement**: 需要判断的陈述句。
-- **answer**: 必须是大写枚举，如 `"TRUE", "FALSE", "NOT_GIVEN", "YES", "NO"`。
+所有结构化题目都建议包含：
+
+- `id`
+- `type`
+- `prompt`
+- `rationale`
+- `evidenceRefs`（可选）
+
+### 5.1 判断题（TFNG / YNNG）
 
 ```json
 {
@@ -99,15 +176,14 @@
   "prompt": "True / False / Not Given",
   "statement": "Researchers were the first to study the psychological effects.",
   "answer": "NOT_GIVEN",
-  "rationale": { "en": "...", "zh": "..." }
+  "rationale": {
+    "en": "...",
+    "zh": "..."
+  }
 }
 ```
 
-### 4.2 标题配对题 (Matching Headings)
-- **type**: `"matching_headings"`
-- **paragraphs**: 目标段落数组。
-- **headings**: 标题选项数组，可包含干扰项 (`isDistractor: true`)。
-- **answerMap**: 键为 paragraph id，值为 heading id。
+### 5.2 标题配对题（Matching Headings）
 
 ```json
 {
@@ -115,21 +191,17 @@
   "type": "matching_headings",
   "prompt": "Choose the correct heading for Paragraph B.",
   "paragraphs": [
-    { "id": "pB", "label": "Paragraph B", "textRef": "Paragraph B" }
+    { "id": "p2", "label": "Paragraph B", "textRef": "Paragraph B" }
   ],
   "headings": [
     { "id": "i", "text": "The physical benefits", "isDistractor": true },
     { "id": "ii", "text": "How natural settings replenish mental fatigue" }
   ],
-  "answerMap": { "pB": "ii" }
+  "answerMap": { "p2": "ii" }
 }
 ```
 
-### 4.3 细节信息配对题 (Matching Information)
-- **type**: `"matching_information"`
-- **items**: 需要配对的细节信息描述。
-- **targets**: 被配对的段落或目标。
-- **allowReuse**: 布尔值，目标是否可重复选择。
+### 5.3 细节信息配对题（Matching Information）
 
 ```json
 {
@@ -148,11 +220,7 @@
 }
 ```
 
-### 4.4 填空题 (Completion)
-- **type**: `"completion"`
-- **subtype**: `"sentence" | "summary" | "table" | "flowchart"`
-- **contentTemplate**: 包含填空占位符的文本，必须使用 `{{blank_id}}` 格式。
-- **blanks**: 每个占位符的详细配置，包含可接受的答案数组 `acceptedAnswers`。
+### 5.4 填空题（Completion）
 
 ```json
 {
@@ -174,10 +242,7 @@
 }
 ```
 
-### 4.5 特征配对题 (Matching Features)
-- **type**: `"matching_features"`
-- **statements**: 需要被配对的陈述或发现。
-- **features**: 特征实体（如人名、时间段等）。
+### 5.5 特征配对题（Matching Features）
 
 ```json
 {
@@ -195,11 +260,7 @@
 }
 ```
 
-### 4.6 多项选择题 (Multiple Choice)
-- **type**: `"multiple_choice"`
-- **selectionMode**: `"single"` 或 `"multiple"`。
-- **options**: 选项数组。
-- **correctOptionIds**: 正确答案的 ID 数组（单选时数组长度为 1）。
+### 5.6 多项选择题（Multiple Choice）
 
 ```json
 {
@@ -217,23 +278,48 @@
 
 ---
 
-## 5. 课程列表更新 (lessons.json)
+## 6. 课程列表更新（lessons.json）
 
-当完成一篇新课程的 JSON 文件（例如 `data/lessons/2026-03-31.json`）后，**必须同步更新根目录下的索引文件 `data/lessons.json`**。否则新课程将不会显示在首页列表中。
+当新增课程详情文件后，必须同步更新根目录下的 `data/lessons.json`，否则课程不会出现在首页。
 
-在 `lessons.json` 的 `lessons` 数组中添加一条新记录，字段需与课程 JSON 的 `meta` 对应：
+示意结构如下：
 
 ```json
 {
   "date": "2026-03-31",
   "path": "pages/2026-03-31.html",
   "title": "新文章的标题",
-  "category": "文章所属分类 (如: Science & Nature)",
-  "summary": "在首页列表展示的简短中文摘要",
+  "category": "文章所属分类",
+  "teaser": "首页摘要文案，同时作为详情页 metadata 描述来源",
   "published": true,
   "featured": true,
   "tag": "文章标签",
   "difficulty": "C1"
 }
 ```
-*注：新增记录通常放置在数组的最前面，以保证最新的文章显示在首页最上方。`difficulty` 字段用于在首页展示 CEFR 分级标签。*
+
+说明：
+
+- 新纪录通常放在数组最前面
+- `difficulty` 必须是 `"A1" | "A2" | "B1" | "B2" | "C1" | "C2"` 之一
+
+---
+
+## 7. 生产与校验要求
+
+内容入库前至少需要完成以下校验：
+
+- lesson 根结构字段完整
+- `schemaVersion === "2.0"`
+- 高亮区间合法且不重叠
+- 所有高亮 key 都能在 vocab 中找到
+- vocab key 唯一
+- 图表 labels 与 datasets 长度一致
+- quiz 题目 id 唯一
+- completion 模板占位符与 blanks 一一对应
+
+不允许：
+
+- 在 `article.en.text` 中出现 HTML 标签
+- 在 `article.zh` 中嵌入 tooltip 或样式标签
+- 生成未被引用的词汇项

@@ -121,6 +121,7 @@ pnpm format
 
 ```json
 {
+  "schemaVersion": "2.0",
   "meta": {
     "title": "Lesson Title"
   },
@@ -131,20 +132,32 @@ pnpm format
     "title": "Article Title",
     "paragraphs": [
       {
-        "en": "English paragraph with <span class=\"vocab-word\" data-word=\"sample\">sample</span>.",
+        "id": "p1",
+        "en": {
+          "text": "English paragraph with sample.",
+          "highlights": [
+            {
+              "start": 23,
+              "end": 29,
+              "key": "sample"
+            }
+          ]
+        },
         "zh": "对应中文翻译。"
       }
     ]
   },
-  "vocab": {
-    "sample": {
+  "vocab": [
+    {
+      "key": "sample",
       "pos": "n.",
       "def": "an example",
       "trans": "示例",
       "speakText": "sample"
     }
-  },
+  ],
   "chart": {
+    "type": "line",
     "title": "Chart Title",
     "description": "图表说明",
     "labels": ["A", "B", "C"],

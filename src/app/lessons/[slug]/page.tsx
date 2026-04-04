@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { LessonView } from '@/features/lesson/components/LessonView';
 import { LessonData, LessonListItem, LessonsList } from '@/types/lesson';
+import { validateLessonData } from '@/lib/lesson';
 import { Metadata } from 'next';
 
 const lessonsDir = path.join(process.cwd(), 'data', 'lessons');
@@ -20,7 +21,7 @@ const readLessonData = (slug: string): LessonData | null => {
   const filePath = path.join(lessonsDir, `${slug}.json`);
   if (!fs.existsSync(filePath)) return null;
 
-  return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  return validateLessonData(JSON.parse(fs.readFileSync(filePath, 'utf8')));
 };
 
 export async function generateMetadata({

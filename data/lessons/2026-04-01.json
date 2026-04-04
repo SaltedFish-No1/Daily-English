@@ -1,4 +1,5 @@
 {
+  "schemaVersion": "2.0",
   "meta": {
     "title": "The Brainless Urban Planner"
   },
@@ -9,157 +10,309 @@
     "title": "The Brainless Urban Planner: What Slime Molds Teach Us",
     "paragraphs": [
       {
-        "en": "When we think of intelligence, we usually picture a complex brain. Therefore, looking at a yellow, jelly-like blob moving slowly across a forest floor creates the <span class=\"vocab-word\" data-word=\"illusion\">illusion</span> that it is a simple, mindless <span class=\"vocab-word\" data-word=\"organism\">organism</span>. This creature is the <span class=\"vocab-word\" data-word=\"slime mold\">slime mold</span>. Despite its appearance, it has a complex life cycle, including a <span class=\"vocab-word\" data-word=\"sexual\">sexual</span> reproduction phase with <span class=\"vocab-word\" data-word=\"multiple\">multiple</span> mating types. In the wild, it lives in a harsh environment. To survive, it must engage in <span class=\"vocab-word\" data-word=\"fierce\">fierce</span> competition with other microorganisms to find and <span class=\"vocab-word\" data-word=\"consume\">consume</span> <span class=\"vocab-word\" data-word=\"decaying\">decaying</span> leaves and bacteria.",
-        "zh": "当我们谈到智能时，脑海中通常浮现的是一个复杂的大脑。因此，当人们看到一团黄色、果冻状的物体在森林地面上缓慢移动时，很容易产生一种<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">错觉<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">illusion</span></span>，以为它只是某种简单、无脑的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">生物<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">organism</span></span>。这种生物就是<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">黏菌<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">slime mold</span></span>。尽管外表并不起眼，它却拥有复杂的生命周期，其中包括具有多种<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">交配类型<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">multiple</span></span>的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">有性<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">sexual</span></span>繁殖阶段。在野外，它生活在严酷的环境中。为了生存，它必须与其他微生物展开<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">激烈<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">fierce</span></span>竞争，去寻找并<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">消耗<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">consume</span></span><span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">腐烂的<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">decaying</span></span>树叶和细菌。"
+        "id": "p1",
+        "en": {
+          "text": "When we think of intelligence, we usually picture a complex brain. Therefore, looking at a yellow, jelly-like blob moving slowly across a forest floor creates the illusion that it is a simple, mindless organism. This creature is the slime mold. Despite its appearance, it has a complex life cycle, including a sexual reproduction phase with multiple mating types. In the wild, it lives in a harsh environment. To survive, it must engage in fierce competition with other microorganisms to find and consume decaying leaves and bacteria.",
+          "highlights": [
+            {
+              "start": 163,
+              "end": 171,
+              "key": "illusion"
+            },
+            {
+              "start": 202,
+              "end": 210,
+              "key": "organism"
+            },
+            {
+              "start": 233,
+              "end": 243,
+              "key": "slime mold"
+            },
+            {
+              "start": 310,
+              "end": 316,
+              "key": "sexual"
+            },
+            {
+              "start": 341,
+              "end": 349,
+              "key": "multiple"
+            },
+            {
+              "start": 440,
+              "end": 446,
+              "key": "fierce"
+            },
+            {
+              "start": 497,
+              "end": 504,
+              "key": "consume"
+            },
+            {
+              "start": 505,
+              "end": 513,
+              "key": "decaying"
+            }
+          ]
+        },
+        "zh": "当我们谈到智能时，脑海中通常浮现的是一个复杂的大脑。因此，当人们看到一团黄色、果冻状的物体在森林地面上缓慢移动时，很容易产生一种错觉，以为它只是某种简单、无脑的生物。这种生物就是黏菌。尽管外表并不起眼，它却拥有复杂的生命周期，其中包括具有多种交配类型的有性繁殖阶段。在野外，它生活在严酷的环境中。为了生存，它必须与其他微生物展开激烈竞争，去寻找并消耗腐烂的树叶和细菌。"
       },
       {
-        "en": "Scientists have long been fascinated by the <span class=\"vocab-word\" data-word=\"novelty\">novelty</span> of the slime mold's behavior, particularly the <span class=\"vocab-word\" data-word=\"dominant\">dominant</span> species used in laboratories, Physarum polycephalum. Researchers <span class=\"vocab-word\" data-word=\"treasure\">treasure</span> this organism because, despite having no central nervous system, it displays remarkable problem-solving skills. When placed in an environment of resource <span class=\"vocab-word\" data-word=\"poverty\">poverty</span>, where food is <span class=\"vocab-word\" data-word=\"scarce\">scarce</span>, the slime mold becomes an expert explorer. If scientists place it in a maze with food (usually oat flakes) at the exits, the mold will quickly spread everywhere. However, once it finds the food, it will completely <span class=\"vocab-word\" data-word=\"disregard\">disregard</span> all the dead ends and pull its body back to form the single shortest, most efficient route between the food sources.",
-        "zh": "长期以来，科学家一直对黏菌行为中所展现出的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">新奇性<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">novelty</span></span>深感着迷，尤其是实验室里最常用、也最具<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">代表性<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">dominant</span></span>的物种——多头绒泡菌。研究人员十分<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">珍视<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">treasure</span></span>这种生物，因为尽管它没有中枢神经系统，却展现出了非凡的解题能力。当它被放入资源<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">匮乏<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">poverty</span></span>、食物<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">稀缺<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">scarce</span></span>的环境里时，黏菌会变成一位高明的探索者。如果科学家把它放进一个迷宫，并在出口处放上食物（通常是燕麦片），它就会迅速向四周蔓延。然而，一旦找到食物，它便会彻底<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">无视<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">disregard</span></span>所有死胡同，把身体收缩回来，并在各个食物源之间形成一条唯一、最短且最高效的路线。"
+        "id": "p2",
+        "en": {
+          "text": "Scientists have long been fascinated by the novelty of the slime mold's behavior, particularly the dominant species used in laboratories, Physarum polycephalum. Researchers treasure this organism because, despite having no central nervous system, it displays remarkable problem-solving skills. When placed in an environment of resource poverty, where food is scarce, the slime mold becomes an expert explorer. If scientists place it in a maze with food (usually oat flakes) at the exits, the mold will quickly spread everywhere. However, once it finds the food, it will completely disregard all the dead ends and pull its body back to form the single shortest, most efficient route between the food sources.",
+          "highlights": [
+            {
+              "start": 44,
+              "end": 51,
+              "key": "novelty"
+            },
+            {
+              "start": 99,
+              "end": 107,
+              "key": "dominant"
+            },
+            {
+              "start": 173,
+              "end": 181,
+              "key": "treasure"
+            },
+            {
+              "start": 336,
+              "end": 343,
+              "key": "poverty"
+            },
+            {
+              "start": 359,
+              "end": 365,
+              "key": "scarce"
+            },
+            {
+              "start": 581,
+              "end": 590,
+              "key": "disregard"
+            }
+          ]
+        },
+        "zh": "长期以来，科学家一直对黏菌行为中所展现出的新奇性深感着迷，尤其是实验室里最常用、也最具代表性的物种——多头绒泡菌。研究人员十分珍视这种生物，因为尽管它没有中枢神经系统，却展现出了非凡的解题能力。当它被放入资源匮乏、食物稀缺的环境里时，黏菌会变成一位高明的探索者。如果科学家把它放进一个迷宫，并在出口处放上食物（通常是燕麦片），它就会迅速向四周蔓延。然而，一旦找到食物，它便会彻底无视所有死胡同，把身体收缩回来，并在各个食物源之间形成一条唯一、最短且最高效的路线。"
       },
       {
-        "en": "The most famous experiment demonstrating this biological magic took place in Japan. Researchers placed oat flakes on a map to represent the major cities around Tokyo, and put the slime mold in the center. Within a few days, the organism grew a network of tubes connecting the food. Astoundingly, this brainless blob managed to accurately <span class=\"vocab-word\" data-word=\"emulate\">emulate</span> the layout of the actual Tokyo railway system—a network that took human engineers decades to design. Unlike human societies, which are divided into various <span class=\"vocab-word\" data-word=\"ethnic\">ethnic</span> groups and require complex political negotiations to build public projects, the slime mold naturally and peacefully calculates the most mathematically perfect routes.",
-        "zh": "展示这种生物奇迹的最著名实验发生在日本。研究人员在地图上摆放燕麦片，以代表东京周边各大城市的位置，并把黏菌放在中央。短短几天内，这种生物便长出了一个连接各食物点的管状网络。令人惊叹的是，这团没有大脑的胶状物竟然能够精准地<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">模拟<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">emulate</span></span>现实中东京铁路系统的布局——而那张网络，是人类工程师花了数十年才设计出来的。与被不同<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">族群<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">ethnic</span></span>划分、且需要复杂政治协商才能推进公共建设的人类社会不同，黏菌能够自然且平和地计算出数学意义上最理想的路线。"
+        "id": "p3",
+        "en": {
+          "text": "The most famous experiment demonstrating this biological magic took place in Japan. Researchers placed oat flakes on a map to represent the major cities around Tokyo, and put the slime mold in the center. Within a few days, the organism grew a network of tubes connecting the food. Astoundingly, this brainless blob managed to accurately emulate the layout of the actual Tokyo railway system—a network that took human engineers decades to design. Unlike human societies, which are divided into various ethnic groups and require complex political negotiations to build public projects, the slime mold naturally and peacefully calculates the most mathematically perfect routes.",
+          "highlights": [
+            {
+              "start": 338,
+              "end": 345,
+              "key": "emulate"
+            },
+            {
+              "start": 502,
+              "end": 508,
+              "key": "ethnic"
+            }
+          ]
+        },
+        "zh": "展示这种生物奇迹的最著名实验发生在日本。研究人员在地图上摆放燕麦片，以代表东京周边各大城市的位置，并把黏菌放在中央。短短几天内，这种生物便长出了一个连接各食物点的管状网络。令人惊叹的是，这团没有大脑的胶状物竟然能够精准地模拟现实中东京铁路系统的布局——而那张网络，是人类工程师花了数十年才设计出来的。与被不同族群划分、且需要复杂政治协商才能推进公共建设的人类社会不同，黏菌能够自然且平和地计算出数学意义上最理想的路线。"
       },
       {
-        "en": "The <span class=\"vocab-word\" data-word=\"implication\">implication</span> of this research is massive. While a single-celled organism obviously cannot participate in human <span class=\"vocab-word\" data-word=\"athletics\">athletics</span> or build actual skyscrapers, its biological <span class=\"vocab-word\" data-word=\"algorithm\">algorithm</span> can <span class=\"vocab-word\" data-word=\"foster\">foster</span> innovative ideas in computer science and urban planning. Today, engineers are studying how to use the slime mold's logic to design smarter electrical grids, optimize traffic systems to <span class=\"vocab-word\" data-word=\"contain\">contain</span> traffic jams, and even plan underground <span class=\"vocab-word\" data-word=\"sewage\">sewage</span> networks. By observing nature, we might find the most efficient ways to build the cities of our future.",
-        "zh": "这项研究所带来的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">启示<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">implication</span></span>是巨大的。虽然单细胞生物显然不可能参与人类的<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">体育竞技<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">athletics</span></span>，也不可能真的去建造摩天大楼，但它的生物<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">算法<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">algorithm</span></span>却能够<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">催生<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">foster</span></span>计算机科学与城市规划中的新思路。如今，工程师们正在研究如何借助黏菌的逻辑来设计更智能的电网，优化交通系统以<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">遏制<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">contain</span></span>拥堵，甚至规划地下<span tabindex=\"0\" class=\"group relative cursor-help border-b border-dashed border-slate-400 text-slate-700 hover:text-slate-900 focus:text-slate-900 transition-colors outline-none\">污水<span class=\"pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 rounded bg-slate-800 px-2 py-1 text-xs text-white shadow-sm\">sewage</span></span>网络。通过观察自然，我们或许能找到建设未来城市的更高效路径。"
+        "id": "p4",
+        "en": {
+          "text": "The implication of this research is massive. While a single-celled organism obviously cannot participate in human athletics or build actual skyscrapers, its biological algorithm can foster innovative ideas in computer science and urban planning. Today, engineers are studying how to use the slime mold's logic to design smarter electrical grids, optimize traffic systems to contain traffic jams, and even plan underground sewage networks. By observing nature, we might find the most efficient ways to build the cities of our future.",
+          "highlights": [
+            {
+              "start": 4,
+              "end": 15,
+              "key": "implication"
+            },
+            {
+              "start": 114,
+              "end": 123,
+              "key": "athletics"
+            },
+            {
+              "start": 168,
+              "end": 177,
+              "key": "algorithm"
+            },
+            {
+              "start": 182,
+              "end": 188,
+              "key": "foster"
+            },
+            {
+              "start": 374,
+              "end": 381,
+              "key": "contain"
+            },
+            {
+              "start": 422,
+              "end": 428,
+              "key": "sewage"
+            }
+          ]
+        },
+        "zh": "这项研究所带来的启示是巨大的。虽然单细胞生物显然不可能参与人类的体育竞技，也不可能真的去建造摩天大楼，但它的生物算法却能够催生计算机科学与城市规划中的新思路。如今，工程师们正在研究如何借助黏菌的逻辑来设计更智能的电网，优化交通系统以遏制拥堵，甚至规划地下污水网络。通过观察自然，我们或许能找到建设未来城市的更高效路径。"
       }
     ]
   },
-  "vocab": {
-    "illusion": {
+  "vocab": [
+    {
+      "key": "illusion",
       "pos": "n.",
       "def": "A false idea or belief; a deceptive appearance or impression.",
       "trans": "错觉，幻觉",
       "speakText": "illusion"
     },
-    "slime mold": {
+    {
+      "key": "slime mold",
       "pos": "n.",
       "def": "A simple organism that consists of an acellular mass of creeping jellylike protoplasm.",
       "trans": "黏菌",
       "speakText": "slime mold"
     },
-    "organism": {
+    {
+      "key": "organism",
       "pos": "n.",
       "def": "An individual animal, plant, or single-celled life form.",
       "trans": "生物，有机体",
       "speakText": "organism"
     },
-    "sexual": {
+    {
+      "key": "sexual",
       "pos": "adj.",
       "def": "Relating to the instincts, physiological processes, and activities connected with physical attraction or intimate physical contact between individuals.",
       "trans": "有性的，性别的",
       "speakText": "sexual"
     },
-    "multiple": {
+    {
+      "key": "multiple",
       "pos": "adj.",
       "def": "Having or involving several parts, elements, or members.",
       "trans": "多种的，多个的",
       "speakText": "multiple"
     },
-    "fierce": {
+    {
+      "key": "fierce",
       "pos": "adj.",
       "def": "Having or displaying an intense or ferocious aggressiveness.",
       "trans": "激烈的，凶猛的",
       "speakText": "fierce"
     },
-    "consume": {
+    {
+      "key": "consume",
       "pos": "v.",
       "def": "To eat, drink, or ingest (food or drink).",
       "trans": "消耗，吃掉",
       "speakText": "consume"
     },
-    "decaying": {
+    {
+      "key": "decaying",
       "pos": "adj.",
       "def": "Rotting or decomposing through the action of bacteria and fungi.",
       "trans": "腐烂的",
       "speakText": "decaying"
     },
-    "novelty": {
+    {
+      "key": "novelty",
       "pos": "n.",
       "def": "The quality of being new, original, or unusual.",
       "trans": "新奇事物，新颖性",
       "speakText": "novelty"
     },
-    "dominant": {
+    {
+      "key": "dominant",
       "pos": "adj.",
       "def": "Most important, powerful, or influential.",
       "trans": "占主导地位的，支配的",
       "speakText": "dominant"
     },
-    "treasure": {
+    {
+      "key": "treasure",
       "pos": "v.",
       "def": "Keep carefully (a valuable or valued item); value highly.",
       "trans": "珍视，珍爱",
       "speakText": "treasure"
     },
-    "poverty": {
+    {
+      "key": "poverty",
       "pos": "n.",
       "def": "The state of being extremely poor; a lack of something.",
       "trans": "贫困，匮乏",
       "speakText": "poverty"
     },
-    "scarce": {
+    {
+      "key": "scarce",
       "pos": "adj.",
       "def": "(especially of food, money, or some other resource) insufficient for the demand.",
       "trans": "缺乏的，不足的",
       "speakText": "scarce"
     },
-    "disregard": {
+    {
+      "key": "disregard",
       "pos": "v.",
       "def": "Pay no attention to; ignore.",
       "trans": "忽视，无视",
       "speakText": "disregard"
     },
-    "emulate": {
+    {
+      "key": "emulate",
       "pos": "v.",
       "def": "Match or surpass (a person or achievement), typically by imitation.",
       "trans": "模仿，仿真，赶超",
       "speakText": "emulate"
     },
-    "ethnic": {
+    {
+      "key": "ethnic",
       "pos": "adj.",
       "def": "Relating to a population subgroup with a common national or cultural tradition.",
       "trans": "种族的，民族的",
       "speakText": "ethnic"
     },
-    "implication": {
+    {
+      "key": "implication",
       "pos": "n.",
       "def": "The conclusion that can be drawn from something although it is not explicitly stated; a likely consequence.",
       "trans": "可能产生的影响，暗指，意义",
       "speakText": "implication"
     },
-    "athletics": {
+    {
+      "key": "athletics",
       "pos": "n.",
       "def": "Physical sports and games of any kind.",
       "trans": "体育运动，田径运动",
       "speakText": "athletics"
     },
-    "algorithm": {
+    {
+      "key": "algorithm",
       "pos": "n.",
       "def": "A process or set of rules to be followed in calculations or other problem-solving operations.",
       "trans": "算法，计算程序",
       "speakText": "algorithm"
     },
-    "foster": {
+    {
+      "key": "foster",
       "pos": "v.",
       "def": "Encourage or promote the development of (something, typically something regarded as good).",
       "trans": "促进，培养，鼓励",
       "speakText": "foster"
     },
-    "contain": {
+    {
+      "key": "contain",
       "pos": "v.",
       "def": "Control or restrain (oneself or a feeling); prevent from spreading.",
       "trans": "遏制，控制，包含",
       "speakText": "contain"
     },
-    "sewage": {
+    {
+      "key": "sewage",
       "pos": "n.",
       "def": "Waste water and excrement conveyed in sewers.",
       "trans": "污水，污物",
       "speakText": "sewage"
     }
-  },
+  ],
   "chart": {
     "type": "bar",
     "title": "Efficiency in Network Design: Slime Mold vs. Human Engineers",
