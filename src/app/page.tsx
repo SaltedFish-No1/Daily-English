@@ -1,8 +1,5 @@
-import { HomeView } from '@/features/home/components/HomeView';
-import { getLessons } from '@/lib/lessons-db';
+import { DashboardView } from '@/features/home/components/DashboardView';
 
-export default async function Home() {
-  const { lessons } = await getLessons();
-
-  return <HomeView lessons={lessons} />;
+export default function Home() {
+  return <DashboardView />;
 }

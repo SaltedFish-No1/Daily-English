@@ -20,7 +20,7 @@ const skills = [
     description: '沉浸式英文阅读，积累地道表达与核心词汇',
     icon: BookOpen,
     color: 'emerald',
-    href: '/',
+    href: '/reading',
     available: true,
   },
   {

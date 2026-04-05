@@ -28,6 +28,8 @@ const tabs: NavTab[] = [
 
 function isActive(href: string, pathname: string) {
   if (href === '/') return pathname === '/';
+  if (href === '/learn')
+    return pathname.startsWith('/learn') || pathname.startsWith('/reading');
   return pathname.startsWith(href);
 }
 

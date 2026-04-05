@@ -5,7 +5,6 @@ import { LessonDifficulty, LessonListItem } from '@/types/lesson';
 import {
   Calendar,
   ArrowRight,
-  Download,
   BookMarked,
   BookOpen,
   Trophy,
@@ -18,10 +17,9 @@ import {
   CEFRGuideDialog,
   difficultyClassMap,
 } from '@/features/home/components/CEFRGuideDialog';
-import { usePWAInstall } from '@/hooks/usePWAInstall';
-import { UserMenu } from '@/features/auth/components/UserMenu';
+import { useLearningStats } from '@/hooks/useLearningStats';
 
-interface HomeViewProps {
+interface ReadingViewProps {
   lessons: LessonListItem[];
 }
 
@@ -30,17 +28,9 @@ interface DifficultyGuideState {
   difficulty: LessonDifficulty | null;
 }
 
-export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
+export const ReadingView: React.FC<ReadingViewProps> = ({ lessons }) => {
   const { savedWords, history } = useUserStore();
-  const {
-    isStandalone,
-    installDialog,
-    installTitle,
-    installLabel,
-    handleInstall,
-    closeInstallDialog,
-    confirmInstall,
-  } = usePWAInstall();
+  const stats = useLearningStats();
 
   const [difficultyGuide, setDifficultyGuide] = useState<DifficultyGuideState>({
     open: false,
@@ -60,25 +50,6 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
     setDifficultyGuide({ open: false, difficulty: null });
   };
 
-  // Learning stats
-  const stats = useMemo(() => {
-    const completedLessons = Object.values(history);
-    const lessonCount = completedLessons.length;
-    const wordCount = Object.keys(savedWords).filter(
-      (k) => savedWords[k].length > 0
-    ).length;
-    const avgScore =
-      lessonCount > 0
-        ? Math.round(
-            completedLessons.reduce(
-              (sum, h) => sum + (h.score / h.total) * 100,
-              0
-            ) / lessonCount
-          )
-        : 0;
-    return { lessonCount, wordCount, avgScore };
-  }, [history, savedWords]);
-
   // Recent vocab
   const recentWordEntries = useMemo(() => {
     return Object.entries(savedWords)
@@ -94,12 +65,14 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
       })
       .sort((a, b) => b.latestOccurrence.savedAt - a.latestOccurrence.savedAt);
   }, [savedWords]);
+
   const savedWordCount = recentWordEntries.length;
   const previewCount = Math.min(
     8,
     Math.max(2, Math.min(6, savedWordCount || 0))
   );
   const recentWords = recentWordEntries.slice(0, previewCount);
+
   const formatDisplayDate = (rawDate: string) => {
     const date = new Date(rawDate);
     if (Number.isNaN(date.getTime())) return rawDate;
@@ -114,24 +87,11 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-5 sm:py-6">
           <div>
             <h1 className="text-xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-              薄荷外语
+              阅读课程
             </h1>
             <p className="mt-0.5 text-[10px] font-bold tracking-widest text-slate-400 uppercase sm:text-sm">
-              每日一课，轻松进步
+              沉浸式英文阅读，积累地道表达
             </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handleInstall}
-              disabled={isStandalone}
-              className="flex h-10 items-center justify-center gap-1.5 rounded-full border border-emerald-100 bg-emerald-50 px-3 text-xs font-bold text-emerald-600 transition-colors enabled:hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-40"
-              title={installTitle}
-            >
-              <Download size={14} />
-              {installLabel}
-            </button>
-            <UserMenu />
           </div>
         </div>
       </header>
@@ -264,7 +224,8 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
                           openDifficultyGuide(event, lesson.difficulty)
                         }
                         onKeyDown={(event) => {
-                          if (event.key !== 'Enter' && event.key !== ' ') return;
+                          if (event.key !== 'Enter' && event.key !== ' ')
+                            return;
                           event.preventDefault();
                           event.stopPropagation();
                           setDifficultyGuide({
@@ -299,61 +260,6 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
         </div>
       </main>
 
-      <footer className="border-t border-slate-100 bg-white py-12 text-center">
-        <p className="text-[11px] font-bold tracking-widest text-slate-400 uppercase">
-          © 2026 薄荷外语 · DESIGNED FOR LEARNING
-        </p>
-        <a
-          href="https://github.com/SaltedFish-No1"
-          target="_blank"
-          rel="noreferrer"
-          className="mt-3 inline-flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-emerald-600"
-        >
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            className="h-3.5 w-3.5 fill-current"
-          >
-            <path d="M12 1.5C6.201 1.5 1.5 6.201 1.5 12c0 4.64 3.01 8.577 7.186 9.966.525.097.717-.228.717-.507 0-.25-.01-1.082-.014-1.962-2.924.636-3.54-1.241-3.54-1.241-.478-1.214-1.168-1.537-1.168-1.537-.955-.652.072-.639.072-.639 1.056.074 1.611 1.084 1.611 1.084.938 1.607 2.46 1.143 3.06.874.095-.68.367-1.144.667-1.407-2.335-.266-4.79-1.168-4.79-5.198 0-1.148.41-2.088 1.082-2.824-.109-.266-.469-1.337.102-2.787 0 0 .882-.282 2.89 1.078A9.96 9.96 0 0 1 12 6.337a9.95 9.95 0 0 1 2.633.354c2.007-1.36 2.888-1.078 2.888-1.078.572 1.45.212 2.521.104 2.787.673.736 1.08 1.676 1.08 2.824 0 4.04-2.458 4.929-4.8 5.19.378.326.714.967.714 1.95 0 1.408-.013 2.543-.013 2.889 0 .282.189.61.722.506A10.503 10.503 0 0 0 22.5 12c0-5.799-4.701-10.5-10.5-10.5Z" />
-          </svg>
-          <span>SaltedFish-No1</span>
-        </a>
-      </footer>
-
-      {installDialog.open && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/40 p-5">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl">
-            <h3 className="mb-2 text-base font-bold text-slate-900">
-              {installDialog.title}
-            </h3>
-            <p className="mb-5 text-sm leading-relaxed text-slate-600">
-              {installDialog.message}
-            </p>
-            <div className="flex justify-end gap-2">
-              {installDialog.showConfirm && (
-                <button
-                  type="button"
-                  onClick={closeInstallDialog}
-                  className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50"
-                >
-                  取消
-                </button>
-              )}
-              <button
-                type="button"
-                onClick={
-                  installDialog.showConfirm
-                    ? confirmInstall
-                    : closeInstallDialog
-                }
-                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700"
-              >
-                {installDialog.showConfirm ? '确认安装' : '知道了'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
       <CEFRGuideDialog
         open={difficultyGuide.open}
         difficulty={difficultyGuide.difficulty}
