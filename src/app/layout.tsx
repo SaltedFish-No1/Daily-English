@@ -23,15 +23,8 @@ export const metadata: Metadata = {
   description: '每日沉浸式互动体验，轻松掌握地道外语表达。',
   manifest: '/manifest.webmanifest',
   icons: {
-    icon: [
-      { url: '/icons/favicon.svg', type: 'image/svg+xml' },
-      { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
-      { url: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' },
-      { url: '/icons/image.png', sizes: '768x768', type: 'image/png' },
-    ],
-    apple: [
-      { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
-    ],
+    icon: [{ url: '/icons/favicon.svg', type: 'image/svg+xml' }],
+    apple: [{ url: '/icons/favicon.svg', type: 'image/svg+xml' }],
   },
   appleWebApp: {
     capable: true,
