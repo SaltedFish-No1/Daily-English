@@ -1,12 +1,12 @@
 /**
  * @author SaltedFish-No1
- * @description 重置密码 API：验证 OTP → 通过 Supabase Admin 更新用户密码。
- *   OTP 验证与密码更新在同一请求中完成，防止绕过验证。
+ * @description 重置密码 API：验证邮件链接 token → 通过 Supabase Admin 更新用户密码。
+ *   Token 验证与密码更新在同一请求中完成，防止绕过验证。
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import { verifyOtpHash } from '@/lib/otp';
+import { verifyTokenHash } from '@/lib/token';
 
 const MAX_ATTEMPTS = 5;
 const MIN_PASSWORD_LENGTH = 6;
@@ -15,12 +15,12 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const email = (body.email as string)?.toLowerCase().trim();
-    const code = (body.code as string)?.trim();
+    const token = (body.token as string)?.trim();
     const newPassword = body.newPassword as string;
 
-    if (!email || !code || !newPassword) {
+    if (!email || !token || !newPassword) {
       return NextResponse.json(
-        { error: '请提供邮箱、验证码和新密码' },
+        { error: '请提供邮箱、token 和新密码' },
         { status: 400 }
       );
     }
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
 
     if (queryError || !row) {
       return NextResponse.json(
-        { error: '验证码无效或已过期，请重新发送' },
+        { error: '重置链接无效或已过期，请重新发送' },
         { status: 400 }
       );
     }
@@ -57,19 +57,19 @@ export async function POST(request: NextRequest) {
         .update({ used: true })
         .eq('id', row.id);
       return NextResponse.json(
-        { error: '验证码已失效，尝试次数过多，请重新发送' },
+        { error: '重置链接已失效，尝试次数过多，请重新发送' },
         { status: 400 }
       );
     }
 
-    // 比较验证码
-    if (!verifyOtpHash(code, row.code)) {
+    // 比较 token
+    if (!verifyTokenHash(token, row.code)) {
       await supabaseAdmin
         .from('email_verifications')
         .update({ attempts: row.attempts + 1 })
         .eq('id', row.id);
       return NextResponse.json(
-        { error: '验证码错误，请重新输入' },
+        { error: '重置链接无效，请重新发送' },
         { status: 400 }
       );
     }
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
       await supabaseAdmin.auth.admin.listUsers();
 
     if (userError) {
-      console.error('[reset-password] listUsers failed:', userError);
+      console.error('[reset-password-with-token] listUsers failed:', userError);
       return NextResponse.json(
         { error: '服务器错误，请稍后重试' },
         { status: 500 }
@@ -108,7 +108,10 @@ export async function POST(request: NextRequest) {
       });
 
     if (updateError) {
-      console.error('[reset-password] updateUserById failed:', updateError);
+      console.error(
+        '[reset-password-with-token] updateUserById failed:',
+        updateError
+      );
       return NextResponse.json(
         { error: '密码更新失败，请稍后重试' },
         { status: 500 }
@@ -117,7 +120,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error('[reset-password] Unexpected error:', err);
+    console.error('[reset-password-with-token] Unexpected error:', err);
     return NextResponse.json(
       { error: '服务器错误，请稍后重试' },
       { status: 500 }

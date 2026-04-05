@@ -41,23 +41,20 @@ export function verifyOtp(email: string, code: string) {
   );
 }
 
-/** 发送密码重置验证码到指定邮箱。 */
-export function sendPasswordResetOtp(email: string) {
-  return post<{ success: boolean }>('/api/auth/send-otp', {
-    email,
-    purpose: 'password-reset',
-  });
+/** 发送密码重置链接到指定邮箱。 */
+export function sendResetLink(email: string) {
+  return post<{ success: boolean }>('/api/auth/send-reset-link', { email });
 }
 
-/** 验证 OTP 并重置密码。 */
-export function resetPassword(
+/** 验证 token 并重置密码。 */
+export function resetPasswordWithToken(
   email: string,
-  code: string,
+  token: string,
   newPassword: string
 ) {
-  return post<{ success: boolean }>('/api/auth/reset-password', {
+  return post<{ success: boolean }>('/api/auth/reset-password-with-token', {
     email,
-    code,
+    token,
     newPassword,
   });
 }
