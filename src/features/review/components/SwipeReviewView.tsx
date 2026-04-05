@@ -52,6 +52,7 @@ interface SwipeReviewViewProps {
 
 const QUALITY_FORGOT = 1;
 const QUALITY_REMEMBERED = 4;
+const EXIT_X = 600;
 
 function buildReviewWords(
   words: string[],
@@ -93,7 +94,6 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
 
   const { speak } = useSpeech();
 
-  // useState (not useMemo) so we can replace the deck on "replay forgot words"
   const [reviewWords, setReviewWords] = useState(() =>
     buildReviewWords(words, savedWords, wordReviewStates)
   );
@@ -102,6 +102,9 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
   const [history, setHistory] = useState<SwipeRecord[]>([]);
   const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
   const [results, setResults] = useState<Array<{ word: string; remembered: boolean }>>([]);
+  const [isAnimating, setIsAnimating] = useState(false);
+  /** Direction of the last undo — used for fly-back initial position */
+  const [undoFrom, setUndoFrom] = useState<'left' | 'right' | null>(null);
   const cardRef = useRef<SwipeCardRef>(null);
 
   const isFinished = currentIndex >= reviewWords.length;
@@ -120,7 +123,7 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
     []
   );
 
-  // ----- Swipe Handler -----
+  // ----- Swipe Handler (called after fly-out animation completes) -----
   const handleSwipe = useCallback(
     (direction: 'left' | 'right') => {
       const word = reviewWords[currentIndex];
@@ -131,28 +134,31 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
         ? { ...wordReviewStates[key] }
         : undefined;
 
-      // Update SM-2
       const quality = direction === 'right' ? QUALITY_REMEMBERED : QUALITY_FORGOT;
       updateWordReview(key, quality);
 
-      // Record history for undo
       setHistory((prev) => [...prev, { word: key, direction, prevState }]);
       setResults((prev) => [
         ...prev,
         { word: key, remembered: direction === 'right' },
       ]);
+      setUndoFrom(null);
       setCurrentIndex((prev) => prev + 1);
+      setIsAnimating(false);
     },
     [currentIndex, reviewWords, wordReviewStates, updateWordReview]
   );
 
   // ----- Undo -----
   const handleUndo = useCallback(() => {
-    if (history.length === 0) return;
+    if (history.length === 0 || isAnimating) return;
 
     const last = history[history.length - 1];
     setHistory((prev) => prev.slice(0, -1));
     setResults((prev) => prev.slice(0, -1));
+
+    // Set undo direction so the card flies back from where it went
+    setUndoFrom(last.direction);
     setCurrentIndex((prev) => prev - 1);
 
     // Restore previous SM-2 state
@@ -164,7 +170,7 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
         },
       }));
     }
-  }, [history]);
+  }, [history, isAnimating]);
 
   // ----- Play audio -----
   const playAudio = useCallback(
@@ -264,6 +270,11 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
     ? Math.round((currentIndex / reviewWords.length) * 100)
     : 0;
 
+  // Compute initial x for undo fly-back
+  const initialX = undoFrom
+    ? (undoFrom === 'left' ? -EXIT_X : EXIT_X)
+    : 0;
+
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
       {/* Header */}
@@ -290,139 +301,140 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
       </div>
 
       {/* Card area */}
-      <div className="flex flex-1 items-center justify-center px-4">
-        <div className="relative h-[420px] w-full max-w-sm">
-          <AnimatePresence mode="popLayout">
-            {/* Show next card underneath (preview) */}
-            {currentIndex + 1 < reviewWords.length && (
-              <motion.div
-                key={`bg-${currentIndex + 1}`}
-                className="absolute inset-0 rounded-3xl border border-slate-100 bg-white shadow-sm"
-                initial={{ scale: 0.95, opacity: 0.6 }}
-                animate={{ scale: 0.95, opacity: 0.6 }}
-                style={{ zIndex: 0 }}
-              />
-            )}
+      <div className="flex flex-1 items-center justify-center px-6 sm:px-4">
+        <div className="relative h-[420px] w-full max-w-[320px] sm:max-w-sm">
+          {/* Show next card underneath (preview) */}
+          {currentIndex + 1 < reviewWords.length && (
+            <motion.div
+              className="absolute inset-0 rounded-3xl border border-slate-100 bg-white shadow-sm"
+              style={{ zIndex: 0 }}
+              initial={{ scale: 0.95, opacity: 0.6 }}
+              animate={{ scale: 0.95, opacity: 0.6 }}
+            />
+          )}
 
-            {/* Active card */}
-            <SwipeCard
-              key={`card-${currentIndex}`}
-              ref={cardRef}
-              onSwipe={handleSwipe}
+          {/* Active card — key changes on index so React remounts */}
+          <SwipeCard
+            key={`card-${currentIndex}`}
+            ref={cardRef}
+            onSwipe={handleSwipe}
+            initialX={initialX}
+          >
+            <div
+              className="flex h-full flex-col items-center justify-center rounded-3xl border border-slate-100 bg-white p-8 shadow-xl"
+              onClick={() => toggleFlip(currentIndex)}
             >
-              <div
-                className="flex h-full flex-col items-center justify-center rounded-3xl border border-slate-100 bg-white p-8 shadow-xl"
-                onClick={() => toggleFlip(currentIndex)}
+              {/* Memory strength badge */}
+              {currentWord!.reviewState && (
+                <div className="absolute top-5 left-5">
+                  {(() => {
+                    const strength = getMemoryStrength(currentWord!.reviewState!);
+                    const label = strengthLabel(strength);
+                    return (
+                      <span className={`text-xs font-bold ${label.color}`}>
+                        {label.text} · {strength}%
+                      </span>
+                    );
+                  })()}
+                </div>
+              )}
+
+              {/* Audio button */}
+              <button
+                className="absolute top-5 right-5 rounded-full p-2 text-slate-300 transition-colors hover:bg-slate-50 hover:text-slate-500"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  playAudio(currentWord!);
+                }}
               >
-                {/* Memory strength badge */}
-                {currentWord!.reviewState && (
-                  <div className="absolute top-5 left-5">
-                    {(() => {
-                      const strength = getMemoryStrength(currentWord!.reviewState!);
-                      const label = strengthLabel(strength);
-                      return (
-                        <span className={`text-xs font-bold ${label.color}`}>
-                          {label.text} · {strength}%
-                        </span>
-                      );
-                    })()}
-                  </div>
-                )}
+                <Volume2 size={20} />
+              </button>
 
-                {/* Audio button */}
-                <button
-                  className="absolute top-5 right-5 rounded-full p-2 text-slate-300 transition-colors hover:bg-slate-50 hover:text-slate-500"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    playAudio(currentWord!);
-                  }}
-                >
-                  <Volume2 size={20} />
-                </button>
-
-                <AnimatePresence mode="wait" initial={false}>
-                  {!isFlipped ? (
-                    /* ---- Front: Word ---- */
-                    <motion.div
-                      key="front"
-                      className="flex flex-col items-center"
-                      initial={{ rotateY: 90, opacity: 0 }}
-                      animate={{ rotateY: 0, opacity: 1 }}
-                      exit={{ rotateY: -90, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <h1 className="mb-2 text-3xl font-black text-slate-900">
-                        {currentWord!.headword ?? currentWord!.word}
-                      </h1>
-                      {currentWord!.phonetic && (
-                        <p className="mb-4 text-sm text-slate-400">
-                          {currentWord!.phonetic}
-                        </p>
-                      )}
-                      <div className="mt-4 flex items-center gap-1.5 text-slate-300">
-                        <Eye size={14} />
-                        <span className="text-xs">点击查看释义</span>
-                      </div>
-                    </motion.div>
-                  ) : (
-                    /* ---- Back: Definition ---- */
-                    <motion.div
-                      key="back"
-                      className="flex flex-col items-center px-2"
-                      initial={{ rotateY: 90, opacity: 0 }}
-                      animate={{ rotateY: 0, opacity: 1 }}
-                      exit={{ rotateY: -90, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <h1 className="mb-2 text-2xl font-black text-slate-900">
-                        {currentWord!.headword ?? currentWord!.word}
-                      </h1>
-                      {currentWord!.pos && (
-                        <span className="mb-3 rounded-full bg-emerald-50 px-3 py-0.5 text-xs font-semibold text-emerald-700">
-                          {currentWord!.pos}
-                        </span>
-                      )}
-                      <p className="mt-2 text-center text-base leading-relaxed text-slate-600">
-                        {currentWord!.def ?? '暂无释义'}
+              <AnimatePresence mode="wait" initial={false}>
+                {!isFlipped ? (
+                  /* ---- Front: Word ---- */
+                  <motion.div
+                    key="front"
+                    className="flex flex-col items-center"
+                    initial={{ rotateY: 90, opacity: 0 }}
+                    animate={{ rotateY: 0, opacity: 1 }}
+                    exit={{ rotateY: -90, opacity: 0 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                  >
+                    <h1 className="mb-2 text-3xl font-black text-slate-900">
+                      {currentWord!.headword ?? currentWord!.word}
+                    </h1>
+                    {currentWord!.phonetic && (
+                      <p className="mb-4 text-sm text-slate-400">
+                        {currentWord!.phonetic}
                       </p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </SwipeCard>
-          </AnimatePresence>
+                    )}
+                    <div className="mt-4 flex items-center gap-1.5 text-slate-300">
+                      <Eye size={14} />
+                      <span className="text-xs">点击查看释义</span>
+                    </div>
+                  </motion.div>
+                ) : (
+                  /* ---- Back: Definition ---- */
+                  <motion.div
+                    key="back"
+                    className="flex flex-col items-center px-2"
+                    initial={{ rotateY: 90, opacity: 0 }}
+                    animate={{ rotateY: 0, opacity: 1 }}
+                    exit={{ rotateY: -90, opacity: 0 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                  >
+                    <h1 className="mb-2 text-2xl font-black text-slate-900">
+                      {currentWord!.headword ?? currentWord!.word}
+                    </h1>
+                    {currentWord!.pos && (
+                      <span className="mb-3 rounded-full bg-emerald-50 px-3 py-0.5 text-xs font-semibold text-emerald-700">
+                        {currentWord!.pos}
+                      </span>
+                    )}
+                    <p className="mt-2 text-center text-base leading-relaxed text-slate-600">
+                      {currentWord!.def ?? '暂无释义'}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </SwipeCard>
         </div>
       </div>
 
       {/* Bottom controls */}
-      <div className="flex items-center justify-center gap-6 px-4 pt-2 pb-10">
-        {/* Undo */}
-        <button
+      <div className="flex flex-col items-center gap-4 px-4 pt-2 pb-10">
+        {/* Undo — separate row above the main buttons */}
+        <motion.button
           onClick={handleUndo}
-          disabled={history.length === 0}
-          className="flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400 shadow-sm transition-all hover:bg-slate-50 disabled:opacity-30 disabled:hover:bg-white"
+          disabled={history.length === 0 || isAnimating}
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400 shadow-sm transition-all hover:bg-slate-50 disabled:opacity-30 disabled:hover:bg-white"
+          whileTap={{ scale: 0.9 }}
         >
-          <Undo2 size={20} />
-        </button>
+          <Undo2 size={16} />
+        </motion.button>
 
-        {/* Forgot (left swipe) */}
-        <button
-          onClick={() => cardRef.current?.swipeLeft()}
-          className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-red-200 bg-white text-red-500 shadow-md transition-all hover:border-red-300 hover:bg-red-50 active:scale-95"
-        >
-          <X size={28} strokeWidth={3} />
-        </button>
+        {/* Forgot / Remembered */}
+        <div className="flex items-center justify-center gap-10">
+          {/* Forgot (left swipe) */}
+          <motion.button
+            onClick={() => cardRef.current?.swipeLeft()}
+            className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-red-200 bg-white text-red-500 shadow-md transition-all hover:border-red-300 hover:bg-red-50"
+            whileTap={{ scale: 0.9 }}
+          >
+            <X size={28} strokeWidth={3} />
+          </motion.button>
 
-        {/* Remembered (right swipe) */}
-        <button
-          onClick={() => cardRef.current?.swipeRight()}
-          className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-emerald-200 bg-white text-emerald-500 shadow-md transition-all hover:border-emerald-300 hover:bg-emerald-50 active:scale-95"
-        >
-          <Check size={28} strokeWidth={3} />
-        </button>
-
-        {/* Placeholder for symmetry */}
-        <div className="h-12 w-12" />
+          {/* Remembered (right swipe) */}
+          <motion.button
+            onClick={() => cardRef.current?.swipeRight()}
+            className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-emerald-200 bg-white text-emerald-500 shadow-md transition-all hover:border-emerald-300 hover:bg-emerald-50"
+            whileTap={{ scale: 0.9 }}
+          >
+            <Check size={28} strokeWidth={3} />
+          </motion.button>
+        </div>
       </div>
     </div>
   );

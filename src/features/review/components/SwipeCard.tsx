@@ -5,11 +5,16 @@ import {
   motion,
   useMotionValue,
   useTransform,
+  animate,
   type PanInfo,
 } from 'framer-motion';
 
 const SWIPE_THRESHOLD = 100;
 const EXIT_X = 600;
+
+/** Spring configs */
+const SPRING_OUT = { type: 'spring' as const, stiffness: 600, damping: 35 };
+const SPRING_BACK = { type: 'spring' as const, stiffness: 300, damping: 25 };
 
 export interface SwipeCardRef {
   swipeLeft: () => void;
@@ -17,13 +22,16 @@ export interface SwipeCardRef {
 }
 
 interface SwipeCardProps {
+  /** Called AFTER the card has fully animated off screen */
   onSwipe: (direction: 'left' | 'right') => void;
   children: React.ReactNode;
+  /** Initial x position – used for undo fly-back from off-screen */
+  initialX?: number;
 }
 
 export const SwipeCard = forwardRef<SwipeCardRef, SwipeCardProps>(
-  function SwipeCard({ onSwipe, children }, ref) {
-    const x = useMotionValue(0);
+  function SwipeCard({ onSwipe, children, initialX = 0 }, ref) {
+    const x = useMotionValue(initialX);
     const swipedRef = useRef(false);
 
     const rotate = useTransform(x, [-200, 0, 200], [-15, 0, 15]);
@@ -33,7 +41,11 @@ export const SwipeCard = forwardRef<SwipeCardRef, SwipeCardProps>(
     const animateOut = (direction: 'left' | 'right') => {
       if (swipedRef.current) return;
       swipedRef.current = true;
-      onSwipe(direction);
+
+      const targetX = direction === 'left' ? -EXIT_X : EXIT_X;
+      animate(x, targetX, SPRING_OUT).then(() => {
+        onSwipe(direction);
+      });
     };
 
     const handleDragEnd = (_: unknown, info: PanInfo) => {
@@ -41,6 +53,9 @@ export const SwipeCard = forwardRef<SwipeCardRef, SwipeCardProps>(
         animateOut('left');
       } else if (info.offset.x > SWIPE_THRESHOLD) {
         animateOut('right');
+      } else {
+        // Snap back to center with spring
+        animate(x, 0, SPRING_BACK);
       }
     };
 
@@ -49,23 +64,22 @@ export const SwipeCard = forwardRef<SwipeCardRef, SwipeCardProps>(
       swipeRight: () => animateOut('right'),
     }));
 
+    // If initialX !== 0 (undo fly-back), animate to center on mount
+    React.useEffect(() => {
+      if (initialX !== 0) {
+        animate(x, 0, SPRING_OUT);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     return (
       <motion.div
         className="absolute inset-0 cursor-grab touch-none active:cursor-grabbing"
-        style={{ x, rotate }}
+        style={{ x, rotate, zIndex: 1 }}
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={0.9}
         onDragEnd={handleDragEnd}
-        exit={{
-          x: swipedRef.current
-            ? x.get() < 0
-              ? -EXIT_X
-              : EXIT_X
-            : 0,
-          opacity: 0,
-          transition: { duration: 0.3, ease: 'easeOut' },
-        }}
       >
         {/* Overlay labels */}
         <motion.div
