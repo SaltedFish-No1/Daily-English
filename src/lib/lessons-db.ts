@@ -1,11 +1,19 @@
 /**
  * @description 课程数据访问层 — 供 Server Component 和 API route 共用。
  *   使用 service-role 客户端绕过 RLS，仅在服务端调用。
+ *
+ *   表结构：结构化列存元数据，article/focus_words/quiz 分列存储（JSONB），
+ *   数据访问层负责拼装为前端所需的 LessonData / LessonListItem。
  */
 
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import { LessonData, LessonListItem } from '@/types/lesson';
-import { validateLessonData } from '@/lib/lesson';
+import {
+  LessonData,
+  LessonListItem,
+  LessonArticle,
+  FocusWord,
+  LessonQuiz,
+} from '@/types/lesson';
 
 interface GetLessonsOptions {
   difficulty?: string;
@@ -65,14 +73,35 @@ export async function getLessonBySlug(
 ): Promise<LessonData | null> {
   const { data, error } = await supabaseAdmin
     .from('lessons')
-    .select('content')
+    .select(
+      'id, slug, title, category, teaser, tag, difficulty, published, featured, speech_enabled, article, focus_words, quiz'
+    )
     .eq('slug', slug)
     .eq('published', true)
     .single();
 
   if (error || !data) return null;
 
-  return validateLessonData(data.content);
+  const lesson: LessonData = {
+    schemaVersion: '2.2',
+    meta: {
+      id: data.id,
+      title: data.title,
+      date: data.slug,
+      category: data.category,
+      teaser: data.teaser,
+      published: data.published,
+      featured: data.featured,
+      tag: data.tag,
+      difficulty: data.difficulty,
+    },
+    speech: { enabled: data.speech_enabled },
+    article: data.article as LessonArticle,
+    focusWords: data.focus_words as FocusWord[],
+    quiz: data.quiz as LessonQuiz,
+  };
+
+  return lesson;
 }
 
 export async function getLessonSlugs(): Promise<string[]> {

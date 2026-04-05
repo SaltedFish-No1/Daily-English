@@ -57,7 +57,10 @@ async function seed() {
         difficulty: meta.difficulty,
         published: meta.published,
         featured: meta.featured,
-        content: lesson,
+        speech_enabled: lesson.speech?.enabled ?? true,
+        article: lesson.article,
+        focus_words: lesson.focusWords,
+        quiz: lesson.quiz,
       },
       { onConflict: 'slug' }
     );
@@ -71,7 +74,9 @@ async function seed() {
     }
   }
 
-  console.log(`\nDone. ${ok} succeeded, ${fail} failed out of ${files.length}.`);
+  console.log(
+    `\nDone. ${ok} succeeded, ${fail} failed out of ${files.length}.`
+  );
 }
 
 seed();
