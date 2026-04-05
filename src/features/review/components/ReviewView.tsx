@@ -4,8 +4,10 @@
  * @description 复习课程页 — 调用 AI 实时生成文章，生成后复用 LessonView 展示。
  */
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { experimental_useObject as useObject } from '@ai-sdk/react';
 import { LessonData, LessonListItem } from '@/types/lesson';
+import { GeneratedLessonSchema, type GeneratedLesson } from '@/types/review';
 import { LessonView } from '@/features/lesson/components/LessonView';
 import { useUserStore } from '@/store/useUserStore';
 import { Sparkles, RefreshCw, ArrowLeft } from 'lucide-react';
@@ -16,21 +18,6 @@ interface ReviewViewProps {
   words: string[];
   difficulty?: string;
 }
-
-interface GeneratedLesson {
-  title: string;
-  category: string;
-  teaser: string;
-  paragraphs: { id: string; en: string; zh: string }[];
-  focusWords: { key: string; forms: string[] }[];
-  quizQuestions: unknown[];
-}
-
-type GenerationState =
-  | { status: 'idle' }
-  | { status: 'generating'; progress: Partial<GeneratedLesson> | null }
-  | { status: 'success'; data: LessonData }
-  | { status: 'error'; message: string };
 
 function assembleLessonData(
   object: GeneratedLesson,
@@ -68,62 +55,37 @@ function assembleLessonData(
 }
 
 export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
-  const [state, setState] = useState<GenerationState>({ status: 'idle' });
   const batchUpdateWordReview = useUserStore((s) => s.batchUpdateWordReview);
+  const [lessonData, setLessonData] = useState<LessonData | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const generate = useCallback(async () => {
-    setState({ status: 'generating', progress: null });
-    try {
-      const res = await fetch('/api/review/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ words, difficulty }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || `HTTP ${res.status}`);
-      }
-
-      // Read streaming response from streamObject
-      const reader = res.body!.getReader();
-      const decoder = new TextDecoder();
-      let accumulated = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        accumulated += decoder.decode(value, { stream: true });
-        try {
-          const partial = JSON.parse(accumulated);
-          setState({ status: 'generating', progress: partial });
-        } catch {
-          // Incomplete JSON — wait for more chunks
-        }
-      }
-
-      // Flush any remaining buffered bytes (e.g. partial multi-byte UTF-8 chars)
-      accumulated += decoder.decode();
-
-      let object: GeneratedLesson;
-      try {
-        object = JSON.parse(accumulated) as GeneratedLesson;
-      } catch {
-        console.error(
-          '[ReviewView] Failed to parse streamed JSON, length:',
-          accumulated.length
+  const { object, submit, isLoading, error } = useObject({
+    api: '/api/review/generate',
+    schema: GeneratedLessonSchema,
+    onFinish({ object: finalObject }) {
+      if (finalObject) {
+        setLessonData(
+          assembleLessonData(finalObject as GeneratedLesson, words, difficulty)
         );
-        throw new Error('AI 生成内容不完整，请重试。');
       }
-      const lessonData = assembleLessonData(object, words, difficulty);
-      setState({ status: 'success', data: lessonData });
-    } catch (err) {
-      setState({
-        status: 'error',
-        message: err instanceof Error ? err.message : '生成失败，请重试',
-      });
+    },
+    onError(err) {
+      setErrorMsg(err.message || '生成失败，请重试');
+    },
+  });
+
+  // Trigger generation on mount
+  useEffect(() => {
+    if (words.length > 0) {
+      submit({ words, difficulty });
     }
-  }, [words, difficulty]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleRetry = useCallback(() => {
+    setLessonData(null);
+    setErrorMsg(null);
+    submit({ words, difficulty });
+  }, [submit, words, difficulty]);
 
   /**
    * 复习课程完成时，根据总分按比例更新每个复习词的 SM-2 状态。
@@ -139,87 +101,27 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
     [words, batchUpdateWordReview]
   );
 
-  useEffect(() => {
-    if (words.length > 0) {
-      generate();
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Loading state
-  if (state.status === 'idle' || state.status === 'generating') {
-    const progress = state.status === 'generating' ? state.progress : null;
-    // Calculate real progress based on which schema fields have arrived
-    const progressSteps = [
+  // Derive progress metrics from the streaming object
+  const progress = object;
+  const progressSteps = useMemo(
+    () => [
       !!progress?.title,
       !!progress?.paragraphs?.length,
       !!progress?.focusWords?.length,
       !!progress?.quizQuestions?.length,
-    ];
-    const progressPct = progress
-      ? Math.round(
-          (progressSteps.filter(Boolean).length / progressSteps.length) * 100
-        )
-      : 0;
+    ],
+    [progress]
+  );
+  const progressPct = progress
+    ? Math.round(
+        (progressSteps.filter(Boolean).length / progressSteps.length) * 100
+      )
+    : 0;
 
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-5">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="w-full max-w-sm text-center"
-        >
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-100">
-            <Sparkles size={32} className="animate-pulse text-emerald-600" />
-          </div>
-          <h2 className="mb-2 text-lg font-bold text-slate-900">
-            正在为你生成专属文章
-          </h2>
-          <p className="mb-6 text-sm text-slate-500">
-            {progress?.title
-              ? `"${progress.title}" — 正在生成中...`
-              : `正在根据你的 ${words.length} 个复习词创作文章和测验题...`}
-          </p>
-          <div className="mx-auto h-1.5 w-48 overflow-hidden rounded-full bg-slate-100">
-            <motion.div
-              className="h-full rounded-full bg-emerald-500"
-              animate={{ width: `${Math.max(5, progressPct)}%` }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
-            />
-          </div>
-          {progress && (
-            <div className="mt-4 flex justify-center gap-2 text-[10px] text-slate-400">
-              {progress.title && <span>标题 ✓</span>}
-              {progress.paragraphs?.length && (
-                <span>段落 ({progress.paragraphs.length}) ✓</span>
-              )}
-              {progress.focusWords?.length && <span>词汇 ✓</span>}
-              {progress.quizQuestions?.length && (
-                <span>测验 ({progress.quizQuestions.length}) ✓</span>
-              )}
-            </div>
-          )}
-          <div className="mt-6 flex flex-wrap justify-center gap-1.5">
-            {words.slice(0, 8).map((w) => (
-              <span
-                key={w}
-                className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700"
-              >
-                {w}
-              </span>
-            ))}
-            {words.length > 8 && (
-              <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[11px] font-semibold text-slate-400">
-                +{words.length - 8}
-              </span>
-            )}
-          </div>
-        </motion.div>
-      </div>
-    );
-  }
+  const displayError = errorMsg || error?.message;
 
   // Error state
-  if (state.status === 'error') {
+  if (displayError && !isLoading) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-5">
         <div className="w-full max-w-sm text-center">
@@ -227,7 +129,7 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
             <Sparkles size={32} className="text-red-500" />
           </div>
           <h2 className="mb-2 text-lg font-bold text-slate-900">生成失败</h2>
-          <p className="mb-6 text-sm text-slate-500">{state.message}</p>
+          <p className="mb-6 text-sm text-slate-500">{displayError}</p>
           <div className="flex justify-center gap-3">
             <Link
               href="/reading"
@@ -238,7 +140,7 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
             </Link>
             <button
               type="button"
-              onClick={generate}
+              onClick={handleRetry}
               className="flex items-center gap-1.5 rounded-full bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700"
             >
               <RefreshCw size={14} />
@@ -251,25 +153,83 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
   }
 
   // Success — render the generated lesson using LessonView
-  const { data } = state;
-  const overview: LessonListItem = {
-    id: data.meta.id,
-    date: data.meta.date,
-    title: data.meta.title,
-    category: data.meta.category,
-    teaser: data.meta.teaser,
-    published: false,
-    featured: false,
-    tag: data.meta.tag,
-    difficulty: data.meta.difficulty,
-  };
+  if (lessonData) {
+    const overview: LessonListItem = {
+      id: lessonData.meta.id,
+      date: lessonData.meta.date,
+      title: lessonData.meta.title,
+      category: lessonData.meta.category,
+      teaser: lessonData.meta.teaser,
+      published: false,
+      featured: false,
+      tag: lessonData.meta.tag,
+      difficulty: lessonData.meta.difficulty,
+    };
 
+    return (
+      <LessonView
+        data={lessonData}
+        lessonSlug={lessonData.meta.id}
+        overview={overview}
+        onReviewComplete={handleReviewComplete}
+      />
+    );
+  }
+
+  // Loading / generating state
   return (
-    <LessonView
-      data={data}
-      lessonSlug={data.meta.id}
-      overview={overview}
-      onReviewComplete={handleReviewComplete}
-    />
+    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-5">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="w-full max-w-sm text-center"
+      >
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-100">
+          <Sparkles size={32} className="animate-pulse text-emerald-600" />
+        </div>
+        <h2 className="mb-2 text-lg font-bold text-slate-900">
+          正在为你生成专属文章
+        </h2>
+        <p className="mb-6 text-sm text-slate-500">
+          {progress?.title
+            ? `"${progress.title}" — 正在生成中...`
+            : `正在根据你的 ${words.length} 个复习词创作文章和测验题...`}
+        </p>
+        <div className="mx-auto h-1.5 w-48 overflow-hidden rounded-full bg-slate-100">
+          <motion.div
+            className="h-full rounded-full bg-emerald-500"
+            animate={{ width: `${Math.max(5, progressPct)}%` }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+          />
+        </div>
+        {progress && (
+          <div className="mt-4 flex justify-center gap-2 text-[10px] text-slate-400">
+            {progress.title && <span>标题 ✓</span>}
+            {progress.paragraphs?.length && (
+              <span>段落 ({progress.paragraphs.length}) ✓</span>
+            )}
+            {progress.focusWords?.length && <span>词汇 ✓</span>}
+            {progress.quizQuestions?.length && (
+              <span>测验 ({progress.quizQuestions.length}) ✓</span>
+            )}
+          </div>
+        )}
+        <div className="mt-6 flex flex-wrap justify-center gap-1.5">
+          {words.slice(0, 8).map((w) => (
+            <span
+              key={w}
+              className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700"
+            >
+              {w}
+            </span>
+          ))}
+          {words.length > 8 && (
+            <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[11px] font-semibold text-slate-400">
+              +{words.length - 8}
+            </span>
+          )}
+        </div>
+      </motion.div>
+    </div>
   );
 }

@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { experimental_useObject as useObject } from '@ai-sdk/react';
 import {
   ArrowLeft,
   Send,
@@ -15,10 +16,7 @@ import {
   Trophy,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  WritingTimerDisplay,
-  WritingTimerControls,
-} from './WritingTimer';
+import { WritingTimerDisplay, WritingTimerControls } from './WritingTimer';
 import { WritingEditor } from './WritingEditor';
 import { GradeReport } from './GradeReport';
 import { HandwritingOcrModal } from './HandwritingOcrModal';
@@ -26,17 +24,17 @@ import { useWritingStore } from '@/store/useWritingStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import {
   submitWriting,
-  gradeSubmission,
   fetchCriteria,
   fetchSubmissions,
 } from '@/features/writing/lib/writingApi';
 import { supabase } from '@/lib/supabase';
-import type {
-  WritingTopic,
-  WritingSubmission,
-  WritingGrade,
-  WritingGradeResult,
-  GradingCriteriaDimension,
+import {
+  WritingGradeSchema,
+  type WritingTopic,
+  type WritingSubmission,
+  type WritingGrade,
+  type WritingGradeResult,
+  type GradingCriteriaDimension,
 } from '@/types/writing';
 
 type Phase = 'writing' | 'submitting' | 'grading' | 'report';
@@ -65,8 +63,6 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
   const [phase, setPhase] = useState<Phase>('writing');
   const [submission, setSubmission] = useState<WritingSubmission | null>(null);
   const [grade, setGrade] = useState<WritingGrade | null>(null);
-  const [partialGrade, setPartialGrade] =
-    useState<Partial<WritingGradeResult> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [submissionCount, setSubmissionCount] = useState(0);
@@ -76,6 +72,55 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
   );
   const [pastGrades, setPastGrades] = useState<Record<string, WritingGrade>>(
     {}
+  );
+  // Ref to track the current submission for onFinish callback
+  const submissionRef = useRef<WritingSubmission | null>(null);
+
+  // AI grading via useObject
+  const {
+    object: gradeObject,
+    submit: submitGrade,
+    isLoading: isGrading,
+  } = useObject({
+    api: '/api/writing/grade',
+    schema: WritingGradeSchema,
+    onFinish({ object: finalObject }) {
+      const sub = submissionRef.current;
+      if (!finalObject || !sub) return;
+      const gradeResult = finalObject as WritingGradeResult;
+      const fullGrade: WritingGrade = {
+        id: '',
+        submissionId: sub.id,
+        userId: '',
+        overallScore: gradeResult.overallScore,
+        dimensionScores: gradeResult.dimensionScores,
+        grammarErrors: gradeResult.grammarErrors,
+        vocabularySuggestions: gradeResult.vocabularySuggestions,
+        overallComment: gradeResult.overallComment,
+        modelAnswer: gradeResult.modelAnswer,
+        strengths: gradeResult.strengths,
+        improvements: gradeResult.improvements,
+        createdAt: new Date().toISOString(),
+      };
+      setGrade(fullGrade);
+      setPhase('report');
+      clearDraft();
+      setPastSubmissions((prev) => [...prev, sub]);
+      setPastGrades((prev) => ({ ...prev, [sub.id]: fullGrade }));
+    },
+    onError(err) {
+      setError(err.message || 'AI 批改失败，请重试');
+      setPhase('writing');
+    },
+  });
+
+  // Derive partial grade from streaming object (no useEffect needed)
+  const partialGradeFromStream = useMemo(
+    () =>
+      isGrading && gradeObject
+        ? (gradeObject as Partial<WritingGradeResult>)
+        : null,
+    [isGrading, gradeObject]
   );
 
   // Load topic data
@@ -148,24 +193,22 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
       setSubmission(sub);
       setSubmissionCount((c) => c + 1);
 
-      // Auto-grade with streaming progress
+      // Start AI grading via useObject
       setPhase('grading');
-      setPartialGrade(null);
-      const gradeResult = await gradeSubmission(sub.id, (partial) => {
-        setPartialGrade(partial);
-      });
-      setGrade(gradeResult);
-      setPhase('report');
-      clearDraft();
-
-      // Append to history so it shows immediately
-      setPastSubmissions((prev) => [...prev, sub]);
-      setPastGrades((prev) => ({ ...prev, [sub.id]: gradeResult }));
+      submissionRef.current = sub;
+      submitGrade({ submissionId: sub.id });
     } catch (err) {
       setError(err instanceof Error ? err.message : '提交失败');
       setPhase('writing');
     }
-  }, [topic, currentDraftText, timerSeconds, wordCount, stopTimer, clearDraft]);
+  }, [
+    topic,
+    currentDraftText,
+    timerSeconds,
+    wordCount,
+    stopTimer,
+    submitGrade,
+  ]);
 
   const handleOcrFill = useCallback(
     (text: string) => {
@@ -212,7 +255,7 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 pb-24 lg:pb-8">
       {/* Header */}
-      <header className="hidden pt-safe sticky top-0 z-30 border-b border-gray-100 bg-white shadow-sm lg:block">
+      <header className="pt-safe sticky top-0 z-30 hidden border-b border-gray-100 bg-white shadow-sm lg:block">
         <div className="mx-auto max-w-3xl px-4 py-3 sm:px-5 sm:py-4">
           {/* Row 1: Back + Title + Timer display */}
           <div className="flex items-center gap-2 sm:gap-3">
@@ -319,25 +362,31 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
               <p className="text-sm font-medium text-slate-600">
                 {phase === 'submitting' ? '提交中...' : 'AI 批改中，请稍候...'}
               </p>
-              {phase === 'grading' && partialGrade && (
+              {phase === 'grading' && partialGradeFromStream && (
                 <div className="w-full max-w-xs space-y-2">
-                  {partialGrade.overallScore != null && (
+                  {partialGradeFromStream.overallScore != null && (
                     <p className="text-center text-lg font-bold text-violet-600">
-                      {partialGrade.overallScore} 分
+                      {partialGradeFromStream.overallScore} 分
                     </p>
                   )}
                   <div className="flex flex-wrap justify-center gap-1.5 text-[10px] text-slate-400">
-                    {partialGrade.overallComment && <span>总评 ✓</span>}
-                    {partialGrade.dimensionScores && <span>维度分数 ✓</span>}
-                    {partialGrade.grammarErrors && <span>语法分析 ✓</span>}
-                    {partialGrade.vocabularySuggestions && (
+                    {partialGradeFromStream.overallComment && (
+                      <span>总评 ✓</span>
+                    )}
+                    {partialGradeFromStream.dimensionScores && (
+                      <span>维度分数 ✓</span>
+                    )}
+                    {partialGradeFromStream.grammarErrors && (
+                      <span>语法分析 ✓</span>
+                    )}
+                    {partialGradeFromStream.vocabularySuggestions && (
                       <span>词汇建议 ✓</span>
                     )}
-                    {partialGrade.modelAnswer && <span>范文 ✓</span>}
+                    {partialGradeFromStream.modelAnswer && <span>范文 ✓</span>}
                   </div>
                 </div>
               )}
-              {phase === 'grading' && !partialGrade && (
+              {phase === 'grading' && !partialGradeFromStream && (
                 <p className="text-xs text-slate-400">
                   正在分析语法、词汇与结构
                 </p>
@@ -456,9 +505,7 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
                           </p>
                         </div>
                         {/* Grade report */}
-                        {g && (
-                          <GradeReport grade={g} dimensions={dimensions} />
-                        )}
+                        {g && <GradeReport grade={g} dimensions={dimensions} />}
                       </div>
                     </details>
                   );
