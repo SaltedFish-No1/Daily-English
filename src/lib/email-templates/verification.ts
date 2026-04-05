@@ -11,8 +11,8 @@ export function buildVerificationEmail(code: string): {
   const digits = code.split('');
 
   return {
-    subject: `${code} — Daily English 验证码`,
-    text: `你的 Daily English 验证码是：${code}\n\n该验证码将在 10 分钟后过期。\n\n如果你没有请求此验证码，请忽略此邮件。`,
+    subject: `${code} — 薄荷外语验证码`,
+    text: `你的薄荷外语验证码是：${code}\n\n该验证码将在 10 分钟后过期。\n\n如果你没有请求此验证码，请忽略此邮件。`,
     html: `
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -25,7 +25,7 @@ export function buildVerificationEmail(code: string): {
         <tr>
           <td style="background:linear-gradient(135deg,#059669,#10b981);padding:32px 24px;text-align:center;">
             <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:700;letter-spacing:0.5px;">
-              📖 Daily English
+              🌿 薄荷外语
             </h1>
           </td>
         </tr>
@@ -49,6 +49,15 @@ export function buildVerificationEmail(code: string): {
                   .join('<td style="width:8px;"></td>')}
               </tr>
             </table>
+            <!-- Copy-friendly code block -->
+            <div style="margin:0 auto 24px;text-align:center;">
+              <div style="display:inline-block;background:#f0fdf4;border:2px dashed #bbf7d0;border-radius:12px;padding:12px 24px;cursor:text;">
+                <span style="font-size:32px;font-weight:700;letter-spacing:8px;color:#059669;font-family:'Courier New',monospace;-webkit-user-select:all;user-select:all;">${code}</span>
+              </div>
+              <p style="margin:8px 0 0;color:#94a3b8;font-size:11px;">
+                点击上方验证码即可复制
+              </p>
+            </div>
             <p style="margin:0 0 4px;color:#64748b;font-size:13px;text-align:center;">
               验证码将在 <strong>10 分钟</strong>后过期
             </p>

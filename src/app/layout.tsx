@@ -18,12 +18,13 @@ const merriweather = Merriweather({
 });
 
 export const metadata: Metadata = {
-  title: 'Magic English',
-  applicationName: 'Magic English',
-  description: '通过沉浸式的交互式体验，每日学习地道的英语表达和专业领域知识。',
+  title: '薄荷外语',
+  applicationName: '薄荷外语',
+  description: '每日沉浸式互动体验，轻松掌握地道外语表达。',
   manifest: '/manifest.webmanifest',
   icons: {
     icon: [
+      { url: '/icons/favicon.svg', type: 'image/svg+xml' },
       { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
       { url: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' },
       { url: '/icons/image.png', sizes: '768x768', type: 'image/png' },
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    title: 'Magic English',
+    title: '薄荷外语',
     statusBarStyle: 'default',
   },
 };

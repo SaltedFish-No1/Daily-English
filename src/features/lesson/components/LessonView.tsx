@@ -182,7 +182,7 @@ export const LessonView: React.FC<LessonViewProps> = ({
 
       <footer className="border-t border-slate-100 bg-white py-12 pb-24 text-center lg:pb-12">
         <p className="text-xs font-bold tracking-widest text-slate-400 uppercase">
-          © 2026 DAILY ENGLISH · DESIGNED FOR LEARNING
+          © 2026 薄荷外语 · DESIGNED FOR LEARNING
         </p>
         <a
           href="https://github.com/SaltedFish-No1"

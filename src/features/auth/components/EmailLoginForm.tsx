@@ -7,6 +7,7 @@
 'use client';
 
 import React, { useState, useCallback, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import {
   sendOtp as apiSendOtp,
@@ -21,6 +22,7 @@ type Step = 'email' | 'verify';
  * @return 邮箱认证表单组件。
  */
 export const EmailLoginForm: React.FC = () => {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [otpCode, setOtpCode] = useState('');
   const [step, setStep] = useState<Step>('email');
@@ -73,9 +75,11 @@ export const EmailLoginForm: React.FC = () => {
     });
     if (sessionError) {
       setError(sessionError.message);
+    } else {
+      router.replace('/');
     }
     setLoading(false);
-  }, [email, otpCode]);
+  }, [email, otpCode, router]);
 
   const handleResend = useCallback(async () => {
     setOtpCode('');
