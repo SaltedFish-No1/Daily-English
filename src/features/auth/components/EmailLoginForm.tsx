@@ -1,13 +1,14 @@
 /**
  * @author SaltedFish-No1
  * @description 统一邮箱认证表单。通过 OTP 验证码实现登录与注册一体化：
- *   填写邮箱 → 发送验证邮件 → 输入验证码或点击邮件链接完成认证。
+ *   填写邮箱 → 发送验证邮件（Resend） → 输入验证码完成认证。
  */
 
 'use client';
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import { sendOtp as apiSendOtp, verifyOtp as apiVerifyOtp } from '../lib/authApi';
 
 type Step = 'email' | 'verify';
 
@@ -38,18 +39,13 @@ export const EmailLoginForm: React.FC = () => {
     setError(null);
     setMessage(null);
 
-    const { error: authError } = await supabase.auth.signInWithOtp({
-      email,
-      options: { shouldCreateUser: true },
-    });
-    if (authError) {
-      setError(authError.message);
+    const { error: sendError } = await apiSendOtp(email);
+    if (sendError) {
+      setError(sendError);
     } else {
       setStep('verify');
       setCooldown(60);
-      setMessage(
-        '验证邮件已发送，请查收邮箱。你可以点击邮件中的链接，或在下方输入验证码。'
-      );
+      setMessage('验证邮件已发送，请查收邮箱并在下方输入验证码。');
     }
     setLoading(false);
   }, [email]);
@@ -60,13 +56,20 @@ export const EmailLoginForm: React.FC = () => {
     setError(null);
     setMessage(null);
 
-    const { error: authError } = await supabase.auth.verifyOtp({
-      email,
-      token: otpCode,
-      type: 'email',
+    const { data, error: verifyError } = await apiVerifyOtp(email, otpCode);
+    if (verifyError || !data?.token_hash) {
+      setError(verifyError ?? '验证失败');
+      setLoading(false);
+      return;
+    }
+
+    // 使用 token_hash 建立 Supabase 会话
+    const { error: sessionError } = await supabase.auth.verifyOtp({
+      token_hash: data.token_hash,
+      type: 'magiclink',
     });
-    if (authError) {
-      setError(authError.message);
+    if (sessionError) {
+      setError(sessionError.message);
     }
     setLoading(false);
   }, [email, otpCode]);
