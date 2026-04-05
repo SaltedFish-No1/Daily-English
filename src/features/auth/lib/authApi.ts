@@ -40,3 +40,24 @@ export function verifyOtp(email: string, code: string) {
     { email, code }
   );
 }
+
+/** 发送密码重置验证码到指定邮箱。 */
+export function sendPasswordResetOtp(email: string) {
+  return post<{ success: boolean }>('/api/auth/send-otp', {
+    email,
+    purpose: 'password-reset',
+  });
+}
+
+/** 验证 OTP 并重置密码。 */
+export function resetPassword(
+  email: string,
+  code: string,
+  newPassword: string
+) {
+  return post<{ success: boolean }>('/api/auth/reset-password', {
+    email,
+    code,
+    newPassword,
+  });
+}

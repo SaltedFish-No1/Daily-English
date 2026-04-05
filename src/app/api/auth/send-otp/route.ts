@@ -8,6 +8,7 @@ import { supabaseAdmin } from '@/lib/supabase-admin';
 import { resend } from '@/lib/resend';
 import { generateOtp, hashOtp } from '@/lib/otp';
 import { buildVerificationEmail } from '@/lib/email-templates/verification';
+import { buildPasswordResetEmail } from '@/lib/email-templates/password-reset';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const OTP_EXPIRY_MINUTES = 10;
@@ -16,6 +17,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const email = (body.email as string)?.toLowerCase().trim();
+    const purpose = (body.purpose as string) || 'verification';
 
     if (!email || !EMAIL_RE.test(email)) {
       return NextResponse.json(
@@ -45,7 +47,10 @@ export async function POST(request: NextRequest) {
     }
 
     // 发送邮件
-    const template = buildVerificationEmail(code);
+    const template =
+      purpose === 'password-reset'
+        ? buildPasswordResetEmail(code)
+        : buildVerificationEmail(code);
     const { error: emailError } = await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL!,
       to: email,
