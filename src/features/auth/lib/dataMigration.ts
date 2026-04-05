@@ -1,12 +1,16 @@
 /**
  * @author SaltedFish-No1
  * @description 本地 localStorage 数据迁移至 Supabase 云端：
- *   将 savedWords、history 和 quizProgress 批量 upsert。
+ *   将 savedWords、history、quizProgress、wordReviewStates、
+ *   preferences、writingDraft 批量 upsert。
  */
 
 import { supabase } from '@/lib/supabase';
 import { useUserStore } from '@/store/useUserStore';
+import { usePreferenceStore } from '@/store/usePreferenceStore';
+import { useWritingStore } from '@/store/useWritingStore';
 import type { VocabOccurrence, LessonHistory } from '@/store/useUserStore';
+import type { WordReviewState } from '@/lib/spaced-repetition';
 
 /** saved_words 表行的插入格式 */
 interface SavedWordRow {
@@ -108,6 +112,76 @@ async function migrateQuizProgress(userId: string) {
 }
 
 /**
+ * @description 将本地 wordReviewStates 迁移到 Supabase word_review_states 表。
+ * @param userId 当前登录用户 ID。
+ */
+async function migrateWordReviewStates(userId: string) {
+  const { wordReviewStates } = useUserStore.getState();
+  const rows = Object.entries(wordReviewStates).map(([word, state]) => ({
+    user_id: userId,
+    word,
+    interval_days: state.interval,
+    easiness: state.easiness,
+    repetition: state.repetition,
+    next_review_at: state.nextReviewAt,
+    last_reviewed_at: state.lastReviewedAt || null,
+    total_reviews: state.totalReviews,
+    total_correct: state.totalCorrect,
+    status: state.status,
+  }));
+
+  if (rows.length === 0) return;
+
+  const batchSize = 500;
+  for (let i = 0; i < rows.length; i += batchSize) {
+    const batch = rows.slice(i, i + batchSize);
+    await supabase
+      .from('word_review_states')
+      .upsert(batch, { onConflict: 'user_id,word' });
+  }
+}
+
+/**
+ * @description 将本地用户偏好迁移到 Supabase user_preferences 表。
+ * @param userId 当前登录用户 ID。
+ */
+async function migratePreferences(userId: string) {
+  const prefs = usePreferenceStore.getState();
+  await supabase.from('user_preferences').upsert(
+    {
+      user_id: userId,
+      avatar_url: prefs.avatarUrl,
+      nickname: prefs.nickname,
+      exam_goal: prefs.examGoal,
+      learning_lang: prefs.learningLang,
+      daily_goal: prefs.dailyGoal,
+      difficulty_pref: prefs.difficultyPref,
+      updated_at: Date.now(),
+    },
+    { onConflict: 'user_id' }
+  );
+}
+
+/**
+ * @description 将本地写作草稿迁移到 Supabase writing_drafts 表。
+ * @param userId 当前登录用户 ID。
+ */
+async function migrateWritingDraft(userId: string) {
+  const { currentTopicId, currentDraftText } = useWritingStore.getState();
+  if (!currentTopicId && !currentDraftText) return;
+
+  await supabase.from('writing_drafts').upsert(
+    {
+      user_id: userId,
+      topic_id: currentTopicId,
+      draft_text: currentDraftText,
+      updated_at: Date.now(),
+    },
+    { onConflict: 'user_id' }
+  );
+}
+
+/**
  * @author SaltedFish-No1
  * @description 执行完整的本地数据→云端迁移流程。
  * @param userId 当前登录用户 ID。
@@ -117,6 +191,9 @@ export async function migrateLocalDataToCloud(userId: string) {
     migrateSavedWords(userId),
     migrateHistory(userId),
     migrateQuizProgress(userId),
+    migrateWordReviewStates(userId),
+    migratePreferences(userId),
+    migrateWritingDraft(userId),
   ]);
 }
 
@@ -126,11 +203,23 @@ export async function migrateLocalDataToCloud(userId: string) {
  * @param userId 当前登录用户 ID。
  */
 export async function pullCloudDataToLocal(userId: string) {
-  const [wordsRes, historyRes, quizRes] = await Promise.all([
-    supabase.from('saved_words').select('*').eq('user_id', userId),
-    supabase.from('lesson_history').select('*').eq('user_id', userId),
-    supabase.from('quiz_progress').select('*').eq('user_id', userId),
-  ]);
+  const [wordsRes, historyRes, quizRes, reviewRes, prefsRes, draftRes] =
+    await Promise.all([
+      supabase.from('saved_words').select('*').eq('user_id', userId),
+      supabase.from('lesson_history').select('*').eq('user_id', userId),
+      supabase.from('quiz_progress').select('*').eq('user_id', userId),
+      supabase.from('word_review_states').select('*').eq('user_id', userId),
+      supabase
+        .from('user_preferences')
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle(),
+      supabase
+        .from('writing_drafts')
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle(),
+    ]);
 
   const store = useUserStore.getState();
 
@@ -202,6 +291,84 @@ export async function pullCloudDataToLocal(userId: string) {
       if (!local) {
         store.setQuizProgress(row.persist_key, row.state);
       }
+    }
+  }
+
+  // 合并 wordReviewStates：lastReviewedAt 更晚者胜出，相同则 repetition 高者胜出
+  if (reviewRes.data) {
+    for (const row of reviewRes.data) {
+      const cloudState: WordReviewState = {
+        interval: row.interval_days,
+        easiness: row.easiness,
+        repetition: row.repetition,
+        nextReviewAt: row.next_review_at,
+        lastReviewedAt: row.last_reviewed_at || 0,
+        totalReviews: row.total_reviews,
+        totalCorrect: row.total_correct,
+        status: row.status,
+      };
+
+      const local = store.wordReviewStates[row.word];
+      if (!local) {
+        // 云端有、本地无：直接采用云端
+        useUserStore.setState((state) => ({
+          wordReviewStates: {
+            ...state.wordReviewStates,
+            [row.word]: cloudState,
+          },
+        }));
+      } else {
+        // 冲突解决：lastReviewedAt 更晚者胜出，相同则 repetition 高者胜出
+        const cloudWins =
+          cloudState.lastReviewedAt > local.lastReviewedAt ||
+          (cloudState.lastReviewedAt === local.lastReviewedAt &&
+            cloudState.repetition > local.repetition);
+        if (cloudWins) {
+          useUserStore.setState((state) => ({
+            wordReviewStates: {
+              ...state.wordReviewStates,
+              [row.word]: cloudState,
+            },
+          }));
+        }
+      }
+    }
+  }
+
+  // 合并 preferences：本地为默认值时采用云端
+  if (prefsRes.data) {
+    const cloud = prefsRes.data;
+    const local = usePreferenceStore.getState();
+    const localIsDefault =
+      local.avatarUrl === '' &&
+      local.nickname === '薄荷学员' &&
+      local.examGoal === 'ielts' &&
+      local.dailyGoal === 1 &&
+      local.difficultyPref === 'auto';
+
+    if (localIsDefault && cloud.updated_at > 0) {
+      usePreferenceStore.setState({
+        avatarUrl: cloud.avatar_url ?? '',
+        nickname: cloud.nickname ?? '薄荷学员',
+        examGoal: cloud.exam_goal ?? 'ielts',
+        learningLang: cloud.learning_lang ?? 'en',
+        dailyGoal: cloud.daily_goal ?? 1,
+        difficultyPref: cloud.difficulty_pref ?? 'auto',
+      });
+    }
+  }
+
+  // 合并 writingDraft：本地为空时采用云端
+  if (draftRes.data) {
+    const cloud = draftRes.data;
+    const local = useWritingStore.getState();
+    const localIsEmpty = !local.currentTopicId && !local.currentDraftText;
+
+    if (localIsEmpty && (cloud.topic_id || cloud.draft_text)) {
+      useWritingStore.setState({
+        currentTopicId: cloud.topic_id ?? null,
+        currentDraftText: cloud.draft_text ?? '',
+      });
     }
   }
 }
