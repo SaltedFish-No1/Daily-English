@@ -1,15 +1,7 @@
 {
-  "schemaVersion": "2.2",
+  "schemaVersion": "2.1",
   "meta": {
-    "id": "c9be6d93-77a9-4958-b57e-b1d9164ce48a",
-    "title": "The Brainless Urban Planner",
-    "date": "2026-04-01",
-    "category": "Biology & Technology",
-    "teaser": "Follow a brainless organism that solves mazes, redesigns transport logic, and challenges how we think about urban intelligence.",
-    "published": true,
-    "featured": true,
-    "tag": "Biology",
-    "difficulty": "C1"
+    "title": "The Brainless Urban Planner"
   },
   "speech": {
     "enabled": true

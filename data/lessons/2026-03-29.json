@@ -1,15 +1,7 @@
 {
-  "schemaVersion": "2.2",
+  "schemaVersion": "2.1",
   "meta": {
-    "id": "0aedb58b-8249-4e62-ae7d-df72e45f622f",
-    "title": "Evolutionary Mismatch",
-    "date": "2026-03-29",
-    "category": "Biology & Psychology",
-    "teaser": "Look at the hidden mismatch between ancient biological instincts and modern life, from food cravings to body image distress.",
-    "published": true,
-    "featured": true,
-    "tag": "Science & Nature",
-    "difficulty": "C1"
+    "title": "Evolutionary Mismatch"
   },
   "speech": {
     "enabled": true

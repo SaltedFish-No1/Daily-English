@@ -1,15 +1,7 @@
 {
-  "schemaVersion": "2.2",
+  "schemaVersion": "2.1",
   "meta": {
-    "id": "a9ac4039-5c39-4108-9bd0-a61e2be6e6e1",
-    "title": "The Evolutionary Advantage of Lying",
-    "date": "2026-04-02",
-    "category": "Psychology & Evolution",
-    "teaser": "Step into a provocative evolutionary theory and see how deception may have shaped the human brain, moral systems, and even art itself.",
-    "published": true,
-    "featured": true,
-    "tag": "Psychology",
-    "difficulty": "C1"
+    "title": "The Evolutionary Advantage of Lying"
   },
   "speech": {
     "enabled": true
