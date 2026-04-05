@@ -8,12 +8,14 @@ export const PhotoCaptureResultSchema = z.object({
         .describe('The English word in lowercase base form (lemma)'),
       pos: z
         .string()
-        .optional()
-        .describe('Part of speech, e.g. noun, verb, adjective'),
+        .nullable()
+        .describe(
+          'Part of speech, e.g. noun, verb, adjective, or null if unknown'
+        ),
       definition: z
         .string()
-        .optional()
-        .describe('Brief English definition of the word'),
+        .nullable()
+        .describe('Brief English definition of the word, or null if unknown'),
     })
   ),
 });
