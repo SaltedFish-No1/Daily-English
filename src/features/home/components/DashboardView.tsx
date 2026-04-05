@@ -10,6 +10,7 @@ import {
   GraduationCap,
   Calendar,
   Sparkles,
+  Layers,
 } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -232,41 +233,47 @@ export function DashboardView() {
           </div>
         </motion.section>
 
-        {/* Review Recommendation Card */}
+        {/* Review Recommendation Cards */}
         {dueCount > 0 && (
           <motion.section
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.08 }}
-            className="mb-6 sm:mb-8"
+            className="mb-6 grid grid-cols-2 gap-3 sm:mb-8"
           >
+            {/* Swipe flashcard — fast */}
+            <Link
+              href={`/review/swipe?words=${encodeURIComponent(dueWords.join(','))}`}
+              className="group flex flex-col overflow-hidden rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-4 shadow-sm transition-all hover:shadow-md active:scale-[0.98]"
+            >
+              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500 text-white shadow-sm">
+                <Layers size={20} />
+              </div>
+              <h3 className="text-sm font-bold text-slate-900">单词闪卡</h3>
+              <p className="mt-0.5 text-[11px] text-slate-500">
+                {dueCount} 个词 · 预计 {Math.max(2, Math.round(dueCount * 0.3))} 分钟
+              </p>
+              <div className="mt-auto flex items-center pt-3 text-xs font-bold text-amber-600">
+                开始复习
+                <ArrowRight size={14} className="ml-1 transition-transform group-hover:translate-x-1" />
+              </div>
+            </Link>
+
+            {/* AI article — deep */}
             <Link
               href={`/review?words=${encodeURIComponent(dueWords.join(','))}`}
-              className="group block overflow-hidden rounded-2xl border border-teal-200 bg-gradient-to-r from-emerald-50 to-teal-50 p-5 shadow-sm transition-all hover:shadow-md active:scale-[0.99]"
+              className="group flex flex-col overflow-hidden rounded-2xl border border-teal-200 bg-gradient-to-br from-emerald-50 to-teal-50 p-4 shadow-sm transition-all hover:shadow-md active:scale-[0.98]"
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-sm">
-                    <Sparkles size={22} />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-slate-900">
-                      今日复习
-                    </h3>
-                    <p className="text-[11px] text-slate-500">
-                      有 {dueCount} 个词需要巩固，已为你准备专属文章
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="hidden text-[11px] font-medium text-slate-400 sm:block">
-                    预计 {Math.max(5, Math.round(dueCount * 0.7))} 分钟
-                  </span>
-                  <ArrowRight
-                    size={16}
-                    className="text-emerald-600 transition-transform group-hover:translate-x-1"
-                  />
-                </div>
+              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-sm">
+                <Sparkles size={20} />
+              </div>
+              <h3 className="text-sm font-bold text-slate-900">AI 复习文章</h3>
+              <p className="mt-0.5 text-[11px] text-slate-500">
+                专属文章 · 预计 {Math.max(5, Math.round(dueCount * 0.7))} 分钟
+              </p>
+              <div className="mt-auto flex items-center pt-3 text-xs font-bold text-emerald-600">
+                开始学习
+                <ArrowRight size={14} className="ml-1 transition-transform group-hover:translate-x-1" />
               </div>
             </Link>
           </motion.section>

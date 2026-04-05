@@ -6,7 +6,8 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { LessonQuiz } from '@/types/lesson';
-import { ArrowRight, RotateCcw } from 'lucide-react';
+import { ArrowRight, RotateCcw, Layers } from 'lucide-react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { QuestionRenderer } from './quiz/QuestionRenderer';
 import { FullScreenCelebration } from './quiz/FullScreenCelebration';
@@ -50,6 +51,14 @@ export const Quiz: React.FC<QuizProps> = ({
   const [rationaleLang, setRationaleLang] = useState<'en' | 'zh'>('en');
   const setQuizProgress = useUserStore((s) => s.setQuizProgress);
   const clearQuizProgress = useUserStore((s) => s.clearQuizProgress);
+  const savedWords = useUserStore((s) => s.savedWords);
+
+  // Words saved from this specific lesson (for post-quiz review prompt)
+  const lessonNewWords = useMemo(() => {
+    return Object.entries(savedWords)
+      .filter(([, occs]) => occs.some((o) => o.lessonSlug === persistKey))
+      .map(([word]) => word);
+  }, [savedWords, persistKey]);
 
   const getQuestionId = useCallback(
     (question: AnyQuizQuestion, idx: number) => {
@@ -294,6 +303,26 @@ export const Quiz: React.FC<QuizProps> = ({
                   </span>
                 )}
               </div>
+            </div>
+          )}
+
+          {/* Post-lesson review prompt (only for regular lessons with saved words) */}
+          {!reviewWords && lessonNewWords.length > 0 && (
+            <div className="mx-auto mb-8 w-full max-w-sm rounded-2xl border border-amber-100 bg-amber-50/50 p-5 text-center">
+              <p className="mb-3 text-sm text-slate-700">
+                你在本课收藏了{' '}
+                <span className="font-bold text-amber-700">
+                  {lessonNewWords.length}
+                </span>{' '}
+                个生词
+              </p>
+              <Link
+                href={`/review/swipe?words=${encodeURIComponent(lessonNewWords.join(','))}`}
+                className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:shadow-md active:scale-95"
+              >
+                <Layers size={15} />
+                去闪卡复习
+              </Link>
             </div>
           )}
 

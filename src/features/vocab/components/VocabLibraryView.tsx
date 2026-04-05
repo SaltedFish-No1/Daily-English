@@ -11,8 +11,9 @@ import { useSpeech } from '@/hooks/useSpeech';
 
 import { useNow } from '@/hooks/useNow';
 import { getMemoryStrength, WordReviewState } from '@/lib/spaced-repetition';
-import { BookMarked, Volume2, Check, ArrowUpDown, Camera } from 'lucide-react';
+import { BookMarked, Volume2, Check, ArrowUpDown, Camera, Layers, BookOpen } from 'lucide-react';
 import { isPhotoCaptureOccurrence } from '@/features/photo-capture/lib/constants';
+import { useReviewWords } from '@/hooks/useReviewWords';
 
 type SortMode = 'recent' | 'urgency' | 'strength';
 
@@ -51,6 +52,7 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
   const [doubleCheckStep, setDoubleCheckStep] = useState<1 | 2>(1);
   const [sortMode, setSortMode] = useState<SortMode>('recent');
   const now = useNow();
+  const { dueCount, dueWords } = useReviewWords();
 
   const cards = useMemo<VocabCardItem[]>(() => {
     const items = Object.entries(savedWords)
@@ -109,6 +111,15 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
               我的生词表
             </h1>
           </div>
+          {dueCount > 0 && (
+            <Link
+              href={`/review/swipe?words=${encodeURIComponent(dueWords.join(','))}`}
+              className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2 text-xs font-bold text-white shadow-sm transition-all hover:shadow-md active:scale-95"
+            >
+              <Layers size={14} />
+              开始复习 ({dueCount})
+            </Link>
+          )}
         </div>
       </header>
 
@@ -290,8 +301,17 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
             ))}
           </div>
         ) : (
-          <div className="rounded-2xl border border-slate-100 bg-white p-10 text-center text-slate-500">
-            你还没有收藏任何生词。去阅读文章点击词卡”收藏”，或使用底部拍照按钮识别手抄单词开始积累吧。
+          <div className="rounded-2xl border border-slate-100 bg-white p-10 text-center">
+            <p className="mb-4 text-slate-500">
+              你还没有收藏任何生词。阅读文章时点击生词即可收藏，或使用底部拍照按钮识别手抄单词开始积累吧。
+            </p>
+            <Link
+              href="/reading"
+              className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-emerald-700"
+            >
+              <BookOpen size={16} />
+              去阅读文章
+            </Link>
           </div>
         )}
       </main>

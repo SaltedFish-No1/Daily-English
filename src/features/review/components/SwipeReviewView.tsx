@@ -4,7 +4,7 @@
  * @description Tinder 风格滑动卡片复习 —— 左滑忘记，右滑记住，逐词更新 SM-2。
  */
 
-import React, { useState, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Volume2,
@@ -93,11 +93,9 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
 
   const { speak } = useSpeech();
 
-  const reviewWords = useMemo(
-    () => buildReviewWords(words, savedWords, wordReviewStates),
-    // Only compute once on mount — SM-2 updates during session shouldn't re-sort
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+  // useState (not useMemo) so we can replace the deck on "replay forgot words"
+  const [reviewWords, setReviewWords] = useState(() =>
+    buildReviewWords(words, savedWords, wordReviewStates)
   );
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -231,6 +229,12 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
             {forgot > 0 && (
               <button
                 onClick={() => {
+                  const forgotWordKeys = results
+                    .filter((r) => !r.remembered)
+                    .map((r) => r.word);
+                  setReviewWords(
+                    buildReviewWords(forgotWordKeys, savedWords, wordReviewStates)
+                  );
                   setCurrentIndex(0);
                   setHistory([]);
                   setResults([]);
@@ -239,7 +243,7 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
                 className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-amber-50 px-4 py-3 text-sm font-bold text-amber-700 transition-colors hover:bg-amber-100"
               >
                 <RotateCcw size={16} />
-                再来一次
+                复习忘记的 ({forgot})
               </button>
             )}
             <Link
