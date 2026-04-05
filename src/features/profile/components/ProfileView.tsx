@@ -153,7 +153,6 @@ export function ProfileView() {
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [editingNickname, setEditingNickname] = useState(false);
   const [nicknameDraft, setNicknameDraft] = useState(prefs.nickname);
-  const [showAbout, setShowAbout] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const toggle = (key: string) =>
@@ -460,8 +459,8 @@ export function ProfileView() {
             </button>
 
             {/* About */}
-            <button
-              onClick={() => setShowAbout((p) => !p)}
+            <Link
+              href="/about"
               className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-slate-50"
             >
               <span className="text-slate-400">
@@ -470,24 +469,8 @@ export function ProfileView() {
               <span className="flex-1 text-sm font-medium text-slate-700">
                 关于薄荷外语
               </span>
-              {showAbout ? (
-                <ChevronDown size={16} className="text-slate-300" />
-              ) : (
-                <ChevronRight size={16} className="text-slate-300" />
-              )}
-            </button>
-            {showAbout && (
-              <div className="space-y-1 bg-slate-50 px-4 py-3 text-xs text-slate-500">
-                <p>
-                  <span className="font-medium text-slate-600">薄荷外语</span>{' '}
-                  v0.1.0
-                </p>
-                <p>用 AI 驱动的沉浸式英语学习应用</p>
-                <p className="text-slate-400">
-                  Built with Next.js · Powered by AI
-                </p>
-              </div>
-            )}
+              <ChevronRight size={16} className="text-slate-300" />
+            </Link>
 
             {/* Sign Out */}
             {!isGuest && (
