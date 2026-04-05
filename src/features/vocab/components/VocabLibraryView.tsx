@@ -8,10 +8,10 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { useUserStore } from '@/store/useUserStore';
 import { useSpeech } from '@/hooks/useSpeech';
+ 
 import { useNow } from '@/hooks/useNow';
 import { getMemoryStrength, WordReviewState } from '@/lib/spaced-repetition';
 import { BookMarked, Volume2, Check, ArrowUpDown } from 'lucide-react';
-import { UserMenu } from '@/features/auth/components/UserMenu';
 
 type SortMode = 'recent' | 'urgency' | 'strength';
 
@@ -108,7 +108,6 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
               我的生词表
             </h1>
           </div>
-          <UserMenu />
         </div>
       </header>
 

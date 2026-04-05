@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { PenLine, Plus, Loader2, ArrowLeft, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UserMenu } from '@/features/auth/components/UserMenu';
+
 import { TopicCard } from './TopicCard';
 import { TopicUploader } from './TopicUploader';
 import { fetchTopics } from '@/features/writing/lib/writingApi';
@@ -80,7 +80,6 @@ export function WritingView() {
               </p>
             </div>
           </div>
-          <UserMenu />
         </div>
       </header>
 

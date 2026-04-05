@@ -10,7 +10,7 @@ import {
   Lock,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { UserMenu } from '@/features/auth/components/UserMenu';
+
 
 const skills = [
   {
@@ -99,7 +99,6 @@ export function LearnView() {
               选择你要练习的技能
             </p>
           </div>
-          <UserMenu />
         </div>
       </header>
 
