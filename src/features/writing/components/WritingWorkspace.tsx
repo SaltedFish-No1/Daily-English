@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { experimental_useObject as useObject } from '@ai-sdk/react';
 import {
   ArrowLeft,
   Send,
@@ -24,17 +23,17 @@ import { useWritingStore } from '@/store/useWritingStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import {
   submitWriting,
+  gradeSubmission,
   fetchCriteria,
   fetchSubmissions,
 } from '@/features/writing/lib/writingApi';
 import { supabase } from '@/lib/supabase';
-import {
-  WritingGradeSchema,
-  type WritingTopic,
-  type WritingSubmission,
-  type WritingGrade,
-  type WritingGradeResult,
-  type GradingCriteriaDimension,
+import type {
+  WritingTopic,
+  WritingSubmission,
+  WritingGrade,
+  WritingGradeResult,
+  GradingCriteriaDimension,
 } from '@/types/writing';
 
 type Phase = 'writing' | 'submitting' | 'grading' | 'report';
@@ -63,6 +62,8 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
   const [phase, setPhase] = useState<Phase>('writing');
   const [submission, setSubmission] = useState<WritingSubmission | null>(null);
   const [grade, setGrade] = useState<WritingGrade | null>(null);
+  const [partialGrade, setPartialGrade] =
+    useState<Partial<WritingGradeResult> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [submissionCount, setSubmissionCount] = useState(0);
@@ -72,55 +73,6 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
   );
   const [pastGrades, setPastGrades] = useState<Record<string, WritingGrade>>(
     {}
-  );
-  // Ref to track the current submission for onFinish callback
-  const submissionRef = useRef<WritingSubmission | null>(null);
-
-  // AI grading via useObject
-  const {
-    object: gradeObject,
-    submit: submitGrade,
-    isLoading: isGrading,
-  } = useObject({
-    api: '/api/writing/grade',
-    schema: WritingGradeSchema,
-    onFinish({ object: finalObject }) {
-      const sub = submissionRef.current;
-      if (!finalObject || !sub) return;
-      const gradeResult = finalObject as WritingGradeResult;
-      const fullGrade: WritingGrade = {
-        id: '',
-        submissionId: sub.id,
-        userId: '',
-        overallScore: gradeResult.overallScore,
-        dimensionScores: gradeResult.dimensionScores,
-        grammarErrors: gradeResult.grammarErrors,
-        vocabularySuggestions: gradeResult.vocabularySuggestions,
-        overallComment: gradeResult.overallComment,
-        modelAnswer: gradeResult.modelAnswer,
-        strengths: gradeResult.strengths,
-        improvements: gradeResult.improvements,
-        createdAt: new Date().toISOString(),
-      };
-      setGrade(fullGrade);
-      setPhase('report');
-      clearDraft();
-      setPastSubmissions((prev) => [...prev, sub]);
-      setPastGrades((prev) => ({ ...prev, [sub.id]: fullGrade }));
-    },
-    onError(err) {
-      setError(err.message || 'AI 批改失败，请重试');
-      setPhase('writing');
-    },
-  });
-
-  // Derive partial grade from streaming object (no useEffect needed)
-  const partialGradeFromStream = useMemo(
-    () =>
-      isGrading && gradeObject
-        ? (gradeObject as Partial<WritingGradeResult>)
-        : null,
-    [isGrading, gradeObject]
   );
 
   // Load topic data
@@ -193,22 +145,24 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
       setSubmission(sub);
       setSubmissionCount((c) => c + 1);
 
-      // Start AI grading via useObject
+      // Auto-grade with streaming progress
       setPhase('grading');
-      submissionRef.current = sub;
-      submitGrade({ submissionId: sub.id });
+      setPartialGrade(null);
+      const gradeResult = await gradeSubmission(sub.id, (partial) => {
+        setPartialGrade(partial);
+      });
+      setGrade(gradeResult);
+      setPhase('report');
+      clearDraft();
+
+      // Append to history so it shows immediately
+      setPastSubmissions((prev) => [...prev, sub]);
+      setPastGrades((prev) => ({ ...prev, [sub.id]: gradeResult }));
     } catch (err) {
       setError(err instanceof Error ? err.message : '提交失败');
       setPhase('writing');
     }
-  }, [
-    topic,
-    currentDraftText,
-    timerSeconds,
-    wordCount,
-    stopTimer,
-    submitGrade,
-  ]);
+  }, [topic, currentDraftText, timerSeconds, wordCount, stopTimer, clearDraft]);
 
   const handleOcrFill = useCallback(
     (text: string) => {
@@ -362,31 +316,25 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
               <p className="text-sm font-medium text-slate-600">
                 {phase === 'submitting' ? '提交中...' : 'AI 批改中，请稍候...'}
               </p>
-              {phase === 'grading' && partialGradeFromStream && (
+              {phase === 'grading' && partialGrade && (
                 <div className="w-full max-w-xs space-y-2">
-                  {partialGradeFromStream.overallScore != null && (
+                  {partialGrade.overallScore != null && (
                     <p className="text-center text-lg font-bold text-violet-600">
-                      {partialGradeFromStream.overallScore} 分
+                      {partialGrade.overallScore} 分
                     </p>
                   )}
                   <div className="flex flex-wrap justify-center gap-1.5 text-[10px] text-slate-400">
-                    {partialGradeFromStream.overallComment && (
-                      <span>总评 ✓</span>
-                    )}
-                    {partialGradeFromStream.dimensionScores && (
-                      <span>维度分数 ✓</span>
-                    )}
-                    {partialGradeFromStream.grammarErrors && (
-                      <span>语法分析 ✓</span>
-                    )}
-                    {partialGradeFromStream.vocabularySuggestions && (
+                    {partialGrade.overallComment && <span>总评 ✓</span>}
+                    {partialGrade.dimensionScores && <span>维度分数 ✓</span>}
+                    {partialGrade.grammarErrors && <span>语法分析 ✓</span>}
+                    {partialGrade.vocabularySuggestions && (
                       <span>词汇建议 ✓</span>
                     )}
-                    {partialGradeFromStream.modelAnswer && <span>范文 ✓</span>}
+                    {partialGrade.modelAnswer && <span>范文 ✓</span>}
                   </div>
                 </div>
               )}
-              {phase === 'grading' && !partialGradeFromStream && (
+              {phase === 'grading' && !partialGrade && (
                 <p className="text-xs text-slate-400">
                   正在分析语法、词汇与结构
                 </p>
