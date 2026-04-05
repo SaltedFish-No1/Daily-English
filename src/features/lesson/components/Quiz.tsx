@@ -28,6 +28,8 @@ export interface QuizProps {
   quiz: LessonQuiz;
   persistKey: string;
   onComplete?: (score: number, total: number) => void;
+  /** 复习课程的目标词列表（非空时显示复习成果小结） */
+  reviewWords?: string[];
 }
 
 const initialQuizProgress: QuizPersistState = {
@@ -37,7 +39,12 @@ const initialQuizProgress: QuizPersistState = {
   grades: {},
 };
 
-export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
+export const Quiz: React.FC<QuizProps> = ({
+  quiz,
+  persistKey,
+  onComplete,
+  reviewWords,
+}) => {
   const questions = quiz.questions;
   const [showReview, setShowReview] = useState(false);
   const [rationaleLang, setRationaleLang] = useState<'en' | 'zh'>('en');
@@ -248,7 +255,48 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
           <h2 className="mb-2 text-3xl font-bold text-slate-900">
             {labels.completeTitle}
           </h2>
-          <p className="mb-8 max-w-sm text-slate-500">{scoreFeedback}</p>
+          <p className="mb-6 max-w-sm text-slate-500">{scoreFeedback}</p>
+
+          {/* 复习成果小结 */}
+          {reviewWords && reviewWords.length > 0 && (
+            <div className="mx-auto mb-8 w-full max-w-sm rounded-2xl border border-emerald-100 bg-emerald-50/50 p-5 text-left">
+              <h3 className="mb-3 text-sm font-bold text-slate-900">
+                复习成果
+              </h3>
+              {scorePercent >= 50 ? (
+                <p className="mb-2 text-sm text-emerald-700">
+                  ✅ {reviewWords.length} 个词已巩固
+                  {scorePercent >= 80
+                    ? '（间隔将延长）'
+                    : '（下次复习间隔适度延长）'}
+                </p>
+              ) : (
+                <p className="mb-2 text-sm text-amber-700">
+                  ⚠️ {reviewWords.length} 个词需要加强（明天将再次出现）
+                </p>
+              )}
+              <div className="flex flex-wrap gap-1.5">
+                {reviewWords.slice(0, 10).map((w) => (
+                  <span
+                    key={w}
+                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                      scorePercent >= 50
+                        ? 'border border-emerald-200 bg-white text-emerald-700'
+                        : 'border border-amber-200 bg-white text-amber-700'
+                    }`}
+                  >
+                    {w}
+                  </span>
+                ))}
+                {reviewWords.length > 10 && (
+                  <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-400">
+                    +{reviewWords.length - 10}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="flex flex-wrap items-center justify-center gap-3">
             <button
               onClick={() => setShowReview(true)}

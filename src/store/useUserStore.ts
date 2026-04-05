@@ -10,6 +10,11 @@ import { DictionaryCacheRecord } from '@/types/dictionary';
 import { QuizPersistState } from '@/types/quiz';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/store/useAuthStore';
+import {
+  WordReviewState,
+  initReviewState,
+  calculateNextReview,
+} from '@/lib/spaced-repetition';
 
 const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -73,6 +78,16 @@ interface UserState {
   quizProgress: Record<string, QuizPersistState>;
   setQuizProgress: (key: string, state: QuizPersistState) => void;
   clearQuizProgress: (key: string) => void;
+  /** 间隔重复：每个词的复习状态 */
+  wordReviewStates: Record<string, WordReviewState>;
+  /** 收藏生词时自动初始化复习状态（若不存在） */
+  initWordReviewState: (word: string) => void;
+  /** Quiz 答题后更新复习状态，quality 0-5 */
+  updateWordReview: (word: string, quality: number) => void;
+  /** 批量更新多个词的复习状态 */
+  batchUpdateWordReview: (
+    updates: Array<{ word: string; quality: number }>
+  ) => void;
 }
 
 export const useUserStore = create<UserState>()(
@@ -82,6 +97,7 @@ export const useUserStore = create<UserState>()(
       dictionaryCache: {},
       history: {},
       quizProgress: {},
+      wordReviewStates: {},
       // 不可变更新 savedWords 索引：按 (lessonSlug, paragraphIndex) 查找已有记录并更新，或追加新记录。
       upsertVocabOccurrence: ({
         word,
@@ -144,11 +160,20 @@ export const useUserStore = create<UserState>()(
               });
           }
 
+          // 自动初始化间隔重复状态（若该词尚未有复习记录）
+          const reviewStates = state.wordReviewStates[key]
+            ? state.wordReviewStates
+            : {
+                ...state.wordReviewStates,
+                [key]: initReviewState(),
+              };
+
           return {
             savedWords: {
               ...state.savedWords,
               [key]: occurrences,
             },
+            wordReviewStates: reviewStates,
           };
         }),
       // 删除特定出处记录；若该词的出处列表清空则删除整个词条以保持索引整洁。
@@ -348,6 +373,130 @@ export const useUserStore = create<UserState>()(
           const next = { ...prev.quizProgress };
           delete next[key];
           return { quizProgress: next };
+        }),
+      // --- 间隔重复 ---
+      initWordReviewState: (word) =>
+        set((state) => {
+          const key = word.trim().toLowerCase();
+          if (state.wordReviewStates[key]) return state;
+          const reviewState = initReviewState();
+
+          // 云端同步
+          const userId = getAuthUserId();
+          if (userId) {
+            supabase
+              .from('word_review_states')
+              .upsert(
+                {
+                  user_id: userId,
+                  word: key,
+                  interval_days: reviewState.interval,
+                  easiness: reviewState.easiness,
+                  repetition: reviewState.repetition,
+                  next_review_at: reviewState.nextReviewAt,
+                  last_reviewed_at: reviewState.lastReviewedAt || null,
+                  total_reviews: reviewState.totalReviews,
+                  total_correct: reviewState.totalCorrect,
+                  status: reviewState.status,
+                },
+                { onConflict: 'user_id,word' }
+              )
+              .then(({ error }) => {
+                if (error)
+                  console.error('[CloudSync] word_review_states init:', error);
+              });
+          }
+
+          return {
+            wordReviewStates: {
+              ...state.wordReviewStates,
+              [key]: reviewState,
+            },
+          };
+        }),
+      updateWordReview: (word, quality) =>
+        set((state) => {
+          const key = word.trim().toLowerCase();
+          const current = state.wordReviewStates[key];
+          if (!current) return state;
+          const next = calculateNextReview(quality, current);
+
+          // 云端同步
+          const userId = getAuthUserId();
+          if (userId) {
+            supabase
+              .from('word_review_states')
+              .upsert(
+                {
+                  user_id: userId,
+                  word: key,
+                  interval_days: next.interval,
+                  easiness: next.easiness,
+                  repetition: next.repetition,
+                  next_review_at: next.nextReviewAt,
+                  last_reviewed_at: next.lastReviewedAt,
+                  total_reviews: next.totalReviews,
+                  total_correct: next.totalCorrect,
+                  status: next.status,
+                },
+                { onConflict: 'user_id,word' }
+              )
+              .then(({ error }) => {
+                if (error)
+                  console.error(
+                    '[CloudSync] word_review_states update:',
+                    error
+                  );
+              });
+          }
+
+          return {
+            wordReviewStates: {
+              ...state.wordReviewStates,
+              [key]: next,
+            },
+          };
+        }),
+      batchUpdateWordReview: (updates) =>
+        set((state) => {
+          const nextStates = { ...state.wordReviewStates };
+          const userId = getAuthUserId();
+          const upsertRows: Array<Record<string, unknown>> = [];
+
+          for (const { word, quality } of updates) {
+            const key = word.trim().toLowerCase();
+            const current = nextStates[key];
+            if (!current) continue;
+            const next = calculateNextReview(quality, current);
+            nextStates[key] = next;
+
+            if (userId) {
+              upsertRows.push({
+                user_id: userId,
+                word: key,
+                interval_days: next.interval,
+                easiness: next.easiness,
+                repetition: next.repetition,
+                next_review_at: next.nextReviewAt,
+                last_reviewed_at: next.lastReviewedAt,
+                total_reviews: next.totalReviews,
+                total_correct: next.totalCorrect,
+                status: next.status,
+              });
+            }
+          }
+
+          if (userId && upsertRows.length > 0) {
+            supabase
+              .from('word_review_states')
+              .upsert(upsertRows, { onConflict: 'user_id,word' })
+              .then(({ error }) => {
+                if (error)
+                  console.error('[CloudSync] word_review_states batch:', error);
+              });
+          }
+
+          return { wordReviewStates: nextStates };
         }),
     }),
     {
