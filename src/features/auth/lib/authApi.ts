@@ -23,6 +23,11 @@ async function post<T>(url: string, body: unknown): Promise<ApiResult<T>> {
   }
 }
 
+/** 检查邮箱是否已注册。 */
+export function checkUserExists(email: string) {
+  return post<{ exists: boolean }>('/api/auth/check-user', { email });
+}
+
 /** 发送验证码到指定邮箱。 */
 export function sendOtp(email: string) {
   return post<{ success: boolean }>('/api/auth/send-otp', { email });
