@@ -1,18 +1,16 @@
 /**
  * @author SaltedFish-No1
- * @description 密码重置验证码邮件 HTML 模板，使用与应用一致的 emerald green 品牌色。
+ * @description 密码重置邮件 HTML 模板，包含重置链接按钮，使用与应用一致的 emerald green 品牌色。
  */
 
-export function buildPasswordResetEmail(code: string): {
+export function buildPasswordResetEmail(resetUrl: string): {
   subject: string;
   html: string;
   text: string;
 } {
-  const digits = code.split('');
-
   return {
-    subject: `${code} — 薄荷外语密码重置验证码`,
-    text: `你的薄荷外语密码重置验证码是：${code}\n\n该验证码将在 10 分钟后过期。\n\n如果你没有请求重置密码，请忽略此邮件并确保账号安全。`,
+    subject: '薄荷外语 — 重置密码',
+    text: `你好！\n\n你正在重置薄荷外语的密码，请点击以下链接设置新密码：\n\n${resetUrl}\n\n该链接将在 30 分钟后过期。\n\n如果你没有请求重置密码，请忽略此邮件并确保账号安全。`,
     html: `
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -36,21 +34,23 @@ export function buildPasswordResetEmail(code: string): {
               你好！
             </p>
             <p style="margin:0 0 24px;color:#334155;font-size:15px;line-height:1.6;">
-              你正在重置密码，验证码是：
+              你正在重置密码，请点击下方按钮设置新密码：
             </p>
-            <!-- OTP digits -->
+            <!-- CTA Button -->
             <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 24px;">
               <tr>
-                ${digits
-                  .map(
-                    (d) =>
-                      `<td style="width:44px;height:52px;text-align:center;font-size:26px;font-weight:700;color:#059669;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;margin:0 4px;font-family:'Courier New',monospace;">${d}</td>`
-                  )
-                  .join('<td style="width:8px;"></td>')}
+                <td align="center" style="border-radius:10px;background-color:#059669;">
+                  <a href="${resetUrl}" target="_blank" style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;border-radius:10px;">
+                    重置密码
+                  </a>
+                </td>
               </tr>
             </table>
             <p style="margin:0 0 4px;color:#64748b;font-size:13px;text-align:center;">
-              验证码将在 <strong>10 分钟</strong>后过期
+              链接将在 <strong>30 分钟</strong>后过期
+            </p>
+            <p style="margin:16px 0 0;color:#94a3b8;font-size:12px;text-align:center;line-height:1.5;word-break:break-all;">
+              如果按钮无法点击，请复制以下链接到浏览器：<br/>${resetUrl}
             </p>
           </td>
         </tr>
