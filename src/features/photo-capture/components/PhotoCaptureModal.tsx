@@ -86,7 +86,7 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
   function handleSave() {
     const store = useUserStore.getState();
     const batchSlug = `${PHOTO_CAPTURE_PREFIX}${Date.now()}`;
-    const dateLabel = `拍照识词 ${new Date().toLocaleDateString('zh-CN')}`;
+    const dateLabel = '拍照识词';
 
     for (const index of selectedIndices) {
       const w = extractedWords[index];

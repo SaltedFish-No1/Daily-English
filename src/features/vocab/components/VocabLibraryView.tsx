@@ -264,12 +264,7 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
                           className="shrink-0 text-emerald-500"
                         />
                         <span className="text-sm font-bold text-slate-800">
-                          {occurrence.lessonTitle || '拍照识词'}
-                        </span>
-                        <span className="text-[11px] font-semibold text-slate-400">
-                          {new Date(occurrence.savedAt).toLocaleDateString(
-                            'zh-CN'
-                          )}
+                          拍照识词
                         </span>
                       </div>
                     ) : (
