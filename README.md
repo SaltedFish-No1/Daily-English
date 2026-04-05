@@ -1,27 +1,39 @@
 # Daily English
 
-一个基于 Next.js 16 构建的英语学习应用，围绕“每日一课”提供阅读、词汇、图表理解与测验练习，并支持 PWA 安装与本地学习记录持久化。
+一个基于 Next.js 16 构建的综合英语学习平台，围绕"每日一课"提供阅读理解、词汇积累、知识测验与写作练习，支持 AI 智能批改、用户认证与 PWA 安装。
 
 ## 项目特性
 
 - 每日课程首页，展示课程卡片、难度标签与课程简介
-- 课程详情页包含 3 个学习区块：阅读、数据图表、知识测验
+- 课程详情页包含阅读与知识测验两大学习区块
 - 支持高亮词点击查看释义、中文翻译与英文发音
+- 多种测验题型：判断题（TFNG/YNNG）、选择题、匹配题（标题/信息/特征）、填空题
 - 内置生词收藏与生词库页面，自动记录词汇出现位置
-- 记录课程测验成绩，学习数据保存在浏览器本地
-- 支持 PWA 安装，可部署为 GitHub Pages 静态站点
+- 写作练习：自定义话题、计时写作、AI 多维度批改（语法、词汇、连贯性等）
+- 学习中心与阅读练习入口
+- 用户认证：邮箱 OTP 登录、密码重置、个人档案
+- 已登录用户学习数据云端同步，未登录用户数据保存在浏览器本地
+- 支持 PWA 安装，可作为独立应用使用
 - 课程难度采用 CEFR 分级展示，并提供分级说明弹窗
 
 ## 技术栈
 
-- Next.js 16 App Router
-- React 19
-- TypeScript 5
-- Zustand
-- Tailwind CSS 4
-- Chart.js + react-chartjs-2
-- Framer Motion
-- `@ducanh2912/next-pwa`
+| 分类 | 技术 |
+|------|------|
+| 框架 | Next.js 16 App Router、React 19 |
+| 语言 | TypeScript 5 |
+| 样式 | Tailwind CSS 4、PostCSS |
+| 状态管理 | Zustand 5（带持久化中间件） |
+| 数据请求 | TanStack React Query 5 |
+| 后端 / 数据库 | Supabase（PostgreSQL、认证） |
+| AI 集成 | Vercel AI SDK 6 + @ai-sdk/openai |
+| 邮件服务 | Resend |
+| 数据校验 | Zod 4 |
+| 动画 | Framer Motion |
+| 图标 | Lucide React |
+| PWA | @ducanh2912/next-pwa |
+| 测试 | Vitest 2 |
+| 代码质量 | ESLint 9、Prettier 3、Husky 9 + lint-staged 16 |
 
 ## 快速开始
 
@@ -43,35 +55,68 @@ pnpm dev
 http://localhost:3000
 ```
 
+## 环境变量
+
+项目运行需要以下环境变量，建议创建 `.env.local` 文件：
+
+```bash
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=           # Supabase 项目地址
+NEXT_PUBLIC_SUPABASE_ANON_KEY=      # Supabase 匿名密钥
+SUPABASE_SERVICE_ROLE_KEY=          # Supabase 服务端密钥（仅服务端使用）
+
+# AI 写作批改
+OPENAI_API_KEY=                     # OpenAI API 密钥
+
+# 邮件
+RESEND_API_KEY=                     # Resend 邮件服务密钥
+```
+
 ## 常用命令
 
 ```bash
-pnpm dev
-pnpm lint
-pnpm build
-pnpm format
+pnpm dev       # 启动本地开发环境
+pnpm build     # 执行 Next.js 构建
+pnpm start     # 启动生产服务器
+pnpm lint      # 运行 ESLint 校验
+pnpm format    # 格式化仓库文件
+pnpm test      # 运行 Vitest 单元测试
 ```
-
-- `pnpm dev`：启动本地开发环境
-- `pnpm lint`：运行 ESLint 校验
-- `pnpm build`：执行 Next.js 静态导出，产物输出到 `out/`
-- `pnpm format`：格式化仓库文件
 
 ## 目录结构
 
 ```text
 .
-├── data/
-│   ├── lessons.json          # 首页课程列表
-│   └── lessons/*.json        # 每日课程内容
-├── public/                   # PWA 资源、图标与静态文件
+├── public/                        # PWA 资源、图标与静态文件
+├── scripts/                       # 数据库建表与数据迁移脚本
 ├── src/
-│   ├── app/                  # App Router 页面入口
-│   ├── features/             # 按业务划分的页面与组件
-│   ├── hooks/                # 自定义 Hook
-│   ├── store/                # Zustand 状态管理
-│   └── types/                # 课程数据类型定义
-├── .github/workflows/        # GitHub Pages 部署流程
+│   ├── __tests__/                 # 单元测试
+│   ├── app/                       # App Router 页面入口
+│   │   ├── api/                   # API 路由（课程、认证、词典、TTS、写作）
+│   │   ├── auth/                  # 认证回调
+│   │   ├── learn/                 # 学习中心
+│   │   ├── lessons/[id]/          # 课程详情
+│   │   ├── login/                 # 登录页
+│   │   ├── profile/               # 个人档案
+│   │   ├── reading/               # 阅读练习
+│   │   ├── reset-password/        # 密码重置
+│   │   ├── vocab/                 # 生词库
+│   │   └── writing/[topicId]/     # 写作练习
+│   ├── components/                # 全局组件（导航栏、应用外壳）
+│   ├── features/                  # 按业务划分的页面与组件
+│   │   ├── auth/                  # 认证（登录表单、用户菜单）
+│   │   ├── home/                  # 首页仪表盘、CEFR 说明
+│   │   ├── learn/                 # 学习中心
+│   │   ├── lesson/                # 课程（文章、测验、词汇面板）
+│   │   ├── profile/               # 个人档案
+│   │   ├── reading/               # 阅读练习
+│   │   ├── vocab/                 # 生词库
+│   │   └── writing/               # 写作（编辑器、批改报告、话题管理）
+│   ├── hooks/                     # 自定义 Hook
+│   ├── lib/                       # 工具函数与服务集成（Supabase、词典、邮件等）
+│   ├── store/                     # Zustand 状态管理
+│   └── types/                     # TypeScript 类型定义
+├── .github/workflows/             # CI 流水线
 └── README.md
 ```
 
@@ -79,17 +124,14 @@ pnpm format
 
 ### 首页 `/`
 
-- 从 `data/lessons.json` 读取课程列表
 - 展示课程标题、日期、摘要、分类标签与 CEFR 难度
 - 展示最近收藏的词汇预览
 - 提供 PWA 安装入口
 
-### 课程页 `/lessons/[slug]`
+### 课程页 `/lessons/[id]`
 
-- 从 `data/lessons/<slug>.json` 读取完整课程
-- 阅读区支持高亮词交互
-- 数据区展示图表与要点解读
-- 测验区支持答题、评分与成绩记录
+- 阅读区支持高亮词交互，点击查看释义与发音
+- 测验区支持多种题型、答题评分与成绩记录
 - 桌面端显示固定词汇面板，移动端显示底部学习导航
 
 ### 生词库 `/vocab`
@@ -98,136 +140,74 @@ pnpm format
 - 展示词性、英文释义、中文翻译与最近收藏信息
 - 可查看词汇来自哪节课、出现在哪一段
 
-## 数据维护
+### 学习中心 `/learn`
 
-课程内容由两个层级组成：
+- 学习功能导航入口
 
-1. `data/lessons.json`：控制首页课程列表
-2. `data/lessons/<date>.json`：存放具体课程内容
+### 阅读练习 `/reading`
 
-### 新增一节课程
+- 阅读练习专区
 
-1. 在 `data/lessons/` 新建一个以日期命名的 JSON 文件，例如 `2026-04-03.json`
-2. 按照课程内容结构填写文章、词汇、图表和测验
-3. 在 `data/lessons.json` 中追加课程概览信息，例如标题、分类、摘要和难度
-4. 运行 `pnpm lint` 和 `pnpm build` 确认无误
-5. 推送到 `main` 分支后自动触发 GitHub Pages 部署
+### 写作练习 `/writing/[topicId]`
 
-### 课程文件结构
+- 自定义写作话题与计时写作
+- AI 智能批改，按语法、词汇、连贯性等维度评分
+- 语法错误检测与词汇建议
+- 支持多次提交与历史记录
 
-`data/lessons/<date>.json` 只保留课程正文与学习任务本身；课程标题、分类、摘要、难度等概览信息统一维护在 `data/lessons.json`。
+### 个人档案 `/profile`
 
-下面是课程文件的示意结构，字段名需要与项目类型定义保持一致：
+- 用户学习统计与个人信息管理
 
-```json
-{
-  "schemaVersion": "2.1",
-  "meta": {
-    "title": "Lesson Title"
-  },
-  "speech": {
-    "enabled": true
-  },
-  "article": {
-    "title": "Article Title",
-    "paragraphs": [
-      {
-        "id": "p1",
-        "en": "English paragraph with sample.",
-        "zh": "对应中文翻译。"
-      }
-    ]
-  },
-  "focusWords": [
-    {
-      "key": "sample",
-      "forms": ["sample"]
-    }
-  ],
-  "chart": {
-    "type": "line",
-    "title": "Chart Title",
-    "description": "图表说明",
-    "labels": ["A", "B", "C"],
-    "datasets": [
-      {
-        "label": "Series 1",
-        "data": [1, 2, 3],
-        "borderColor": "#10b981",
-        "backgroundColor": "rgba(16,185,129,0.15)"
-      }
-    ],
-    "insights": [
-      {
-        "icon": "trend",
-        "title": "Insight",
-        "text": "图表结论"
-      }
-    ]
-  },
-  "quiz": {
-    "title": "Knowledge Check",
-    "questions": [
-      {
-        "q": "Question text",
-        "options": [
-          {
-            "text": "Option A",
-            "correct": true,
-            "rationale": {
-              "en": "Reason in English",
-              "zh": "中文解析"
-            }
-          }
-        ]
-      }
-    ]
-  }
-}
-```
+### 登录 `/login`
 
-### 课程列表项结构
+- 邮箱 OTP 验证登录，无需密码
 
-下面是 `data/lessons.json` 中单条课程记录的示意结构：
+## 状态管理
 
-```json
-{
-  "date": "2026-04-03",
-  "path": "pages/2026-04-03.html",
-  "title": "Lesson Title",
-  "category": "Science & Nature",
-  "teaser": "首页摘要文案，同时作为详情页 metadata 描述来源",
-  "published": true,
-  "featured": true,
-  "tag": "Science",
-  "difficulty": "B2"
-}
-```
+项目使用 Zustand 管理状态，包含以下 Store：
 
-## 本地状态说明
+| Store | 职责 | 持久化 |
+|-------|------|--------|
+| `useAuthStore` | 用户认证会话 | 否 |
+| `useUserStore` | 词汇收藏、学习历史、词典缓存 | 是（localStorage） |
+| `useLessonStore` | 课程页标签状态、测验进度 | 否 |
+| `usePreferenceStore` | 用户偏好设置 | 是 |
+| `useWritingStore` | 写作练习状态 | 否 |
 
-项目使用浏览器本地存储保存学习数据，不依赖后端服务：
+- **未登录用户**：所有学习数据保存在浏览器 `localStorage`，刷新页面后保留，更换浏览器或清除存储后丢失
+- **已登录用户**：通过 Supabase 实现数据云端同步
 
-- 生词收藏保存在 `daily-english-user-storage`
-- 课程答题成绩同样保存在本地持久化状态中
-- 课程页面当前激活标签与选词上下文通过 Zustand 管理
+## 数据存储
 
-这意味着刷新页面后收藏记录和成绩仍会保留，但更换浏览器或清理本地存储后数据会丢失。
+课程数据存储在 Supabase PostgreSQL 数据库中，采用规范化表结构：
+
+- `lessons` — 课程主表（标题、分类、难度、发布状态等）
+- `lesson_paragraphs` — 课程段落（英文正文与中文翻译）
+- `lesson_focus_words` — 重点词汇
+- `lesson_quiz_questions` — 测验题目（支持多种题型）
+
+写作相关数据：
+
+- `writing_topics` — 写作话题
+- `writing_submissions` — 用户提交
+- `writing_grades` — AI 批改结果
+- `grading_criteria` — 评分标准
+
+数据库建表脚本位于 `scripts/` 目录。
 
 ## 部署说明
 
-- 项目使用 `next build --webpack` 生成静态站点
-- `next.config.ts` 中启用了 `output: 'export'`
-- 生产环境 `basePath` 为 `/Daily-English`
-- GitHub Actions 会在推送到 `main` 分支后自动构建并部署到 GitHub Pages
-- 构建产物目录为 `out/`
+- 项目使用 `next build --webpack` 构建
+- 需要 Node.js 服务器运行时环境（非静态导出）
+- CI 流水线（`.github/workflows/ci.yml`）在推送到 `main` 或 PR 时自动运行 lint → build → test
 
 ## 开发提示
 
-- 新增课程时，优先参考现有 `data/lessons/*.json` 文件格式
-- 高亮词必须在正文 HTML 中使用 `data-word` 标记，才能与右侧词卡联动
+- 高亮词必须在正文中使用 `data-word` 标记，才能与词汇面板联动
 - 如果课程启用了发音，浏览器需要支持 Web Speech API
 - 生词库页面的数据来源于本地收藏，不会自动扫描所有课程词汇
+- 提交代码时 Husky pre-commit hook 会自动运行 lint-staged 进行代码检查与格式化
 
 ## License
 
