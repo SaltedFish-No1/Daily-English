@@ -8,7 +8,10 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { sendOtp as apiSendOtp, verifyOtp as apiVerifyOtp } from '../lib/authApi';
+import {
+  sendOtp as apiSendOtp,
+  verifyOtp as apiVerifyOtp,
+} from '../lib/authApi';
 
 type Step = 'email' | 'verify';
 

@@ -4,10 +4,8 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import {
-  fetchDictionaryEntries,
-  normalizeDictionaryQuery,
-} from '@/lib/dictionary';
+import { normalizeDictionaryQuery } from '@/lib/dictionary';
+import { fetchDictionaryFromApi } from '@/lib/dictionary-fallback';
 import { DictionaryCacheRecord } from '@/types/dictionary';
 import { QuizPersistState } from '@/types/quiz';
 import { supabase } from '@/lib/supabase';
@@ -262,7 +260,7 @@ export const useUserStore = create<UserState>()(
           },
         }));
 
-        const result = await fetchDictionaryEntries(key);
+        const result = await fetchDictionaryFromApi(key);
 
         set((state) => ({
           dictionaryCache: {
@@ -271,6 +269,12 @@ export const useUserStore = create<UserState>()(
               fetchedAt: Date.now(),
               data: result.data,
               status: result.status,
+              source: result.source as
+                | 'dictionaryapi'
+                | 'ai_generated'
+                | 'cache'
+                | undefined,
+              audioUrl: result.audioUrl,
             },
           },
         }));
