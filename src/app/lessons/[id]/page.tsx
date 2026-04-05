@@ -6,11 +6,17 @@ import {
   getReviewLessonById,
 } from '@/lib/lessons-db';
 import { getServerUserId } from '@/lib/supabase-rsc';
+import { cookies } from 'next/headers';
 import { Metadata } from 'next';
 
 async function resolveLesson(id: string) {
   const data = await getLessonById(id);
   if (data) return data;
+
+  // Trigger dynamic rendering bailout outside any try-catch so Next.js can
+  // detect the dynamic API usage and switch from static to dynamic rendering.
+  // Published lessons return early above, preserving static generation.
+  await cookies();
 
   // Fallback: try loading as user's review lesson
   const userId = await getServerUserId();
