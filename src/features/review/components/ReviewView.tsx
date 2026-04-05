@@ -9,6 +9,7 @@ import { LessonData, LessonListItem } from '@/types/lesson';
 import { type GeneratedLesson } from '@/types/review';
 import { LessonView } from '@/features/lesson/components/LessonView';
 import { useUserStore } from '@/store/useUserStore';
+import { parsePartialJson } from 'ai';
 import { Sparkles, RefreshCw, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -72,27 +73,35 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
         body: JSON.stringify({ words, difficulty }),
       });
 
-      // DEBUG: non-streaming — server returns JSON directly
-      const json = await res.json();
-      console.log('[ReviewView] Response status:', res.status, 'body:', json);
-
       if (!res.ok) {
-        throw new Error(json.error || `HTTP ${res.status}`);
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `HTTP ${res.status}`);
       }
 
-      const finalObject = json as GeneratedLesson;
+      const reader = res.body!.getReader();
+      const decoder = new TextDecoder();
+      let accumulated = '';
 
-      console.log('[ReviewView] Validation check:', {
-        hasTitle: !!finalObject.title,
-        hasParagraphs: !!finalObject.paragraphs?.length,
-        paragraphCount: finalObject.paragraphs?.length,
-        hasQuizQuestions: !!finalObject.quizQuestions?.length,
-        quizCount: finalObject.quizQuestions?.length,
-        hasFocusWords: !!finalObject.focusWords?.length,
-      });
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        accumulated += decoder.decode(value, { stream: true });
+
+        const { value: partial } = await parsePartialJson(accumulated);
+        if (partial != null) {
+          setState({
+            status: 'generating',
+            progress: partial as Partial<GeneratedLesson>,
+          });
+        }
+      }
+      accumulated += decoder.decode();
+
+      const { value: parsed } = await parsePartialJson(accumulated);
+      const finalObject = parsed as GeneratedLesson | null;
 
       if (
-        !finalObject.title ||
+        !finalObject?.title ||
         !finalObject.paragraphs?.length ||
         !finalObject.quizQuestions?.length
       ) {

@@ -61,7 +61,9 @@ const TFNGQuestionSchema = z.object({
   rationale: z.object({ en: z.string(), zh: z.string() }).nullable(),
 });
 
-const QuizQuestionSchema = z.discriminatedUnion('type', [
+// Use z.union (produces JSON Schema `anyOf`) instead of z.discriminatedUnion
+// (produces `oneOf`) because OpenAI structured outputs do not support `oneOf`.
+const QuizQuestionSchema = z.union([
   CompletionQuestionSchema,
   MultipleChoiceQuestionSchema,
   TFNGQuestionSchema,

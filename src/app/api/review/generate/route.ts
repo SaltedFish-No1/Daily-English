@@ -7,7 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { generateObject } from 'ai';
+import { streamObject } from 'ai';
 import { modelPower } from '@/lib/ai';
 import { requireApiAuth } from '@/lib/api-auth';
 import { GeneratedLessonSchema } from '@/types/review';
@@ -63,9 +63,7 @@ export async function POST(request: NextRequest) {
   const wordList = words.slice(0, 15).join(', ');
 
   try {
-    // DEBUG: Use generateObject (non-streaming) to surface errors directly.
-    // Once the root cause is identified, switch back to streamObject.
-    const { object } = await generateObject({
+    const result = streamObject({
       model: modelPower,
       schema: GeneratedLessonSchema,
       maxOutputTokens: 65536,
@@ -93,16 +91,11 @@ Return valid JSON matching the schema exactly.`,
       temperature: 0.8,
     });
 
-    return NextResponse.json(object);
+    return result.toTextStreamResponse();
   } catch (error) {
     console.error('[ReviewGenerate] AI generation failed:', error);
-    // Return the full error details so we can see them in the browser
     return NextResponse.json(
-      {
-        error: String(error),
-        name: error instanceof Error ? error.name : 'Unknown',
-        stack: error instanceof Error ? error.stack?.slice(0, 1000) : undefined,
-      },
+      { error: 'AI generation failed' },
       { status: 502 }
     );
   }
