@@ -1,19 +1,48 @@
 /**
  * @description 课程数据访问层 — 供 Server Component 和 API route 共用。
- *   使用 service-role 客户端绕过 RLS，仅在服务端调用。
  *
- *   表结构：结构化列存元数据，article/focus_words/quiz 分列存储（JSONB），
- *   数据访问层负责拼装为前端所需的 LessonData / LessonListItem。
+ *   规范化表结构：lessons + lesson_paragraphs + lesson_focus_words + lesson_quiz_questions
+ *   此层负责将多表数据拼装为前端所需的 LessonData / LessonListItem。
  */
 
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import {
   LessonData,
   LessonListItem,
-  LessonArticle,
+  Paragraph,
   FocusWord,
-  LessonQuiz,
+  AnyQuizQuestion,
+  QuizRationale,
 } from '@/types/lesson';
+
+// ---------------------------------------------------------------------------
+// Types for raw DB rows
+// ---------------------------------------------------------------------------
+
+interface ParagraphRow {
+  key: string;
+  en: string;
+  zh: string;
+}
+
+interface FocusWordRow {
+  key: string;
+  forms: string[];
+}
+
+interface QuizQuestionRow {
+  question_key: string;
+  question_type: string;
+  prompt: string;
+  rationale_en: string | null;
+  rationale_zh: string | null;
+  evidence_refs: string[] | null;
+  payload: Record<string, unknown>;
+}
+
+// ---------------------------------------------------------------------------
+// List
+// ---------------------------------------------------------------------------
 
 interface GetLessonsOptions {
   difficulty?: string;
@@ -68,41 +97,112 @@ export async function getLessons(
   return { lessons, total: count ?? 0 };
 }
 
+// ---------------------------------------------------------------------------
+// Detail — assemble LessonData from 4 tables
+// ---------------------------------------------------------------------------
+
 export async function getLessonBySlug(
   slug: string
 ): Promise<LessonData | null> {
-  const { data, error } = await supabaseAdmin
+  // 1. Main lesson row
+  const { data: lesson, error: lessonErr } = await supabaseAdmin
     .from('lessons')
     .select(
-      'id, slug, title, category, teaser, tag, difficulty, published, featured, speech_enabled, article, focus_words, quiz'
+      'id, slug, title, category, teaser, tag, difficulty, published, featured, speech_enabled, article_title, quiz_title'
     )
     .eq('slug', slug)
     .eq('published', true)
     .single();
 
-  if (error || !data) return null;
+  if (lessonErr || !lesson) return null;
 
-  const lesson: LessonData = {
+  // 2. Fetch child tables in parallel
+  const [paragraphsRes, focusWordsRes, questionsRes] = await Promise.all([
+    supabaseAdmin
+      .from('lesson_paragraphs')
+      .select('key, en, zh')
+      .eq('lesson_id', lesson.id)
+      .order('position', { ascending: true }),
+    supabaseAdmin
+      .from('lesson_focus_words')
+      .select('key, forms')
+      .eq('lesson_id', lesson.id)
+      .order('position', { ascending: true }),
+    supabaseAdmin
+      .from('lesson_quiz_questions')
+      .select(
+        'question_key, question_type, prompt, rationale_en, rationale_zh, evidence_refs, payload'
+      )
+      .eq('lesson_id', lesson.id)
+      .order('position', { ascending: true }),
+  ]);
+
+  // 3. Assemble paragraphs
+  const paragraphs: Paragraph[] = (
+    (paragraphsRes.data as ParagraphRow[] | null) ?? []
+  ).map((row) => ({
+    id: row.key,
+    en: row.en,
+    zh: row.zh,
+  }));
+
+  // 4. Assemble focus words
+  const focusWords: FocusWord[] = (
+    (focusWordsRes.data as FocusWordRow[] | null) ?? []
+  ).map((row) => ({
+    key: row.key,
+    forms: row.forms,
+  }));
+
+  // 5. Assemble quiz questions
+  const questions: AnyQuizQuestion[] = (
+    (questionsRes.data as QuizQuestionRow[] | null) ?? []
+  ).map((row) => {
+    const rationale: QuizRationale | undefined =
+      row.rationale_en && row.rationale_zh
+        ? { en: row.rationale_en, zh: row.rationale_zh }
+        : undefined;
+
+    return {
+      id: row.question_key,
+      type: row.question_type,
+      prompt: row.prompt,
+      ...(rationale ? { rationale } : {}),
+      ...(row.evidence_refs?.length ? { evidenceRefs: row.evidence_refs } : {}),
+      ...row.payload,
+    } as AnyQuizQuestion;
+  });
+
+  // 6. Build the full LessonData
+  return {
     schemaVersion: '2.2',
     meta: {
-      id: data.id,
-      title: data.title,
-      date: data.slug,
-      category: data.category,
-      teaser: data.teaser,
-      published: data.published,
-      featured: data.featured,
-      tag: data.tag,
-      difficulty: data.difficulty,
+      id: lesson.id,
+      title: lesson.title,
+      date: lesson.slug,
+      category: lesson.category,
+      teaser: lesson.teaser,
+      published: lesson.published,
+      featured: lesson.featured,
+      tag: lesson.tag,
+      difficulty: lesson.difficulty,
     },
-    speech: { enabled: data.speech_enabled },
-    article: data.article as LessonArticle,
-    focusWords: data.focus_words as FocusWord[],
-    quiz: data.quiz as LessonQuiz,
+    speech: { enabled: lesson.speech_enabled },
+    article: {
+      title: lesson.article_title,
+      paragraphs,
+    },
+    focusWords,
+    quiz: {
+      title: lesson.quiz_title,
+      questions,
+    },
   };
-
-  return lesson;
 }
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
 
 export async function getLessonSlugs(): Promise<string[]> {
   const { data, error } = await supabaseAdmin
