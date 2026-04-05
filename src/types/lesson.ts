@@ -184,6 +184,7 @@ export interface LessonData {
 export interface LessonListItem {
   id: string;
   date: string;
+  createdAt?: string;
   title: string;
   category: string;
   teaser: string;

@@ -40,6 +40,38 @@ interface QuizQuestionRow {
   payload: Record<string, unknown>;
 }
 
+interface LegacyLessonRow {
+  id: string;
+  slug: string;
+  created_at: string | null;
+  title: string;
+  category: string;
+  teaser: string;
+  tag: string;
+  difficulty: string;
+  published: boolean;
+  featured: boolean;
+  content: LessonData | null;
+}
+
+function isMissingColumn(error: unknown, column: string): boolean {
+  if (!error || typeof error !== 'object') return false;
+  const message =
+    'message' in error && typeof error.message === 'string'
+      ? error.message
+      : '';
+  return message.includes(`column lessons.${column} does not exist`);
+}
+
+function toYyyyMmDd(input: string | null | undefined): string | undefined {
+  if (!input) return undefined;
+  const date = new Date(input);
+  if (Number.isNaN(date.getTime())) return undefined;
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(
+    date.getDate()
+  ).padStart(2, '0')}`;
+}
+
 // ---------------------------------------------------------------------------
 // List
 // ---------------------------------------------------------------------------
@@ -67,11 +99,11 @@ export async function getLessons(
   let query = supabaseAdmin
     .from('lessons')
     .select(
-      'id, date, title, category, teaser, tag, difficulty, published, featured',
+      'id, date, created_at, title, category, teaser, tag, difficulty, published, featured',
       { count: 'exact' }
     )
     .eq('published', true)
-    .order('date', { ascending: false })
+    .order('created_at', { ascending: false })
     .range(from, to);
 
   if (difficulty) query = query.eq('difficulty', difficulty);
@@ -80,11 +112,56 @@ export async function getLessons(
 
   const { data, count, error } = await query;
 
-  if (error) throw new Error(`getLessons failed: ${error.message}`);
+  if (error && !isMissingColumn(error, 'date')) {
+    throw new Error(`getLessons failed: ${error.message}`);
+  }
+
+  if (error && isMissingColumn(error, 'date')) {
+    let legacyQuery = supabaseAdmin
+      .from('lessons')
+      .select(
+        'id, slug, created_at, title, category, teaser, tag, difficulty, published, featured',
+        { count: 'exact' }
+      )
+      .eq('published', true)
+      .order('slug', { ascending: false })
+      .range(from, to);
+
+    if (difficulty) legacyQuery = legacyQuery.eq('difficulty', difficulty);
+    if (tag) legacyQuery = legacyQuery.eq('tag', tag);
+    if (featured !== undefined)
+      legacyQuery = legacyQuery.eq('featured', featured);
+
+    const {
+      data: legacyData,
+      count: legacyCount,
+      error: legacyErr,
+    } = await legacyQuery;
+
+    if (legacyErr) throw new Error(`getLessons failed: ${legacyErr.message}`);
+
+    const lessons: LessonListItem[] = (
+      (legacyData as LegacyLessonRow[] | null) ?? []
+    ).map((row) => ({
+      id: row.id,
+      date: row.slug,
+      createdAt: toYyyyMmDd(row.created_at) ?? row.slug,
+      title: row.title,
+      category: row.category,
+      teaser: row.teaser,
+      published: row.published,
+      featured: row.featured,
+      tag: row.tag,
+      difficulty: row.difficulty as LessonListItem['difficulty'],
+    }));
+
+    return { lessons, total: legacyCount ?? 0 };
+  }
 
   const lessons: LessonListItem[] = (data ?? []).map((row) => ({
     id: row.id,
     date: row.date,
+    createdAt: toYyyyMmDd(row.created_at) ?? row.date,
     title: row.title,
     category: row.category,
     teaser: row.teaser,
@@ -101,18 +178,50 @@ export async function getLessons(
 // Detail — assemble LessonData from 4 tables
 // ---------------------------------------------------------------------------
 
-export async function getLessonByDate(
-  date: string
-): Promise<LessonData | null> {
-  // 1. Main lesson row
+export async function getLessonById(id: string): Promise<LessonData | null> {
   const { data: lesson, error: lessonErr } = await supabaseAdmin
     .from('lessons')
     .select(
       'id, date, title, category, teaser, tag, difficulty, published, featured, speech_enabled, article_title, quiz_title'
     )
-    .eq('date', date)
+    .eq('id', id)
     .eq('published', true)
     .single();
+
+  if (lessonErr && isMissingColumn(lessonErr, 'date')) {
+    const { data: legacyLesson, error: legacyErr } = await supabaseAdmin
+      .from('lessons')
+      .select(
+        'id, slug, title, category, teaser, tag, difficulty, published, featured, content'
+      )
+      .eq('id', id)
+      .eq('published', true)
+      .single();
+
+    if (legacyErr || !legacyLesson) return null;
+
+    const row = legacyLesson as LegacyLessonRow;
+    const content = row.content ?? ({} as LessonData);
+
+    return {
+      schemaVersion: content.schemaVersion ?? '2.1',
+      meta: {
+        id: row.id,
+        title: row.title,
+        date: row.slug,
+        category: row.category,
+        teaser: row.teaser,
+        published: row.published,
+        featured: row.featured,
+        tag: row.tag,
+        difficulty: row.difficulty as LessonListItem['difficulty'],
+      },
+      speech: content.speech ?? { enabled: true },
+      article: content.article ?? { title: row.title, paragraphs: [] },
+      focusWords: content.focusWords ?? [],
+      quiz: content.quiz ?? { title: 'Knowledge Check', questions: [] },
+    };
+  }
 
   if (lessonErr || !lesson) return null;
 
@@ -207,20 +316,69 @@ export async function getLessonByDate(
 export async function getLessonDates(): Promise<string[]> {
   const { data, error } = await supabaseAdmin
     .from('lessons')
-    .select('date')
+    .select('id')
     .eq('published', true)
-    .order('date', { ascending: false });
+    .order('created_at', { ascending: false });
 
-  if (error || !data) return [];
-  return data.map((row) => row.date);
+  if (error && !isMissingColumn(error, 'date')) return [];
+  if (data) return data.map((row) => row.id);
+
+  const { data: legacyData, error: legacyError } = await supabaseAdmin
+    .from('lessons')
+    .select('id')
+    .eq('published', true)
+    .order('slug', { ascending: false });
+
+  if (legacyError || !legacyData) return [];
+  return legacyData.map((row) => row.id);
+}
+
+export async function getLessonIds(): Promise<string[]> {
+  const { data, error } = await supabaseAdmin
+    .from('lessons')
+    .select('id')
+    .eq('published', true)
+    .order('created_at', { ascending: false });
+
+  if (error && !isMissingColumn(error, 'date')) return [];
+  if (data) return data.map((row) => row.id);
+
+  const { data: legacyData, error: legacyError } = await supabaseAdmin
+    .from('lessons')
+    .select('id')
+    .eq('published', true)
+    .order('slug', { ascending: false });
+
+  if (legacyError || !legacyData) return [];
+  return legacyData.map((row) => row.id);
 }
 
 export async function getLessonTitleMap(): Promise<Record<string, string>> {
   const { data, error } = await supabaseAdmin
     .from('lessons')
-    .select('date, title')
+    .select('id, date, title')
     .eq('published', true);
 
-  if (error || !data) return {};
-  return Object.fromEntries(data.map((row) => [row.date, row.title]));
+  if (error && !isMissingColumn(error, 'date')) return {};
+  if (data) {
+    return Object.fromEntries(
+      data.flatMap((row) => [
+        [row.id, row.title] as [string, string],
+        [row.date, row.title] as [string, string],
+      ])
+    );
+  }
+
+  const { data: legacyData, error: legacyError } = await supabaseAdmin
+    .from('lessons')
+    .select('id, slug, title')
+    .eq('published', true);
+
+  if (legacyError || !legacyData) return {};
+  return Object.fromEntries(
+    legacyData.flatMap((row) => [
+      [row.id, row.title] as [string, string],
+      [row.slug, row.title] as [string, string],
+    ])
+  );
 }

@@ -1,15 +1,15 @@
 import { LessonView } from '@/features/lesson/components/LessonView';
 import { LessonListItem } from '@/types/lesson';
-import { getLessonByDate, getLessonDates } from '@/lib/lessons-db';
+import { getLessonById, getLessonIds } from '@/lib/lessons-db';
 import { Metadata } from 'next';
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ id: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
-  const data = await getLessonByDate(slug);
+  const { id } = await params;
+  const data = await getLessonById(id);
   if (!data) return { title: 'Lesson Not Found' };
 
   return {
@@ -19,17 +19,17 @@ export async function generateMetadata({
 }
 
 export async function generateStaticParams() {
-  const dates = await getLessonDates();
-  return dates.map((slug) => ({ slug }));
+  const ids = await getLessonIds();
+  return ids.map((id) => ({ id }));
 }
 
 export default async function LessonPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ id: string }>;
 }) {
-  const { slug } = await params;
-  const data = await getLessonByDate(slug);
+  const { id } = await params;
+  const data = await getLessonById(id);
 
   if (!data) {
     return <div>Lesson not found</div>;
@@ -47,5 +47,5 @@ export default async function LessonPage({
     difficulty: data.meta.difficulty,
   };
 
-  return <LessonView data={data} lessonSlug={slug} overview={overview} />;
+  return <LessonView data={data} lessonSlug={id} overview={overview} />;
 }

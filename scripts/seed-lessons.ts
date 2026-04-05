@@ -10,6 +10,9 @@ import fs from 'fs';
 import path from 'path';
 import { createClient } from '@supabase/supabase-js';
 
+import dotenv from 'dotenv';
+dotenv.config({ path: path.resolve(__dirname, '../.env.local') });
+
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -36,6 +39,19 @@ interface QuizQuestion {
   [key: string]: unknown;
 }
 
+function isLegacySchemaError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+  if (!('message' in error)) return false;
+  const message =
+    typeof error.message === 'string' ? error.message : JSON.stringify(error);
+  return (
+    message.includes("Could not find the 'article_title' column") ||
+    message.includes("Could not find the 'date' column") ||
+    message.includes('column lessons.article_title does not exist') ||
+    message.includes('column lessons.date does not exist')
+  );
+}
+
 async function seed() {
   let ok = 0;
   let fail = 0;
@@ -53,24 +69,48 @@ async function seed() {
     }
 
     try {
-      // --- 1. Upsert main lesson row ---
-      const { error: lessonErr } = await supabase.from('lessons').upsert(
-        {
-          id: meta.id,
-          date,
-          title: meta.title,
-          category: meta.category,
-          teaser: meta.teaser,
-          tag: meta.tag,
-          difficulty: meta.difficulty,
-          published: meta.published,
-          featured: meta.featured,
-          speech_enabled: lesson.speech?.enabled ?? true,
-          article_title: lesson.article?.title ?? meta.title,
-          quiz_title: lesson.quiz?.title ?? 'Knowledge Check',
-        },
-        { onConflict: 'date' }
-      );
+      const normalizedPayload = {
+        id: meta.id,
+        date,
+        title: meta.title,
+        category: meta.category,
+        teaser: meta.teaser,
+        tag: meta.tag,
+        difficulty: meta.difficulty,
+        published: meta.published,
+        featured: meta.featured,
+        speech_enabled: lesson.speech?.enabled ?? true,
+        article_title: lesson.article?.title ?? meta.title,
+        quiz_title: lesson.quiz?.title ?? 'Knowledge Check',
+      };
+
+      const { error: lessonErr } = await supabase
+        .from('lessons')
+        .upsert(normalizedPayload, { onConflict: 'date' });
+
+      if (lessonErr && isLegacySchemaError(lessonErr)) {
+        const { error: legacyErr } = await supabase.from('lessons').upsert(
+          {
+            id: meta.id,
+            slug: date,
+            title: meta.title,
+            category: meta.category,
+            teaser: meta.teaser,
+            tag: meta.tag,
+            difficulty: meta.difficulty,
+            published: meta.published,
+            featured: meta.featured,
+            content: lesson,
+          },
+          { onConflict: 'slug' }
+        );
+        if (legacyErr) throw legacyErr;
+
+        console.log(`[OK] ${file} → legacy content mode`);
+        ok++;
+        continue;
+      }
+
       if (lessonErr) throw lessonErr;
 
       const lessonId = meta.id;

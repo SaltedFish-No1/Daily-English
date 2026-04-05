@@ -1,10 +1,16 @@
 -- 课程数据库表结构（完全规范化，每个字段只存一次）
 -- Run this in the Supabase SQL editor.
 
+-- 删除旧表以防架构不一致
+DROP TABLE IF EXISTS lesson_quiz_questions CASCADE;
+DROP TABLE IF EXISTS lesson_focus_words CASCADE;
+DROP TABLE IF EXISTS lesson_paragraphs CASCADE;
+DROP TABLE IF EXISTS lessons CASCADE;
+
 -- ==========================================================================
 -- 1. 主表：课程元数据 + 文章标题 + 语音开关
 -- ==========================================================================
-CREATE TABLE IF NOT EXISTS lessons (
+CREATE TABLE lessons (
   id              UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   date            TEXT NOT NULL UNIQUE,          -- 日期字符串，如 "2026-04-02"
   title           TEXT NOT NULL,
@@ -26,7 +32,7 @@ CREATE INDEX IF NOT EXISTS idx_lessons_published ON lessons (published, date DES
 -- ==========================================================================
 -- 2. 文章段落表
 -- ==========================================================================
-CREATE TABLE IF NOT EXISTS lesson_paragraphs (
+CREATE TABLE lesson_paragraphs (
   id          UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   lesson_id   UUID NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
   position    SMALLINT NOT NULL,               -- 段落顺序 0, 1, 2, ...
@@ -41,7 +47,7 @@ CREATE INDEX IF NOT EXISTS idx_paragraphs_lesson ON lesson_paragraphs (lesson_id
 -- ==========================================================================
 -- 3. 重点词表
 -- ==========================================================================
-CREATE TABLE IF NOT EXISTS lesson_focus_words (
+CREATE TABLE lesson_focus_words (
   id          UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   lesson_id   UUID NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
   position    SMALLINT NOT NULL,               -- 词条顺序
@@ -55,7 +61,7 @@ CREATE INDEX IF NOT EXISTS idx_focus_words_lesson ON lesson_focus_words (lesson_
 -- ==========================================================================
 -- 4. 测验题表（多态：公共字段为列，题型特有数据为 payload）
 -- ==========================================================================
-CREATE TABLE IF NOT EXISTS lesson_quiz_questions (
+CREATE TABLE lesson_quiz_questions (
   id              UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   lesson_id       UUID NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
   position        SMALLINT NOT NULL,           -- 题目顺序

@@ -84,6 +84,13 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
     Math.max(2, Math.min(6, savedWordCount || 0))
   );
   const recentWords = recentWordEntries.slice(0, previewCount);
+  const formatDisplayDate = (rawDate: string) => {
+    const date = new Date(rawDate);
+    if (Number.isNaN(date.getTime())) return rawDate;
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(
+      date.getDate()
+    ).padStart(2, '0')}`;
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
@@ -154,8 +161,8 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3">
           {lessons.map((lesson, i) => (
             <Link
-              key={lesson.date}
-              href={`/lessons/${lesson.date}`}
+              key={lesson.id}
+              href={`/lessons/${lesson.id}`}
               className="group relative block overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:shadow-xl active:scale-95"
             >
               <motion.div
@@ -164,11 +171,13 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
                 transition={{ delay: i * 0.1 }}
               >
                 <div className="flex h-44 items-center justify-center bg-emerald-50/50 p-6 transition-colors group-hover:bg-emerald-50 sm:h-48 sm:p-8">
-                  <div className="text-center">
-                    <span className="mb-2 inline-block rounded-full bg-emerald-100 px-2.5 py-0.5 text-[10px] font-bold tracking-widest text-emerald-700 uppercase">
-                      {lesson.tag}
-                    </span>
-                    <h3 className="text-lg leading-tight font-bold text-slate-900 transition-colors group-hover:text-emerald-900 sm:text-xl">
+                  <div className="w-full">
+                    <div className="mb-3 flex flex-wrap items-center justify-center gap-1.5">
+                      <span className="inline-block rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-[10px] font-bold tracking-widest text-slate-500 uppercase">
+                        {lesson.category}
+                      </span>
+                    </div>
+                    <h3 className="text-center text-lg leading-tight font-bold text-slate-900 transition-colors group-hover:text-emerald-900 sm:text-xl">
                       {lesson.title}
                     </h3>
                   </div>
@@ -177,7 +186,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
                   <div className="mb-3 flex items-center justify-between text-[10px] font-bold tracking-widest text-slate-400 uppercase">
                     <span className="flex items-center gap-1">
                       <Calendar size={12} />
-                      {lesson.date}
+                      {formatDisplayDate(lesson.createdAt ?? lesson.date)}
                     </span>
                     <span
                       role="button"
@@ -199,7 +208,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
                       {lesson.difficulty}
                     </span>
                   </div>
-                  <p className="mb-5 line-clamp-2 text-sm leading-relaxed font-medium text-slate-500">
+                  <p className="mb-5 line-clamp-3 text-sm leading-relaxed font-medium text-slate-500">
                     {lesson.teaser}
                   </p>
                   <div className="flex items-center justify-between">
