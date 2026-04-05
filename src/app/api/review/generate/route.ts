@@ -7,7 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { streamObject } from 'ai';
+import { generateObject } from 'ai';
 import { z } from 'zod';
 import { modelPower } from '@/lib/ai';
 import { requireApiAuth } from '@/lib/api-auth';
@@ -69,7 +69,7 @@ const TFNGQuestionSchema = z.object({
   rationale: z.object({ en: z.string(), zh: z.string() }).nullable(),
 });
 
-const QuizQuestionSchema = z.discriminatedUnion('type', [
+const QuizQuestionSchema = z.union([
   CompletionQuestionSchema,
   MultipleChoiceQuestionSchema,
   TFNGQuestionSchema,
@@ -135,10 +135,10 @@ export async function POST(request: NextRequest) {
   const wordList = words.slice(0, 15).join(', ');
 
   try {
-    const result = streamObject({
+    const { object } = await generateObject({
       model: modelPower,
       schema: GeneratedLessonSchema,
-      maxOutputTokens: 16384,
+      maxOutputTokens: 65536,
       prompt: `You are a professional English language education content creator.
 
 Generate a complete English reading lesson that naturally incorporates ALL of the following vocabulary words: ${wordList}
@@ -161,25 +161,9 @@ REQUIREMENTS:
 
 Return valid JSON matching the schema exactly.`,
       temperature: 0.8,
-      onFinish: ({ object, error }) => {
-        if (error) {
-          console.error(
-            '[ReviewGenerate] streamObject finished with error:',
-            error
-          );
-        }
-        if (!object) {
-          console.error(
-            '[ReviewGenerate] streamObject produced no valid object'
-          );
-        }
-      },
     });
 
-    // Stream the raw generated lesson object to the client.
-    // The frontend reads the stream, shows real progress, and assembles
-    // the full LessonData once complete.
-    return result.toTextStreamResponse();
+    return NextResponse.json(object);
   } catch (error) {
     console.error('[ReviewGenerate] AI generation failed:', error);
     return NextResponse.json(

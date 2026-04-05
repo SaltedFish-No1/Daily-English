@@ -85,36 +85,7 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
         throw new Error(err.error || `HTTP ${res.status}`);
       }
 
-      // Read streaming response from streamObject
-      const reader = res.body!.getReader();
-      const decoder = new TextDecoder();
-      let accumulated = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        accumulated += decoder.decode(value, { stream: true });
-        try {
-          const partial = JSON.parse(accumulated);
-          setState({ status: 'generating', progress: partial });
-        } catch {
-          // Incomplete JSON — wait for more chunks
-        }
-      }
-
-      // Flush any remaining buffered bytes (e.g. partial multi-byte UTF-8 chars)
-      accumulated += decoder.decode();
-
-      let object: GeneratedLesson;
-      try {
-        object = JSON.parse(accumulated) as GeneratedLesson;
-      } catch {
-        console.error(
-          '[ReviewView] Failed to parse streamed JSON, length:',
-          accumulated.length
-        );
-        throw new Error('AI 生成内容不完整，请重试。');
-      }
+      const object = (await res.json()) as GeneratedLesson;
       const lessonData = assembleLessonData(object, words, difficulty);
       setState({ status: 'success', data: lessonData });
     } catch (err) {
