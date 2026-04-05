@@ -317,7 +317,7 @@ export function DashboardView() {
                 >
                   <div>
                     <p className="text-sm font-bold text-slate-800">
-                      {record.slug}
+                      {record.title || record.slug}
                     </p>
                     <p className="text-[11px] text-slate-400">
                       {new Date(record.completedAt).toLocaleDateString('zh-CN')}

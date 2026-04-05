@@ -58,11 +58,9 @@ async function migrateSavedWords(userId: string) {
   const batchSize = 500;
   for (let i = 0; i < rows.length; i += batchSize) {
     const batch = rows.slice(i, i + batchSize);
-    await supabase
-      .from('saved_words')
-      .upsert(batch, {
-        onConflict: 'user_id,word,lesson_slug,paragraph_index',
-      });
+    await supabase.from('saved_words').upsert(batch, {
+      onConflict: 'user_id,word,lesson_slug,paragraph_index',
+    });
   }
 }
 
@@ -76,6 +74,7 @@ async function migrateHistory(userId: string) {
   const rows = Object.values(history).map((h: LessonHistory) => ({
     user_id: userId,
     slug: h.slug,
+    title: h.title,
     score: h.score,
     total: h.total,
     completed_at: h.completedAt,
@@ -191,7 +190,7 @@ export async function pullCloudDataToLocal(userId: string) {
     for (const row of historyRes.data) {
       const local = store.history[row.slug];
       if (!local || row.score > local.score) {
-        store.saveLessonScore(row.slug, row.score, row.total);
+        store.saveLessonScore(row.slug, row.score, row.total, row.title);
       }
     }
   }
