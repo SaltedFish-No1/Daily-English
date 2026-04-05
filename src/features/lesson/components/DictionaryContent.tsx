@@ -44,9 +44,44 @@ export const DictionaryContent: React.FC<DictionaryContentProps> = ({
 }) => {
   if (currentRecord?.status === 'loading') {
     return (
-      <div className="flex flex-col items-center justify-center space-y-4 py-16">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-emerald-500"></div>
-        <p className="text-sm font-medium text-slate-500">正在查询词典…</p>
+      <div className="fade-in space-y-6">
+        {/* Word header skeleton */}
+        <div className="mb-6 lg:mb-8">
+          <div className="flex items-start justify-between gap-4">
+            <div className="h-9 w-36 animate-pulse rounded-lg bg-slate-200" />
+            <div className="flex shrink-0 gap-2">
+              <div className="h-10 w-10 animate-pulse rounded-full bg-slate-100" />
+              <div className="h-10 w-10 animate-pulse rounded-full bg-slate-100" />
+            </div>
+          </div>
+          <div className="mt-3 flex gap-2.5">
+            <div className="h-5 w-16 animate-pulse rounded-full bg-slate-100" />
+            <div className="h-5 w-24 animate-pulse rounded bg-slate-100" />
+          </div>
+        </div>
+        {/* Meaning block skeletons */}
+        {[0, 1].map((i) => (
+          <div
+            key={i}
+            className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm lg:p-6"
+          >
+            <div className="mb-4 flex items-center gap-3 border-b border-slate-50 pb-3">
+              <div className="h-7 w-16 animate-pulse rounded-lg bg-slate-100" />
+              <div className="h-px flex-1 bg-slate-100" />
+            </div>
+            <div className="space-y-5">
+              {[0, 1].map((j) => (
+                <div key={j} className="flex items-start gap-3">
+                  <div className="mt-0.5 h-5 w-5 animate-pulse rounded-full bg-slate-100" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 w-full animate-pulse rounded bg-slate-200" />
+                    <div className="h-4 w-2/3 animate-pulse rounded bg-slate-100" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
@@ -228,11 +263,13 @@ export const DictionaryContent: React.FC<DictionaryContentProps> = ({
                         <p className="text-[15px] leading-relaxed font-medium text-slate-800">
                           {definition.definition}
                         </p>
-                        {definition.definitionZh && (
+                        {definition.definitionZh ? (
                           <p className="text-sm leading-relaxed text-slate-500">
                             {definition.definitionZh}
                           </p>
-                        )}
+                        ) : currentRecord?.zhStatus === 'pending' ? (
+                          <div className="h-4 w-2/3 animate-pulse rounded bg-slate-100" />
+                        ) : null}
                         {definition.example && (
                           <div className="rounded-lg border-l-2 border-emerald-200 bg-emerald-50/50 py-2 pr-3 pl-3">
                             <p className="text-sm leading-relaxed text-slate-600 italic">
