@@ -5,8 +5,8 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { generateObject } from 'ai';
-import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
+import { modelFast } from '@/lib/ai';
 import { supabaseAdmin } from '@/lib/supabase-server';
 import {
   fetchDictionaryEntries,
@@ -17,13 +17,13 @@ import { DictionaryEntry } from '@/types/dictionary';
 
 const DictionaryDefinitionSchema = z.object({
   definition: z.string(),
-  example: z.string().optional(),
+  example: z.string().nullable(),
   synonyms: z.array(z.string()),
   antonyms: z.array(z.string()),
 });
 
 const DictionaryMeaningSchema = z.object({
-  partOfSpeech: z.string().optional(),
+  partOfSpeech: z.string().nullable(),
   definitions: z.array(DictionaryDefinitionSchema),
   synonyms: z.array(z.string()),
   antonyms: z.array(z.string()),
@@ -31,12 +31,12 @@ const DictionaryMeaningSchema = z.object({
 
 const DictionaryEntrySchema = z.object({
   word: z.string(),
-  phonetic: z.string().optional(),
+  phonetic: z.string().nullable(),
   phonetics: z.array(
     z.object({
-      text: z.string().optional(),
-      audio: z.string().optional(),
-      sourceUrl: z.string().optional(),
+      text: z.string().nullable(),
+      audio: z.string().nullable(),
+      sourceUrl: z.string().nullable(),
     })
   ),
   meanings: z.array(DictionaryMeaningSchema),
@@ -88,7 +88,10 @@ export async function POST(request: NextRequest) {
   // 2. 请求 dictionaryapi.dev
   const apiResult = await fetchDictionaryEntries(word);
 
-  if (apiResult.status === 'success' && isDictionaryEntryComplete(apiResult.data)) {
+  if (
+    apiResult.status === 'success' &&
+    isDictionaryEntryComplete(apiResult.data)
+  ) {
     const audioUrl = extractAudioUrl(apiResult.data!);
 
     // 写入缓存（后台，不阻塞响应）
@@ -113,7 +116,7 @@ export async function POST(request: NextRequest) {
   // 3. AI Fallback
   try {
     const { object } = await generateObject({
-      model: openai('gpt-4o-mini'),
+      model: modelFast,
       schema: AIResponseSchema,
       prompt: `You are a professional English dictionary. Generate a complete dictionary entry for the word "${word}".
 
@@ -128,18 +131,18 @@ Return the data as a JSON object with an "entries" array. Each entry should have
 
     const aiEntries: DictionaryEntry[] = object.entries.map((entry) => ({
       word: entry.word,
-      phonetic: entry.phonetic,
+      phonetic: entry.phonetic ?? undefined,
       audio: undefined,
       phonetics: entry.phonetics.map((p) => ({
-        text: p.text,
-        audio: p.audio,
-        sourceUrl: p.sourceUrl,
+        text: p.text ?? undefined,
+        audio: p.audio ?? undefined,
+        sourceUrl: p.sourceUrl ?? undefined,
       })),
       meanings: entry.meanings.map((m) => ({
-        partOfSpeech: m.partOfSpeech,
+        partOfSpeech: m.partOfSpeech ?? undefined,
         definitions: m.definitions.map((d) => ({
           definition: d.definition,
-          example: d.example,
+          example: d.example ?? undefined,
           synonyms: d.synonyms,
           antonyms: d.antonyms,
         })),

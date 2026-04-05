@@ -4,8 +4,8 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { generateObject } from 'ai';
-import { openai } from '@ai-sdk/openai';
 import { supabaseAdmin } from '@/lib/supabase-server';
+import { modelPower } from '@/lib/ai';
 import { getAuthUser } from '@/lib/auth-helper';
 import {
   WritingGradeSchema,
@@ -117,7 +117,7 @@ Provide your overall comment, strengths, and improvements in Chinese (中文). G
   let gradeResult;
   try {
     const { object } = await generateObject({
-      model: openai('gpt-4o'),
+      model: modelPower,
       schema: WritingGradeSchema,
       messages: [
         { role: 'system', content: systemPrompt },

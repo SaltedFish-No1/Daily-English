@@ -8,8 +8,8 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { generateObject } from 'ai';
-import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
+import { modelPower } from '@/lib/ai';
 
 // ---------------------------------------------------------------------------
 // Zod schema for the AI-generated lesson
@@ -29,7 +29,7 @@ const FocusWordSchema = z.object({
 const CompletionBlankSchema = z.object({
   id: z.string(),
   acceptedAnswers: z.array(z.string()),
-  wordLimit: z.number().optional(),
+  wordLimit: z.number().nullable(),
 });
 
 const CompletionQuestionSchema = z.object({
@@ -40,7 +40,7 @@ const CompletionQuestionSchema = z.object({
   instruction: z.string(),
   contentTemplate: z.string(),
   blanks: z.array(CompletionBlankSchema),
-  rationale: z.object({ en: z.string(), zh: z.string() }).optional(),
+  rationale: z.object({ en: z.string(), zh: z.string() }).nullable(),
 });
 
 const MultipleChoiceOptionSchema = z.object({
@@ -55,7 +55,7 @@ const MultipleChoiceQuestionSchema = z.object({
   prompt: z.string(),
   options: z.array(MultipleChoiceOptionSchema),
   correctOptionIds: z.array(z.string()),
-  rationale: z.object({ en: z.string(), zh: z.string() }).optional(),
+  rationale: z.object({ en: z.string(), zh: z.string() }).nullable(),
 });
 
 const TFNGQuestionSchema = z.object({
@@ -65,7 +65,7 @@ const TFNGQuestionSchema = z.object({
   prompt: z.string(),
   statement: z.string(),
   answer: z.enum(['TRUE', 'FALSE', 'NOT_GIVEN']),
-  rationale: z.object({ en: z.string(), zh: z.string() }).optional(),
+  rationale: z.object({ en: z.string(), zh: z.string() }).nullable(),
 });
 
 const QuizQuestionSchema = z.discriminatedUnion('type', [
@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const { object } = await generateObject({
-      model: openai('gpt-4o-mini'),
+      model: modelPower,
       schema: GeneratedLessonSchema,
       prompt: `You are a professional English language education content creator.
 
