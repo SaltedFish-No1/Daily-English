@@ -10,6 +10,7 @@ import {
   Trophy,
   CheckCircle2,
   Sparkles,
+  CircleCheckBig,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -78,7 +79,7 @@ export const ReadingView: React.FC<ReadingViewProps> = ({ lessons }) => {
 
       <main className="mx-auto w-full max-w-5xl flex-grow px-5 py-8 sm:py-12">
         {/* Learning Stats */}
-        <section className="mb-6 grid grid-cols-3 gap-3 sm:mb-8">
+        <section className="mb-6 grid grid-cols-4 gap-3 sm:mb-8">
           <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm">
             <div className="mb-1 flex items-center justify-center text-emerald-600">
               <BookOpen size={18} />
@@ -99,6 +100,17 @@ export const ReadingView: React.FC<ReadingViewProps> = ({ lessons }) => {
             </p>
             <p className="text-[10px] font-bold text-slate-400 sm:text-[11px]">
               收藏生词
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm">
+            <div className="mb-1 flex items-center justify-center text-emerald-600">
+              <CircleCheckBig size={18} />
+            </div>
+            <p className="text-xl font-bold text-slate-900 sm:text-2xl">
+              {stats.masteredCount}
+            </p>
+            <p className="text-[10px] font-bold text-slate-400 sm:text-[11px]">
+              已背单词
             </p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm">

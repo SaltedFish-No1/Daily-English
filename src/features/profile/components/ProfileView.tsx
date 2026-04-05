@@ -18,6 +18,7 @@ import {
   LogOut,
   Camera,
   User,
+  CircleCheckBig,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useUserStore } from '@/store/useUserStore';
@@ -145,7 +146,7 @@ function SettingRow<T extends string | number>({
 /*  ProfileView                                                        */
 /* ------------------------------------------------------------------ */
 export function ProfileView() {
-  const { savedWords, history, dictionaryCache } = useUserStore();
+  const { savedWords, history, dictionaryCache, wordReviewStates } = useUserStore();
   const { user, isGuest, signOut } = useAuthStore();
   const prefs = usePreferenceStore();
 
@@ -173,8 +174,11 @@ export function ProfileView() {
             ) / lessonCount
           )
         : 0;
-    return { wordCount, lessonCount, avgScore };
-  }, [savedWords, history]);
+    const masteredCount = Object.values(wordReviewStates).filter(
+      (s) => s.status === 'mastered'
+    ).length;
+    return { wordCount, lessonCount, avgScore, masteredCount };
+  }, [savedWords, history, wordReviewStates]);
 
   const cacheCount = Object.keys(dictionaryCache).length;
 
@@ -307,7 +311,7 @@ export function ProfileView() {
         </section>
 
         {/* ── Stats Grid ────────────────────────────── */}
-        <section className="grid grid-cols-3 gap-3">
+        <section className="grid grid-cols-4 gap-3">
           <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm">
             <div className="mb-1 flex items-center justify-center text-emerald-600">
               <BookOpen size={20} />
@@ -325,6 +329,15 @@ export function ProfileView() {
               {stats.wordCount}
             </p>
             <p className="text-[11px] font-bold text-slate-400">收藏生词</p>
+          </div>
+          <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm">
+            <div className="mb-1 flex items-center justify-center text-emerald-600">
+              <CircleCheckBig size={20} />
+            </div>
+            <p className="text-2xl font-bold text-slate-900">
+              {stats.masteredCount}
+            </p>
+            <p className="text-[11px] font-bold text-slate-400">已背单词</p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm">
             <div className="mb-1 flex items-center justify-center text-emerald-600">
