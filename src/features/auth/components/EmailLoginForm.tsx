@@ -14,6 +14,8 @@ import {
   checkUserExists,
   sendOtp as apiSendOtp,
   verifyOtp as apiVerifyOtp,
+  sendPasswordResetOtp,
+  resetPassword as apiResetPassword,
 } from '../lib/authApi';
 
 type Step =
@@ -21,7 +23,8 @@ type Step =
   | 'login-password'
   | 'login-otp'
   | 'register-verify'
-  | 'forgot-password';
+  | 'forgot-password'
+  | 'forgot-set-password';
 
 export const EmailLoginForm: React.FC = () => {
   const router = useRouter();
@@ -152,21 +155,49 @@ export const EmailLoginForm: React.FC = () => {
     setLoading(false);
   }, [email]);
 
-  // ── 忘记密码 ──
+  // ── 忘记密码：发送重置验证码 ──
   const handleForgotPassword = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setOtpCode('');
 
-    const { error: resetError } =
-      await supabase.auth.resetPasswordForEmail(email);
-    if (resetError) {
-      setError(resetError.message);
+    const { error: sendError } = await sendPasswordResetOtp(email);
+    if (sendError) {
+      setError(sendError);
     } else {
       setCooldown(60);
+      setMessage('密码重置验证码已发送，请查收邮箱。');
       setStep('forgot-password');
     }
     setLoading(false);
   }, [email]);
+
+  // ── 忘记密码：验证 OTP 后设置新密码 ──
+  const handleResetPassword = useCallback(async () => {
+    if (password.length < 6) {
+      setError('密码至少 6 位');
+      return;
+    }
+    setLoading(true);
+    setError(null);
+
+    const { error: resetError } = await apiResetPassword(
+      email,
+      otpCode,
+      password
+    );
+    if (resetError) {
+      setError(resetError);
+      setLoading(false);
+      return;
+    }
+
+    setMessage('密码重置成功，请使用新密码登录。');
+    setPassword('');
+    setOtpCode('');
+    setStep('login-password');
+    setLoading(false);
+  }, [email, otpCode, password]);
 
   // ── 切换回邮箱输入 ──
   const handleChangeEmail = useCallback(() => {
@@ -392,39 +423,110 @@ export const EmailLoginForm: React.FC = () => {
   }
 
   // ════════════════════════════════
-  // Step 5: 忘记密码确认
+  // Step 5: 忘记密码 — 输入验证码
+  // ════════════════════════════════
+  if (step === 'forgot-password') {
+    return (
+      <div className="space-y-4">
+        {emailBar}
+
+        {message && <p className="text-xs text-emerald-600">{message}</p>}
+
+        <input
+          type="text"
+          inputMode="numeric"
+          placeholder="输入 6 位验证码"
+          maxLength={6}
+          value={otpCode}
+          onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && otpCode.length === 6) {
+              setError(null);
+              setMessage(null);
+              setStep('forgot-set-password');
+            }
+          }}
+          className={inputClass}
+        />
+
+        {error && <p className="text-xs text-red-500">{error}</p>}
+
+        <button
+          type="button"
+          disabled={otpCode.length < 6}
+          onClick={() => {
+            setError(null);
+            setMessage(null);
+            setStep('forgot-set-password');
+          }}
+          className="h-12 w-full rounded-xl bg-emerald-600 text-sm font-bold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
+        >
+          下一步
+        </button>
+
+        <div className="flex items-center justify-between">
+          <button
+            type="button"
+            disabled={loading || cooldown > 0}
+            onClick={handleForgotPassword}
+            className="text-xs font-bold text-slate-400 transition-colors hover:text-emerald-600 disabled:opacity-50"
+          >
+            {cooldown > 0 ? `重新发送 (${cooldown}s)` : '重新发送验证码'}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setError(null);
+              setMessage(null);
+              setOtpCode('');
+              setStep('login-password');
+            }}
+            className="text-xs font-bold text-slate-400 transition-colors hover:text-emerald-600"
+          >
+            返回登录
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ════════════════════════════════
+  // Step 6: 忘记密码 — 设置新密码
   // ════════════════════════════════
   return (
     <div className="space-y-4">
       {emailBar}
 
-      <div className="rounded-xl bg-emerald-50 px-4 py-3">
-        <p className="text-sm text-emerald-700">
-          密码重置邮件已发送到 <span className="font-bold">{email}</span>
-          ，请查收邮箱中的重置链接。
-        </p>
-      </div>
+      <input
+        type="password"
+        placeholder="设置新密码（至少 6 位）"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        onKeyDown={(e) => e.key === 'Enter' && handleResetPassword()}
+        className={inputClass}
+      />
 
       {error && <p className="text-xs text-red-500">{error}</p>}
 
       <button
         type="button"
-        onClick={() => {
-          setError(null);
-          setStep('login-password');
-        }}
-        className="h-12 w-full rounded-xl bg-emerald-600 text-sm font-bold text-white transition-colors hover:bg-emerald-700"
+        disabled={loading || password.length < 6}
+        onClick={handleResetPassword}
+        className="h-12 w-full rounded-xl bg-emerald-600 text-sm font-bold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
       >
-        返回登录
+        {loading ? '重置中...' : '重置密码'}
       </button>
 
       <button
         type="button"
-        disabled={loading || cooldown > 0}
-        onClick={handleForgotPassword}
-        className="w-full text-center text-xs font-bold text-slate-400 transition-colors hover:text-emerald-600 disabled:opacity-50"
+        onClick={() => {
+          setError(null);
+          setPassword('');
+          setStep('forgot-password');
+        }}
+        className="w-full text-center text-xs font-bold text-slate-400 transition-colors hover:text-emerald-600"
       >
-        {cooldown > 0 ? `重新发送 (${cooldown}s)` : '重新发送重置邮件'}
+        返回上一步
       </button>
     </div>
   );
