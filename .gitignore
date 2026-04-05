@@ -35,6 +35,12 @@ next-env.d.ts
 /blob-report/
 /playwright/.cache/
 
+# schema (contains Supabase table definitions including sensitive tables)
+schema.json
+
+# npm lock file (project uses pnpm)
+package-lock.json
+
 # LLM docs
 docs/*
 # .claude/*

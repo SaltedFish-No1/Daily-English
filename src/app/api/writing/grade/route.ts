@@ -1,11 +1,11 @@
 /**
- * @description AI 批改写作：根据评分标准生成结构化批改报告。
+ * @description AI 批改写作：根据评分标准生成结构化批改报告（流式输出）。
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { generateObject } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { streamObject } from 'ai';
 import { supabaseAdmin } from '@/lib/supabase-server';
+import { modelPower } from '@/lib/ai';
 import { getAuthUser } from '@/lib/auth-helper';
 import {
   WritingGradeSchema,
@@ -113,48 +113,36 @@ Please grade this writing according to the criteria above. For dimensionScores, 
 
 Provide your overall comment, strengths, and improvements in Chinese (中文). Grammar errors, vocabulary suggestions, and model answer should be in English.`;
 
-  // 6. Call AI
-  let gradeResult;
-  try {
-    const { object } = await generateObject({
-      model: openai('gpt-4o'),
-      schema: WritingGradeSchema,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-    });
-    gradeResult = object;
-  } catch (error) {
-    console.error('[Writing] AI grading error:', error);
-    return NextResponse.json({ error: 'AI grading failed' }, { status: 502 });
-  }
+  // 6. Stream AI grading — client receives partial results progressively
+  const result = streamObject({
+    model: modelPower,
+    schema: WritingGradeSchema,
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
+    ],
+    onFinish: async ({ object: gradeResult }) => {
+      if (!gradeResult) return;
+      // 7. Insert grade into DB after stream completes
+      const { error: insertError } = await supabaseAdmin
+        .from('writing_grades')
+        .insert({
+          submission_id: submissionId,
+          user_id: user.id,
+          overall_score: gradeResult.overallScore,
+          dimension_scores: gradeResult.dimensionScores,
+          grammar_errors: gradeResult.grammarErrors,
+          vocabulary_suggestions: gradeResult.vocabularySuggestions,
+          overall_comment: gradeResult.overallComment,
+          model_answer: gradeResult.modelAnswer,
+          strengths: gradeResult.strengths,
+          improvements: gradeResult.improvements,
+        });
+      if (insertError) {
+        console.error('[Writing] Insert grade error:', insertError);
+      }
+    },
+  });
 
-  // 7. Insert grade
-  const { data: grade, error: insertError } = await supabaseAdmin
-    .from('writing_grades')
-    .insert({
-      submission_id: submissionId,
-      user_id: user.id,
-      overall_score: gradeResult.overallScore,
-      dimension_scores: gradeResult.dimensionScores,
-      grammar_errors: gradeResult.grammarErrors,
-      vocabulary_suggestions: gradeResult.vocabularySuggestions,
-      overall_comment: gradeResult.overallComment,
-      model_answer: gradeResult.modelAnswer,
-      strengths: gradeResult.strengths,
-      improvements: gradeResult.improvements,
-    })
-    .select()
-    .single();
-
-  if (insertError || !grade) {
-    console.error('[Writing] Insert grade error:', insertError);
-    return NextResponse.json(
-      { error: 'Failed to save grade' },
-      { status: 500 }
-    );
-  }
-
-  return NextResponse.json({ grade: mapWritingGradeRow(grade) });
+  return result.toTextStreamResponse();
 }

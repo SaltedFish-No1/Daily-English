@@ -7,9 +7,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { generateObject } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { streamObject } from 'ai';
 import { z } from 'zod';
+import { modelPower } from '@/lib/ai';
 
 // ---------------------------------------------------------------------------
 // Zod schema for the AI-generated lesson
@@ -29,7 +29,7 @@ const FocusWordSchema = z.object({
 const CompletionBlankSchema = z.object({
   id: z.string(),
   acceptedAnswers: z.array(z.string()),
-  wordLimit: z.number().optional(),
+  wordLimit: z.number().nullable(),
 });
 
 const CompletionQuestionSchema = z.object({
@@ -40,7 +40,7 @@ const CompletionQuestionSchema = z.object({
   instruction: z.string(),
   contentTemplate: z.string(),
   blanks: z.array(CompletionBlankSchema),
-  rationale: z.object({ en: z.string(), zh: z.string() }).optional(),
+  rationale: z.object({ en: z.string(), zh: z.string() }).nullable(),
 });
 
 const MultipleChoiceOptionSchema = z.object({
@@ -55,7 +55,7 @@ const MultipleChoiceQuestionSchema = z.object({
   prompt: z.string(),
   options: z.array(MultipleChoiceOptionSchema),
   correctOptionIds: z.array(z.string()),
-  rationale: z.object({ en: z.string(), zh: z.string() }).optional(),
+  rationale: z.object({ en: z.string(), zh: z.string() }).nullable(),
 });
 
 const TFNGQuestionSchema = z.object({
@@ -65,7 +65,7 @@ const TFNGQuestionSchema = z.object({
   prompt: z.string(),
   statement: z.string(),
   answer: z.enum(['TRUE', 'FALSE', 'NOT_GIVEN']),
-  rationale: z.object({ en: z.string(), zh: z.string() }).optional(),
+  rationale: z.object({ en: z.string(), zh: z.string() }).nullable(),
 });
 
 const QuizQuestionSchema = z.discriminatedUnion('type', [
@@ -131,8 +131,8 @@ export async function POST(request: NextRequest) {
   const wordList = words.slice(0, 15).join(', ');
 
   try {
-    const { object } = await generateObject({
-      model: openai('gpt-4o-mini'),
+    const result = streamObject({
+      model: modelPower,
       schema: GeneratedLessonSchema,
       prompt: `You are a professional English language education content creator.
 
@@ -158,38 +158,10 @@ Return valid JSON matching the schema exactly.`,
       temperature: 0.8,
     });
 
-    // Assemble into LessonData format
-    const lessonId = `review-${Date.now()}`;
-    const today = new Date().toISOString().slice(0, 10);
-
-    const lessonData = {
-      schemaVersion: '2.2' as const,
-      meta: {
-        id: lessonId,
-        title: object.title,
-        date: today,
-        category: object.category,
-        teaser: object.teaser,
-        published: false,
-        featured: false,
-        tag: 'Review',
-        difficulty,
-        isReview: true,
-        reviewWords: words,
-      },
-      speech: { enabled: true },
-      article: {
-        title: object.title,
-        paragraphs: object.paragraphs,
-      },
-      focusWords: object.focusWords,
-      quiz: {
-        title: 'Vocabulary & Comprehension Check',
-        questions: object.quizQuestions,
-      },
-    };
-
-    return NextResponse.json(lessonData);
+    // Stream the raw generated lesson object to the client.
+    // The frontend reads the stream, shows real progress, and assembles
+    // the full LessonData once complete.
+    return result.toTextStreamResponse();
   } catch (error) {
     console.error('[ReviewGenerate] AI generation failed:', error);
     return NextResponse.json(

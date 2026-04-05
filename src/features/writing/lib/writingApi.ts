@@ -9,6 +9,7 @@ import type {
   WritingTopicWithStats,
   WritingSubmission,
   WritingGrade,
+  WritingGradeResult,
 } from '@/types/writing';
 
 async function getAccessToken(): Promise<string> {
@@ -104,8 +105,14 @@ export async function submitHandwritten(
   return json.submission;
 }
 
+/**
+ * Grade a submission — handles both JSON (existing grade) and streaming (new AI grading).
+ * @param onPartial - Called with partial WritingGradeResult as the stream arrives.
+ *                    Allows the UI to show progressive grading feedback.
+ */
 export async function gradeSubmission(
-  submissionId: string
+  submissionId: string,
+  onPartial?: (partial: Partial<WritingGradeResult>) => void
 ): Promise<WritingGrade> {
   const res = await authFetch('/api/writing/grade', {
     method: 'POST',
@@ -116,6 +123,62 @@ export async function gradeSubmission(
     const err = await res.json().catch(() => ({}));
     throw new Error(err.error ?? 'Grading failed');
   }
-  const json = await res.json();
-  return json.grade;
+
+  const contentType = res.headers.get('content-type') ?? '';
+
+  // Existing grade — server returns JSON directly
+  if (contentType.includes('application/json')) {
+    const json = await res.json();
+    return json.grade;
+  }
+
+  // New AI grading — server streams partial JSON via streamObject
+  const text = await readStreamAsText(res, onPartial);
+  const parsed = JSON.parse(text) as WritingGradeResult;
+
+  // Construct full WritingGrade from AI result (DB fields filled client-side)
+  return {
+    id: '',
+    submissionId,
+    userId: '',
+    overallScore: parsed.overallScore,
+    dimensionScores: parsed.dimensionScores,
+    grammarErrors: parsed.grammarErrors,
+    vocabularySuggestions: parsed.vocabularySuggestions,
+    overallComment: parsed.overallComment,
+    modelAnswer: parsed.modelAnswer,
+    strengths: parsed.strengths,
+    improvements: parsed.improvements,
+    createdAt: new Date().toISOString(),
+  };
+}
+
+/**
+ * Read a text stream response, calling onPartial with accumulated text
+ * parsed as partial JSON whenever possible.
+ */
+async function readStreamAsText(
+  res: Response,
+  onPartial?: (partial: Partial<WritingGradeResult>) => void
+): Promise<string> {
+  const reader = res.body!.getReader();
+  const decoder = new TextDecoder();
+  let accumulated = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    accumulated += decoder.decode(value, { stream: true });
+
+    if (onPartial) {
+      try {
+        const partial = JSON.parse(accumulated);
+        onPartial(partial);
+      } catch {
+        // Incomplete JSON — skip until next chunk
+      }
+    }
+  }
+
+  return accumulated;
 }

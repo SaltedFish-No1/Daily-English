@@ -27,6 +27,7 @@ import type {
   WritingTopic,
   WritingSubmission,
   WritingGrade,
+  WritingGradeResult,
   GradingCriteriaDimension,
 } from '@/types/writing';
 
@@ -53,6 +54,8 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
   const [phase, setPhase] = useState<Phase>('writing');
   const [submission, setSubmission] = useState<WritingSubmission | null>(null);
   const [grade, setGrade] = useState<WritingGrade | null>(null);
+  const [partialGrade, setPartialGrade] =
+    useState<Partial<WritingGradeResult> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [submissionCount, setSubmissionCount] = useState(0);
@@ -116,9 +119,12 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
       setSubmission(sub);
       setSubmissionCount((c) => c + 1);
 
-      // Auto-grade
+      // Auto-grade with streaming progress
       setPhase('grading');
-      const gradeResult = await gradeSubmission(sub.id);
+      setPartialGrade(null);
+      const gradeResult = await gradeSubmission(sub.id, (partial) => {
+        setPartialGrade(partial);
+      });
       setGrade(gradeResult);
       setPhase('report');
       clearDraft();
@@ -246,9 +252,29 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
               <p className="text-sm font-medium text-slate-600">
                 {phase === 'submitting' ? '提交中...' : 'AI 批改中，请稍候...'}
               </p>
-              <p className="text-xs text-slate-400">
-                {phase === 'grading' && '正在分析语法、词汇与结构'}
-              </p>
+              {phase === 'grading' && partialGrade && (
+                <div className="w-full max-w-xs space-y-2">
+                  {partialGrade.overallScore != null && (
+                    <p className="text-center text-lg font-bold text-violet-600">
+                      {partialGrade.overallScore} 分
+                    </p>
+                  )}
+                  <div className="flex flex-wrap justify-center gap-1.5 text-[10px] text-slate-400">
+                    {partialGrade.overallComment && <span>总评 ✓</span>}
+                    {partialGrade.dimensionScores && <span>维度分数 ✓</span>}
+                    {partialGrade.grammarErrors && <span>语法分析 ✓</span>}
+                    {partialGrade.vocabularySuggestions && (
+                      <span>词汇建议 ✓</span>
+                    )}
+                    {partialGrade.modelAnswer && <span>范文 ✓</span>}
+                  </div>
+                </div>
+              )}
+              {phase === 'grading' && !partialGrade && (
+                <p className="text-xs text-slate-400">
+                  正在分析语法、词汇与结构
+                </p>
+              )}
             </motion.div>
           )}
 

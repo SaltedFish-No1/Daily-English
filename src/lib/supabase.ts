@@ -1,10 +1,12 @@
 /**
  * @author SaltedFish-No1
  * @description Supabase 客户端单例（懒初始化），供全应用客户端组件使用。
- *   延迟到首次访问时才创建，避免模块加载阶段的副作用。
+ *   使用 @supabase/ssr 的 createBrowserClient 以支持 cookie 存储，
+ *   从而让 Next.js middleware 能够读取会话信息进行路由保护。
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createBrowserClient } from '@supabase/ssr';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 const supabaseUrl =
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
@@ -22,7 +24,7 @@ let _supabase: SupabaseClient | null = null;
  */
 export function getSupabase(): SupabaseClient {
   if (!_supabase) {
-    _supabase = createClient(supabaseUrl, supabaseAnonKey);
+    _supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
   }
   return _supabase;
 }
