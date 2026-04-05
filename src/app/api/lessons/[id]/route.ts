@@ -1,18 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getLessonBySlug } from '@/lib/lessons-db';
+import { getLessonById } from '@/lib/lessons-db';
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { slug } = await params;
+  const { id } = await params;
 
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(slug)) {
-    return NextResponse.json({ error: 'Invalid slug format' }, { status: 400 });
+  if (
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      id
+    )
+  ) {
+    return NextResponse.json(
+      { error: 'Invalid lesson id format' },
+      { status: 400 }
+    );
   }
 
   try {
-    const lesson = await getLessonBySlug(slug);
+    const lesson = await getLessonById(id);
     if (!lesson) {
       return NextResponse.json({ error: 'Lesson not found' }, { status: 404 });
     }
