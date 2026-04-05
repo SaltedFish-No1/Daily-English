@@ -24,6 +24,7 @@ interface SavedWordRow {
   sense_headword: string | null;
   sense_pos: string | null;
   sense_def: string | null;
+  sense_def_zh: string | null;
   sense_phonetic: string | null;
   sense_audio: string | null;
 }
@@ -50,6 +51,7 @@ async function migrateSavedWords(userId: string) {
         sense_headword: occ.senseSnapshot.headword ?? null,
         sense_pos: occ.senseSnapshot.pos ?? null,
         sense_def: occ.senseSnapshot.def ?? null,
+        sense_def_zh: occ.senseSnapshot.defZh ?? null,
         sense_phonetic: occ.senseSnapshot.phonetic ?? null,
         sense_audio: occ.senseSnapshot.audio ?? null,
       });
@@ -236,6 +238,7 @@ export async function pullCloudDataToLocal(userId: string) {
           headword: row.sense_headword ?? undefined,
           pos: row.sense_pos ?? undefined,
           def: row.sense_def ?? undefined,
+          defZh: row.sense_def_zh ?? undefined,
           phonetic: row.sense_phonetic ?? undefined,
           audio: row.sense_audio ?? undefined,
         },

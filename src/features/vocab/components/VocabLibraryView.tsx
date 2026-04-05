@@ -23,6 +23,7 @@ interface VocabCardItem {
     headword?: string;
     pos?: string;
     def?: string;
+    defZh?: string;
     phonetic?: string;
     audio?: string;
   };
@@ -68,6 +69,7 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
             headword: latest.senseSnapshot.headword,
             pos: latest.senseSnapshot.pos,
             def: latest.senseSnapshot.def,
+            defZh: latest.senseSnapshot.defZh,
             phonetic: latest.senseSnapshot.phonetic,
             audio: latest.senseSnapshot.audio,
           },
@@ -249,6 +251,11 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
                     <div className="mt-1 text-sm text-slate-700">
                       {card.latestSense.def || ''}
                     </div>
+                    {card.latestSense.defZh && (
+                      <div className="mt-0.5 text-sm text-slate-500">
+                        {card.latestSense.defZh}
+                      </div>
+                    )}
                   </div>
                 )}
 

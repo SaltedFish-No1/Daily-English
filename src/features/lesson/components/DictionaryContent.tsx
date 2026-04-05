@@ -228,6 +228,11 @@ export const DictionaryContent: React.FC<DictionaryContentProps> = ({
                         <p className="text-[15px] leading-relaxed font-medium text-slate-800">
                           {definition.definition}
                         </p>
+                        {definition.definitionZh && (
+                          <p className="text-sm leading-relaxed text-slate-500">
+                            {definition.definitionZh}
+                          </p>
+                        )}
                         {definition.example && (
                           <div className="rounded-lg border-l-2 border-emerald-200 bg-emerald-50/50 py-2 pr-3 pl-3">
                             <p className="text-sm leading-relaxed text-slate-600 italic">

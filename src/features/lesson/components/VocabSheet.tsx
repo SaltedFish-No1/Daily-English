@@ -126,6 +126,7 @@ export const VocabSheet: React.FC<VocabSheetProps> = ({ speech }) => {
         headword: primaryEntry.word,
         pos: firstMeaning?.partOfSpeech,
         def: firstDefinition?.definition,
+        defZh: firstDefinition?.definitionZh,
         phonetic: preferredPhonetic,
         audio: preferredAudio,
       },

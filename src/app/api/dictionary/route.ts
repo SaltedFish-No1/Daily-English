@@ -18,6 +18,7 @@ import { DictionaryEntry } from '@/types/dictionary';
 
 const DictionaryDefinitionSchema = z.object({
   definition: z.string(),
+  definitionZh: z.string().nullable(),
   example: z.string().nullable(),
   synonyms: z.array(z.string()),
   antonyms: z.array(z.string()),
@@ -58,6 +59,95 @@ function extractAudioUrl(entries: DictionaryEntry[]): string | null {
   return null;
 }
 
+/** 检查词典条目是否已包含中文释义 */
+function hasChinese(entries: DictionaryEntry[]): boolean {
+  return entries.some((e) =>
+    e.meanings.some((m) => m.definitions.some((d) => Boolean(d.definitionZh)))
+  );
+}
+
+/** 中文释义补全：调用 GPT 为已有英文释义生成对应中文翻译 */
+const ChineseEnrichmentSchema = z.object({
+  meanings: z.array(
+    z.object({
+      partOfSpeech: z.string(),
+      definitions: z.array(
+        z.object({
+          original: z.string(),
+          definitionZh: z.string(),
+        })
+      ),
+    })
+  ),
+});
+
+async function enrichWithChinese(
+  word: string,
+  entries: DictionaryEntry[]
+): Promise<DictionaryEntry[]> {
+  const primaryEntry = entries[0];
+  if (!primaryEntry) return entries;
+
+  try {
+    const { object } = await generateObject({
+      model: modelFast,
+      schema: ChineseEnrichmentSchema,
+      prompt: `You are a bilingual English-Chinese dictionary assistant.
+
+Given the following English dictionary entry for the word "${word}", provide an accurate, natural Chinese translation for each definition.
+
+${JSON.stringify(
+  primaryEntry.meanings.map((m) => ({
+    partOfSpeech: m.partOfSpeech,
+    definitions: m.definitions.map((d) => d.definition),
+  })),
+  null,
+  2
+)}
+
+Rules:
+- Translate each definition into concise, natural Chinese (中文释义)
+- Match the register and specificity of the English definition
+- For technical terms, use the standard Chinese terminology
+- Keep translations brief (typically 5-20 Chinese characters)
+- Echo back the original English definition exactly in the "original" field so translations can be aligned
+- Return one meanings array matching the structure above`,
+    });
+
+    // 按位置对齐合并中文释义，回退到文本匹配
+    return entries.map((entry, entryIndex) => {
+      if (entryIndex !== 0) return entry;
+      return {
+        ...entry,
+        meanings: entry.meanings.map((meaning, mIdx) => {
+          const aiMeaning = object.meanings[mIdx];
+          return {
+            ...meaning,
+            definitions: meaning.definitions.map((def, dIdx) => {
+              // 优先位置匹配
+              const aiDef = aiMeaning?.definitions[dIdx];
+              if (aiDef) {
+                return { ...def, definitionZh: aiDef.definitionZh };
+              }
+              // 回退：按原文文本匹配
+              const textMatch = aiMeaning?.definitions.find(
+                (ad) => ad.original === def.definition
+              );
+              if (textMatch) {
+                return { ...def, definitionZh: textMatch.definitionZh };
+              }
+              return def;
+            }),
+          };
+        }),
+      };
+    });
+  } catch (error) {
+    console.error('[Dictionary Chinese Enrichment] Error:', error);
+    return entries;
+  }
+}
+
 export async function POST(request: NextRequest) {
   const auth = await requireApiAuth(request);
   if ('error' in auth) return auth.error;
@@ -81,7 +171,7 @@ export async function POST(request: NextRequest) {
     .eq('word', word)
     .single();
 
-  if (cached?.data) {
+  if (cached?.data && hasChinese(cached.data as DictionaryEntry[])) {
     return NextResponse.json({
       data: cached.data,
       source: 'cache',
@@ -89,30 +179,46 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  // 2. 请求 dictionaryapi.dev
-  const apiResult = await fetchDictionaryEntries(word);
+  // 缓存命中但无中文释义，保留作为基础数据待补全
+  const baseEntries = cached?.data as DictionaryEntry[] | null;
 
-  if (
-    apiResult.status === 'success' &&
-    isDictionaryEntryComplete(apiResult.data)
-  ) {
-    const audioUrl = extractAudioUrl(apiResult.data!);
+  // 2. 请求 dictionaryapi.dev（若无缓存基础数据）
+  let entriesToEnrich: DictionaryEntry[] | null = baseEntries;
+  let audioUrl: string | null = cached?.audio_url ?? null;
+  let source: string = cached?.source ?? 'dictionaryapi';
+
+  if (!entriesToEnrich) {
+    const apiResult = await fetchDictionaryEntries(word);
+
+    if (
+      apiResult.status === 'success' &&
+      isDictionaryEntryComplete(apiResult.data)
+    ) {
+      entriesToEnrich = apiResult.data;
+      audioUrl = extractAudioUrl(apiResult.data!);
+      source = 'dictionaryapi';
+    }
+  }
+
+  // 2.5 对已有英文数据补全中文释义
+  if (entriesToEnrich && entriesToEnrich.length > 0) {
+    const enriched = await enrichWithChinese(word, entriesToEnrich);
 
     // 写入缓存（后台，不阻塞响应）
     void supabaseAdmin.from('dictionary_cache').upsert(
       {
         word,
-        data: apiResult.data,
+        data: enriched,
         audio_url: audioUrl,
-        source: 'dictionaryapi',
+        source,
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'word' }
     );
 
     return NextResponse.json({
-      data: apiResult.data,
-      source: 'dictionaryapi',
+      data: enriched,
+      source,
       audioUrl,
     });
   }
@@ -122,13 +228,14 @@ export async function POST(request: NextRequest) {
     const { object } = await generateObject({
       model: modelFast,
       schema: AIResponseSchema,
-      prompt: `You are a professional English dictionary. Generate a complete dictionary entry for the word "${word}".
+      prompt: `You are a professional bilingual English-Chinese dictionary. Generate a complete dictionary entry for the word "${word}".
 
 Include:
 - Accurate IPA phonetic transcription
 - All common parts of speech with definitions
 - Example sentences for each definition
 - Synonyms and antonyms where applicable
+- For each definition, also provide a concise Chinese translation in the "definitionZh" field (typically 5-20 Chinese characters, natural and accurate)
 
 Return the data as a JSON object with an "entries" array. Each entry should have: word, phonetic (IPA), phonetics (array with text), meanings (array of objects with partOfSpeech, definitions, synonyms, antonyms), and sourceUrls (empty array).`,
     });
@@ -146,6 +253,7 @@ Return the data as a JSON object with an "entries" array. Each entry should have
         partOfSpeech: m.partOfSpeech ?? undefined,
         definitions: m.definitions.map((d) => ({
           definition: d.definition,
+          definitionZh: d.definitionZh ?? undefined,
           example: d.example ?? undefined,
           synonyms: d.synonyms,
           antonyms: d.antonyms,
@@ -183,12 +291,12 @@ Return the data as a JSON object with an "entries" array. Each entry should have
   } catch (error) {
     console.error('[Dictionary AI Fallback] Error:', error);
 
-    // 如果 dictionaryapi 有部分数据，仍然返回
-    if (apiResult.data && apiResult.data.length > 0) {
+    // 如果 dictionaryapi 有部分数据，仍然返回（无中文）
+    if (entriesToEnrich && entriesToEnrich.length > 0) {
       return NextResponse.json({
-        data: apiResult.data,
-        source: 'dictionaryapi',
-        audioUrl: extractAudioUrl(apiResult.data),
+        data: entriesToEnrich,
+        source,
+        audioUrl,
       });
     }
 

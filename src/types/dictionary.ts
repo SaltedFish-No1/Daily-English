@@ -4,6 +4,7 @@
 
 export interface DictionaryDefinition {
   definition: string;
+  definitionZh?: string;
   example?: string;
   synonyms: string[];
   antonyms: string[];
