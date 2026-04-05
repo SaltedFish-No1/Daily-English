@@ -421,12 +421,6 @@ export function DashboardView() {
         </motion.section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-slate-100 bg-white py-12 text-center">
-        <p className="text-[11px] font-bold tracking-widest text-slate-400 uppercase">
-          © 2026 薄荷外语 · DESIGNED FOR LEARNING
-        </p>
-      </footer>
 
       {/* PWA Install Dialog */}
       {installDialog.open && (

@@ -15,7 +15,7 @@ interface RepoData {
 
 const FALLBACK: RepoData = {
   pushedAt: '2026-04-01',
-  license: 'MIT',
+  license: 'All Rights Reserved',
   ownerAvatar: 'https://avatars.githubusercontent.com/u/138401553',
   ownerLogin: 'SaltedFish-No1',
   ownerUrl: 'https://github.com/SaltedFish-No1',
@@ -35,7 +35,7 @@ export function AboutView() {
       .then((data) => {
         setRepo({
           pushedAt: data.pushed_at?.slice(0, 10) ?? FALLBACK.pushedAt,
-          license: data.license?.spdx_id ?? FALLBACK.license,
+          license: data.license?.spdx_id || FALLBACK.license,
           ownerAvatar: data.owner?.avatar_url ?? FALLBACK.ownerAvatar,
           ownerLogin: data.owner?.login ?? FALLBACK.ownerLogin,
           ownerUrl: data.owner?.html_url ?? FALLBACK.ownerUrl,
