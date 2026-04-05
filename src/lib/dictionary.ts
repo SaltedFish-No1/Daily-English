@@ -155,7 +155,7 @@ export const mapDictionaryEntries = (
   return entries.length > 0 ? entries : null;
 };
 
-const FETCH_TIMEOUT_MS = 5000;
+const FETCH_TIMEOUT_MS = 3000;
 
 export const fetchDictionaryEntries = async (word: string) => {
   const normalizedWord = normalizeDictionaryQuery(word);

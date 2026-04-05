@@ -8,6 +8,7 @@ interface DictionaryApiResponse {
   data: DictionaryEntry[] | null;
   source: 'cache' | 'dictionaryapi' | 'ai_generated';
   audioUrl?: string | null;
+  zhStatus?: 'full' | 'pending' | 'none';
 }
 
 export async function fetchDictionaryFromApi(
@@ -17,6 +18,7 @@ export async function fetchDictionaryFromApi(
   data: DictionaryEntry[] | null;
   source?: string;
   audioUrl?: string | null;
+  zhStatus?: 'full' | 'pending' | 'none';
 }> {
   try {
     const res = await fetch('/api/dictionary', {
@@ -43,6 +45,7 @@ export async function fetchDictionaryFromApi(
       data: json.data,
       source: json.source,
       audioUrl: json.audioUrl,
+      zhStatus: json.zhStatus,
     };
   } catch {
     return { status: 'error', data: null };

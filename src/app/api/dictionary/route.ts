@@ -3,7 +3,7 @@
  *   所有成功结果写入 Supabase dictionary_cache，下次直接返回。
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { after, NextRequest, NextResponse } from 'next/server';
 import { generateObject } from 'ai';
 import { z } from 'zod';
 import { modelFast } from '@/lib/ai';
@@ -176,6 +176,7 @@ export async function POST(request: NextRequest) {
       data: cached.data,
       source: 'cache',
       audioUrl: cached.audio_url,
+      zhStatus: 'full',
     });
   }
 
@@ -200,26 +201,42 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // 2.5 对已有英文数据补全中文释义
+  // 2.5 有英文数据：立即返回，后台异步补全中文释义并写缓存
   if (entriesToEnrich && entriesToEnrich.length > 0) {
-    const enriched = await enrichWithChinese(word, entriesToEnrich);
-
-    // 写入缓存（后台，不阻塞响应）
-    void supabaseAdmin.from('dictionary_cache').upsert(
-      {
-        word,
-        data: enriched,
-        audio_url: audioUrl,
-        source,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: 'word' }
-    );
+    after(async () => {
+      try {
+        const enriched = await enrichWithChinese(word, entriesToEnrich);
+        await supabaseAdmin.from('dictionary_cache').upsert(
+          {
+            word,
+            data: enriched,
+            audio_url: audioUrl,
+            source,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'word' }
+        );
+      } catch (error) {
+        console.error('[Dictionary after() enrichment] Error:', error);
+        // 写入无中文版本，下次查询时重试补全
+        await supabaseAdmin.from('dictionary_cache').upsert(
+          {
+            word,
+            data: entriesToEnrich,
+            audio_url: audioUrl,
+            source,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'word' }
+        );
+      }
+    });
 
     return NextResponse.json({
-      data: enriched,
+      data: entriesToEnrich,
       source,
       audioUrl,
+      zhStatus: 'pending',
     });
   }
 
@@ -287,6 +304,7 @@ Return the data as a JSON object with an "entries" array. Each entry should have
       data: aiEntries,
       source: 'ai_generated',
       audioUrl: null,
+      zhStatus: 'full',
     });
   } catch (error) {
     console.error('[Dictionary AI Fallback] Error:', error);
@@ -297,6 +315,7 @@ Return the data as a JSON object with an "entries" array. Each entry should have
         data: entriesToEnrich,
         source,
         audioUrl,
+        zhStatus: 'none',
       });
     }
 
