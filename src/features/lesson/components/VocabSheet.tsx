@@ -161,7 +161,7 @@ export const VocabSheet: React.FC<VocabSheetProps> = ({ speech }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleClose}
-            className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-sm lg:hidden"
           />
         )}
       </AnimatePresence>
@@ -173,7 +173,7 @@ export const VocabSheet: React.FC<VocabSheetProps> = ({ speech }) => {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="pb-safe fixed inset-x-0 bottom-0 z-50 rounded-t-3xl bg-white shadow-2xl lg:static lg:block lg:rounded-none lg:bg-transparent lg:shadow-none"
+            className="pb-safe fixed inset-x-0 bottom-0 z-[70] rounded-t-3xl bg-white shadow-2xl lg:static lg:block lg:rounded-none lg:bg-transparent lg:shadow-none"
           >
             <div className="relative h-[70vh] max-h-[85vh] overflow-y-auto p-6 pt-14 lg:h-auto lg:max-h-none lg:rounded-2xl lg:border lg:border-emerald-100 lg:bg-slate-50/50 lg:pt-8">
               {/* Drag Handle */}
