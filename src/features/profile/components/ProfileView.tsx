@@ -209,9 +209,10 @@ export function ProfileView() {
     }
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     if (confirm('确定要退出登录吗？')) {
-      signOut();
+      await signOut();
+      window.location.href = '/login';
     }
   };
 
