@@ -1,7 +1,15 @@
 {
-  "schemaVersion": "2.1",
+  "schemaVersion": "2.2",
   "meta": {
-    "title": "The Ecology of Predators"
+    "id": "a748b6a3-92a9-4289-94fb-382c12dceb2d",
+    "title": "The Ecology of Predators",
+    "date": "2026-03-28",
+    "category": "Science & Nature",
+    "teaser": "Reconsider the role of predators and uncover how fear, ecology, and human perception have long shaped the natural world.",
+    "published": true,
+    "featured": true,
+    "tag": "Ecology",
+    "difficulty": "B2"
   },
   "speech": {
     "enabled": true
