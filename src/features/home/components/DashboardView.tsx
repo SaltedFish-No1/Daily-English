@@ -15,7 +15,7 @@ import { motion } from 'framer-motion';
 import { useUserStore } from '@/store/useUserStore';
 import { useLearningStats } from '@/hooks/useLearningStats';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
-import { UserMenu } from '@/features/auth/components/UserMenu';
+
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -142,7 +142,7 @@ export function DashboardView() {
                 {installLabel}
               </button>
             )}
-            <UserMenu />
+
           </div>
         </div>
       </header>
