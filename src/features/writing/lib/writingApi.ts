@@ -65,6 +65,24 @@ export async function uploadTopic(
   return json.topic;
 }
 
+export async function createTopicManual(params: {
+  gradingCriteria: string;
+  title: string | null;
+  writingPrompt: string;
+}): Promise<WritingTopic> {
+  const res = await authFetch('/api/writing/create-topic', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(params),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error ?? '创建题目失败');
+  }
+  const json = await res.json();
+  return json.topic;
+}
+
 export async function submitWriting(params: {
   topicId: string;
   content: string;
