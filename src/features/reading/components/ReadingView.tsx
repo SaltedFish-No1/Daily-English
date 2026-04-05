@@ -31,7 +31,7 @@ interface DifficultyGuideState {
 }
 
 export const ReadingView: React.FC<ReadingViewProps> = ({ lessons }) => {
-  const { history } = useUserStore();
+  const { history, quizProgress } = useUserStore();
   const stats = useLearningStats();
   const { dueCount, dueWords } = useReviewWords();
 
@@ -162,6 +162,10 @@ export const ReadingView: React.FC<ReadingViewProps> = ({ lessons }) => {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3">
           {lessons.map((lesson, i) => {
             const lessonHistory = history[lesson.date];
+            const lessonProgress = quizProgress[lesson.date];
+            const accuracy = lessonHistory && lessonHistory.total > 0
+              ? Math.round((lessonHistory.score / lessonHistory.total) * 100)
+              : null;
             return (
               <Link
                 key={lesson.id}
@@ -173,16 +177,29 @@ export const ReadingView: React.FC<ReadingViewProps> = ({ lessons }) => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
                 >
-                  {/* Completion badge */}
-                  {lessonHistory && (
-                    <div className="absolute top-4 right-4 z-10 flex items-center gap-1 rounded-full bg-emerald-600 px-2.5 py-1 text-[10px] font-bold text-white shadow-sm">
-                      <CheckCircle2 size={12} />
-                      {Math.round(
-                        (lessonHistory.score / lessonHistory.total) * 100
-                      )}
-                      %
-                    </div>
-                  )}
+                  {/* Status label */}
+                  <div className={`absolute top-4 right-4 z-10 flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold shadow-sm ${
+                    lessonHistory
+                      ? accuracy! < 20
+                        ? 'bg-red-500 text-white'
+                        : accuracy! < 60
+                          ? 'bg-amber-400 text-amber-900'
+                          : 'bg-emerald-600 text-white'
+                      : lessonProgress
+                        ? 'bg-indigo-500 text-white'
+                        : 'bg-slate-400 text-white'
+                  }`}>
+                    {lessonHistory ? (
+                      <>
+                        <CheckCircle2 size={12} />
+                        {accuracy === 100 ? 'done 🏅' : accuracy! < 20 ? 'done?' : 'done'}
+                      </>
+                    ) : lessonProgress ? (
+                      '进行中'
+                    ) : (
+                      'new'
+                    )}
+                  </div>
                   <div className="flex h-44 items-center justify-center bg-emerald-50/50 p-6 transition-colors group-hover:bg-emerald-50 sm:h-48 sm:p-8">
                     <div className="w-full">
                       <div className="mb-3 flex flex-wrap items-center justify-center gap-1.5">
