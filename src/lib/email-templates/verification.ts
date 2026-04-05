@@ -49,15 +49,6 @@ export function buildVerificationEmail(code: string): {
                   .join('<td style="width:8px;"></td>')}
               </tr>
             </table>
-            <!-- Copy-friendly code block -->
-            <div style="margin:0 auto 24px;text-align:center;">
-              <div style="display:inline-block;background:#f0fdf4;border:2px dashed #bbf7d0;border-radius:12px;padding:12px 24px;cursor:text;">
-                <span style="font-size:32px;font-weight:700;letter-spacing:8px;color:#059669;font-family:'Courier New',monospace;-webkit-user-select:all;user-select:all;">${code}</span>
-              </div>
-              <p style="margin:8px 0 0;color:#94a3b8;font-size:11px;">
-                点击上方验证码即可复制
-              </p>
-            </div>
             <p style="margin:0 0 4px;color:#64748b;font-size:13px;text-align:center;">
               验证码将在 <strong>10 分钟</strong>后过期
             </p>
