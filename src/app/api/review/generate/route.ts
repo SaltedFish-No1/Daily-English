@@ -7,7 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { streamObject } from 'ai';
+import { generateObject } from 'ai';
 import { modelPower } from '@/lib/ai';
 import { requireApiAuth } from '@/lib/api-auth';
 import { GeneratedLessonSchema } from '@/types/review';
@@ -63,7 +63,9 @@ export async function POST(request: NextRequest) {
   const wordList = words.slice(0, 15).join(', ');
 
   try {
-    const result = streamObject({
+    // DEBUG: Use generateObject (non-streaming) to surface errors directly.
+    // Once the root cause is identified, switch back to streamObject.
+    const { object } = await generateObject({
       model: modelPower,
       schema: GeneratedLessonSchema,
       maxOutputTokens: 65536,
@@ -89,67 +91,19 @@ REQUIREMENTS:
 
 Return valid JSON matching the schema exactly.`,
       temperature: 0.8,
-      onFinish: ({ object, error }) => {
-        if (error) {
-          console.error(
-            '[ReviewGenerate] streamObject finished with error:',
-            error
-          );
-        }
-        if (!object) {
-          console.error(
-            '[ReviewGenerate] streamObject produced no valid object'
-          );
-        }
-      },
     });
 
-    // Wrap the text stream: pass through normal data, but if the stream
-    // ends empty (AI error swallowed), append the error from result.object.
-    const textStream = result.textStream;
-    const objectPromise = result.object;
-
-    const encoder = new TextEncoder();
-    let hasData = false;
-
-    const wrappedStream = new ReadableStream({
-      async start(controller) {
-        try {
-          for await (const chunk of textStream) {
-            hasData = true;
-            controller.enqueue(encoder.encode(chunk));
-          }
-        } catch (streamErr) {
-          console.error(
-            '[ReviewGenerate] textStream iteration error:',
-            streamErr
-          );
-        }
-
-        // If no data came through, the AI call likely failed.
-        // Await the object promise to get the real error and surface it.
-        if (!hasData) {
-          try {
-            await objectPromise;
-          } catch (objErr) {
-            const errMsg = `__SERVER_ERROR__${String(objErr)}`;
-            console.error('[ReviewGenerate] object promise rejected:', objErr);
-            controller.enqueue(encoder.encode(errMsg));
-          }
-        }
-
-        controller.close();
-      },
-    });
-
-    return new Response(wrappedStream, {
-      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-    });
+    return NextResponse.json(object);
   } catch (error) {
     console.error('[ReviewGenerate] AI generation failed:', error);
+    // Return the full error details so we can see them in the browser
     return NextResponse.json(
-      { error: 'Failed to generate review article. Please try again.' },
-      { status: 500 }
+      {
+        error: String(error),
+        name: error instanceof Error ? error.name : 'Unknown',
+        stack: error instanceof Error ? error.stack?.slice(0, 1000) : undefined,
+      },
+      { status: 502 }
     );
   }
 }

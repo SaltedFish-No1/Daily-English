@@ -5,7 +5,6 @@
  */
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { parsePartialJson } from 'ai';
 import { LessonData, LessonListItem } from '@/types/lesson';
 import { type GeneratedLesson } from '@/types/review';
 import { LessonView } from '@/features/lesson/components/LessonView';
@@ -73,103 +72,34 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
         body: JSON.stringify({ words, difficulty }),
       });
 
+      // DEBUG: non-streaming — server returns JSON directly
+      const json = await res.json();
+      console.log('[ReviewView] Response status:', res.status, 'body:', json);
+
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || `HTTP ${res.status}`);
+        throw new Error(json.error || `HTTP ${res.status}`);
       }
 
-      // Read streaming response from streamObject
-      const reader = res.body!.getReader();
-      const decoder = new TextDecoder();
-      let accumulated = '';
-      let chunkCount = 0;
+      const finalObject = json as GeneratedLesson;
 
-      console.log('[ReviewView] Stream started, reading chunks...');
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        accumulated += chunk;
-        chunkCount++;
-
-        if (chunkCount <= 3) {
-          console.log(
-            `[ReviewView] Chunk #${chunkCount}, size=${chunk.length}, accumulated=${accumulated.length}, preview:`,
-            accumulated.slice(0, 200)
-          );
-        }
-
-        const { value: partial } = await parsePartialJson(accumulated);
-        if (partial != null) {
-          if (chunkCount <= 3) {
-            console.log(
-              `[ReviewView] parsePartialJson OK, keys:`,
-              Object.keys(partial as Record<string, unknown>)
-            );
-          }
-          setState({
-            status: 'generating',
-            progress: partial as Partial<GeneratedLesson>,
-          });
-        }
-      }
-
-      // Flush any remaining buffered bytes
-      accumulated += decoder.decode();
-
-      console.log(
-        `[ReviewView] Stream ended. Total chunks=${chunkCount}, accumulated length=${accumulated.length}`
-      );
-      console.log('[ReviewView] First 500 chars:', accumulated.slice(0, 500));
-      console.log('[ReviewView] Last 500 chars:', accumulated.slice(-500));
-
-      // Check if the server sent an error message instead of JSON
-      if (accumulated.startsWith('__SERVER_ERROR__')) {
-        const serverError = accumulated.slice('__SERVER_ERROR__'.length);
-        console.error('[ReviewView] Server-side error:', serverError);
-        throw new Error(`服务端错误: ${serverError}`);
-      }
-
-      const { value: finalObject } = await parsePartialJson(accumulated);
-
-      console.log(
-        '[ReviewView] Final parsePartialJson result:',
-        finalObject
-          ? Object.keys(finalObject as Record<string, unknown>)
-          : 'null/undefined'
-      );
-
-      if (finalObject) {
-        const obj = finalObject as GeneratedLesson;
-        console.log('[ReviewView] Validation check:', {
-          hasTitle: !!obj.title,
-          hasParagraphs: !!obj.paragraphs?.length,
-          paragraphCount: obj.paragraphs?.length,
-          hasQuizQuestions: !!obj.quizQuestions?.length,
-          quizCount: obj.quizQuestions?.length,
-          hasFocusWords: !!obj.focusWords?.length,
-        });
-      }
+      console.log('[ReviewView] Validation check:', {
+        hasTitle: !!finalObject.title,
+        hasParagraphs: !!finalObject.paragraphs?.length,
+        paragraphCount: finalObject.paragraphs?.length,
+        hasQuizQuestions: !!finalObject.quizQuestions?.length,
+        quizCount: finalObject.quizQuestions?.length,
+        hasFocusWords: !!finalObject.focusWords?.length,
+      });
 
       if (
-        !finalObject ||
-        !(finalObject as GeneratedLesson).title ||
-        !(finalObject as GeneratedLesson).paragraphs?.length ||
-        !(finalObject as GeneratedLesson).quizQuestions?.length
+        !finalObject.title ||
+        !finalObject.paragraphs?.length ||
+        !finalObject.quizQuestions?.length
       ) {
-        console.error(
-          '[ReviewView] FAILED validation. Incomplete streamed JSON, length:',
-          accumulated.length
-        );
         throw new Error('AI 生成内容不完整，请重试。');
       }
 
-      const lessonData = assembleLessonData(
-        finalObject as GeneratedLesson,
-        words,
-        difficulty
-      );
+      const lessonData = assembleLessonData(finalObject, words, difficulty);
       setState({ status: 'success', data: lessonData });
     } catch (err) {
       setState({
