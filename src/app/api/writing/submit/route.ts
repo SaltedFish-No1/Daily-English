@@ -4,8 +4,8 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { generateObject } from 'ai';
-import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
+import { modelVision } from '@/lib/ai';
 import { supabaseAdmin } from '@/lib/supabase-server';
 import { getAuthUser } from '@/lib/auth-helper';
 import { mapWritingSubmissionRow } from '@/types/writing';
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
       const mimeType = imageFile.type || 'image/jpeg';
 
       const { object } = await generateObject({
-        model: openai('gpt-4o'),
+        model: modelVision,
         schema: z.object({
           extractedText: z
             .string()

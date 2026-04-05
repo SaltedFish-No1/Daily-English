@@ -17,18 +17,62 @@ interface ReviewViewProps {
   difficulty?: string;
 }
 
+interface GeneratedLesson {
+  title: string;
+  category: string;
+  teaser: string;
+  paragraphs: { id: string; en: string; zh: string }[];
+  focusWords: { key: string; forms: string[] }[];
+  quizQuestions: unknown[];
+}
+
 type GenerationState =
   | { status: 'idle' }
-  | { status: 'generating' }
+  | { status: 'generating'; progress: Partial<GeneratedLesson> | null }
   | { status: 'success'; data: LessonData }
   | { status: 'error'; message: string };
+
+function assembleLessonData(
+  object: GeneratedLesson,
+  words: string[],
+  difficulty: string
+): LessonData {
+  const lessonId = `review-${Date.now()}`;
+  const today = new Date().toISOString().slice(0, 10);
+  return {
+    schemaVersion: '2.2' as const,
+    meta: {
+      id: lessonId,
+      title: object.title,
+      date: today,
+      category: object.category,
+      teaser: object.teaser,
+      published: false,
+      featured: false,
+      tag: 'Review',
+      difficulty,
+      isReview: true,
+      reviewWords: words,
+    },
+    speech: { enabled: true },
+    article: {
+      title: object.title,
+      paragraphs: object.paragraphs,
+    },
+    focusWords: object.focusWords,
+    quiz: {
+      title: 'Vocabulary & Comprehension Check',
+      questions: object.quizQuestions,
+    },
+  } as LessonData;
+}
 
 export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
   const [state, setState] = useState<GenerationState>({ status: 'idle' });
   const batchUpdateWordReview = useUserStore((s) => s.batchUpdateWordReview);
 
   const generate = useCallback(async () => {
-    setState({ status: 'generating' });
+    setState({ status: 'generating', progress: null });
     try {
       const res = await fetch('/api/review/generate', {
         method: 'POST',
@@ -41,7 +85,25 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
         throw new Error(err.error || `HTTP ${res.status}`);
       }
 
-      const lessonData: LessonData = await res.json();
+      // Read streaming response from streamObject
+      const reader = res.body!.getReader();
+      const decoder = new TextDecoder();
+      let accumulated = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        accumulated += decoder.decode(value, { stream: true });
+        try {
+          const partial = JSON.parse(accumulated);
+          setState({ status: 'generating', progress: partial });
+        } catch {
+          // Incomplete JSON — wait for more chunks
+        }
+      }
+
+      const object = JSON.parse(accumulated) as GeneratedLesson;
+      const lessonData = assembleLessonData(object, words, difficulty);
       setState({ status: 'success', data: lessonData });
     } catch (err) {
       setState({
@@ -73,6 +135,20 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
 
   // Loading state
   if (state.status === 'idle' || state.status === 'generating') {
+    const progress = state.status === 'generating' ? state.progress : null;
+    // Calculate real progress based on which schema fields have arrived
+    const progressSteps = [
+      !!progress?.title,
+      !!progress?.paragraphs?.length,
+      !!progress?.focusWords?.length,
+      !!progress?.quizQuestions?.length,
+    ];
+    const progressPct = progress
+      ? Math.round(
+          (progressSteps.filter(Boolean).length / progressSteps.length) * 100
+        )
+      : 0;
+
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-5">
         <motion.div
@@ -87,16 +163,29 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
             正在为你生成专属文章
           </h2>
           <p className="mb-6 text-sm text-slate-500">
-            正在根据你的 {words.length} 个复习词创作文章和测验题...
+            {progress?.title
+              ? `"${progress.title}" — 正在生成中...`
+              : `正在根据你的 ${words.length} 个复习词创作文章和测验题...`}
           </p>
           <div className="mx-auto h-1.5 w-48 overflow-hidden rounded-full bg-slate-100">
             <motion.div
               className="h-full rounded-full bg-emerald-500"
-              initial={{ width: '5%' }}
-              animate={{ width: '85%' }}
-              transition={{ duration: 15, ease: 'easeOut' }}
+              animate={{ width: `${Math.max(5, progressPct)}%` }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
             />
           </div>
+          {progress && (
+            <div className="mt-4 flex justify-center gap-2 text-[10px] text-slate-400">
+              {progress.title && <span>标题 ✓</span>}
+              {progress.paragraphs?.length && (
+                <span>段落 ({progress.paragraphs.length}) ✓</span>
+              )}
+              {progress.focusWords?.length && <span>词汇 ✓</span>}
+              {progress.quizQuestions?.length && (
+                <span>测验 ({progress.quizQuestions.length}) ✓</span>
+              )}
+            </div>
+          )}
           <div className="mt-6 flex flex-wrap justify-center gap-1.5">
             {words.slice(0, 8).map((w) => (
               <span
