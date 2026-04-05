@@ -83,6 +83,17 @@ export async function createTopicManual(params: {
   return json.topic;
 }
 
+export async function fetchSubmissions(topicId: string): Promise<{
+  submissions: WritingSubmission[];
+  grades: Record<string, WritingGrade>;
+}> {
+  const res = await authFetch(
+    `/api/writing/submissions?topicId=${encodeURIComponent(topicId)}`
+  );
+  if (!res.ok) throw new Error('Failed to fetch submissions');
+  return res.json();
+}
+
 export async function submitWriting(params: {
   topicId: string;
   content: string;

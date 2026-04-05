@@ -11,9 +11,14 @@ import {
   PenLine,
   Hash,
   Camera,
+  History,
+  Trophy,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { WritingTimer } from './WritingTimer';
+import {
+  WritingTimerDisplay,
+  WritingTimerControls,
+} from './WritingTimer';
 import { WritingEditor } from './WritingEditor';
 import { GradeReport } from './GradeReport';
 import { HandwritingOcrModal } from './HandwritingOcrModal';
@@ -23,6 +28,7 @@ import {
   submitWriting,
   gradeSubmission,
   fetchCriteria,
+  fetchSubmissions,
 } from '@/features/writing/lib/writingApi';
 import { supabase } from '@/lib/supabase';
 import type {
@@ -65,6 +71,12 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
   const [loading, setLoading] = useState(true);
   const [submissionCount, setSubmissionCount] = useState(0);
   const [ocrModalOpen, setOcrModalOpen] = useState(false);
+  const [pastSubmissions, setPastSubmissions] = useState<WritingSubmission[]>(
+    []
+  );
+  const [pastGrades, setPastGrades] = useState<Record<string, WritingGrade>>(
+    {}
+  );
 
   // Load topic data
   useEffect(() => {
@@ -98,6 +110,17 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
       const criteriaList = await fetchCriteria();
       const crit = criteriaList.find((c) => c.id === found.gradingCriteria);
       if (crit) setDimensions(crit.dimensions);
+
+      // Fetch past submissions
+      try {
+        const { submissions: subs, grades: gds } =
+          await fetchSubmissions(topicId);
+        setPastSubmissions(subs);
+        setPastGrades(gds);
+        setSubmissionCount(subs.length);
+      } catch {
+        // Non-fatal — past submissions simply won't show
+      }
 
       setCurrentTopic(topicId);
       setLoading(false);
@@ -134,6 +157,10 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
       setGrade(gradeResult);
       setPhase('report');
       clearDraft();
+
+      // Append to history so it shows immediately
+      setPastSubmissions((prev) => [...prev, sub]);
+      setPastGrades((prev) => ({ ...prev, [sub.id]: gradeResult }));
     } catch (err) {
       setError(err instanceof Error ? err.message : '提交失败');
       setPhase('writing');
@@ -186,27 +213,41 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
     <div className="flex min-h-screen flex-col bg-slate-50 pb-24 lg:pb-8">
       {/* Header */}
       <header className="pt-safe sticky top-0 z-30 border-b border-gray-100 bg-white shadow-sm">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-5 py-4">
-          <div className="flex items-center gap-3">
+        <div className="mx-auto max-w-3xl px-4 py-3 sm:px-5 sm:py-4">
+          {/* Row 1: Back + Title + Timer display */}
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => router.push('/writing')}
-              className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100"
+              className="shrink-0 rounded-lg p-1.5 text-slate-400 hover:bg-slate-100"
             >
               <ArrowLeft size={20} />
             </button>
-            <div className="min-w-0">
-              <h1 className="truncate text-sm font-bold text-slate-900">
-                {topic.title ?? '写作练习'}
-              </h1>
-              <div className="flex items-center gap-3 text-[10px] text-slate-400">
-                <span className="flex items-center gap-1">
-                  <Hash size={10} />第{' '}
-                  {submissionCount + (phase === 'writing' ? 1 : 0)} 次
-                </span>
-              </div>
+            <h1 className="min-w-0 flex-1 truncate text-sm font-bold text-slate-900">
+              {topic.title ?? '写作练习'}
+            </h1>
+            <div className="shrink-0">
+              <WritingTimerDisplay />
+            </div>
+            {/* Controls inline on sm+ */}
+            <div className="hidden shrink-0 sm:flex">
+              <WritingTimerControls />
             </div>
           </div>
-          <WritingTimer />
+          {/* Row 2 (mobile only): metadata + timer controls */}
+          <div className="mt-1.5 flex items-center justify-between sm:hidden">
+            <span className="flex items-center gap-1 text-[10px] text-slate-400">
+              <Hash size={10} />第{' '}
+              {submissionCount + (phase === 'writing' ? 1 : 0)} 次
+            </span>
+            <WritingTimerControls />
+          </div>
+          {/* Metadata inline on sm+ */}
+          <div className="mt-0.5 hidden pl-[40px] sm:block">
+            <span className="flex items-center gap-1 text-[10px] text-slate-400">
+              <Hash size={10} />第{' '}
+              {submissionCount + (phase === 'writing' ? 1 : 0)} 次
+            </span>
+          </div>
         </div>
       </header>
 
@@ -346,6 +387,85 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Past submissions history */}
+        {pastSubmissions.length > 0 && (
+          <div className="mt-6">
+            <h2 className="mb-3 flex items-center gap-2 text-sm font-bold text-slate-700">
+              <History size={16} />
+              历史记录
+            </h2>
+            <div className="flex flex-col gap-3">
+              {pastSubmissions
+                .slice()
+                .reverse()
+                .map((sub) => {
+                  const g = pastGrades[sub.id];
+                  return (
+                    <details
+                      key={sub.id}
+                      className="rounded-2xl border border-slate-100 bg-white shadow-sm"
+                    >
+                      <summary className="flex cursor-pointer items-center gap-3 p-4">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-violet-50 text-xs font-bold text-violet-600">
+                          #{sub.attemptNumber}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-medium text-slate-700">
+                              第 {sub.attemptNumber} 次
+                            </span>
+                            {g && (
+                              <span className="flex items-center gap-1 text-xs font-bold text-amber-600">
+                                <Trophy size={12} />
+                                {g.overallScore}
+                              </span>
+                            )}
+                          </div>
+                          <div className="mt-0.5 flex items-center gap-2 text-[10px] text-slate-400">
+                            <span>{sub.wordCount} 词</span>
+                            {sub.timeSpentSeconds != null &&
+                              sub.timeSpentSeconds > 0 && (
+                                <span>
+                                  {Math.floor(sub.timeSpentSeconds / 60)} 分钟
+                                </span>
+                              )}
+                            <span>
+                              {new Date(sub.createdAt).toLocaleDateString(
+                                'zh-CN',
+                                {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                }
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      </summary>
+                      <div className="space-y-3 border-t border-slate-50 p-4">
+                        {/* Original text */}
+                        <div>
+                          <p className="mb-1 flex items-center gap-1 text-xs font-bold text-slate-600">
+                            <Eye size={12} />
+                            原文
+                          </p>
+                          <p className="text-xs leading-relaxed whitespace-pre-wrap text-slate-500">
+                            {sub.content}
+                          </p>
+                        </div>
+                        {/* Grade report */}
+                        {g && (
+                          <GradeReport grade={g} dimensions={dimensions} />
+                        )}
+                      </div>
+                    </details>
+                  );
+                })}
+            </div>
+          </div>
+        )}
       </main>
 
       <HandwritingOcrModal

@@ -63,8 +63,8 @@ export function WritingView() {
     <div className="flex min-h-screen flex-col bg-slate-50 pb-24 lg:pb-8">
       {/* Header */}
       <header className="pt-safe sticky top-0 z-30 border-b border-gray-100 bg-white shadow-sm">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-5 py-5">
-          <div className="flex items-center gap-3">
+        <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3 sm:px-5 sm:py-5">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => router.push('/learn')}
               className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100"
@@ -72,7 +72,7 @@ export function WritingView() {
               <ArrowLeft size={20} />
             </button>
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-slate-900">
+              <h1 className="text-lg font-bold tracking-tight text-slate-900 sm:text-xl">
                 写作练习
               </h1>
               <p className="mt-0.5 text-[10px] font-bold tracking-widest text-slate-400 uppercase">
