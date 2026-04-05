@@ -5,4 +5,18 @@
 
 import { Resend } from 'resend';
 
-export const resend = new Resend(process.env.RESEND_API_KEY);
+let _client: Resend | null = null;
+
+/** 延迟初始化 Resend 客户端，避免构建阶段读取未设置的环境变量。 */
+export function getResend(): Resend {
+  if (!_client) {
+    _client = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _client;
+}
+
+export const resend = new Proxy({} as Resend, {
+  get(_target, prop) {
+    return (getResend() as unknown as Record<string | symbol, unknown>)[prop];
+  },
+});
