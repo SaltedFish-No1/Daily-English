@@ -191,7 +191,7 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
     const forgot = results.filter((r) => !r.remembered).length;
 
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
+      <div className="flex h-dvh flex-col items-center justify-center overflow-hidden bg-slate-50 px-4">
         <motion.div
           className="w-full max-w-sm rounded-3xl border border-slate-100 bg-white p-8 text-center shadow-lg"
           initial={{ opacity: 0, scale: 0.9 }}
@@ -276,7 +276,7 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
     : 0;
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
+    <div className="flex h-dvh flex-col overflow-hidden bg-slate-50">
       {/* Header */}
       <header className="flex items-center justify-between px-4 pt-4 pb-2">
         <Link
