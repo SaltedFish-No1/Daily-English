@@ -135,54 +135,6 @@
       ]
     }
   ],
-  "chart": {
-    "type": "bar",
-    "title": "Impact of Enrichment on Captive Animals",
-    "description": "Comparison of animal well-being indicators between standard lavish enclosures (free food) and enriched environments (puzzle feeders).",
-    "labels": [
-      "Boredom & Stress",
-      "Brain Activity",
-      "Social Interaction"
-    ],
-    "datasets": [
-      {
-        "label": "Lavish Enclosure (Free Food)",
-        "data": [
-          85,
-          30,
-          40
-        ],
-        "borderColor": "#f43f5e",
-        "backgroundColor": "rgba(244, 63, 94, 0.7)"
-      },
-      {
-        "label": "Enriched Environment (Puzzles)",
-        "data": [
-          20,
-          85,
-          90
-        ],
-        "borderColor": "#10b981",
-        "backgroundColor": "rgba(16, 185, 129, 0.7)"
-      }
-    ],
-    "yBeginAtZero": true,
-    "yMin": 0,
-    "yMax": 100,
-    "yAxisTitle": "Observed Frequency Score (0-100)",
-    "insights": [
-      {
-        "icon": "🧠",
-        "title": "Mental Stimulation",
-        "text": "Puzzle feeders significantly boost brain activity by forcing animals to use their natural instincts."
-      },
-      {
-        "icon": "📉",
-        "title": "Stress Reduction",
-        "text": "An effortless life leads to high stress, whereas manageable challenges dramatically reduce boredom."
-      }
-    ]
-  },
   "quiz": {
     "title": "Knowledge Check",
     "questions": [
