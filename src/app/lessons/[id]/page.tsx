@@ -1,7 +1,22 @@
 import { LessonView } from '@/features/lesson/components/LessonView';
 import { LessonListItem } from '@/types/lesson';
-import { getLessonById, getLessonIds } from '@/lib/lessons-db';
+import {
+  getLessonById,
+  getLessonIds,
+  getReviewLessonById,
+} from '@/lib/lessons-db';
+import { getServerUserId } from '@/lib/supabase-rsc';
 import { Metadata } from 'next';
+
+async function resolveLesson(id: string) {
+  const data = await getLessonById(id);
+  if (data) return data;
+
+  // Fallback: try loading as user's review lesson
+  const userId = await getServerUserId();
+  if (userId) return getReviewLessonById(id, userId);
+  return null;
+}
 
 export async function generateMetadata({
   params,
@@ -9,7 +24,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const data = await getLessonById(id);
+  const data = await resolveLesson(id);
   if (!data) return { title: 'Lesson Not Found' };
 
   return {
@@ -29,7 +44,7 @@ export default async function LessonPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const data = await getLessonById(id);
+  const data = await resolveLesson(id);
 
   if (!data) {
     return <div>Lesson not found</div>;
