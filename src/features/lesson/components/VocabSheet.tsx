@@ -9,6 +9,7 @@ import { LessonSpeech } from '@/types/lesson';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DictionaryContent } from './DictionaryContent';
+import { fetchTTSAudioUrl } from '@/lib/tts-fallback';
 
 interface VocabSheetProps {
   speech: LessonSpeech;
@@ -41,6 +42,7 @@ export const VocabSheet: React.FC<VocabSheetProps> = ({ speech }) => {
     primaryEntry?.phonetic ??
     primaryEntry?.phonetics.find((phonetic) => phonetic.text)?.text;
   const preferredAudio =
+    currentRecord?.audioUrl ??
     primaryEntry?.audio ??
     primaryEntry?.phonetics.find((phonetic) => phonetic.audio)?.audio;
   const savedWordKey = normalizeDictionaryQuery(
@@ -71,19 +73,33 @@ export const VocabSheet: React.FC<VocabSheetProps> = ({ speech }) => {
     setSelectedWordContext(null);
   };
 
-  const handleSpeak = () => {
+  const handleSpeak = async () => {
     if (!queryWord || !speech.enabled) return;
+    const targetWord = primaryEntry?.word || queryWord;
 
-    const audioUrl = preferredAudio;
-    if (audioUrl) {
-      const audio = new Audio(audioUrl);
-      void audio.play().catch(() => {
-        speak(primaryEntry?.word || queryWord);
-      });
-      return;
+    // Tier 1: 已有音频 URL（来自 dictionaryapi 或 TTS 缓存）
+    if (preferredAudio) {
+      try {
+        await new Audio(preferredAudio).play();
+        return;
+      } catch {
+        // 播放失败，继续 fallback
+      }
     }
 
-    speak(primaryEntry?.word || queryWord);
+    // Tier 2: 服务端 TTS 生成
+    try {
+      const ttsUrl = await fetchTTSAudioUrl(targetWord);
+      if (ttsUrl) {
+        await new Audio(ttsUrl).play();
+        return;
+      }
+    } catch {
+      // TTS 失败，继续 fallback
+    }
+
+    // Tier 3: 浏览器 Web Speech API
+    speak(targetWord);
   };
 
   const handleSave = () => {

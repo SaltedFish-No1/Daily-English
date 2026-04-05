@@ -35,4 +35,6 @@ export interface DictionaryCacheRecord {
   fetchedAt: number;
   data: DictionaryEntry[] | null;
   status: 'loading' | 'success' | 'not_found' | 'error';
+  source?: 'dictionaryapi' | 'ai_generated' | 'cache';
+  audioUrl?: string | null;
 }
