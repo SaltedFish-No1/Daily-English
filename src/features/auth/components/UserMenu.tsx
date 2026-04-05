@@ -88,6 +88,7 @@ export const UserMenu: React.FC = () => {
             onClick={async () => {
               setOpen(false);
               await signOut();
+              window.location.href = '/login';
             }}
             className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-slate-600 transition-colors hover:bg-slate-50"
           >
