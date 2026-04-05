@@ -7,7 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { generateObject } from 'ai';
+import { streamObject } from 'ai';
 import { z } from 'zod';
 import { modelPower } from '@/lib/ai';
 
@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
   const wordList = words.slice(0, 15).join(', ');
 
   try {
-    const { object } = await generateObject({
+    const result = streamObject({
       model: modelPower,
       schema: GeneratedLessonSchema,
       prompt: `You are a professional English language education content creator.
@@ -158,38 +158,10 @@ Return valid JSON matching the schema exactly.`,
       temperature: 0.8,
     });
 
-    // Assemble into LessonData format
-    const lessonId = `review-${Date.now()}`;
-    const today = new Date().toISOString().slice(0, 10);
-
-    const lessonData = {
-      schemaVersion: '2.2' as const,
-      meta: {
-        id: lessonId,
-        title: object.title,
-        date: today,
-        category: object.category,
-        teaser: object.teaser,
-        published: false,
-        featured: false,
-        tag: 'Review',
-        difficulty,
-        isReview: true,
-        reviewWords: words,
-      },
-      speech: { enabled: true },
-      article: {
-        title: object.title,
-        paragraphs: object.paragraphs,
-      },
-      focusWords: object.focusWords,
-      quiz: {
-        title: 'Vocabulary & Comprehension Check',
-        questions: object.quizQuestions,
-      },
-    };
-
-    return NextResponse.json(lessonData);
+    // Stream the raw generated lesson object to the client.
+    // The frontend reads the stream, shows real progress, and assembles
+    // the full LessonData once complete.
+    return result.toTextStreamResponse();
   } catch (error) {
     console.error('[ReviewGenerate] AI generation failed:', error);
     return NextResponse.json(
