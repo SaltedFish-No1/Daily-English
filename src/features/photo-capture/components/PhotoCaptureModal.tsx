@@ -98,8 +98,8 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
         surface: w.word,
         senseSnapshot: {
           headword: w.word,
-          pos: w.pos,
-          def: w.definition,
+          pos: w.pos ?? undefined,
+          def: w.definition ?? undefined,
         },
       });
       // Background: enrich with dictionary data (phonetics, audio)
@@ -126,7 +126,7 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            className="w-full max-w-lg rounded-t-3xl bg-white p-6 shadow-2xl sm:rounded-3xl"
+            className="max-h-[90dvh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white p-6 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] shadow-2xl sm:rounded-3xl sm:pb-6"
           >
             {/* Header */}
             <div className="mb-4 flex items-center justify-between">
