@@ -20,7 +20,7 @@ const tabs: NavTab[] = [
   {
     id: 'camera',
     href: '#camera',
-    label: '拍照',
+    label: '拍照识词',
     icon: Camera,
     isSpecial: true,
   },

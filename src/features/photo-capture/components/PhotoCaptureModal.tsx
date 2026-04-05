@@ -36,6 +36,7 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
   }, []);
 
   function handleClose() {
+    if (extracting) return;
     reset();
     onClose();
   }
@@ -120,13 +121,15 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[60] flex items-end justify-center bg-black/40 sm:items-center"
-          onClick={(e) => e.target === e.currentTarget && handleClose()}
+          onClick={(e) =>
+            !extracting && e.target === e.currentTarget && handleClose()
+          }
         >
           <motion.div
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            className="max-h-[90dvh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white p-6 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] shadow-2xl sm:rounded-3xl sm:pb-6"
+            className="relative max-h-[90dvh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white p-6 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] shadow-2xl sm:rounded-3xl sm:pb-6"
           >
             {/* Header */}
             <div className="mb-4 flex items-center justify-between">
@@ -135,7 +138,8 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
               </h2>
               <button
                 onClick={handleClose}
-                className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100"
+                disabled={extracting}
+                className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <X size={20} />
               </button>
@@ -242,7 +246,8 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
                           setImagePreview(null);
                           setError(null);
                         }}
-                        className="absolute top-2 right-2 rounded-full bg-black/50 p-1.5 text-white hover:bg-black/70"
+                        disabled={extracting}
+                        className="absolute top-2 right-2 rounded-full bg-black/50 p-1.5 text-white hover:bg-black/70 disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         <X size={14} />
                       </button>
@@ -291,6 +296,14 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
                   )}
                 </button>
               </>
+            )}
+            {extracting && (
+              <div className="absolute inset-0 z-10 flex items-center justify-center rounded-t-3xl bg-white/70 backdrop-blur-[1px] sm:rounded-3xl">
+                <div className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow">
+                  <Loader2 size={16} className="animate-spin" />
+                  AI 识别中...
+                </div>
+              </div>
             )}
           </motion.div>
         </motion.div>
