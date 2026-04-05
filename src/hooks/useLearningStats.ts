@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useUserStore } from '@/store/useUserStore';
 
 export function useLearningStats() {
-  const { savedWords, history } = useUserStore();
+  const { savedWords, history, wordReviewStates } = useUserStore();
 
   return useMemo(() => {
     const completedLessons = Object.values(history);
@@ -20,6 +20,10 @@ export function useLearningStats() {
           )
         : 0;
 
-    return { lessonCount, wordCount, avgScore };
-  }, [history, savedWords]);
+    const masteredCount = Object.values(wordReviewStates).filter(
+      (s) => s.status === 'mastered'
+    ).length;
+
+    return { lessonCount, wordCount, avgScore, masteredCount };
+  }, [history, savedWords, wordReviewStates]);
 }

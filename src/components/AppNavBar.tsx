@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, GraduationCap, Camera, BookMarked, User } from 'lucide-react';
 import { PhotoCaptureModal } from '@/features/photo-capture/components/PhotoCaptureModal';
+import { useReviewWords } from '@/hooks/useReviewWords';
 
 interface NavTab {
   id: string;
@@ -38,6 +39,7 @@ function isActive(href: string, pathname: string) {
 export function AppNavBar() {
   const pathname = usePathname();
   const [cameraOpen, setCameraOpen] = useState(false);
+  const { dueCount } = useReviewWords();
 
   // Hide nav bar on login page
   if (pathname === '/login' || pathname === '/auth/callback') return null;
@@ -75,13 +77,16 @@ export function AppNavBar() {
               <Link
                 key={tab.id}
                 href={tab.href}
-                className={`flex min-w-[3.5rem] flex-col items-center gap-0.5 py-1 transition-colors ${
+                className={`relative flex min-w-[3.5rem] flex-col items-center gap-0.5 py-1 transition-colors ${
                   active
                     ? 'text-emerald-600'
                     : 'text-slate-400 active:text-slate-600'
                 }`}
               >
                 <tab.icon size={22} strokeWidth={active ? 2.5 : 2} />
+                {tab.id === 'vocab' && dueCount > 0 && (
+                  <span className="absolute top-0 right-2 h-2 w-2 rounded-full bg-amber-500" />
+                )}
                 <span
                   className={`text-[10px] ${active ? 'font-bold' : 'font-semibold'}`}
                 >
@@ -99,6 +104,7 @@ export function AppNavBar() {
 export function DesktopSidebar() {
   const pathname = usePathname();
   const [cameraOpen, setCameraOpen] = useState(false);
+  const { dueCount } = useReviewWords();
 
   if (pathname === '/login' || pathname === '/auth/callback') return null;
 
@@ -133,13 +139,16 @@ export function DesktopSidebar() {
               <Link
                 key={tab.id}
                 href={tab.href}
-                className={`flex h-14 w-14 flex-col items-center justify-center gap-1 rounded-2xl transition-all ${
+                className={`relative flex h-14 w-14 flex-col items-center justify-center gap-1 rounded-2xl transition-all ${
                   active
                     ? 'bg-emerald-50 text-emerald-600'
                     : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'
                 }`}
               >
                 <tab.icon size={22} strokeWidth={active ? 2.5 : 2} />
+                {tab.id === 'vocab' && dueCount > 0 && (
+                  <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-amber-500" />
+                )}
                 <span
                   className={`text-[9px] ${active ? 'font-bold' : 'font-semibold'}`}
                 >

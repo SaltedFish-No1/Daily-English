@@ -118,14 +118,38 @@ describe('calculateNextReview', () => {
 });
 
 describe('getWordsForReview', () => {
-  it('returns words whose nextReviewAt <= now, sorted by urgency', () => {
+  it('returns due words and new words, sorted: new first then by urgency', () => {
     const states: Record<string, WordReviewState> = {
-      apple: { ...initReviewState(NOW - 3 * MS_PER_DAY) }, // due 2 days ago
-      banana: { ...initReviewState(NOW - 1 * MS_PER_DAY) }, // due just now
-      cherry: { ...initReviewState(NOW + 1 * MS_PER_DAY) }, // not due yet
+      apple: { ...initReviewState(NOW - 3 * MS_PER_DAY) }, // due 2 days ago (new + due)
+      banana: { ...initReviewState(NOW - 1 * MS_PER_DAY) }, // due just now (new + due)
+      cherry: { ...initReviewState(NOW + 1 * MS_PER_DAY) }, // not due yet but status='new'
     };
     const result = getWordsForReview(states, 10, NOW);
-    expect(result).toEqual(['apple', 'banana']);
+    // All three are status='new' so all included; sorted by nextReviewAt within new group
+    expect(result).toEqual(['apple', 'banana', 'cherry']);
+  });
+
+  it('includes today-added new words even if nextReviewAt is in future', () => {
+    const states: Record<string, WordReviewState> = {
+      fresh: initReviewState(NOW), // nextReviewAt = NOW + 1 day, status='new'
+    };
+    const result = getWordsForReview(states, 10, NOW);
+    expect(result).toEqual(['fresh']);
+  });
+
+  it('new words appear before due historical words', () => {
+    const learning: WordReviewState = {
+      ...initReviewState(NOW - 10 * MS_PER_DAY),
+      status: 'learning',
+      nextReviewAt: NOW - 2 * MS_PER_DAY, // overdue
+    };
+    const states: Record<string, WordReviewState> = {
+      oldword: learning,
+      newword: initReviewState(NOW), // status='new'
+    };
+    const result = getWordsForReview(states, 10, NOW);
+    expect(result[0]).toBe('newword');
+    expect(result[1]).toBe('oldword');
   });
 
   it('excludes mastered words', () => {
@@ -141,6 +165,18 @@ describe('getWordsForReview', () => {
     expect(result).toEqual(['unknown']);
   });
 
+  it('excludes non-due learning/reviewing words', () => {
+    const learning: WordReviewState = {
+      ...initReviewState(NOW),
+      status: 'learning',
+      nextReviewAt: NOW + 5 * MS_PER_DAY, // not due
+    };
+    const states: Record<string, WordReviewState> = {
+      notyet: learning,
+    };
+    expect(getWordsForReview(states, 10, NOW)).toEqual([]);
+  });
+
   it('respects the limit parameter', () => {
     const states: Record<string, WordReviewState> = {};
     for (let i = 0; i < 20; i++) {
@@ -149,26 +185,25 @@ describe('getWordsForReview', () => {
     const result = getWordsForReview(states, 5, NOW);
     expect(result).toHaveLength(5);
   });
-
-  it('returns empty array when nothing is due', () => {
-    const states: Record<string, WordReviewState> = {
-      future: initReviewState(NOW + 10 * MS_PER_DAY),
-    };
-    expect(getWordsForReview(states, 10, NOW + 10 * MS_PER_DAY)).toEqual([]);
-  });
 });
 
 describe('countDueWords', () => {
-  it('counts only due, non-mastered words', () => {
+  it('counts new words + due non-mastered words', () => {
+    const learning: WordReviewState = {
+      ...initReviewState(NOW),
+      status: 'learning',
+      nextReviewAt: NOW + 5 * MS_PER_DAY, // not due
+    };
     const states: Record<string, WordReviewState> = {
-      due: initReviewState(NOW - 2 * MS_PER_DAY),
-      notDue: initReviewState(NOW + 2 * MS_PER_DAY),
+      due: initReviewState(NOW - 2 * MS_PER_DAY),       // new + due → counted
+      newToday: initReviewState(NOW),                     // new → counted
+      notDue: learning,                                   // learning + not due → excluded
       mastered: {
         ...initReviewState(NOW - 2 * MS_PER_DAY),
-        status: 'mastered',
+        status: 'mastered',                               // mastered → excluded
       },
     };
-    expect(countDueWords(states, NOW)).toBe(1);
+    expect(countDueWords(states, NOW)).toBe(2);
   });
 });
 
