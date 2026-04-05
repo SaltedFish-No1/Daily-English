@@ -8,8 +8,12 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { useUserStore } from '@/store/useUserStore';
 import { useSpeech } from '@/hooks/useSpeech';
-import { BookMarked, Volume2, Check } from 'lucide-react';
+ 
+import { useNow } from '@/hooks/useNow';
+import { getMemoryStrength, WordReviewState } from '@/lib/spaced-repetition';
+import { BookMarked, Volume2, Check, ArrowUpDown } from 'lucide-react';
 
+type SortMode = 'recent' | 'urgency' | 'strength';
 
 interface VocabCardItem {
   word: string;
@@ -27,6 +31,8 @@ interface VocabCardItem {
     paragraphIndex: number;
     savedAt: number;
   }>;
+  reviewState?: WordReviewState;
+  memoryStrength: number;
 }
 
 interface VocabLibraryViewProps {
@@ -36,21 +42,24 @@ interface VocabLibraryViewProps {
 export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
   lessonTitleMap,
 }) => {
-  const { savedWords, removeWord } = useUserStore();
+  const { savedWords, removeWord, wordReviewStates } = useUserStore();
   const { speak } = useSpeech();
   const [pendingRemoveWord, setPendingRemoveWord] = useState<string | null>(
     null
   );
   const [doubleCheckStep, setDoubleCheckStep] = useState<1 | 2>(1);
+  const [sortMode, setSortMode] = useState<SortMode>('recent');
+  const now = useNow();
 
   const cards = useMemo<VocabCardItem[]>(() => {
-    return Object.entries(savedWords)
+    const items = Object.entries(savedWords)
       .filter(([, occurrences]) => occurrences.length > 0)
       .map(([word, occurrences]) => {
         const sortedOccurrences = [...occurrences].sort(
           (a, b) => b.savedAt - a.savedAt
         );
         const latest = sortedOccurrences[0];
+        const reviewState = wordReviewStates[word.trim().toLowerCase()];
         return {
           word,
           latestSavedAt: latest.savedAt,
@@ -67,10 +76,27 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
             paragraphIndex: item.paragraphIndex,
             savedAt: item.savedAt,
           })),
+          reviewState,
+          memoryStrength: reviewState ? getMemoryStrength(reviewState) : 0,
         };
-      })
-      .sort((a, b) => b.latestSavedAt - a.latestSavedAt);
-  }, [savedWords]);
+      });
+
+    // Sort based on selected mode
+    switch (sortMode) {
+      case 'urgency':
+        return items.sort((a, b) => {
+          const aNext = a.reviewState?.nextReviewAt ?? Infinity;
+          const bNext = b.reviewState?.nextReviewAt ?? Infinity;
+          const aDue = aNext <= now ? now - aNext : -(aNext - now);
+          const bDue = bNext <= now ? now - bNext : -(bNext - now);
+          return bDue - aDue;
+        });
+      case 'strength':
+        return items.sort((a, b) => a.memoryStrength - b.memoryStrength);
+      default:
+        return items.sort((a, b) => b.latestSavedAt - a.latestSavedAt);
+    }
+  }, [savedWords, wordReviewStates, sortMode, now]);
 
   return (
     <div className="min-h-screen bg-slate-50 pb-24 lg:pb-8">
@@ -86,6 +112,32 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
       </header>
 
       <main className="mx-auto w-full max-w-5xl px-5 py-8">
+        {/* Sort Controls */}
+        {cards.length > 0 && (
+          <div className="mb-4 flex items-center gap-2">
+            <ArrowUpDown size={14} className="text-slate-400" />
+            <span className="text-xs font-bold text-slate-400">排序：</span>
+            {[
+              { key: 'recent' as const, label: '最近收藏' },
+              { key: 'urgency' as const, label: '复习紧急' },
+              { key: 'strength' as const, label: '记忆强度' },
+            ].map((opt) => (
+              <button
+                key={opt.key}
+                type="button"
+                onClick={() => setSortMode(opt.key)}
+                className={`rounded-full px-3 py-1 text-xs font-bold transition-colors ${
+                  sortMode === opt.key
+                    ? 'bg-emerald-600 text-white'
+                    : 'border border-slate-200 bg-white text-slate-500 hover:bg-slate-50'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        )}
+
         {cards.length > 0 ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {cards.map((card) => (
@@ -138,6 +190,50 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
                     {card.occurrences.length} 个收藏点
                   </span>
                 </div>
+
+                {/* Memory Strength Bar */}
+                {card.reviewState && (
+                  <div className="mb-3">
+                    <div className="mb-1 flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-slate-400">
+                        记忆强度
+                      </span>
+                      <span
+                        className={`text-[10px] font-bold ${
+                          card.reviewState.status === 'mastered'
+                            ? 'text-emerald-600'
+                            : card.reviewState.status === 'reviewing'
+                              ? 'text-sky-600'
+                              : card.reviewState.status === 'learning'
+                                ? 'text-amber-600'
+                                : 'text-slate-400'
+                        }`}
+                      >
+                        {card.reviewState.status === 'mastered'
+                          ? '已掌握'
+                          : card.reviewState.status === 'reviewing'
+                            ? '复习中'
+                            : card.reviewState.status === 'learning'
+                              ? '学习中'
+                              : '新词'}
+                      </span>
+                    </div>
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                      <div
+                        className={`h-full rounded-full transition-all ${
+                          card.memoryStrength >= 80
+                            ? 'bg-emerald-500'
+                            : card.memoryStrength >= 40
+                              ? 'bg-sky-500'
+                              : card.memoryStrength >= 10
+                                ? 'bg-amber-500'
+                                : 'bg-slate-300'
+                        }`}
+                        style={{ width: `${card.memoryStrength}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
 
                 {(card.latestSense.pos || card.latestSense.def) && (
                   <div className="mb-4 rounded-xl bg-slate-50 p-3">

@@ -20,20 +20,24 @@ interface LessonViewProps {
   data: LessonData;
   lessonSlug: string;
   overview: LessonListItem;
+  /** 复习课程完成后的额外回调（用于更新间隔重复状态） */
+  onReviewComplete?: (score: number, total: number) => void;
 }
 
 export const LessonView: React.FC<LessonViewProps> = ({
   data,
   lessonSlug,
   overview,
+  onReviewComplete,
 }) => {
   const { activeTab, setActiveTab } = useLessonStore();
   const { saveLessonScore } = useUserStore();
   const handleQuizComplete = useCallback(
     (score: number, total: number) => {
-      saveLessonScore(lessonSlug, score, total);
+      saveLessonScore(lessonSlug, score, total, overview.title);
+      onReviewComplete?.(score, total);
     },
-    [lessonSlug, saveLessonScore]
+    [lessonSlug, saveLessonScore, onReviewComplete, overview.title]
   );
 
   const tabs = [
@@ -125,6 +129,7 @@ export const LessonView: React.FC<LessonViewProps> = ({
               quiz={data.quiz}
               persistKey={lessonSlug}
               onComplete={handleQuizComplete}
+              reviewWords={data.meta.reviewWords}
             />
           </motion.div>
         </div>

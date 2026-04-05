@@ -9,12 +9,14 @@ import {
   Download,
   GraduationCap,
   Calendar,
+  Sparkles,
 } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useUserStore } from '@/store/useUserStore';
 import { useLearningStats } from '@/hooks/useLearningStats';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
+import { useReviewWords } from '@/hooks/useReviewWords';
 
 
 function getGreeting(): string {
@@ -29,6 +31,7 @@ function getGreeting(): string {
 export function DashboardView() {
   const { savedWords, history } = useUserStore();
   const stats = useLearningStats();
+  const { dueCount, dueWords } = useReviewWords();
   const {
     isStandalone,
     installDialog,
@@ -202,6 +205,46 @@ export function DashboardView() {
           </div>
         </motion.section>
 
+        {/* Review Recommendation Card */}
+        {dueCount > 0 && (
+          <motion.section
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.08 }}
+            className="mb-6 sm:mb-8"
+          >
+            <Link
+              href={`/review?words=${encodeURIComponent(dueWords.join(','))}`}
+              className="group block overflow-hidden rounded-2xl border border-teal-200 bg-gradient-to-r from-emerald-50 to-teal-50 p-5 shadow-sm transition-all hover:shadow-md active:scale-[0.99]"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-sm">
+                    <Sparkles size={22} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900">
+                      今日复习
+                    </h3>
+                    <p className="text-[11px] text-slate-500">
+                      有 {dueCount} 个词需要巩固，已为你准备专属文章
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="hidden text-[11px] font-medium text-slate-400 sm:block">
+                    预计 {Math.max(5, Math.round(dueCount * 0.7))} 分钟
+                  </span>
+                  <ArrowRight
+                    size={16}
+                    className="text-emerald-600 transition-transform group-hover:translate-x-1"
+                  />
+                </div>
+              </div>
+            </Link>
+          </motion.section>
+        )}
+
         {/* Quick Actions */}
         <motion.section
           initial={{ opacity: 0, y: 12 }}
@@ -274,7 +317,7 @@ export function DashboardView() {
                 >
                   <div>
                     <p className="text-sm font-bold text-slate-800">
-                      {record.slug}
+                      {record.title || record.slug}
                     </p>
                     <p className="text-[11px] text-slate-400">
                       {new Date(record.completedAt).toLocaleDateString('zh-CN')}
