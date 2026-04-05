@@ -76,7 +76,7 @@ export const usePWAInstall = () => {
       setInstallDialog({
         open: true,
         title: '已安装',
-        message: 'Magic English 已经安装到本地。',
+        message: '薄荷外语 已经安装到本地。',
         showConfirm: false,
       });
       return;
@@ -113,7 +113,7 @@ export const usePWAInstall = () => {
     setInstallDialog({
       open: true,
       title: '确认安装',
-      message: '确认安装 Magic English 到本地吗？',
+      message: '确认安装 薄荷外语 到本地吗？',
       showConfirm: true,
     });
   };

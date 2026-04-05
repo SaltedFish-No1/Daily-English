@@ -44,7 +44,7 @@ export async function generateMetadata({
   if (!data) return { title: 'Lesson Not Found' };
 
   return {
-    title: `${data.meta.title} - Daily English`,
+    title: `${data.meta.title} - 薄荷外语`,
     description: overview?.teaser ?? data.article.title,
   };
 }

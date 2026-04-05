@@ -91,10 +91,10 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-5 sm:py-6">
           <div>
             <h1 className="text-xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-              Daily English
+              薄荷外语
             </h1>
             <p className="mt-0.5 text-[10px] font-bold tracking-widest text-slate-400 uppercase sm:text-sm">
-              Elevate Your Language
+              每日一课，轻松进步
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -227,7 +227,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
 
       <footer className="pb-safe border-t border-slate-100 bg-white py-12 text-center">
         <p className="text-[11px] font-bold tracking-widest text-slate-400 uppercase">
-          © 2026 DAILY ENGLISH · DESIGNED FOR LEARNING
+          © 2026 薄荷外语 · DESIGNED FOR LEARNING
         </p>
         <a
           href="https://github.com/SaltedFish-No1"

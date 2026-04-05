@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Mint leaf shape -->
+  <defs>
+    <linearGradient id="leaf" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+  </defs>
+  <!-- Main leaf body -->
+  <path d="M32 6C16 6 6 22 10 38c2 8 8 14 16 18 2-6 4-12 8-18 4-6 10-14 8-24-1-4-4-8-10-8z" fill="url(#leaf)"/>
+  <path d="M32 6c8 8 16 20 18 34 1 6-1 10-4 14-2-10-8-22-14-32V6z" fill="#059669"/>
+  <!-- Leaf veins -->
+  <path d="M32 10v44" stroke="#f0fdf4" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+  <path d="M22 28c6-2 12-2 18 0" stroke="#f0fdf4" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.5"/>
+  <path d="M18 38c8-2 16-2 24 0" stroke="#f0fdf4" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.5"/>
+  <path d="M20 48c7-2 14-2 20 0" stroke="#f0fdf4" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.4"/>
+</svg>

@@ -1,7 +1,7 @@
 {
-  "name": "Magic English",
-  "short_name": "Magic English",
-  "description": "通过沉浸式的交互式体验，每日学习地道的英语表达和专业领域知识。",
+  "name": "薄荷外语",
+  "short_name": "薄荷外语",
+  "description": "每日沉浸式互动体验，轻松掌握地道外语表达。",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",

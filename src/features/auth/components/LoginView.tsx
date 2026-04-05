@@ -23,10 +23,10 @@ export const LoginView: React.FC = () => {
         {/* Logo & Tagline */}
         <div className="mb-10 text-center">
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-            Daily English
+            薄荷外语
           </h1>
           <p className="mt-1 text-xs font-bold tracking-widest text-slate-400 uppercase">
-            Elevate Your Language
+            每日一课，轻松进步
           </p>
         </div>
 
