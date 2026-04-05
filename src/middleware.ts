@@ -1,19 +1,12 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createSupabaseMiddlewareClient } from '@/lib/supabase-middleware';
 
-const PROTECTED_PREFIXES = [
-  '/profile',
-  '/vocab',
-  '/writing',
-  '/review',
-  '/learn',
-  '/lessons',
-  '/reading',
-];
+/** 无需登录即可访问的页面路径（白名单） */
+const PUBLIC_PATHS = ['/login', '/intro', '/reset-password'];
 
-function isProtectedRoute(pathname: string): boolean {
-  return PROTECTED_PREFIXES.some(
-    (prefix) => pathname === prefix || pathname.startsWith(prefix + '/')
+function isPublicRoute(pathname: string): boolean {
+  return PUBLIC_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(path + '/')
   );
 }
 
@@ -27,22 +20,20 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Unauthenticated user accessing protected route → redirect to login
-  if (!user && isProtectedRoute(pathname)) {
-    const loginUrl = request.nextUrl.clone();
-    loginUrl.pathname = '/login';
-    loginUrl.searchParams.set('redirect', pathname);
-    const redirectResponse = NextResponse.redirect(loginUrl);
-    // Copy cookies set by Supabase (e.g. refreshed tokens) to the redirect response,
-    // otherwise the updated auth cookies are lost and subsequent requests may fail.
+  // 未登录用户访问非公开路由 → 重定向到产品介绍页
+  if (!user && !isPublicRoute(pathname)) {
+    const introUrl = request.nextUrl.clone();
+    introUrl.pathname = '/intro';
+    introUrl.searchParams.set('redirect', pathname);
+    const redirectResponse = NextResponse.redirect(introUrl);
     response.cookies.getAll().forEach((cookie) => {
       redirectResponse.cookies.set(cookie.name, cookie.value);
     });
     return redirectResponse;
   }
 
-  // Authenticated user accessing login page → redirect to home
-  if (user && pathname === '/login') {
+  // 已登录用户访问登录页或介绍页 → 重定向到首页
+  if (user && (pathname === '/login' || pathname === '/intro')) {
     const homeUrl = request.nextUrl.clone();
     homeUrl.pathname = '/';
     const redirectResponse = NextResponse.redirect(homeUrl);

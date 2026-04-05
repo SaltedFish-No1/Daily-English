@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { streamObject } from 'ai';
 import { z } from 'zod';
 import { modelPower } from '@/lib/ai';
+import { requireApiAuth } from '@/lib/api-auth';
 
 // ---------------------------------------------------------------------------
 // Zod schema for the AI-generated lesson
@@ -111,6 +112,9 @@ function pickTopic(): string {
 // ---------------------------------------------------------------------------
 
 export async function POST(request: NextRequest) {
+  const auth = await requireApiAuth(request);
+  if ('error' in auth) return auth.error;
+
   let body: { words?: string[]; difficulty?: string };
   try {
     body = await request.json();
