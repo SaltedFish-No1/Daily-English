@@ -38,4 +38,5 @@ export interface DictionaryCacheRecord {
   status: 'loading' | 'success' | 'not_found' | 'error';
   source?: 'dictionaryapi' | 'ai_generated' | 'cache';
   audioUrl?: string | null;
+  zhStatus?: 'full' | 'pending' | 'none';
 }

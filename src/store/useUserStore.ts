@@ -307,9 +307,17 @@ export const useUserStore = create<UserState>()(
                 | 'cache'
                 | undefined,
               audioUrl: result.audioUrl,
+              zhStatus: result.zhStatus,
             },
           },
         }));
+
+        // 中文释义后台生成中，3s 后自动重新查询以获取完整数据
+        if (result.zhStatus === 'pending') {
+          setTimeout(() => {
+            get().fetchDictionaryRecord(key, true);
+          }, 3000);
+        }
       },
       saveLessonScore: (slug, score, total, title) =>
         set((state) => {
