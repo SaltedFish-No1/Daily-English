@@ -50,8 +50,8 @@ const skills = [
     description: '主题写作训练，AI实时批改与建议',
     icon: PenLine,
     color: 'violet',
-    href: '#',
-    available: false,
+    href: '/writing',
+    available: true,
   },
 ] as const;
 

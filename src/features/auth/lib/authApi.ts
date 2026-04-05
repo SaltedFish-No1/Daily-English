@@ -40,3 +40,21 @@ export function verifyOtp(email: string, code: string) {
     { email, code }
   );
 }
+
+/** 发送密码重置链接到指定邮箱。 */
+export function sendResetLink(email: string) {
+  return post<{ success: boolean }>('/api/auth/send-reset-link', { email });
+}
+
+/** 验证 token 并重置密码。 */
+export function resetPasswordWithToken(
+  email: string,
+  token: string,
+  newPassword: string
+) {
+  return post<{ success: boolean }>('/api/auth/reset-password-with-token', {
+    email,
+    token,
+    newPassword,
+  });
+}

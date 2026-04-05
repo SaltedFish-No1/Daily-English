@@ -134,16 +134,17 @@ export function DashboardView() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handleInstall}
-              disabled={isStandalone}
-              className="flex h-10 items-center justify-center gap-1.5 rounded-full border border-emerald-100 bg-emerald-50 px-3 text-xs font-bold text-emerald-600 transition-colors enabled:hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-40"
-              title={installTitle}
-            >
-              <Download size={14} />
-              {installLabel}
-            </button>
+            {!isStandalone && (
+              <button
+                type="button"
+                onClick={handleInstall}
+                className="flex h-10 items-center justify-center gap-1.5 rounded-full border border-emerald-100 bg-emerald-50 px-3 text-xs font-bold text-emerald-600 transition-colors hover:bg-emerald-100"
+                title={installTitle}
+              >
+                <Download size={14} />
+                {installLabel}
+              </button>
+            )}
             <UserMenu />
           </div>
         </div>

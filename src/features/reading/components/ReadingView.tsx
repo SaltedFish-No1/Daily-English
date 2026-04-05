@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { LessonDifficulty, LessonListItem } from '@/types/lesson';
 import {
   Calendar,
@@ -31,7 +31,7 @@ interface DifficultyGuideState {
 }
 
 export const ReadingView: React.FC<ReadingViewProps> = ({ lessons }) => {
-  const { savedWords, history } = useUserStore();
+  const { history } = useUserStore();
   const stats = useLearningStats();
   const { dueCount, dueWords } = useReviewWords();
 
@@ -52,29 +52,6 @@ export const ReadingView: React.FC<ReadingViewProps> = ({ lessons }) => {
   const closeDifficultyGuide = () => {
     setDifficultyGuide({ open: false, difficulty: null });
   };
-
-  // Recent vocab
-  const recentWordEntries = useMemo(() => {
-    return Object.entries(savedWords)
-      .filter(([, occurrences]) => occurrences.length > 0)
-      .map(([word, occurrences]) => {
-        const [firstOccurrence, ...restOccurrences] = occurrences;
-        const latestOccurrence = restOccurrences.reduce(
-          (latest, current) =>
-            current.savedAt > latest.savedAt ? current : latest,
-          firstOccurrence
-        );
-        return { word, latestOccurrence };
-      })
-      .sort((a, b) => b.latestOccurrence.savedAt - a.latestOccurrence.savedAt);
-  }, [savedWords]);
-
-  const savedWordCount = recentWordEntries.length;
-  const previewCount = Math.min(
-    8,
-    Math.max(2, Math.min(6, savedWordCount || 0))
-  );
-  const recentWords = recentWordEntries.slice(0, previewCount);
 
   const formatDisplayDate = (rawDate: string) => {
     const date = new Date(rawDate);
@@ -135,46 +112,6 @@ export const ReadingView: React.FC<ReadingViewProps> = ({ lessons }) => {
               平均正确率
             </p>
           </div>
-        </section>
-
-        {/* Vocab Cards */}
-        <section className="mb-6 rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm sm:mb-8">
-          <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <BookMarked size={18} className="text-emerald-600" />
-              <h2 className="text-base font-bold text-slate-900 sm:text-lg">
-                我的生词库
-              </h2>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
-                {savedWordCount} 词
-              </span>
-              <Link
-                href="/vocab"
-                className="rounded-full bg-emerald-600 px-3 py-1 text-xs font-bold text-white transition-colors hover:bg-emerald-700"
-              >
-                查看生词表
-              </Link>
-            </div>
-          </div>
-          {recentWords.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {recentWords.map(({ word, latestOccurrence }) => (
-                <Link
-                  key={`${word}-${latestOccurrence.lessonSlug}-${latestOccurrence.paragraphIndex}`}
-                  href="/vocab"
-                  className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600 transition-colors hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
-                >
-                  {word}
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-slate-500">
-              还没有收藏记录，进入课程点击高亮词后可在词卡里收藏。
-            </p>
-          )}
         </section>
 
         {/* Review Recommendation */}
