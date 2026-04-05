@@ -32,14 +32,24 @@ export async function middleware(request: NextRequest) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = '/login';
     loginUrl.searchParams.set('redirect', pathname);
-    return NextResponse.redirect(loginUrl);
+    const redirectResponse = NextResponse.redirect(loginUrl);
+    // Copy cookies set by Supabase (e.g. refreshed tokens) to the redirect response,
+    // otherwise the updated auth cookies are lost and subsequent requests may fail.
+    response.cookies.getAll().forEach((cookie) => {
+      redirectResponse.cookies.set(cookie.name, cookie.value);
+    });
+    return redirectResponse;
   }
 
   // Authenticated user accessing login page → redirect to home
   if (user && pathname === '/login') {
     const homeUrl = request.nextUrl.clone();
     homeUrl.pathname = '/';
-    return NextResponse.redirect(homeUrl);
+    const redirectResponse = NextResponse.redirect(homeUrl);
+    response.cookies.getAll().forEach((cookie) => {
+      redirectResponse.cookies.set(cookie.name, cookie.value);
+    });
+    return redirectResponse;
   }
 
   return response;
