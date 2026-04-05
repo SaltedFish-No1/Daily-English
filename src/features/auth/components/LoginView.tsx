@@ -7,8 +7,6 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
 import { EmailLoginForm } from '@/features/auth/components/EmailLoginForm';
 
 /**
@@ -38,15 +36,6 @@ export const LoginView: React.FC = () => {
 
           <EmailLoginForm />
         </div>
-
-        {/* Guest Skip */}
-        <Link
-          href="/"
-          className="mt-6 flex items-center justify-center gap-1 text-sm font-bold text-slate-400 transition-colors hover:text-emerald-600"
-        >
-          跳过，以访客身份继续
-          <ArrowRight size={14} />
-        </Link>
       </div>
     </div>
   );

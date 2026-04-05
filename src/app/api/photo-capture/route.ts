@@ -8,8 +8,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateObject } from 'ai';
 import { modelVision } from '@/lib/ai';
 import { PhotoCaptureResultSchema } from '@/features/photo-capture/types';
+import { requireApiAuth } from '@/lib/api-auth';
 
 export async function POST(request: NextRequest) {
+  const auth = await requireApiAuth(request);
+  if ('error' in auth) return auth.error;
+
   let formData: FormData;
   try {
     formData = await request.formData();

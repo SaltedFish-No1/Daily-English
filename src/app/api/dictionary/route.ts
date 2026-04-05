@@ -8,6 +8,7 @@ import { generateObject } from 'ai';
 import { z } from 'zod';
 import { modelFast } from '@/lib/ai';
 import { supabaseAdmin } from '@/lib/supabase-server';
+import { requireApiAuth } from '@/lib/api-auth';
 import {
   fetchDictionaryEntries,
   normalizeDictionaryQuery,
@@ -58,6 +59,9 @@ function extractAudioUrl(entries: DictionaryEntry[]): string | null {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = await requireApiAuth(request);
+  if ('error' in auth) return auth.error;
+
   let body: { word?: string };
   try {
     body = await request.json();
