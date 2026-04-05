@@ -138,6 +138,7 @@ export async function POST(request: NextRequest) {
     const result = streamObject({
       model: modelPower,
       schema: GeneratedLessonSchema,
+      maxOutputTokens: 16384,
       prompt: `You are a professional English language education content creator.
 
 Generate a complete English reading lesson that naturally incorporates ALL of the following vocabulary words: ${wordList}
@@ -160,6 +161,19 @@ REQUIREMENTS:
 
 Return valid JSON matching the schema exactly.`,
       temperature: 0.8,
+      onFinish: ({ object, error }) => {
+        if (error) {
+          console.error(
+            '[ReviewGenerate] streamObject finished with error:',
+            error
+          );
+        }
+        if (!object) {
+          console.error(
+            '[ReviewGenerate] streamObject produced no valid object'
+          );
+        }
+      },
     });
 
     // Stream the raw generated lesson object to the client.

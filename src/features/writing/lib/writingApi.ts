@@ -179,7 +179,16 @@ export async function gradeSubmission(
 
   // New AI grading — server streams partial JSON via streamObject
   const text = await readStreamAsText(res, onPartial);
-  const parsed = JSON.parse(text) as WritingGradeResult;
+  let parsed: WritingGradeResult;
+  try {
+    parsed = JSON.parse(text) as WritingGradeResult;
+  } catch {
+    console.error(
+      '[WritingGrade] Failed to parse streamed JSON, length:',
+      text.length
+    );
+    throw new Error('AI 批改结果不完整，请重试。');
+  }
 
   // Construct full WritingGrade from AI result (DB fields filled client-side)
   return {
@@ -224,6 +233,9 @@ async function readStreamAsText(
       }
     }
   }
+
+  // Flush any remaining buffered bytes (e.g. partial multi-byte UTF-8 chars)
+  accumulated += decoder.decode();
 
   return accumulated;
 }
