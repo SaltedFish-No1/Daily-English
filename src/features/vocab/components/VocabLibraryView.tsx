@@ -8,10 +8,11 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { useUserStore } from '@/store/useUserStore';
 import { useSpeech } from '@/hooks/useSpeech';
- 
+
 import { useNow } from '@/hooks/useNow';
 import { getMemoryStrength, WordReviewState } from '@/lib/spaced-repetition';
-import { BookMarked, Volume2, Check, ArrowUpDown } from 'lucide-react';
+import { BookMarked, Volume2, Check, ArrowUpDown, Camera } from 'lucide-react';
+import { isPhotoCaptureOccurrence } from '@/features/photo-capture/lib/constants';
 
 type SortMode = 'recent' | 'urgency' | 'strength';
 
@@ -252,30 +253,50 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
                 )}
 
                 <div className="space-y-2">
-                  {card.occurrences.map((occurrence) => (
-                    <Link
-                      key={`${card.word}-${occurrence.lessonSlug}-${occurrence.paragraphIndex}`}
-                      href={`/lessons/${occurrence.lessonSlug}#p-${occurrence.paragraphIndex}`}
-                      className="block rounded-lg border border-slate-100 px-3 py-2 text-xs font-semibold text-slate-600 transition-colors hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
-                    >
-                      <span className="block text-sm font-bold text-slate-800">
-                        {occurrence.lessonTitle ||
-                          lessonTitleMap[occurrence.lessonSlug] ||
-                          occurrence.lessonSlug}
-                      </span>
-                      <span className="mt-0.5 block text-[11px] font-semibold text-slate-500">
-                        日期 {occurrence.lessonSlug} · 第
-                        {occurrence.paragraphIndex + 1}段
-                      </span>
-                    </Link>
-                  ))}
+                  {card.occurrences.map((occurrence) =>
+                    isPhotoCaptureOccurrence(occurrence.lessonSlug) ? (
+                      <div
+                        key={`${card.word}-${occurrence.lessonSlug}-${occurrence.paragraphIndex}`}
+                        className="flex items-center gap-2 rounded-lg border border-emerald-100 bg-emerald-50/50 px-3 py-2"
+                      >
+                        <Camera
+                          size={12}
+                          className="shrink-0 text-emerald-500"
+                        />
+                        <span className="text-sm font-bold text-slate-800">
+                          {occurrence.lessonTitle || '拍照识词'}
+                        </span>
+                        <span className="text-[11px] font-semibold text-slate-400">
+                          {new Date(occurrence.savedAt).toLocaleDateString(
+                            'zh-CN'
+                          )}
+                        </span>
+                      </div>
+                    ) : (
+                      <Link
+                        key={`${card.word}-${occurrence.lessonSlug}-${occurrence.paragraphIndex}`}
+                        href={`/lessons/${occurrence.lessonSlug}#p-${occurrence.paragraphIndex}`}
+                        className="block rounded-lg border border-slate-100 px-3 py-2 text-xs font-semibold text-slate-600 transition-colors hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
+                      >
+                        <span className="block text-sm font-bold text-slate-800">
+                          {occurrence.lessonTitle ||
+                            lessonTitleMap[occurrence.lessonSlug] ||
+                            occurrence.lessonSlug}
+                        </span>
+                        <span className="mt-0.5 block text-[11px] font-semibold text-slate-500">
+                          日期 {occurrence.lessonSlug} · 第
+                          {occurrence.paragraphIndex + 1}段
+                        </span>
+                      </Link>
+                    )
+                  )}
                 </div>
               </article>
             ))}
           </div>
         ) : (
           <div className="rounded-2xl border border-slate-100 bg-white p-10 text-center text-slate-500">
-            你还没有收藏任何生词，去阅读文章并点击词卡里的“收藏”开始积累吧。
+            你还没有收藏任何生词。去阅读文章点击词卡”收藏”，或使用底部拍照按钮识别手抄单词开始积累吧。
           </div>
         )}
       </main>
