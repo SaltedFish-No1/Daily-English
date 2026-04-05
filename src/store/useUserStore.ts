@@ -278,7 +278,6 @@ export const useUserStore = create<UserState>()(
         const isStale =
           !currentRecord ||
           currentRecord.status === 'error' ||
-          currentRecord.status === 'loading' ||
           Date.now() - currentRecord.fetchedAt > CACHE_TTL_MS;
         if (!isStale && !force) return;
 
