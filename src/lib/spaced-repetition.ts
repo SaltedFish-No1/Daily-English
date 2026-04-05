@@ -146,8 +146,19 @@ export function calculateNextReview(
 // ---------------------------------------------------------------------------
 
 /**
- * 从所有词汇的复习状态中，筛选出到期需要复习的词。
- * 按紧急度排序（过期最久的优先），限制返回数量。
+ * 判断一个词是否属于"待背"：
+ *   1. 今日新加的词（status='new'，不论 nextReviewAt）
+ *   2. 记忆曲线到期的历史词（nextReviewAt <= now，排除 mastered）
+ */
+function isDue(state: WordReviewState, now: number): boolean {
+  if (state.status === 'mastered') return false;
+  if (state.status === 'new') return true;
+  return state.nextReviewAt <= now;
+}
+
+/**
+ * 从所有词汇的复习状态中，筛选出待背的词。
+ * 排序：新词优先，然后按过期紧急度排序（过期最久的优先），限制返回数量。
  */
 export function getWordsForReview(
   states: Record<string, WordReviewState>,
@@ -155,24 +166,27 @@ export function getWordsForReview(
   now: number = Date.now()
 ): string[] {
   return Object.entries(states)
-    .filter(
-      ([, state]) => state.nextReviewAt <= now && state.status !== 'mastered'
-    )
-    .sort((a, b) => a[1].nextReviewAt - b[1].nextReviewAt)
+    .filter(([, state]) => isDue(state, now))
+    .sort((a, b) => {
+      // 新词排在前面
+      const aNew = a[1].status === 'new' ? 0 : 1;
+      const bNew = b[1].status === 'new' ? 0 : 1;
+      if (aNew !== bNew) return aNew - bNew;
+      // 同类按 nextReviewAt 升序（最紧急的优先）
+      return a[1].nextReviewAt - b[1].nextReviewAt;
+    })
     .slice(0, limit)
     .map(([word]) => word);
 }
 
 /**
- * 计算待复习词总数（用于 UI 徽标显示）。
+ * 计算待背词总数（用于 UI 徽标显示）。
  */
 export function countDueWords(
   states: Record<string, WordReviewState>,
   now: number = Date.now()
 ): number {
-  return Object.values(states).filter(
-    (state) => state.nextReviewAt <= now && state.status !== 'mastered'
-  ).length;
+  return Object.values(states).filter((state) => isDue(state, now)).length;
 }
 
 /**
