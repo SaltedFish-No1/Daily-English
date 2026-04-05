@@ -101,6 +101,22 @@ export async function submitWriting(params: {
   return json.submission;
 }
 
+export async function recognizeHandwriting(image: File): Promise<string> {
+  const formData = new FormData();
+  formData.append('image', image);
+
+  const res = await authFetch('/api/writing/ocr', {
+    method: 'POST',
+    body: formData,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error ?? '手写识别失败');
+  }
+  const json = await res.json();
+  return json.text;
+}
+
 export async function submitHandwritten(
   topicId: string,
   image: File,
