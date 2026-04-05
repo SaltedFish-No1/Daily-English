@@ -55,10 +55,6 @@ const isBoolean = (value: unknown): value is boolean => {
   return typeof value === 'boolean';
 };
 
-const isNumber = (value: unknown): value is number => {
-  return typeof value === 'number' && Number.isFinite(value);
-};
-
 const isStringArray = (value: unknown): value is string[] => {
   return Array.isArray(value) && value.every(isString);
 };
@@ -78,7 +74,7 @@ export const validateLessonData = (value: unknown): LessonData | null => {
   const migrated = migrateToCurrentVersion(value);
   if (!migrated) return null;
 
-  const { meta, speech, article, focusWords, chart, quiz } = migrated;
+  const { meta, speech, article, focusWords, quiz } = migrated;
 
   if (!isRecord(meta) || !isString(meta.title)) return null;
   if (!isRecord(speech) || !isBoolean(speech.enabled)) return null;
@@ -127,44 +123,6 @@ export const validateLessonData = (value: unknown): LessonData | null => {
 
     // 拒绝英文段落中的 HTML 标签，防止注入。
     if (!isString(paragraph.en) || /<[^>]+>/.test(paragraph.en)) return null;
-  }
-
-  if (
-    !isRecord(chart) ||
-    !isString(chart.type) ||
-    !['line', 'bar'].includes(chart.type) ||
-    !isString(chart.title) ||
-    !isString(chart.description) ||
-    !isStringArray(chart.labels) ||
-    !Array.isArray(chart.datasets) ||
-    !Array.isArray(chart.insights)
-  ) {
-    return null;
-  }
-
-  for (const dataset of chart.datasets) {
-    if (!isRecord(dataset)) return null;
-    if (!isString(dataset.label) || !isString(dataset.borderColor)) return null;
-    if (
-      dataset.backgroundColor !== undefined &&
-      !isString(dataset.backgroundColor)
-    ) {
-      return null;
-    }
-    if (!Array.isArray(dataset.data) || !dataset.data.every(isNumber))
-      return null;
-    if (dataset.data.length !== chart.labels.length) return null;
-  }
-
-  for (const insight of chart.insights) {
-    if (!isRecord(insight)) return null;
-    if (
-      !isString(insight.icon) ||
-      !isString(insight.title) ||
-      !isString(insight.text)
-    ) {
-      return null;
-    }
   }
 
   if (

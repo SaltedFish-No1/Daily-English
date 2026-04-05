@@ -153,64 +153,6 @@
       ]
     }
   ],
-  "chart": {
-    "type": "bar",
-    "title": "Impact of Environment on Prosocial Behavior",
-    "description": "Based on UC Berkeley research, this chart illustrates the shift in prosocial tendencies (such as willingness to help) after subjects are exposed to awe-inspiring natural environments versus ordinary urban settings.",
-    "labels": [
-      "Willingness to Help",
-      "Sense of Connection",
-      "Focus on Self (Egoism)"
-    ],
-    "datasets": [
-      {
-        "label": "Urban Environment",
-        "data": [
-          45,
-          40,
-          75
-        ],
-        "borderColor": "#f97316",
-        "backgroundColor": "rgba(249, 115, 22, 0.7)",
-        "borderWidth": 1
-      },
-      {
-        "label": "Nature (Awe)",
-        "data": [
-          85,
-          90,
-          30
-        ],
-        "borderColor": "#10b981",
-        "backgroundColor": "rgba(16, 185, 129, 0.7)",
-        "borderWidth": 1
-      }
-    ],
-    "yBeginAtZero": true,
-    "yMin": 0,
-    "yMax": 100,
-    "yAxisTitle": "Self-Reported Score (0-100)",
-    "insights": [
-      {
-        "icon": "🏙️",
-        "title": "Urban Egoism",
-        "text": "In regular urban settings, individuals tend to focus significantly more on their own needs and internal thoughts.",
-        "tone": "orange"
-      },
-      {
-        "icon": "🌲",
-        "title": "Nature's Awe",
-        "text": "Exposure to grand natural elements dramatically boosts a person's desire to cooperate and feel connected to the community.",
-        "tone": "emerald"
-      },
-      {
-        "icon": "🤝",
-        "title": "The Behavioral Shift",
-        "text": "Notice the sharp decrease in selfish focus and the concurrent rise in prosocial behaviors when subjects experience awe.",
-        "tone": "slate"
-      }
-    ]
-  },
   "quiz": {
     "title": "Knowledge Check",
     "questions": [
