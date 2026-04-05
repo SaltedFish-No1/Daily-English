@@ -95,6 +95,8 @@ interface UserState {
   batchUpdateWordReview: (
     updates: Array<{ word: string; quality: number }>
   ) => void;
+  /** 重置所有用户数据（登出时清理 localStorage） */
+  resetStore: () => void;
 }
 
 export const useUserStore = create<UserState>()(
@@ -473,6 +475,14 @@ export const useUserStore = create<UserState>()(
               [key]: next,
             },
           };
+        }),
+      resetStore: () =>
+        set({
+          savedWords: {},
+          dictionaryCache: {},
+          history: {},
+          quizProgress: {},
+          wordReviewStates: {},
         }),
       batchUpdateWordReview: (updates) =>
         set((state) => {

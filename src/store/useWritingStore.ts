@@ -55,6 +55,8 @@ interface WritingState {
   setCurrentTopic: (topicId: string | null) => void;
   setDraftText: (text: string) => void;
   clearDraft: () => void;
+  /** 重置所有写作状态（登出时清理 localStorage） */
+  resetStore: () => void;
 }
 
 export const useWritingStore = create<WritingState>()(
@@ -90,6 +92,13 @@ export const useWritingStore = create<WritingState>()(
         });
         syncDraftToCloud();
       },
+      resetStore: () =>
+        set({
+          currentTopicId: null,
+          currentDraftText: '',
+          timerSeconds: 0,
+          timerRunning: false,
+        }),
     }),
     {
       name: 'daily-english-writing-storage',

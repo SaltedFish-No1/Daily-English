@@ -8,10 +8,10 @@
 
 import { useEffect, useRef } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
-import {
-  migrateLocalDataToCloud,
-  pullCloudDataToLocal,
-} from '@/features/auth/lib/dataMigration';
+import { pullCloudDataToLocal } from '@/features/auth/lib/dataMigration';
+import { useUserStore } from '@/store/useUserStore';
+import { usePreferenceStore } from '@/store/usePreferenceStore';
+import { useWritingStore } from '@/store/useWritingStore';
 
 /**
  * @author SaltedFish-No1
@@ -35,9 +35,11 @@ export function useDataSync() {
 
     const sync = async () => {
       try {
-        // 先上传本地数据（upsert 不会覆盖更新的云端记录）
-        await migrateLocalDataToCloud(user.id);
-        // 再拉取云端数据合并到本地
+        // 先清空本地数据，防止上一个用户的数据残留（处理浏览器崩溃等未正常登出的情况）
+        useUserStore.getState().resetStore();
+        usePreferenceStore.getState().resetStore();
+        useWritingStore.getState().resetStore();
+        // 从云端拉取当前用户的数据到干净的本地 store
         await pullCloudDataToLocal(user.id);
       } catch (err) {
         console.error('[DataSync] 数据同步失败:', err);
