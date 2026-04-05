@@ -11,7 +11,7 @@ import { useSpeech } from '@/hooks/useSpeech';
 
 import { useNow } from '@/hooks/useNow';
 import { getMemoryStrength, WordReviewState } from '@/lib/spaced-repetition';
-import { BookMarked, Volume2, Check, ArrowUpDown, Camera, Layers, BookOpen } from 'lucide-react';
+import { BookMarked, Volume2, Check, ArrowUpDown, Camera, Layers, BookOpen, ArrowRight } from 'lucide-react';
 import { isPhotoCaptureOccurrence } from '@/features/photo-capture/lib/constants';
 import { useReviewWords } from '@/hooks/useReviewWords';
 
@@ -124,6 +124,34 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
       </header>
 
       <main className="mx-auto w-full max-w-5xl px-5 py-8">
+        {/* Review Recommendation */}
+        {dueCount > 0 && cards.length > 0 && (
+          <Link
+            href={`/review/swipe?words=${encodeURIComponent(dueWords.join(','))}`}
+            className="group mb-6 block overflow-hidden rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-5 shadow-sm transition-all hover:shadow-lg active:scale-[0.99]"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500 text-white shadow-sm">
+                  <Layers size={22} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">
+                    {dueCount} 个单词待复习
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    左滑忘了、右滑记住，逐词精准打分
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1 text-sm font-bold text-amber-600 transition-transform group-hover:translate-x-1">
+                开始
+                <ArrowRight size={16} />
+              </div>
+            </div>
+          </Link>
+        )}
+
         {/* Sort Controls */}
         {cards.length > 0 && (
           <div className="mb-4 flex items-center gap-2">
