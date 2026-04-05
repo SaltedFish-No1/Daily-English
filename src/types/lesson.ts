@@ -28,28 +28,6 @@ export interface LessonArticle {
   paragraphs: Paragraph[];
 }
 
-export interface ChartDataset {
-  label: string;
-  data: number[];
-  borderColor: string;
-  backgroundColor?: string;
-}
-
-export interface ChartInsight {
-  icon: string;
-  title: string;
-  text: string;
-}
-
-export interface LessonChart {
-  type: 'line' | 'bar';
-  title: string;
-  description: string;
-  labels: string[];
-  datasets: ChartDataset[];
-  insights: ChartInsight[];
-}
-
 // ---------------------------------------------------------------------------
 // Shared quiz types — live here so LessonQuiz can reference them without
 // creating circular imports between @/types/lesson and feature modules.
@@ -190,7 +168,6 @@ export interface LessonData {
   speech: LessonSpeech;
   article: LessonArticle;
   focusWords: FocusWord[];
-  chart: LessonChart;
   quiz: LessonQuiz;
 }
 

@@ -9,10 +9,9 @@ import { LessonData, LessonListItem } from '@/types/lesson';
 import { useLessonStore } from '@/store/useLessonStore';
 import { useUserStore } from '@/store/useUserStore';
 import { Article } from './Article';
-import { Chart } from './Chart';
 import { Quiz } from './Quiz';
 import { VocabSheet } from './VocabSheet';
-import { BookOpen, BarChart3, HelpCircle } from 'lucide-react';
+import { BookOpen, HelpCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { LessonBreadcrumb } from './LessonBreadcrumb';
 import { UserMenu } from '@/features/auth/components/UserMenu';
@@ -43,12 +42,6 @@ export const LessonView: React.FC<LessonViewProps> = ({
       desktopLabel: '阅读',
       mobileLabel: '阅读',
       icon: BookOpen,
-    },
-    {
-      id: 'chart',
-      desktopLabel: '图表',
-      mobileLabel: '图表',
-      icon: BarChart3,
     },
     {
       id: 'quiz',
@@ -100,18 +93,6 @@ export const LessonView: React.FC<LessonViewProps> = ({
               lessonSlug={lessonSlug}
               lessonTitle={overview.title}
             />
-          </motion.div>
-          <motion.div
-            initial={false}
-            animate={{
-              opacity: activeTab === 'chart' ? 1 : 0,
-              x: activeTab === 'chart' ? 0 : 20,
-            }}
-            transition={{ duration: 0.2 }}
-            className={activeTab === 'chart' ? 'block' : 'hidden'}
-            aria-hidden={activeTab !== 'chart'}
-          >
-            <Chart chart={data.chart} />
           </motion.div>
           <motion.div
             initial={false}

@@ -141,62 +141,6 @@
       ]
     }
   ],
-  "chart": {
-    "type": "line",
-    "title": "Two Survival Strategies: Force vs. Deception",
-    "description": "A theoretical comparison inspired by the passage, showing why strategic deception could outperform direct aggression in social groups while still requiring moral rules to keep society stable.",
-    "labels": [
-      "Direct Violence",
-      "Resource Access",
-      "Social Stability",
-      "Creative Potential"
-    ],
-    "datasets": [
-      {
-        "label": "Physical Aggression Strategy",
-        "data": [
-          88,
-          36,
-          18,
-          10
-        ],
-        "borderColor": "#f97316",
-        "backgroundColor": "rgba(249, 115, 22, 0.18)"
-      },
-      {
-        "label": "Strategic Deception Strategy",
-        "data": [
-          24,
-          82,
-          56,
-          84
-        ],
-        "borderColor": "#10b981",
-        "backgroundColor": "rgba(16, 185, 129, 0.18)"
-      }
-    ],
-    "yBeginAtZero": true,
-    "yMin": 0,
-    "yMax": 100,
-    "yAxisTitle": "Relative Influence Score (0-100)",
-    "insights": [
-      {
-        "icon": "🧠",
-        "title": "Social Intelligence Pressure",
-        "text": "The passage suggests that managing alliances, trust, and deception placed stronger pressure on brain growth than simple environmental danger."
-      },
-      {
-        "icon": "⚖️",
-        "title": "Morality as a Counterweight",
-        "text": "Because widespread lying would destroy cooperation, human cultures had to build strong norms that reward honesty and punish cheating."
-      },
-      {
-        "icon": "🎭",
-        "title": "Creativity as a Byproduct",
-        "text": "The same cognitive machinery that supports lying may also support fiction, storytelling, and other imaginative arts."
-      }
-    ]
-  },
   "quiz": {
     "title": "Knowledge Check",
     "questions": [

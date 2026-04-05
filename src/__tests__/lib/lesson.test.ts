@@ -10,20 +10,6 @@ const validLesson = {
     paragraphs: [{ id: 'p1', en: 'Hello world.', zh: '你好世界。' }],
   },
   focusWords: [{ key: 'hello', forms: ['hello', 'hellos'] }],
-  chart: {
-    type: 'bar',
-    title: 'Chart',
-    description: 'A chart',
-    labels: ['Jan', 'Feb'],
-    datasets: [
-      {
-        label: 'Dataset 1',
-        data: [10, 20],
-        borderColor: '#000',
-      },
-    ],
-    insights: [{ icon: '📈', title: 'Up', text: 'Going up' }],
-  },
   quiz: {
     title: 'Quiz',
     questions: [],
@@ -76,23 +62,6 @@ describe('validateLessonData', () => {
       ],
     };
     expect(validateLessonData(withDupeForm)).toBeNull();
-  });
-
-  it('rejects dataset with wrong data length', () => {
-    const withBadChart = {
-      ...validLesson,
-      chart: {
-        ...validLesson.chart,
-        datasets: [
-          {
-            label: 'Bad',
-            data: [10],
-            borderColor: '#000',
-          },
-        ],
-      },
-    };
-    expect(validateLessonData(withBadChart)).toBeNull();
   });
 
   it('rejects missing quiz title', () => {
