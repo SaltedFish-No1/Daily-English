@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Camera, Upload, Loader2, X, Check } from 'lucide-react';
+import { Camera, Upload, Loader2, X, Check, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { uploadTopic, fetchCriteria } from '@/features/writing/lib/writingApi';
 import type { GradingCriteria, WritingTopic } from '@/types/writing';
@@ -14,6 +14,7 @@ interface TopicUploaderProps {
 
 export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
   const [criteria, setCriteria] = useState<GradingCriteria[]>([]);
+  const [criteriaLoading, setCriteriaLoading] = useState(true);
   const [selectedCriteria, setSelectedCriteria] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -22,10 +23,17 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    fetchCriteria().then((list) => {
-      setCriteria(list);
-      if (list.length > 0) setSelectedCriteria(list[0].id);
-    });
+    fetchCriteria()
+      .then((list) => {
+        setCriteria(list);
+        if (list.length > 0) setSelectedCriteria(list[0].id);
+      })
+      .catch(() => {
+        setError('评分标准加载失败，请刷新重试');
+      })
+      .finally(() => {
+        setCriteriaLoading(false);
+      });
   }, []);
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -80,24 +88,31 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
         <label className="mb-1 block text-xs font-semibold text-slate-500">
           评分标准
         </label>
-        <select
-          value={selectedCriteria}
-          onChange={(e) => setSelectedCriteria(e.target.value)}
-          className="mb-4 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100"
-        >
-          {criteria.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.label}
-            </option>
-          ))}
-        </select>
+        <div className="relative mb-4">
+          <select
+            value={selectedCriteria}
+            onChange={(e) => setSelectedCriteria(e.target.value)}
+            disabled={criteriaLoading}
+            className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 pr-9 text-sm text-slate-900 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100 disabled:opacity-50"
+          >
+            {criteriaLoading && <option value="">加载中...</option>}
+            {criteria.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+          <ChevronDown
+            size={16}
+            className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-slate-400"
+          />
+        </div>
 
         {/* Image upload area */}
         <input
           ref={fileInputRef}
           type="file"
           accept="image/*"
-          capture="environment"
           onChange={handleFileChange}
           className="hidden"
         />
