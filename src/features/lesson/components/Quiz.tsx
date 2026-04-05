@@ -111,7 +111,7 @@ export const Quiz: React.FC<QuizProps> = ({
 
   const labels = {
     completeTitle: '测验完成',
-    retakeButtonLabel: '重新��答',
+    retakeButtonLabel: '重新答题',
     scoreLabel: '得分',
     correctLabel: '回答正确',
     incorrectLabel: '回答错误',

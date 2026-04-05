@@ -53,7 +53,7 @@ const DIFFICULTY_OPTIONS: { value: DifficultyPref; label: string }[] = [
   { value: 'C2', label: 'C2 精通' },
 ];
 
-const LANG_OPTIONS = [{ value: 'en' as const, label: '🇬🇧 英语 English' }];
+const LANG_OPTIONS = [{ value: 'en' as const, label: '英语 English' }];
 
 /** 将图片文件压缩为 128x128 的 base64 JPEG */
 function compressImage(file: File): Promise<string> {
