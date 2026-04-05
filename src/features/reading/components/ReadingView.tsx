@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   Sparkles,
   CircleCheckBig,
+  Layers,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -128,7 +129,48 @@ export const ReadingView: React.FC<ReadingViewProps> = ({ lessons }) => {
 
         {/* Review Recommendation */}
         {dueCount > 0 && (
-          <section className="mb-8">
+          <section className="mb-8 space-y-3">
+            {/* Swipe review card */}
+            <Link
+              href={`/review/swipe?words=${encodeURIComponent(dueWords.join(','))}`}
+              className="group block overflow-hidden rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-6 shadow-sm transition-all hover:shadow-lg active:scale-[0.99]"
+            >
+              <div className="mb-2 flex items-center gap-2">
+                <Layers size={16} className="text-amber-600" />
+                <span className="text-[10px] font-bold tracking-widest text-amber-600 uppercase">
+                  快速复习 · 滑动卡片
+                </span>
+              </div>
+              <h3 className="mb-1 text-lg font-bold text-slate-900">
+                单词闪卡
+              </h3>
+              <p className="mb-4 text-sm text-slate-500">
+                {dueCount} 个待复习词，左滑忘了、右滑记住，逐词精准打分
+              </p>
+              <div className="flex items-center justify-between">
+                <div className="flex flex-wrap gap-1.5">
+                  {dueWords.slice(0, 5).map((w) => (
+                    <span
+                      key={w}
+                      className="rounded-full border border-amber-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-amber-700"
+                    >
+                      {w}
+                    </span>
+                  ))}
+                  {dueCount > 5 && (
+                    <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-400">
+                      +{dueCount - 5}
+                    </span>
+                  )}
+                </div>
+                <span className="flex items-center text-sm font-bold text-amber-600 transition-transform group-hover:translate-x-1">
+                  开始复习
+                  <ArrowRight size={16} className="ml-1" />
+                </span>
+              </div>
+            </Link>
+
+            {/* AI review article card */}
             <Link
               href={`/review?words=${encodeURIComponent(dueWords.join(','))}`}
               className="group block overflow-hidden rounded-2xl border border-teal-200 bg-gradient-to-r from-emerald-50 to-teal-50 p-6 shadow-sm transition-all hover:shadow-lg active:scale-[0.99]"
