@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { streamObject } from 'ai';
 import { supabaseAdmin } from '@/lib/supabase-server';
 import { modelPower } from '@/lib/ai';
-import { requireApiAuth } from '@/lib/api-auth';
+import { getAuthUser } from '@/lib/auth-helper';
 import {
   WritingGradeSchema,
   mapWritingGradeRow,
@@ -14,9 +14,10 @@ import {
 } from '@/types/writing';
 
 export async function POST(request: NextRequest) {
-  const auth = await requireApiAuth(request);
-  if ('error' in auth) return auth.error;
-  const { user } = auth;
+  const user = await getAuthUser(request);
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
   let body: { submissionId?: string };
   try {
@@ -116,7 +117,7 @@ Provide your overall comment, strengths, and improvements in Chinese (中文). G
   const result = streamObject({
     model: modelPower,
     schema: WritingGradeSchema,
-    maxOutputTokens: 65536,
+    maxOutputTokens: 16384,
     messages: [
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userPrompt },
