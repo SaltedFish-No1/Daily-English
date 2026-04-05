@@ -289,7 +289,14 @@ export const useUserStore = create<UserState>()(
             [key]: {
               fetchedAt: Date.now(),
               data: currentRecord?.data ?? null,
-              status: 'loading',
+              status: currentRecord?.data ? 'revalidating' : 'loading',
+              ...(currentRecord?.data
+                ? {
+                    source: currentRecord.source,
+                    audioUrl: currentRecord.audioUrl,
+                    zhStatus: currentRecord.zhStatus,
+                  }
+                : {}),
             },
           },
         }));
