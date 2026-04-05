@@ -2,10 +2,20 @@
  * @description 课程数据领域类型：文章、图表、测验题型与列表元数据。
  */
 
-export type LessonSchemaVersion = '2.1';
+export type LessonSchemaVersion = '2.1' | '2.2';
+
+export type LessonDifficulty = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 
 export interface LessonMeta {
+  id: string;
   title: string;
+  date: string;
+  category: string;
+  teaser: string;
+  published: boolean;
+  featured: boolean;
+  tag: string;
+  difficulty: LessonDifficulty;
 }
 
 export interface LessonSpeech {
@@ -171,11 +181,9 @@ export interface LessonData {
   quiz: LessonQuiz;
 }
 
-export type LessonDifficulty = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
-
 export interface LessonListItem {
+  id: string;
   date: string;
-  path: string;
   title: string;
   category: string;
   teaser: string;

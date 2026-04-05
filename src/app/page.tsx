@@ -1,12 +1,8 @@
-import fs from 'fs';
-import path from 'path';
 import { HomeView } from '@/features/home/components/HomeView';
-import { LessonsList } from '@/types/lesson';
+import { getLessons } from '@/lib/lessons-db';
 
-export default function Home() {
-  const filePath = path.join(process.cwd(), 'data', 'lessons.json');
-  const fileContent = fs.readFileSync(filePath, 'utf8');
-  const data: LessonsList = JSON.parse(fileContent);
+export default async function Home() {
+  const { lessons } = await getLessons();
 
-  return <HomeView lessons={data.lessons} />;
+  return <HomeView lessons={lessons} />;
 }

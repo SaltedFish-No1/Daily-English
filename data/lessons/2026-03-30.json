@@ -1,7 +1,15 @@
 {
-  "schemaVersion": "2.1",
+  "schemaVersion": "2.2",
   "meta": {
-    "title": "The Psychology of Awe"
+    "id": "cde7a49c-e887-4b06-a763-5561b10b1633",
+    "title": "The Psychology of Awe",
+    "date": "2026-03-30",
+    "category": "Psychology & Behavior",
+    "teaser": "Enter the psychology of awe and explore how nature restores tired minds while quietly making people more generous and connected.",
+    "published": true,
+    "featured": true,
+    "tag": "Psychology",
+    "difficulty": "B2"
   },
   "speech": {
     "enabled": true

@@ -2,24 +2,50 @@
  * @description 课程 JSON 数据校验与 schema 迁移。
  */
 
-import { FocusWord, LessonData } from '@/types/lesson';
+import crypto from 'crypto';
+import { FocusWord, LessonData, LessonDifficulty } from '@/types/lesson';
 
 // ---------------------------------------------------------------------------
 // Schema migration
 // ---------------------------------------------------------------------------
 
-const CURRENT_SCHEMA_VERSION = '2.1';
+const CURRENT_SCHEMA_VERSION = '2.2';
 
 type MigratorFn = (data: Record<string, unknown>) => Record<string, unknown>;
+
+const VALID_DIFFICULTIES: Set<string> = new Set<string>([
+  'A1',
+  'A2',
+  'B1',
+  'B2',
+  'C1',
+  'C2',
+]);
 
 /**
  * Add an entry here whenever the schema version is bumped.
  * Key = the FROM version; the function should return data at the next version.
- *
- * Example for a future 2.1 → 2.2 migration:
- *   '2.1': (data) => ({ ...data, schemaVersion: '2.2', newField: 'default' }),
  */
-const MIGRATIONS: Record<string, MigratorFn> = {};
+const MIGRATIONS: Record<string, MigratorFn> = {
+  '2.1': (data) => {
+    const oldMeta = (data.meta as Record<string, unknown>) ?? {};
+    return {
+      ...data,
+      schemaVersion: '2.2',
+      meta: {
+        id: crypto.randomUUID(),
+        date: 'unknown',
+        category: 'Uncategorized',
+        teaser: 'No description available.',
+        published: false,
+        featured: false,
+        tag: 'General',
+        difficulty: 'B2',
+        ...oldMeta,
+      },
+    };
+  },
+};
 
 /**
  * Walks the migration chain until the data reaches CURRENT_SCHEMA_VERSION,
@@ -59,6 +85,10 @@ const isStringArray = (value: unknown): value is string[] => {
   return Array.isArray(value) && value.every(isString);
 };
 
+const isDifficulty = (value: unknown): value is LessonDifficulty => {
+  return typeof value === 'string' && VALID_DIFFICULTIES.has(value);
+};
+
 const isFocusWord = (value: unknown): value is FocusWord => {
   if (!isRecord(value)) return false;
   if (!isString(value.key)) return false;
@@ -76,7 +106,14 @@ export const validateLessonData = (value: unknown): LessonData | null => {
 
   const { meta, speech, article, focusWords, quiz } = migrated;
 
-  if (!isRecord(meta) || !isString(meta.title)) return null;
+  // --- meta 校验 ---
+  if (!isRecord(meta) || !isString(meta.id) || !isString(meta.title))
+    return null;
+  if (!isString(meta.date) || !isString(meta.category)) return null;
+  if (!isString(meta.teaser) || !isString(meta.tag)) return null;
+  if (!isBoolean(meta.published) || !isBoolean(meta.featured)) return null;
+  if (!isDifficulty(meta.difficulty)) return null;
+
   if (!isRecord(speech) || !isBoolean(speech.enabled)) return null;
 
   if (!isRecord(article) || !isString(article.title)) return null;

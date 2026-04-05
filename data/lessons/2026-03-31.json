@@ -1,7 +1,15 @@
 {
-  "schemaVersion": "2.1",
+  "schemaVersion": "2.2",
   "meta": {
-    "title": "Rethinking Animal Play"
+    "id": "9fcb3a7f-dc91-4527-a283-e810fa31a89e",
+    "title": "Rethinking Animal Play",
+    "date": "2026-03-31",
+    "category": "Science & Nature",
+    "teaser": "Discover why a more challenging life can make captive animals healthier, sharper, and closer to their wild instincts.",
+    "published": true,
+    "featured": true,
+    "tag": "Science",
+    "difficulty": "B2"
   },
   "speech": {
     "enabled": true
