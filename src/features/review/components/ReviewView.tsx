@@ -6,8 +6,10 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { LessonData, LessonListItem } from '@/types/lesson';
+import { type GeneratedLesson } from '@/types/review';
 import { LessonView } from '@/features/lesson/components/LessonView';
 import { useUserStore } from '@/store/useUserStore';
+import { parsePartialJson } from 'ai';
 import { Sparkles, RefreshCw, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -15,15 +17,6 @@ import Link from 'next/link';
 interface ReviewViewProps {
   words: string[];
   difficulty?: string;
-}
-
-interface GeneratedLesson {
-  title: string;
-  category: string;
-  teaser: string;
-  paragraphs: { id: string; en: string; zh: string }[];
-  focusWords: { key: string; forms: string[] }[];
-  quizQuestions: unknown[];
 }
 
 type GenerationState =
@@ -85,7 +78,6 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
         throw new Error(err.error || `HTTP ${res.status}`);
       }
 
-      // Read streaming response from streamObject
       const reader = res.body!.getReader();
       const decoder = new TextDecoder();
       let accumulated = '';
@@ -94,28 +86,29 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
         const { done, value } = await reader.read();
         if (done) break;
         accumulated += decoder.decode(value, { stream: true });
-        try {
-          const partial = JSON.parse(accumulated);
-          setState({ status: 'generating', progress: partial });
-        } catch {
-          // Incomplete JSON — wait for more chunks
+
+        const { value: partial } = await parsePartialJson(accumulated);
+        if (partial != null) {
+          setState({
+            status: 'generating',
+            progress: partial as Partial<GeneratedLesson>,
+          });
         }
       }
-
-      // Flush any remaining buffered bytes (e.g. partial multi-byte UTF-8 chars)
       accumulated += decoder.decode();
 
-      let object: GeneratedLesson;
-      try {
-        object = JSON.parse(accumulated) as GeneratedLesson;
-      } catch {
-        console.error(
-          '[ReviewView] Failed to parse streamed JSON, length:',
-          accumulated.length
-        );
+      const { value: parsed } = await parsePartialJson(accumulated);
+      const finalObject = parsed as GeneratedLesson | null;
+
+      if (
+        !finalObject?.title ||
+        !finalObject.paragraphs?.length ||
+        !finalObject.quizQuestions?.length
+      ) {
         throw new Error('AI 生成内容不完整，请重试。');
       }
-      const lessonData = assembleLessonData(object, words, difficulty);
+
+      const lessonData = assembleLessonData(finalObject, words, difficulty);
       setState({ status: 'success', data: lessonData });
     } catch (err) {
       setState({

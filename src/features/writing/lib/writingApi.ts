@@ -3,6 +3,7 @@
  */
 
 import { supabase } from '@/lib/supabase';
+import { parsePartialJson } from 'ai';
 import type {
   GradingCriteria,
   TopicExtraction,
@@ -152,8 +153,7 @@ export async function submitHandwritten(
 
 /**
  * Grade a submission — handles both JSON (existing grade) and streaming (new AI grading).
- * @param onPartial - Called with partial WritingGradeResult as the stream arrives.
- *                    Allows the UI to show progressive grading feedback.
+ * Uses parsePartialJson for robust partial JSON parsing during streaming.
  */
 export async function gradeSubmission(
   submissionId: string,
@@ -177,44 +177,7 @@ export async function gradeSubmission(
     return json.grade;
   }
 
-  // New AI grading — server streams partial JSON via streamObject
-  const text = await readStreamAsText(res, onPartial);
-  let parsed: WritingGradeResult;
-  try {
-    parsed = JSON.parse(text) as WritingGradeResult;
-  } catch {
-    console.error(
-      '[WritingGrade] Failed to parse streamed JSON, length:',
-      text.length
-    );
-    throw new Error('AI 批改结果不完整，请重试。');
-  }
-
-  // Construct full WritingGrade from AI result (DB fields filled client-side)
-  return {
-    id: '',
-    submissionId,
-    userId: '',
-    overallScore: parsed.overallScore,
-    dimensionScores: parsed.dimensionScores,
-    grammarErrors: parsed.grammarErrors,
-    vocabularySuggestions: parsed.vocabularySuggestions,
-    overallComment: parsed.overallComment,
-    modelAnswer: parsed.modelAnswer,
-    strengths: parsed.strengths,
-    improvements: parsed.improvements,
-    createdAt: new Date().toISOString(),
-  };
-}
-
-/**
- * Read a text stream response, calling onPartial with accumulated text
- * parsed as partial JSON whenever possible.
- */
-async function readStreamAsText(
-  res: Response,
-  onPartial?: (partial: Partial<WritingGradeResult>) => void
-): Promise<string> {
+  // New AI grading — stream partial JSON via streamObject
   const reader = res.body!.getReader();
   const decoder = new TextDecoder();
   let accumulated = '';
@@ -225,17 +188,36 @@ async function readStreamAsText(
     accumulated += decoder.decode(value, { stream: true });
 
     if (onPartial) {
-      try {
-        const partial = JSON.parse(accumulated);
-        onPartial(partial);
-      } catch {
-        // Incomplete JSON — skip until next chunk
+      const { value: partial } = await parsePartialJson(accumulated);
+      if (partial != null) {
+        onPartial(partial as Partial<WritingGradeResult>);
       }
     }
   }
-
-  // Flush any remaining buffered bytes (e.g. partial multi-byte UTF-8 chars)
   accumulated += decoder.decode();
 
-  return accumulated;
+  const { value: parsed } = await parsePartialJson(accumulated);
+  if (!parsed || !(parsed as WritingGradeResult).overallScore) {
+    console.error(
+      '[WritingGrade] Incomplete streamed JSON, length:',
+      accumulated.length
+    );
+    throw new Error('AI 批改结果不完整，请重试。');
+  }
+
+  const result = parsed as WritingGradeResult;
+  return {
+    id: '',
+    submissionId,
+    userId: '',
+    overallScore: result.overallScore,
+    dimensionScores: result.dimensionScores,
+    grammarErrors: result.grammarErrors,
+    vocabularySuggestions: result.vocabularySuggestions,
+    overallComment: result.overallComment,
+    modelAnswer: result.modelAnswer,
+    strengths: result.strengths,
+    improvements: result.improvements,
+    createdAt: new Date().toISOString(),
+  };
 }
