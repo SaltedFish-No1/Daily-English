@@ -29,6 +29,12 @@ pnpm-debug.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
 # schema (contains Supabase table definitions including sensitive tables)
 schema.json
 
