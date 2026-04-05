@@ -86,7 +86,7 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
   function handleSave() {
     const store = useUserStore.getState();
     const batchSlug = `${PHOTO_CAPTURE_PREFIX}${Date.now()}`;
-    const dateLabel = `拍照识词 ${new Date().toLocaleDateString('zh-CN')}`;
+    const dateLabel = '拍照识词';
 
     for (const index of selectedIndices) {
       const w = extractedWords[index];
@@ -119,7 +119,7 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center"
+          className="fixed inset-0 z-[60] flex items-end justify-center bg-black/40 sm:items-center"
           onClick={(e) => e.target === e.currentTarget && handleClose()}
         >
           <motion.div
