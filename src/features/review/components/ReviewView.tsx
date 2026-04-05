@@ -124,6 +124,13 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
       console.log('[ReviewView] First 500 chars:', accumulated.slice(0, 500));
       console.log('[ReviewView] Last 500 chars:', accumulated.slice(-500));
 
+      // Check if the server sent an error message instead of JSON
+      if (accumulated.startsWith('__SERVER_ERROR__')) {
+        const serverError = accumulated.slice('__SERVER_ERROR__'.length);
+        console.error('[ReviewView] Server-side error:', serverError);
+        throw new Error(`服务端错误: ${serverError}`);
+      }
+
       const { value: finalObject } = await parsePartialJson(accumulated);
 
       console.log(

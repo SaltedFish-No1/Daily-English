@@ -104,10 +104,47 @@ Return valid JSON matching the schema exactly.`,
       },
     });
 
-    // Stream the raw generated lesson object to the client.
-    // The frontend reads the stream, shows real progress, and assembles
-    // the full LessonData once complete.
-    return result.toTextStreamResponse();
+    // Wrap the text stream: pass through normal data, but if the stream
+    // ends empty (AI error swallowed), append the error from result.object.
+    const textStream = result.textStream;
+    const objectPromise = result.object;
+
+    const encoder = new TextEncoder();
+    let hasData = false;
+
+    const wrappedStream = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const chunk of textStream) {
+            hasData = true;
+            controller.enqueue(encoder.encode(chunk));
+          }
+        } catch (streamErr) {
+          console.error(
+            '[ReviewGenerate] textStream iteration error:',
+            streamErr
+          );
+        }
+
+        // If no data came through, the AI call likely failed.
+        // Await the object promise to get the real error and surface it.
+        if (!hasData) {
+          try {
+            await objectPromise;
+          } catch (objErr) {
+            const errMsg = `__SERVER_ERROR__${String(objErr)}`;
+            console.error('[ReviewGenerate] object promise rejected:', objErr);
+            controller.enqueue(encoder.encode(errMsg));
+          }
+        }
+
+        controller.close();
+      },
+    });
+
+    return new Response(wrappedStream, {
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+    });
   } catch (error) {
     console.error('[ReviewGenerate] AI generation failed:', error);
     return NextResponse.json(
