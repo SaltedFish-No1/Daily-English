@@ -8,81 +8,10 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { streamObject } from 'ai';
-import { z } from 'zod';
 import { modelPower } from '@/lib/ai';
 import { requireApiAuth } from '@/lib/api-auth';
-
-// ---------------------------------------------------------------------------
-// Zod schema for the AI-generated lesson
-// ---------------------------------------------------------------------------
-
-const ParagraphSchema = z.object({
-  id: z.string(),
-  en: z.string(),
-  zh: z.string(),
-});
-
-const FocusWordSchema = z.object({
-  key: z.string(),
-  forms: z.array(z.string()),
-});
-
-const CompletionBlankSchema = z.object({
-  id: z.string(),
-  acceptedAnswers: z.array(z.string()),
-  wordLimit: z.number().nullable(),
-});
-
-const CompletionQuestionSchema = z.object({
-  id: z.string(),
-  type: z.literal('completion'),
-  subtype: z.enum(['summary', 'sentence']),
-  prompt: z.string(),
-  instruction: z.string(),
-  contentTemplate: z.string(),
-  blanks: z.array(CompletionBlankSchema),
-  rationale: z.object({ en: z.string(), zh: z.string() }).nullable(),
-});
-
-const MultipleChoiceOptionSchema = z.object({
-  id: z.string(),
-  text: z.string(),
-});
-
-const MultipleChoiceQuestionSchema = z.object({
-  id: z.string(),
-  type: z.literal('multiple_choice'),
-  selectionMode: z.enum(['single', 'multiple']),
-  prompt: z.string(),
-  options: z.array(MultipleChoiceOptionSchema),
-  correctOptionIds: z.array(z.string()),
-  rationale: z.object({ en: z.string(), zh: z.string() }).nullable(),
-});
-
-const TFNGQuestionSchema = z.object({
-  id: z.string(),
-  type: z.literal('tfng'),
-  mode: z.enum(['TFNG', 'YNNG']),
-  prompt: z.string(),
-  statement: z.string(),
-  answer: z.enum(['TRUE', 'FALSE', 'NOT_GIVEN']),
-  rationale: z.object({ en: z.string(), zh: z.string() }).nullable(),
-});
-
-const QuizQuestionSchema = z.discriminatedUnion('type', [
-  CompletionQuestionSchema,
-  MultipleChoiceQuestionSchema,
-  TFNGQuestionSchema,
-]);
-
-const GeneratedLessonSchema = z.object({
-  title: z.string(),
-  category: z.string(),
-  teaser: z.string(),
-  paragraphs: z.array(ParagraphSchema),
-  focusWords: z.array(FocusWordSchema),
-  quizQuestions: z.array(QuizQuestionSchema),
-});
+import { GeneratedLessonSchema } from '@/types/review';
+import { saveReviewLesson } from '@/lib/lessons-db';
 
 // ---------------------------------------------------------------------------
 // Topics pool — rotated to keep content varied
@@ -135,10 +64,29 @@ export async function POST(request: NextRequest) {
   const wordList = words.slice(0, 15).join(', ');
 
   try {
+    const userId = auth.user.id;
     const result = streamObject({
       model: modelPower,
       schema: GeneratedLessonSchema,
-      maxOutputTokens: 16384,
+      maxOutputTokens: 65536,
+      onFinish: async ({ object }) => {
+        if (object) {
+          try {
+            const lessonId = await saveReviewLesson(
+              userId,
+              object,
+              words,
+              difficulty
+            );
+            console.log('[ReviewGenerate] Saved review lesson:', lessonId);
+          } catch (err) {
+            console.error(
+              '[ReviewGenerate] Failed to save review lesson:',
+              err
+            );
+          }
+        }
+      },
       prompt: `You are a professional English language education content creator.
 
 Generate a complete English reading lesson that naturally incorporates ALL of the following vocabulary words: ${wordList}
@@ -161,30 +109,14 @@ REQUIREMENTS:
 
 Return valid JSON matching the schema exactly.`,
       temperature: 0.8,
-      onFinish: ({ object, error }) => {
-        if (error) {
-          console.error(
-            '[ReviewGenerate] streamObject finished with error:',
-            error
-          );
-        }
-        if (!object) {
-          console.error(
-            '[ReviewGenerate] streamObject produced no valid object'
-          );
-        }
-      },
     });
 
-    // Stream the raw generated lesson object to the client.
-    // The frontend reads the stream, shows real progress, and assembles
-    // the full LessonData once complete.
     return result.toTextStreamResponse();
   } catch (error) {
     console.error('[ReviewGenerate] AI generation failed:', error);
     return NextResponse.json(
-      { error: 'Failed to generate review article. Please try again.' },
-      { status: 500 }
+      { error: 'AI generation failed' },
+      { status: 502 }
     );
   }
 }
