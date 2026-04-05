@@ -5,6 +5,7 @@
 import { supabase } from '@/lib/supabase';
 import type {
   GradingCriteria,
+  TopicExtraction,
   WritingTopic,
   WritingTopicWithStats,
   WritingSubmission,
@@ -45,30 +46,29 @@ export async function fetchTopics(): Promise<WritingTopicWithStats[]> {
   return json.topics;
 }
 
-export async function uploadTopic(
-  image: File,
-  gradingCriteria: string
-): Promise<WritingTopic> {
+export async function parseTopicImage(
+  image: File
+): Promise<{ imageUrl: string; extraction: TopicExtraction }> {
   const formData = new FormData();
   formData.append('image', image);
-  formData.append('gradingCriteria', gradingCriteria);
 
-  const res = await authFetch('/api/writing/upload-topic', {
+  const res = await authFetch('/api/writing/parse-topic-image', {
     method: 'POST',
     body: formData,
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.error ?? 'Upload failed');
+    throw new Error(err.error ?? '图片识别失败');
   }
-  const json = await res.json();
-  return json.topic;
+  return res.json();
 }
 
 export async function createTopicManual(params: {
   gradingCriteria: string;
   title: string | null;
   writingPrompt: string;
+  imageUrl?: string | null;
+  wordLimit?: number | null;
 }): Promise<WritingTopic> {
   const res = await authFetch('/api/writing/create-topic', {
     method: 'POST',

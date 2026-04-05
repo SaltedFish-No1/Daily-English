@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  uploadTopic,
+  parseTopicImage,
   createTopicManual,
   fetchCriteria,
 } from '@/features/writing/lib/writingApi';
@@ -37,6 +37,13 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
   const [manualTitle, setManualTitle] = useState('');
   const [manualPrompt, setManualPrompt] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [parsing, setParsing] = useState(false);
+  const [parsedData, setParsedData] = useState<{
+    imageUrl: string;
+    title: string;
+    writingPrompt: string;
+    wordLimit: number | null;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -67,16 +74,48 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
   const canSubmit =
     selectedCriteria &&
     !uploading &&
-    (inputMode === 'image' ? !!imageFile : manualPrompt.trim().length > 0);
+    !parsing &&
+    (inputMode === 'image'
+      ? parsedData
+        ? parsedData.writingPrompt.trim().length > 0
+        : !!imageFile
+      : manualPrompt.trim().length > 0);
 
   async function handleSubmit() {
     if (!canSubmit) return;
-    setUploading(true);
     setError(null);
+
+    if (inputMode === 'image' && !parsedData && imageFile) {
+      // Step 1: Parse image → show extracted text for review
+      setParsing(true);
+      try {
+        const { imageUrl, extraction } = await parseTopicImage(imageFile);
+        setParsedData({
+          imageUrl,
+          title: extraction.title,
+          writingPrompt: extraction.writingPrompt,
+          wordLimit: extraction.wordLimit,
+        });
+      } catch (err) {
+        setError(err instanceof Error ? err.message : '图片识别失败');
+      } finally {
+        setParsing(false);
+      }
+      return;
+    }
+
+    // Step 2 (image confirmed) or manual mode: save to DB
+    setUploading(true);
     try {
       let topic: WritingTopic;
-      if (inputMode === 'image' && imageFile) {
-        topic = await uploadTopic(imageFile, selectedCriteria);
+      if (inputMode === 'image' && parsedData) {
+        topic = await createTopicManual({
+          gradingCriteria: selectedCriteria,
+          title: parsedData.title.trim() || null,
+          writingPrompt: parsedData.writingPrompt.trim(),
+          imageUrl: parsedData.imageUrl,
+          wordLimit: parsedData.wordLimit,
+        });
       } else {
         topic = await createTopicManual({
           gradingCriteria: selectedCriteria,
@@ -143,7 +182,10 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
         {/* Input mode toggle */}
         <div className="mb-4 flex gap-2">
           <button
-            onClick={() => setInputMode('manual')}
+            onClick={() => {
+              setInputMode('manual');
+              setParsedData(null);
+            }}
             className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-semibold transition-all ${
               inputMode === 'manual'
                 ? 'bg-violet-100 text-violet-700'
@@ -174,45 +216,121 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              {/* Image upload area */}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="hidden"
-              />
-
-              {imagePreview ? (
-                <div className="relative mb-4 overflow-hidden rounded-2xl border border-slate-200">
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="max-h-64 w-full bg-slate-50 object-contain"
-                  />
+              {parsedData ? (
+                /* Post-parse: show extracted text for review/editing */
+                <div className="mb-4 flex flex-col gap-3">
+                  {imagePreview && (
+                    <div className="relative overflow-hidden rounded-xl border border-slate-200">
+                      <img
+                        src={imagePreview}
+                        alt="题目图片"
+                        className="max-h-32 w-full bg-slate-50 object-contain"
+                      />
+                    </div>
+                  )}
+                  <div>
+                    <label className="mb-1 block text-xs font-semibold text-slate-500">
+                      题目标题（选填）
+                    </label>
+                    <input
+                      value={parsedData.title}
+                      onChange={(e) =>
+                        setParsedData({ ...parsedData, title: e.target.value })
+                      }
+                      placeholder="例如：IELTS Task 2 - Education"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs font-semibold text-slate-500">
+                      写作题目内容
+                    </label>
+                    <textarea
+                      value={parsedData.writingPrompt}
+                      onChange={(e) =>
+                        setParsedData({
+                          ...parsedData,
+                          writingPrompt: e.target.value,
+                        })
+                      }
+                      placeholder="请输入完整的写作题目要求..."
+                      rows={5}
+                      className="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm leading-relaxed text-slate-900 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs font-semibold text-slate-500">
+                      字数要求（选填）
+                    </label>
+                    <input
+                      type="number"
+                      value={parsedData.wordLimit ?? ''}
+                      onChange={(e) =>
+                        setParsedData({
+                          ...parsedData,
+                          wordLimit: e.target.value
+                            ? Number(e.target.value)
+                            : null,
+                        })
+                      }
+                      placeholder="例如：250"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100"
+                    />
+                  </div>
                   <button
                     onClick={() => {
+                      setParsedData(null);
                       setImageFile(null);
                       setImagePreview(null);
                     }}
-                    className="absolute top-2 right-2 rounded-full bg-black/50 p-1.5 text-white hover:bg-black/70"
+                    className="self-start text-xs font-medium text-violet-600 hover:text-violet-800"
                   >
-                    <X size={14} />
+                    重新上传图片
                   </button>
                 </div>
               ) : (
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="mb-4 flex w-full flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 py-10 text-slate-400 transition-colors hover:border-violet-300 hover:text-violet-500"
-                >
-                  <div className="flex gap-2">
-                    <Camera size={24} />
-                    <Upload size={24} />
-                  </div>
-                  <span className="text-sm font-medium">
-                    拍照或选择题目图片
-                  </span>
-                </button>
+                /* Pre-parse: image upload area */
+                <>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+
+                  {imagePreview ? (
+                    <div className="relative mb-4 overflow-hidden rounded-2xl border border-slate-200">
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="max-h-64 w-full bg-slate-50 object-contain"
+                      />
+                      <button
+                        onClick={() => {
+                          setImageFile(null);
+                          setImagePreview(null);
+                        }}
+                        className="absolute top-2 right-2 rounded-full bg-black/50 p-1.5 text-white hover:bg-black/70"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="mb-4 flex w-full flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 py-10 text-slate-400 transition-colors hover:border-violet-300 hover:text-violet-500"
+                    >
+                      <div className="flex gap-2">
+                        <Camera size={24} />
+                        <Upload size={24} />
+                      </div>
+                      <span className="text-sm font-medium">
+                        拍照或选择题目图片
+                      </span>
+                    </button>
+                  )}
+                </>
               )}
             </motion.div>
           ) : (
@@ -259,15 +377,20 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
           disabled={!canSubmit}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 py-3 text-sm font-bold text-white shadow-lg shadow-violet-200 transition-all hover:bg-violet-700 disabled:opacity-50 disabled:shadow-none"
         >
-          {uploading ? (
+          {parsing ? (
             <>
               <Loader2 size={18} className="animate-spin" />
-              {inputMode === 'image' ? 'AI 识别中...' : '创建中...'}
+              AI 识别中...
+            </>
+          ) : uploading ? (
+            <>
+              <Loader2 size={18} className="animate-spin" />
+              创建中...
             </>
           ) : (
             <>
               <Check size={18} />
-              确认
+              {inputMode === 'image' && !parsedData ? '开始识别' : '确认提交'}
             </>
           )}
         </button>
