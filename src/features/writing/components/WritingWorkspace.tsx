@@ -10,11 +10,13 @@ import {
   Eye,
   PenLine,
   Hash,
+  Camera,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { WritingTimer } from './WritingTimer';
 import { WritingEditor } from './WritingEditor';
 import { GradeReport } from './GradeReport';
+import { HandwritingOcrModal } from './HandwritingOcrModal';
 import { useWritingStore } from '@/store/useWritingStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import {
@@ -44,9 +46,12 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
     currentDraftText,
     timerSeconds,
     setCurrentTopic,
+    setDraftText,
     clearDraft,
     resetTimer,
     stopTimer,
+    timerRunning,
+    startTimer,
   } = useWritingStore();
 
   const [topic, setTopic] = useState<WritingTopic | null>(null);
@@ -59,6 +64,7 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [submissionCount, setSubmissionCount] = useState(0);
+  const [ocrModalOpen, setOcrModalOpen] = useState(false);
 
   // Load topic data
   useEffect(() => {
@@ -133,6 +139,17 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
       setPhase('writing');
     }
   }, [topic, currentDraftText, timerSeconds, wordCount, stopTimer, clearDraft]);
+
+  const handleOcrFill = useCallback(
+    (text: string) => {
+      setDraftText(text);
+      setOcrModalOpen(false);
+      if (!timerRunning && text.trim().length > 0) {
+        startTimer();
+      }
+    },
+    [setDraftText, timerRunning, startTimer]
+  );
 
   const handleNewAttempt = useCallback(() => {
     setPhase('writing');
@@ -220,6 +237,15 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
               exit={{ opacity: 0 }}
               className="flex flex-col gap-4"
             >
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setOcrModalOpen(true)}
+                  className="flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100"
+                >
+                  <Camera size={14} />
+                  手写识别
+                </button>
+              </div>
               <WritingEditor wordLimit={topic.wordLimit} />
 
               {error && (
@@ -321,6 +347,13 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
           )}
         </AnimatePresence>
       </main>
+
+      <HandwritingOcrModal
+        open={ocrModalOpen}
+        onClose={() => setOcrModalOpen(false)}
+        onFillText={handleOcrFill}
+        hasExistingText={currentDraftText.trim().length > 0}
+      />
     </div>
   );
 }
