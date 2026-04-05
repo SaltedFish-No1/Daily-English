@@ -41,7 +41,7 @@ async function seed() {
   let fail = 0;
 
   for (const file of files) {
-    const slug = file.replace('.json', '');
+    const date = file.replace('.json', '');
     const filePath = path.join(lessonsDir, file);
     const lesson = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     const meta = lesson.meta;
@@ -57,7 +57,7 @@ async function seed() {
       const { error: lessonErr } = await supabase.from('lessons').upsert(
         {
           id: meta.id,
-          slug,
+          date,
           title: meta.title,
           category: meta.category,
           teaser: meta.teaser,
@@ -69,7 +69,7 @@ async function seed() {
           article_title: lesson.article?.title ?? meta.title,
           quiz_title: lesson.quiz?.title ?? 'Knowledge Check',
         },
-        { onConflict: 'slug' }
+        { onConflict: 'date' }
       );
       if (lessonErr) throw lessonErr;
 

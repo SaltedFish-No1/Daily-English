@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getLessonBySlug } from '@/lib/lessons-db';
+import { getLessonByDate } from '@/lib/lessons-db';
 
 export async function GET(
   _req: NextRequest,
@@ -12,7 +12,7 @@ export async function GET(
   }
 
   try {
-    const lesson = await getLessonBySlug(slug);
+    const lesson = await getLessonByDate(slug);
     if (!lesson) {
       return NextResponse.json({ error: 'Lesson not found' }, { status: 404 });
     }

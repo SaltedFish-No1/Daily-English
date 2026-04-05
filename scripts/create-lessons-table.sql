@@ -6,7 +6,7 @@
 -- ==========================================================================
 CREATE TABLE IF NOT EXISTS lessons (
   id              UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  slug            TEXT NOT NULL UNIQUE,          -- 日期字符串，如 "2026-04-02"
+  date            TEXT NOT NULL UNIQUE,          -- 日期字符串，如 "2026-04-02"
   title           TEXT NOT NULL,
   category        TEXT NOT NULL,
   teaser          TEXT NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS lessons (
   updated_at      TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX IF NOT EXISTS idx_lessons_published ON lessons (published, slug DESC);
+CREATE INDEX IF NOT EXISTS idx_lessons_published ON lessons (published, date DESC);
 
 -- ==========================================================================
 -- 2. 文章段落表

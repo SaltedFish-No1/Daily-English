@@ -1,6 +1,6 @@
 import { LessonView } from '@/features/lesson/components/LessonView';
 import { LessonListItem } from '@/types/lesson';
-import { getLessonBySlug, getLessonSlugs } from '@/lib/lessons-db';
+import { getLessonByDate, getLessonDates } from '@/lib/lessons-db';
 import { Metadata } from 'next';
 
 export async function generateMetadata({
@@ -9,7 +9,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const data = await getLessonBySlug(slug);
+  const data = await getLessonByDate(slug);
   if (!data) return { title: 'Lesson Not Found' };
 
   return {
@@ -19,8 +19,8 @@ export async function generateMetadata({
 }
 
 export async function generateStaticParams() {
-  const slugs = await getLessonSlugs();
-  return slugs.map((slug) => ({ slug }));
+  const dates = await getLessonDates();
+  return dates.map((slug) => ({ slug }));
 }
 
 export default async function LessonPage({
@@ -29,7 +29,7 @@ export default async function LessonPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const data = await getLessonBySlug(slug);
+  const data = await getLessonByDate(slug);
 
   if (!data) {
     return <div>Lesson not found</div>;

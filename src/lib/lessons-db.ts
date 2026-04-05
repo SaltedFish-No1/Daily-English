@@ -67,11 +67,11 @@ export async function getLessons(
   let query = supabaseAdmin
     .from('lessons')
     .select(
-      'id, slug, title, category, teaser, tag, difficulty, published, featured',
+      'id, date, title, category, teaser, tag, difficulty, published, featured',
       { count: 'exact' }
     )
     .eq('published', true)
-    .order('slug', { ascending: false })
+    .order('date', { ascending: false })
     .range(from, to);
 
   if (difficulty) query = query.eq('difficulty', difficulty);
@@ -84,7 +84,7 @@ export async function getLessons(
 
   const lessons: LessonListItem[] = (data ?? []).map((row) => ({
     id: row.id,
-    date: row.slug,
+    date: row.date,
     title: row.title,
     category: row.category,
     teaser: row.teaser,
@@ -101,16 +101,16 @@ export async function getLessons(
 // Detail — assemble LessonData from 4 tables
 // ---------------------------------------------------------------------------
 
-export async function getLessonBySlug(
-  slug: string
+export async function getLessonByDate(
+  date: string
 ): Promise<LessonData | null> {
   // 1. Main lesson row
   const { data: lesson, error: lessonErr } = await supabaseAdmin
     .from('lessons')
     .select(
-      'id, slug, title, category, teaser, tag, difficulty, published, featured, speech_enabled, article_title, quiz_title'
+      'id, date, title, category, teaser, tag, difficulty, published, featured, speech_enabled, article_title, quiz_title'
     )
-    .eq('slug', slug)
+    .eq('date', date)
     .eq('published', true)
     .single();
 
@@ -179,7 +179,7 @@ export async function getLessonBySlug(
     meta: {
       id: lesson.id,
       title: lesson.title,
-      date: lesson.slug,
+      date: lesson.date,
       category: lesson.category,
       teaser: lesson.teaser,
       published: lesson.published,
@@ -204,23 +204,23 @@ export async function getLessonBySlug(
 // Helpers
 // ---------------------------------------------------------------------------
 
-export async function getLessonSlugs(): Promise<string[]> {
+export async function getLessonDates(): Promise<string[]> {
   const { data, error } = await supabaseAdmin
     .from('lessons')
-    .select('slug')
+    .select('date')
     .eq('published', true)
-    .order('slug', { ascending: false });
+    .order('date', { ascending: false });
 
   if (error || !data) return [];
-  return data.map((row) => row.slug);
+  return data.map((row) => row.date);
 }
 
 export async function getLessonTitleMap(): Promise<Record<string, string>> {
   const { data, error } = await supabaseAdmin
     .from('lessons')
-    .select('slug, title')
+    .select('date, title')
     .eq('published', true);
 
   if (error || !data) return {};
-  return Object.fromEntries(data.map((row) => [row.slug, row.title]));
+  return Object.fromEntries(data.map((row) => [row.date, row.title]));
 }
