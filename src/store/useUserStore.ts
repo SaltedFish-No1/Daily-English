@@ -46,6 +46,7 @@ export type DictionaryCacheIndex = Record<string, DictionaryCacheRecord>;
 
 export interface LessonHistory {
   slug: string;
+  title?: string;
   score: number;
   total: number;
   completedAt: number;
@@ -74,7 +75,12 @@ interface UserState {
     record: DictionaryCacheRecord
   ) => void;
   fetchDictionaryRecord: (word: string, force?: boolean) => Promise<void>;
-  saveLessonScore: (slug: string, score: number, total: number) => void;
+  saveLessonScore: (
+    slug: string,
+    score: number,
+    total: number,
+    title?: string
+  ) => void;
   quizProgress: Record<string, QuizPersistState>;
   setQuizProgress: (key: string, state: QuizPersistState) => void;
   clearQuizProgress: (key: string) => void;
@@ -304,7 +310,7 @@ export const useUserStore = create<UserState>()(
           },
         }));
       },
-      saveLessonScore: (slug, score, total) =>
+      saveLessonScore: (slug, score, total, title) =>
         set((state) => {
           const userId = getAuthUserId();
           if (userId) {
@@ -316,6 +322,7 @@ export const useUserStore = create<UserState>()(
                   slug,
                   score,
                   total,
+                  title,
                   completed_at: Date.now(),
                 },
                 { onConflict: 'user_id,slug' }
@@ -330,6 +337,7 @@ export const useUserStore = create<UserState>()(
               ...state.history,
               [slug]: {
                 slug,
+                title,
                 score,
                 total,
                 completedAt: Date.now(),
