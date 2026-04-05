@@ -19,10 +19,12 @@ import {
   Camera,
   User,
   CircleCheckBig,
+  Download,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useUserStore } from '@/store/useUserStore';
 import { useAuthStore } from '@/store/useAuthStore';
+import { usePWAInstall } from '@/hooks/usePWAInstall';
 import {
   usePreferenceStore,
   type ExamGoal,
@@ -155,6 +157,13 @@ export function ProfileView() {
   const [nicknameDraft, setNicknameDraft] = useState(prefs.nickname);
   const [showAbout, setShowAbout] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const {
+    isStandalone,
+    installDialog,
+    handleInstall,
+    closeInstallDialog,
+    confirmInstall,
+  } = usePWAInstall();
 
   const toggle = (key: string) =>
     setExpandedRow((prev) => (prev === key ? null : key));
@@ -222,7 +231,7 @@ export function ProfileView() {
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 pb-24 lg:pb-8">
-      <header className="pt-safe sticky top-0 z-30 border-b border-gray-100 bg-white shadow-sm">
+      <header className="hidden pt-safe sticky top-0 z-30 border-b border-gray-100 bg-white shadow-sm lg:block">
         <div className="mx-auto max-w-3xl px-5 py-6">
           <h1 className="text-xl font-bold tracking-tight text-slate-900">
             我的
@@ -309,6 +318,20 @@ export function ProfileView() {
             </div>
           </div>
         </section>
+
+        {/* ── PWA Install Tip ────────────────────────── */}
+        {!isStandalone && (
+          <button
+            type="button"
+            onClick={handleInstall}
+            className="flex w-full items-center gap-3 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-left transition-colors hover:bg-emerald-100 active:scale-[0.99]"
+          >
+            <Download size={18} className="shrink-0 text-emerald-600" />
+            <span className="min-w-0 flex-1 text-sm text-emerald-800">
+              将<strong>薄荷外语</strong>安装到桌面，获得更好的使用体验
+            </span>
+          </button>
+        )}
 
         {/* ── Stats Grid ────────────────────────────── */}
         <section className="grid grid-cols-4 gap-3">
@@ -506,6 +529,42 @@ export function ProfileView() {
           </div>
         </section>
       </main>
+
+      {/* PWA Install Dialog */}
+      {installDialog.open && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/40 p-5">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl">
+            <h3 className="mb-2 text-base font-bold text-slate-900">
+              {installDialog.title}
+            </h3>
+            <p className="mb-5 text-sm leading-relaxed text-slate-600">
+              {installDialog.message}
+            </p>
+            <div className="flex justify-end gap-2">
+              {installDialog.showConfirm && (
+                <button
+                  type="button"
+                  onClick={closeInstallDialog}
+                  className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50"
+                >
+                  取消
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={
+                  installDialog.showConfirm
+                    ? confirmInstall
+                    : closeInstallDialog
+                }
+                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700"
+              >
+                {installDialog.showConfirm ? '确认安装' : '知道了'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

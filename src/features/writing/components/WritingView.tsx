@@ -62,7 +62,7 @@ export function WritingView() {
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 pb-24 lg:pb-8">
       {/* Header */}
-      <header className="pt-safe sticky top-0 z-30 border-b border-gray-100 bg-white shadow-sm">
+      <header className="hidden pt-safe sticky top-0 z-30 border-b border-gray-100 bg-white shadow-sm lg:block">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3 sm:px-5 sm:py-5">
           <div className="flex items-center gap-2 sm:gap-3">
             <button
