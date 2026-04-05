@@ -117,12 +117,19 @@ Provide your overall comment, strengths, and improvements in Chinese (中文). G
   const result = streamObject({
     model: modelPower,
     schema: WritingGradeSchema,
+    maxOutputTokens: 16384,
     messages: [
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userPrompt },
     ],
-    onFinish: async ({ object: gradeResult }) => {
-      if (!gradeResult) return;
+    onFinish: async ({ object: gradeResult, error }) => {
+      if (error) {
+        console.error('[Writing] streamObject finished with error:', error);
+      }
+      if (!gradeResult) {
+        console.error('[Writing] streamObject produced no valid object');
+        return;
+      }
       // 7. Insert grade into DB after stream completes
       const { error: insertError } = await supabaseAdmin
         .from('writing_grades')

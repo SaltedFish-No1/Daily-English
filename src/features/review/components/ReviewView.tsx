@@ -102,7 +102,19 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
         }
       }
 
-      const object = JSON.parse(accumulated) as GeneratedLesson;
+      // Flush any remaining buffered bytes (e.g. partial multi-byte UTF-8 chars)
+      accumulated += decoder.decode();
+
+      let object: GeneratedLesson;
+      try {
+        object = JSON.parse(accumulated) as GeneratedLesson;
+      } catch {
+        console.error(
+          '[ReviewView] Failed to parse streamed JSON, length:',
+          accumulated.length
+        );
+        throw new Error('AI 生成内容不完整，请重试。');
+      }
       const lessonData = assembleLessonData(object, words, difficulty);
       setState({ status: 'success', data: lessonData });
     } catch (err) {
