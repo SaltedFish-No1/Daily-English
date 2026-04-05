@@ -82,13 +82,32 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
       const reader = res.body!.getReader();
       const decoder = new TextDecoder();
       let accumulated = '';
+      let chunkCount = 0;
+
+      console.log('[ReviewView] Stream started, reading chunks...');
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        accumulated += decoder.decode(value, { stream: true });
+        const chunk = decoder.decode(value, { stream: true });
+        accumulated += chunk;
+        chunkCount++;
+
+        if (chunkCount <= 3) {
+          console.log(
+            `[ReviewView] Chunk #${chunkCount}, size=${chunk.length}, accumulated=${accumulated.length}, preview:`,
+            accumulated.slice(0, 200)
+          );
+        }
+
         const { value: partial } = await parsePartialJson(accumulated);
         if (partial != null) {
+          if (chunkCount <= 3) {
+            console.log(
+              `[ReviewView] parsePartialJson OK, keys:`,
+              Object.keys(partial as Record<string, unknown>)
+            );
+          }
           setState({
             status: 'generating',
             progress: partial as Partial<GeneratedLesson>,
@@ -99,7 +118,33 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
       // Flush any remaining buffered bytes
       accumulated += decoder.decode();
 
+      console.log(
+        `[ReviewView] Stream ended. Total chunks=${chunkCount}, accumulated length=${accumulated.length}`
+      );
+      console.log('[ReviewView] First 500 chars:', accumulated.slice(0, 500));
+      console.log('[ReviewView] Last 500 chars:', accumulated.slice(-500));
+
       const { value: finalObject } = await parsePartialJson(accumulated);
+
+      console.log(
+        '[ReviewView] Final parsePartialJson result:',
+        finalObject
+          ? Object.keys(finalObject as Record<string, unknown>)
+          : 'null/undefined'
+      );
+
+      if (finalObject) {
+        const obj = finalObject as GeneratedLesson;
+        console.log('[ReviewView] Validation check:', {
+          hasTitle: !!obj.title,
+          hasParagraphs: !!obj.paragraphs?.length,
+          paragraphCount: obj.paragraphs?.length,
+          hasQuizQuestions: !!obj.quizQuestions?.length,
+          quizCount: obj.quizQuestions?.length,
+          hasFocusWords: !!obj.focusWords?.length,
+        });
+      }
+
       if (
         !finalObject ||
         !(finalObject as GeneratedLesson).title ||
@@ -107,7 +152,7 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
         !(finalObject as GeneratedLesson).quizQuestions?.length
       ) {
         console.error(
-          '[ReviewView] Incomplete streamed JSON, length:',
+          '[ReviewView] FAILED validation. Incomplete streamed JSON, length:',
           accumulated.length
         );
         throw new Error('AI 生成内容不完整，请重试。');
