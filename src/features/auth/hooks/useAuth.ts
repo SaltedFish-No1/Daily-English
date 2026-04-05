@@ -75,6 +75,21 @@ export function useAuth() {
     return { error };
   };
 
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo:
+        typeof window !== 'undefined'
+          ? `${window.location.origin}/auth/callback`
+          : undefined,
+    });
+    return { error };
+  };
+
+  const updatePassword = async (password: string) => {
+    const { error } = await supabase.auth.updateUser({ password });
+    return { error };
+  };
+
   return {
     user,
     session,
@@ -88,5 +103,7 @@ export function useAuth() {
     signUpWithEmail,
     signUpWithEmailOtp,
     verifyEmailOtp,
+    resetPassword,
+    updatePassword,
   };
 }
