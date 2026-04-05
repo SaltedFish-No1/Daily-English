@@ -9,6 +9,7 @@ import { generateObject } from 'ai';
 import { supabaseAdmin } from '@/lib/supabase-server';
 import { modelVision } from '@/lib/ai';
 import { getAuthUser } from '@/lib/auth-helper';
+import { ensureWritingBucket } from '@/lib/ensure-writing-bucket';
 import { TopicExtractionSchema } from '@/types/writing';
 
 export async function POST(request: NextRequest) {
@@ -33,6 +34,7 @@ export async function POST(request: NextRequest) {
   }
 
   // 3. Upload image to Supabase Storage
+  await ensureWritingBucket();
   const arrayBuffer = await imageFile.arrayBuffer();
   const ext = imageFile.name.split('.').pop() ?? 'jpg';
   const fileName = `${user.id}/topics/${Date.now()}.${ext}`;
@@ -46,7 +48,10 @@ export async function POST(request: NextRequest) {
 
   if (uploadError) {
     console.error('[Writing] Image upload error:', uploadError);
-    return NextResponse.json({ error: 'Image upload failed' }, { status: 502 });
+    return NextResponse.json(
+      { error: `Image upload failed: ${uploadError.message}` },
+      { status: 502 }
+    );
   }
 
   const {

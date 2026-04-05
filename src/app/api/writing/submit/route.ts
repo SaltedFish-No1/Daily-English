@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { modelVision } from '@/lib/ai';
 import { supabaseAdmin } from '@/lib/supabase-server';
 import { getAuthUser } from '@/lib/auth-helper';
+import { ensureWritingBucket } from '@/lib/ensure-writing-bucket';
 import { mapWritingSubmissionRow } from '@/types/writing';
 
 function countWords(text: string): number {
@@ -46,6 +47,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Upload answer image
+    await ensureWritingBucket();
     const arrayBuffer = await imageFile.arrayBuffer();
     const ext = imageFile.name.split('.').pop() ?? 'jpg';
     const fileName = `${user.id}/answers/${Date.now()}.${ext}`;
@@ -60,7 +62,7 @@ export async function POST(request: NextRequest) {
     if (uploadError) {
       console.error('[Writing] Answer image upload error:', uploadError);
       return NextResponse.json(
-        { error: 'Image upload failed' },
+        { error: `Image upload failed: ${uploadError.message}` },
         { status: 502 }
       );
     }
