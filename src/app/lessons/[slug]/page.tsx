@@ -22,6 +22,21 @@ const findLessonOverview = (slug: string): LessonListItem | null => {
   return list.lessons.find((lesson) => lesson.date === slug) ?? null;
 };
 
+/**
+ * Find the next lesson (newer date) in the sorted list.
+ * lessons.json is sorted newest-first, so "next" = previous index.
+ */
+const findNextLesson = (
+  slug: string
+): { slug: string; title: string } | null => {
+  const list = readLessonsList();
+  if (!list) return null;
+  const idx = list.lessons.findIndex((lesson) => lesson.date === slug);
+  if (idx <= 0) return null; // already newest or not found
+  const next = list.lessons[idx - 1];
+  return { slug: next.date, title: next.title };
+};
+
 const readLessonData = (slug: string): LessonData | null => {
   const filePath = path.join(lessonsDir, `${slug}.json`);
   if (!fs.existsSync(filePath)) return null;
@@ -72,5 +87,15 @@ export default async function LessonPage({
     return <div>Lesson not found</div>;
   }
 
-  return <LessonView data={data} lessonSlug={slug} overview={overview} />;
+  const nextLesson = findNextLesson(slug);
+
+  return (
+    <LessonView
+      data={data}
+      lessonSlug={slug}
+      overview={overview}
+      nextLessonSlug={nextLesson?.slug ?? null}
+      nextLessonTitle={nextLesson?.title ?? null}
+    />
+  );
 }

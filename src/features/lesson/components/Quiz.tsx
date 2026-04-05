@@ -6,7 +6,16 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { LessonQuiz } from '@/types/lesson';
-import { ArrowRight, RotateCcw } from 'lucide-react';
+import Link from 'next/link';
+import {
+  ArrowRight,
+  RotateCcw,
+  BookOpen,
+  ClipboardList,
+  Home,
+  ChevronRight,
+  BookMarked,
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 import { QuestionRenderer } from './quiz/QuestionRenderer';
 import { FullScreenCelebration } from './quiz/FullScreenCelebration';
@@ -27,7 +36,11 @@ import {
 export interface QuizProps {
   quiz: LessonQuiz;
   persistKey: string;
+  lessonSlug: string;
+  nextLessonSlug?: string | null;
+  nextLessonTitle?: string | null;
   onComplete?: (score: number, total: number) => void;
+  onSwitchToArticle?: () => void;
 }
 
 const initialQuizProgress: QuizPersistState = {
@@ -37,7 +50,15 @@ const initialQuizProgress: QuizPersistState = {
   grades: {},
 };
 
-export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
+export const Quiz: React.FC<QuizProps> = ({
+  quiz,
+  persistKey,
+  lessonSlug,
+  nextLessonSlug,
+  nextLessonTitle,
+  onComplete,
+  onSwitchToArticle,
+}) => {
   const questions = quiz.questions;
   const [showReview, setShowReview] = useState(false);
   const [rationaleLang, setRationaleLang] = useState<'en' | 'zh'>('en');
@@ -236,10 +257,21 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
         </div>
       );
     }
+    // Count saved words for this lesson
+    const savedWords = useUserStore.getState().savedWords;
+    const lessonWordCount = Object.values(savedWords).filter((occurrences) =>
+      occurrences.some((o) => o.lessonSlug === lessonSlug)
+    ).length;
+
+    // Determine primary CTA based on score
+    const primaryAction: 'next' | 'review' | 'article' =
+      scorePercent >= 90 ? 'next' : scorePercent >= 70 ? 'review' : 'article';
+
     return (
       <>
         {isPerfectScore ? <FullScreenCelebration /> : null}
         <div className="flex min-h-[60vh] flex-col items-center justify-center border-gray-100 bg-white p-8 text-center sm:rounded-xl sm:border sm:shadow-sm">
+          {/* Score Display */}
           <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-full border-4 border-emerald-100 bg-emerald-50">
             <span className="text-4xl font-bold text-emerald-600">
               {score}/{total}
@@ -249,20 +281,123 @@ export const Quiz: React.FC<QuizProps> = ({ quiz, persistKey, onComplete }) => {
             {labels.completeTitle}
           </h2>
           <p className="mb-8 max-w-sm text-slate-500">{scoreFeedback}</p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
+
+          {/* Forward Navigation Actions */}
+          <div className="flex w-full max-w-md flex-col gap-3">
+            {/* Review Article & Vocab */}
+            <button
+              onClick={onSwitchToArticle}
+              className={`flex w-full items-center gap-3 rounded-xl border px-5 py-4 text-left transition-all ${
+                primaryAction === 'article'
+                  ? 'border-emerald-200 bg-emerald-50 shadow-sm hover:bg-emerald-100'
+                  : 'border-slate-200 hover:bg-slate-50'
+              }`}
+            >
+              <div
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
+                  primaryAction === 'article'
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-slate-100 text-slate-500'
+                }`}
+              >
+                <BookOpen size={20} />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-bold text-slate-900">
+                  回顾文章与生词
+                </p>
+                <p className="text-xs text-slate-500">
+                  {lessonWordCount > 0
+                    ? `本课已收藏 ${lessonWordCount} 个生词`
+                    : '点击文中单词可查词并收藏'}
+                </p>
+              </div>
+              {primaryAction === 'article' && (
+                <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-bold text-white">
+                  推荐
+                </span>
+              )}
+            </button>
+
+            {/* View Review & Analysis */}
             <button
               onClick={() => setShowReview(true)}
-              className="rounded-xl border border-slate-200 px-6 py-3 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50"
+              className={`flex w-full items-center gap-3 rounded-xl border px-5 py-4 text-left transition-all ${
+                primaryAction === 'review'
+                  ? 'border-emerald-200 bg-emerald-50 shadow-sm hover:bg-emerald-100'
+                  : 'border-slate-200 hover:bg-slate-50'
+              }`}
             >
-              查看做题记录与解析
+              <div
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
+                  primaryAction === 'review'
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-slate-100 text-slate-500'
+                }`}
+              >
+                <ClipboardList size={20} />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-bold text-slate-900">
+                  查看做题记录与解析
+                </p>
+                <p className="text-xs text-slate-500">复盘错题，巩固理解</p>
+              </div>
+              {primaryAction === 'review' && (
+                <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-bold text-white">
+                  推荐
+                </span>
+              )}
             </button>
-            <button
-              onClick={handleRestart}
-              className="flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-3 font-bold text-white shadow-lg shadow-emerald-600/20 transition-colors hover:bg-emerald-700"
+
+            {/* Retake + Next Lesson row */}
+            <div className="flex gap-3">
+              <button
+                onClick={handleRestart}
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-3 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50"
+              >
+                <RotateCcw size={16} />
+                重新做答
+              </button>
+              {nextLessonSlug ? (
+                <Link
+                  href={`/lessons/${nextLessonSlug}`}
+                  title={nextLessonTitle ?? undefined}
+                  className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition-all ${
+                    primaryAction === 'next'
+                      ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20 hover:bg-emerald-700'
+                      : 'border border-emerald-200 text-emerald-700 hover:bg-emerald-50'
+                  }`}
+                >
+                  下一课
+                  <ChevronRight size={16} className="shrink-0" />
+                </Link>
+              ) : (
+                <span className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-100 px-4 py-3 text-sm font-bold text-slate-400">
+                  已是最新课程
+                </span>
+              )}
+            </div>
+
+            {/* Vocab Library link */}
+            {lessonWordCount > 0 && (
+              <Link
+                href="/vocab"
+                className="flex items-center justify-center gap-1.5 py-2 text-sm font-bold text-emerald-600 transition-colors hover:text-emerald-700"
+              >
+                <BookMarked size={14} />
+                查看完整生词表
+              </Link>
+            )}
+
+            {/* Home link */}
+            <Link
+              href="/"
+              className="flex items-center justify-center gap-1.5 py-1 text-xs text-slate-400 transition-colors hover:text-slate-600"
             >
-              <RotateCcw size={20} />
-              {labels.retakeButtonLabel}
-            </button>
+              <Home size={12} />
+              返回首页
+            </Link>
           </div>
         </div>
       </>

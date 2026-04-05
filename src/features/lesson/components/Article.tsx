@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { ArrowRight } from 'lucide-react';
 import { buildRenderableTokens } from '@/lib/focusWords';
 import { useLessonStore } from '@/store/useLessonStore';
 import { FocusWord, LessonArticle } from '@/types/lesson';
@@ -11,6 +12,8 @@ interface ArticleProps {
   speechEnabled: boolean;
   lessonSlug: string;
   lessonTitle: string;
+  questionCount?: number;
+  onStartQuiz?: () => void;
 }
 
 /**
@@ -25,6 +28,8 @@ export const Article: React.FC<ArticleProps> = ({
   speechEnabled,
   lessonSlug,
   lessonTitle,
+  questionCount,
+  onStartQuiz,
 }) => {
   const { selectedWordContext, setSelectedWordContext } = useLessonStore();
   const [showHint, setShowHint] = useState(true);
@@ -173,6 +178,28 @@ export const Article: React.FC<ArticleProps> = ({
           </div>
         ))}
       </article>
+
+      {/* Start Quiz CTA */}
+      {onStartQuiz && (
+        <div className="mt-8 rounded-2xl border border-emerald-100 bg-emerald-50/50 p-6 text-center">
+          <p className="mb-3 text-sm font-bold text-slate-700">
+            阅读完成？检验一下你的理解吧
+          </p>
+          <button
+            type="button"
+            onClick={onStartQuiz}
+            className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-3 font-bold text-white shadow-lg shadow-emerald-600/20 transition-all hover:bg-emerald-700 active:scale-95"
+          >
+            开始测验
+            <ArrowRight size={18} />
+          </button>
+          {questionCount != null && questionCount > 0 && (
+            <p className="mt-2 text-xs text-slate-500">
+              共 {questionCount} 道阅读理解题
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 };

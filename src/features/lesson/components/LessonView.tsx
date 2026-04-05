@@ -20,12 +20,16 @@ interface LessonViewProps {
   data: LessonData;
   lessonSlug: string;
   overview: LessonListItem;
+  nextLessonSlug?: string | null;
+  nextLessonTitle?: string | null;
 }
 
 export const LessonView: React.FC<LessonViewProps> = ({
   data,
   lessonSlug,
   overview,
+  nextLessonSlug,
+  nextLessonTitle,
 }) => {
   const { activeTab, setActiveTab } = useLessonStore();
   const { saveLessonScore } = useUserStore();
@@ -35,6 +39,16 @@ export const LessonView: React.FC<LessonViewProps> = ({
     },
     [lessonSlug, saveLessonScore]
   );
+
+  const handleSwitchToArticle = useCallback(() => {
+    setActiveTab('article');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [setActiveTab]);
+
+  const handleStartQuiz = useCallback(() => {
+    setActiveTab('quiz');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [setActiveTab]);
 
   const tabs = [
     {
@@ -110,6 +124,8 @@ export const LessonView: React.FC<LessonViewProps> = ({
               speechEnabled={data.speech.enabled}
               lessonSlug={lessonSlug}
               lessonTitle={overview.title}
+              questionCount={data.quiz.questions.length}
+              onStartQuiz={handleStartQuiz}
             />
           </motion.div>
           <motion.div
@@ -125,7 +141,11 @@ export const LessonView: React.FC<LessonViewProps> = ({
             <Quiz
               quiz={data.quiz}
               persistKey={lessonSlug}
+              lessonSlug={lessonSlug}
+              nextLessonSlug={nextLessonSlug}
+              nextLessonTitle={nextLessonTitle}
               onComplete={handleQuizComplete}
+              onSwitchToArticle={handleSwitchToArticle}
             />
           </motion.div>
         </div>
