@@ -2,7 +2,15 @@
 
 import React, { useMemo, useState } from 'react';
 import { LessonDifficulty, LessonListItem } from '@/types/lesson';
-import { Calendar, ArrowRight, Download, BookMarked } from 'lucide-react';
+import {
+  Calendar,
+  ArrowRight,
+  Download,
+  BookMarked,
+  BookOpen,
+  Trophy,
+  CheckCircle2,
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useUserStore } from '@/store/useUserStore';
@@ -22,14 +30,8 @@ interface DifficultyGuideState {
   difficulty: LessonDifficulty | null;
 }
 
-/**
- * @author SuperQ
- * @description 渲染首页课程列表与入口卡片。
- * @param props 课程清单数据。
- * @return 首页视图组件。
- */
 export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
-  const { savedWords } = useUserStore();
+  const { savedWords, history } = useUserStore();
   const {
     isStandalone,
     installDialog,
@@ -51,19 +53,33 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
   ) => {
     event.preventDefault();
     event.stopPropagation();
-    setDifficultyGuide({
-      open: true,
-      difficulty,
-    });
+    setDifficultyGuide({ open: true, difficulty });
   };
 
   const closeDifficultyGuide = () => {
-    setDifficultyGuide({
-      open: false,
-      difficulty: null,
-    });
+    setDifficultyGuide({ open: false, difficulty: null });
   };
 
+  // Learning stats
+  const stats = useMemo(() => {
+    const completedLessons = Object.values(history);
+    const lessonCount = completedLessons.length;
+    const wordCount = Object.keys(savedWords).filter(
+      (k) => savedWords[k].length > 0
+    ).length;
+    const avgScore =
+      lessonCount > 0
+        ? Math.round(
+            completedLessons.reduce(
+              (sum, h) => sum + (h.score / h.total) * 100,
+              0
+            ) / lessonCount
+          )
+        : 0;
+    return { lessonCount, wordCount, avgScore };
+  }, [history, savedWords]);
+
+  // Recent vocab
   const recentWordEntries = useMemo(() => {
     return Object.entries(savedWords)
       .filter(([, occurrences]) => occurrences.length > 0)
@@ -86,8 +102,8 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
   const recentWords = recentWordEntries.slice(0, previewCount);
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
-      <header className="pt-safe sticky top-0 z-50 border-b border-gray-100 bg-white shadow-sm">
+    <div className="flex min-h-screen flex-col bg-slate-50 pb-24 lg:pb-8">
+      <header className="pt-safe sticky top-0 z-30 border-b border-gray-100 bg-white shadow-sm">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-5 sm:py-6">
           <div>
             <h1 className="text-xl font-bold tracking-tight text-slate-900 sm:text-3xl">
@@ -114,6 +130,44 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
       </header>
 
       <main className="mx-auto w-full max-w-5xl flex-grow px-5 py-8 sm:py-12">
+        {/* Learning Stats */}
+        <section className="mb-6 grid grid-cols-3 gap-3 sm:mb-8">
+          <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm">
+            <div className="mb-1 flex items-center justify-center text-emerald-600">
+              <BookOpen size={18} />
+            </div>
+            <p className="text-xl font-bold text-slate-900 sm:text-2xl">
+              {stats.lessonCount}
+            </p>
+            <p className="text-[10px] font-bold text-slate-400 sm:text-[11px]">
+              已完成课程
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm">
+            <div className="mb-1 flex items-center justify-center text-emerald-600">
+              <BookMarked size={18} />
+            </div>
+            <p className="text-xl font-bold text-slate-900 sm:text-2xl">
+              {stats.wordCount}
+            </p>
+            <p className="text-[10px] font-bold text-slate-400 sm:text-[11px]">
+              收藏生词
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm">
+            <div className="mb-1 flex items-center justify-center text-emerald-600">
+              <Trophy size={18} />
+            </div>
+            <p className="text-xl font-bold text-slate-900 sm:text-2xl">
+              {stats.avgScore > 0 ? `${stats.avgScore}%` : '--'}
+            </p>
+            <p className="text-[10px] font-bold text-slate-400 sm:text-[11px]">
+              平均正确率
+            </p>
+          </div>
+        </section>
+
+        {/* Vocab Cards */}
         <section className="mb-6 rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm sm:mb-8">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -137,12 +191,13 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
           {recentWords.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {recentWords.map(({ word, latestOccurrence }) => (
-                <span
+                <Link
                   key={`${word}-${latestOccurrence.lessonSlug}-${latestOccurrence.paragraphIndex}`}
+                  href="/vocab"
                   className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600 transition-colors hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
                 >
                   {word}
-                </span>
+                </Link>
               ))}
             </div>
           ) : (
@@ -151,81 +206,92 @@ export const HomeView: React.FC<HomeViewProps> = ({ lessons }) => {
             </p>
           )}
         </section>
+
+        {/* Lesson Cards */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3">
-          {lessons.map((lesson, i) => (
-            <Link
-              key={lesson.date}
-              href={`/lessons/${lesson.date}`}
-              className="group relative block overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:shadow-xl active:scale-95"
-            >
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
+          {lessons.map((lesson, i) => {
+            const lessonHistory = history[lesson.date];
+            return (
+              <Link
+                key={lesson.date}
+                href={`/lessons/${lesson.date}`}
+                className="group relative block overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:shadow-xl active:scale-95"
               >
-                <div className="flex h-44 items-center justify-center bg-emerald-50/50 p-6 transition-colors group-hover:bg-emerald-50 sm:h-48 sm:p-8">
-                  <div className="text-center">
-                    <span className="mb-2 inline-block rounded-full bg-emerald-100 px-2.5 py-0.5 text-[10px] font-bold tracking-widest text-emerald-700 uppercase">
-                      {lesson.tag}
-                    </span>
-                    <h3 className="text-lg leading-tight font-bold text-slate-900 transition-colors group-hover:text-emerald-900 sm:text-xl">
-                      {lesson.title}
-                    </h3>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <div className="mb-3 flex items-center justify-between text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-                    <span className="flex items-center gap-1">
-                      <Calendar size={12} />
-                      {lesson.date}
-                    </span>
-                    <span
-                      role="button"
-                      tabIndex={0}
-                      onClick={(event) =>
-                        openDifficultyGuide(event, lesson.difficulty)
-                      }
-                      onKeyDown={(event) => {
-                        if (event.key !== 'Enter' && event.key !== ' ') return;
-                        event.preventDefault();
-                        event.stopPropagation();
-                        setDifficultyGuide({
-                          open: true,
-                          difficulty: lesson.difficulty,
-                        });
-                      }}
-                      className={`cursor-pointer rounded-full px-2 py-0.5 ${difficultyClassMap[lesson.difficulty]}`}
-                    >
-                      {lesson.difficulty}
-                    </span>
-                  </div>
-                  <p className="mb-5 line-clamp-2 text-sm leading-relaxed font-medium text-slate-500">
-                    {lesson.teaser}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center text-sm font-bold text-emerald-600 transition-transform group-hover:translate-x-1">
-                      立即开始
-                      <ArrowRight size={16} className="ml-1" />
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                >
+                  <div className="flex h-44 items-center justify-center bg-emerald-50/50 p-6 transition-colors group-hover:bg-emerald-50 sm:h-48 sm:p-8">
+                    <div className="text-center">
+                      <span className="mb-2 inline-block rounded-full bg-emerald-100 px-2.5 py-0.5 text-[10px] font-bold tracking-widest text-emerald-700 uppercase">
+                        {lesson.tag}
+                      </span>
+                      <h3 className="text-lg leading-tight font-bold text-slate-900 transition-colors group-hover:text-emerald-900 sm:text-xl">
+                        {lesson.title}
+                      </h3>
                     </div>
-                    <div className="flex -space-x-1.5">
-                      {[1, 2, 3].map((j) => (
-                        <div
-                          key={j}
-                          className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-slate-100 text-[8px] font-bold text-slate-400"
-                        >
-                          {j}
-                        </div>
-                      ))}
+                    {/* Completion badge */}
+                    {lessonHistory && (
+                      <div className="absolute top-4 right-4 flex items-center gap-1 rounded-full bg-emerald-600 px-2.5 py-1 text-[10px] font-bold text-white shadow-sm">
+                        <CheckCircle2 size={12} />
+                        {Math.round(
+                          (lessonHistory.score / lessonHistory.total) * 100
+                        )}
+                        %
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-6">
+                    <div className="mb-3 flex items-center justify-between text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                      <span className="flex items-center gap-1">
+                        <Calendar size={12} />
+                        {lesson.date}
+                      </span>
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        onClick={(event) =>
+                          openDifficultyGuide(event, lesson.difficulty)
+                        }
+                        onKeyDown={(event) => {
+                          if (event.key !== 'Enter' && event.key !== ' ')
+                            return;
+                          event.preventDefault();
+                          event.stopPropagation();
+                          setDifficultyGuide({
+                            open: true,
+                            difficulty: lesson.difficulty,
+                          });
+                        }}
+                        className={`cursor-pointer rounded-full px-2 py-0.5 ${difficultyClassMap[lesson.difficulty]}`}
+                      >
+                        {lesson.difficulty}
+                      </span>
+                    </div>
+                    <p className="mb-5 line-clamp-2 text-sm leading-relaxed font-medium text-slate-500">
+                      {lesson.teaser}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center text-sm font-bold text-emerald-600 transition-transform group-hover:translate-x-1">
+                        {lessonHistory ? '再次学习' : '立即开始'}
+                        <ArrowRight size={16} className="ml-1" />
+                      </div>
+                      {lessonHistory && (
+                        <span className="text-xs font-bold text-slate-400">
+                          {lessonHistory.score}/{lessonHistory.total}
+                        </span>
+                      )}
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            </Link>
-          ))}
+                </motion.div>
+              </Link>
+            );
+          })}
         </div>
       </main>
 
-      <footer className="pb-safe border-t border-slate-100 bg-white py-12 text-center">
+      <footer className="border-t border-slate-100 bg-white py-12 text-center">
         <p className="text-[11px] font-bold tracking-widest text-slate-400 uppercase">
           © 2026 薄荷外语 · DESIGNED FOR LEARNING
         </p>

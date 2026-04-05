@@ -73,7 +73,7 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
   }, [savedWords]);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 pb-24 lg:pb-8">
       <header className="sticky top-0 z-40 border-b border-slate-100 bg-white">
         <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-5 py-4">
           <div className="flex items-center gap-2">
@@ -82,15 +82,7 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
               我的生词表
             </h1>
           </div>
-          <div className="flex items-center gap-2">
-            <Link
-              href="/"
-              className="rounded-full border border-slate-200 px-3 py-1 text-xs font-bold text-slate-600 transition-colors hover:bg-slate-50"
-            >
-              返回首页
-            </Link>
-            <UserMenu />
-          </div>
+          <UserMenu />
         </div>
       </header>
 

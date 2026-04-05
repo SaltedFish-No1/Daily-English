@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter, Merriweather } from 'next/font/google';
 import './globals.css';
 import Providers from './providers';
+import { AppShell } from '@/components/AppShell';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -57,7 +58,9 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" className={`${inter.variable} ${merriweather.variable}`}>
       <body className="antialiased">
-        <Providers>{children}</Providers>
+        <Providers>
+          <AppShell>{children}</AppShell>
+        </Providers>
       </body>
     </html>
   );
