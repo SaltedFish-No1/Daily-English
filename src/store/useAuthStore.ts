@@ -7,6 +7,9 @@
 import { create } from 'zustand';
 import type { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
+import { useUserStore } from '@/store/useUserStore';
+import { usePreferenceStore } from '@/store/usePreferenceStore';
+import { useWritingStore } from '@/store/useWritingStore';
 
 interface AuthStoreState {
   user: User | null;
@@ -30,6 +33,10 @@ export const useAuthStore = create<AuthStoreState>()((set) => ({
 
   signOut: async () => {
     await supabase.auth.signOut();
+    // 清理所有持久化的用户数据，防止下一个登录用户看到旧数据
+    useUserStore.getState().resetStore();
+    usePreferenceStore.getState().resetStore();
+    useWritingStore.getState().resetStore();
     set({ user: null, session: null, isGuest: true });
   },
 }));

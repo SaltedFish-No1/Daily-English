@@ -45,6 +45,8 @@ interface PreferenceState {
   setLearningLang: (lang: LearningLang) => void;
   setDailyGoal: (goal: number) => void;
   setDifficultyPref: (pref: DifficultyPref) => void;
+  /** 重置所有偏好到默认值（登出时清理 localStorage） */
+  resetStore: () => void;
 }
 
 export const usePreferenceStore = create<PreferenceState>()(
@@ -80,6 +82,15 @@ export const usePreferenceStore = create<PreferenceState>()(
         set({ difficultyPref });
         syncPreferenceToCloud({ difficulty_pref: difficultyPref });
       },
+      resetStore: () =>
+        set({
+          avatarUrl: '',
+          nickname: '薄荷学员',
+          examGoal: 'ielts',
+          learningLang: 'en',
+          dailyGoal: 1,
+          difficultyPref: 'auto',
+        }),
     }),
     {
       name: 'daily-english-preferences',

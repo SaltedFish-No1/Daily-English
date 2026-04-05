@@ -338,40 +338,25 @@ export async function pullCloudDataToLocal(userId: string) {
     }
   }
 
-  // 合并 preferences：本地为默认值时采用云端
+  // 从云端恢复 preferences
   if (prefsRes.data) {
     const cloud = prefsRes.data;
-    const local = usePreferenceStore.getState();
-    const localIsDefault =
-      local.avatarUrl === '' &&
-      local.nickname === '薄荷学员' &&
-      local.examGoal === 'ielts' &&
-      local.dailyGoal === 1 &&
-      local.difficultyPref === 'auto';
-
-    if (localIsDefault && cloud.updated_at > 0) {
-      usePreferenceStore.setState({
-        avatarUrl: cloud.avatar_url ?? '',
-        nickname: cloud.nickname ?? '薄荷学员',
-        examGoal: cloud.exam_goal ?? 'ielts',
-        learningLang: cloud.learning_lang ?? 'en',
-        dailyGoal: cloud.daily_goal ?? 1,
-        difficultyPref: cloud.difficulty_pref ?? 'auto',
-      });
-    }
+    usePreferenceStore.setState({
+      avatarUrl: cloud.avatar_url ?? '',
+      nickname: cloud.nickname ?? '薄荷学员',
+      examGoal: cloud.exam_goal ?? 'ielts',
+      learningLang: cloud.learning_lang ?? 'en',
+      dailyGoal: cloud.daily_goal ?? 1,
+      difficultyPref: cloud.difficulty_pref ?? 'auto',
+    });
   }
 
-  // 合并 writingDraft：本地为空时采用云端
+  // 从云端恢复 writingDraft
   if (draftRes.data) {
     const cloud = draftRes.data;
-    const local = useWritingStore.getState();
-    const localIsEmpty = !local.currentTopicId && !local.currentDraftText;
-
-    if (localIsEmpty && (cloud.topic_id || cloud.draft_text)) {
-      useWritingStore.setState({
-        currentTopicId: cloud.topic_id ?? null,
-        currentDraftText: cloud.draft_text ?? '',
-      });
-    }
+    useWritingStore.setState({
+      currentTopicId: cloud.topic_id ?? null,
+      currentDraftText: cloud.draft_text ?? '',
+    });
   }
 }
