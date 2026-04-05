@@ -20,6 +20,8 @@ export async function POST(request: NextRequest) {
     gradingCriteria?: string;
     title?: string | null;
     writingPrompt?: string;
+    imageUrl?: string | null;
+    wordLimit?: number | null;
   };
   try {
     body = await request.json();
@@ -50,8 +52,8 @@ export async function POST(request: NextRequest) {
       title: title || null,
       writing_prompt: writingPrompt.trim(),
       grading_criteria: gradingCriteria,
-      word_limit: null,
-      image_url: null,
+      word_limit: body.wordLimit ?? null,
+      image_url: body.imageUrl ?? null,
     })
     .select()
     .single();

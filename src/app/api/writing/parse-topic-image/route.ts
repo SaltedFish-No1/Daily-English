@@ -1,6 +1,7 @@
 /**
- * @description 上传写作题目图片 → 视觉模型提取题目 → 存入数据库。
- *   接收 FormData: image (File), gradingCriteria (string)
+ * @description 上传写作题目图片 → 视觉模型提取题目文字 → 返回提取结果（不写入数据库）。
+ *   接收 FormData: image (File)
+ *   返回 { imageUrl: string, extraction: { title, writingPrompt, wordLimit } }
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -8,7 +9,7 @@ import { generateObject } from 'ai';
 import { supabaseAdmin } from '@/lib/supabase-server';
 import { modelVision } from '@/lib/ai';
 import { getAuthUser } from '@/lib/auth-helper';
-import { TopicExtractionSchema, mapWritingTopicRow } from '@/types/writing';
+import { TopicExtractionSchema } from '@/types/writing';
 
 export async function POST(request: NextRequest) {
   // 1. Auth
@@ -26,16 +27,9 @@ export async function POST(request: NextRequest) {
   }
 
   const imageFile = formData.get('image') as File | null;
-  const gradingCriteria = formData.get('gradingCriteria') as string | null;
 
   if (!imageFile) {
     return NextResponse.json({ error: 'Missing image file' }, { status: 400 });
-  }
-  if (!gradingCriteria) {
-    return NextResponse.json(
-      { error: 'Missing gradingCriteria' },
-      { status: 400 }
-    );
   }
 
   // 3. Upload image to Supabase Storage
@@ -62,8 +56,7 @@ export async function POST(request: NextRequest) {
   // 4. Call vision model to extract writing prompt
   let extraction;
   try {
-    const imageBuffer = Buffer.from(arrayBuffer);
-    const base64Image = imageBuffer.toString('base64');
+    const base64Image = Buffer.from(arrayBuffer).toString('base64');
     const mimeType = imageFile.type || 'image/jpeg';
 
     const { object } = await generateObject({
@@ -94,27 +87,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // 5. Insert into writing_topics
-  const { data: topic, error: insertError } = await supabaseAdmin
-    .from('writing_topics')
-    .insert({
-      user_id: user.id,
-      title: extraction.title,
-      writing_prompt: extraction.writingPrompt,
-      grading_criteria: gradingCriteria,
-      word_limit: extraction.wordLimit,
-      image_url: publicUrl,
-    })
-    .select()
-    .single();
-
-  if (insertError || !topic) {
-    console.error('[Writing] Insert topic error:', insertError);
-    return NextResponse.json(
-      { error: 'Failed to save topic' },
-      { status: 500 }
-    );
-  }
-
-  return NextResponse.json({ topic: mapWritingTopicRow(topic) });
+  // 5. Return extracted data (no DB insert)
+  return NextResponse.json({ imageUrl: publicUrl, extraction });
 }
