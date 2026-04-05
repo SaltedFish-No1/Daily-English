@@ -16,6 +16,10 @@ export interface LessonMeta {
   featured: boolean;
   tag: string;
   difficulty: LessonDifficulty;
+  /** 是否为间隔重复生成的复习课程 */
+  isReview?: boolean;
+  /** 本课程复习的目标词列表 */
+  reviewWords?: string[];
 }
 
 export interface LessonSpeech {

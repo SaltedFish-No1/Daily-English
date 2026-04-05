@@ -9,6 +9,7 @@ import {
   BookOpen,
   Trophy,
   CheckCircle2,
+  Sparkles,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -18,6 +19,7 @@ import {
   difficultyClassMap,
 } from '@/features/home/components/CEFRGuideDialog';
 import { useLearningStats } from '@/hooks/useLearningStats';
+import { useReviewWords } from '@/hooks/useReviewWords';
 
 interface ReadingViewProps {
   lessons: LessonListItem[];
@@ -31,6 +33,7 @@ interface DifficultyGuideState {
 export const ReadingView: React.FC<ReadingViewProps> = ({ lessons }) => {
   const { history } = useUserStore();
   const stats = useLearningStats();
+  const { dueCount, dueWords } = useReviewWords();
 
   const [difficultyGuide, setDifficultyGuide] = useState<DifficultyGuideState>({
     open: false,
@@ -110,6 +113,50 @@ export const ReadingView: React.FC<ReadingViewProps> = ({ lessons }) => {
             </p>
           </div>
         </section>
+
+        {/* Review Recommendation */}
+        {dueCount > 0 && (
+          <section className="mb-8">
+            <Link
+              href={`/review?words=${encodeURIComponent(dueWords.join(','))}`}
+              className="group block overflow-hidden rounded-2xl border border-teal-200 bg-gradient-to-r from-emerald-50 to-teal-50 p-6 shadow-sm transition-all hover:shadow-lg active:scale-[0.99]"
+            >
+              <div className="mb-2 flex items-center gap-2">
+                <Sparkles size={16} className="text-emerald-600" />
+                <span className="text-[10px] font-bold tracking-widest text-emerald-600 uppercase">
+                  为你定制 · 复习课程
+                </span>
+              </div>
+              <h3 className="mb-1 text-lg font-bold text-slate-900">
+                专属复习文章
+              </h3>
+              <p className="mb-4 text-sm text-slate-500">
+                包含 {dueCount} 个复习词，系统将为你实时生成一篇个性化文章
+              </p>
+              <div className="flex items-center justify-between">
+                <div className="flex flex-wrap gap-1.5">
+                  {dueWords.slice(0, 5).map((w) => (
+                    <span
+                      key={w}
+                      className="rounded-full border border-emerald-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-emerald-700"
+                    >
+                      {w}
+                    </span>
+                  ))}
+                  {dueCount > 5 && (
+                    <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-400">
+                      +{dueCount - 5}
+                    </span>
+                  )}
+                </div>
+                <span className="flex items-center text-sm font-bold text-emerald-600 transition-transform group-hover:translate-x-1">
+                  开始学习
+                  <ArrowRight size={16} className="ml-1" />
+                </span>
+              </div>
+            </Link>
+          </section>
+        )}
 
         {/* Lesson Cards */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3">

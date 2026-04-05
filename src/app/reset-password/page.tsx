@@ -65,7 +65,7 @@ const ResetPasswordForm: React.FC = () => {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50 px-5 py-12">
         <div className="w-full max-w-sm">
-          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm text-center">
+          <div className="rounded-2xl border border-slate-100 bg-white p-6 text-center shadow-sm">
             <p className="text-sm text-red-500">
               无效的重置链接，请从邮件中重新点击链接。
             </p>
@@ -95,7 +95,7 @@ const ResetPasswordForm: React.FC = () => {
               每日一课，轻松进步
             </p>
           </div>
-          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm text-center space-y-3">
+          <div className="space-y-3 rounded-2xl border border-slate-100 bg-white p-6 text-center shadow-sm">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50">
               <svg
                 className="h-6 w-6 text-emerald-600"
@@ -111,9 +111,7 @@ const ResetPasswordForm: React.FC = () => {
                 />
               </svg>
             </div>
-            <p className="text-sm font-bold text-slate-700">
-              密码重置成功！
-            </p>
+            <p className="text-sm font-bold text-slate-700">密码重置成功！</p>
             <p className="text-xs text-slate-400">3 秒后自动跳转到登录页...</p>
           </div>
         </div>
