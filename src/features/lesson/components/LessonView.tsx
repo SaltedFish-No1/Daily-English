@@ -39,20 +39,18 @@ export const LessonView: React.FC<LessonViewProps> = ({
   const tabs = [
     {
       id: 'article',
-      desktopLabel: '阅读',
-      mobileLabel: '阅读',
+      label: '阅读',
       icon: BookOpen,
     },
     {
       id: 'quiz',
-      desktopLabel: '测验',
-      mobileLabel: '测验',
+      label: '测验',
       icon: HelpCircle,
     },
   ];
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
+    <div className="flex min-h-screen flex-col bg-slate-50 pb-24 lg:pb-8">
       <div className="sticky top-0 z-30">
         {/* Header */}
         <header className="pt-safe border-b border-gray-100 bg-white shadow-sm">
@@ -71,10 +69,30 @@ export const LessonView: React.FC<LessonViewProps> = ({
           </div>
         </header>
         <LessonBreadcrumb category={overview.category} />
+
+        {/* Segmented Control (replaces old bottom tab bar) */}
+        <div className="border-b border-slate-100 bg-white">
+          <div className="mx-auto flex max-w-5xl items-center gap-1 px-5 py-2">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-bold transition-all ${
+                  activeTab === tab.id
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700'
+                }`}
+              >
+                <tab.icon size={16} />
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Main Content */}
-      <main className="mx-auto grid w-full max-w-5xl flex-grow grid-cols-1 gap-8 sm:px-6 sm:py-12 lg:grid-cols-3 lg:pl-24 xl:pl-6">
+      <main className="mx-auto grid w-full max-w-5xl flex-grow grid-cols-1 gap-8 sm:px-6 sm:py-12 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <motion.div
             initial={false}
@@ -113,7 +131,7 @@ export const LessonView: React.FC<LessonViewProps> = ({
         </div>
 
         {/* Desktop Vocab Panel */}
-        <div className="hidden lg:sticky lg:top-[200px] lg:block lg:h-fit lg:self-start">
+        <div className="hidden lg:sticky lg:top-[260px] lg:block lg:h-fit lg:self-start">
           <VocabSheet speech={data.speech} />
         </div>
       </main>
@@ -123,45 +141,7 @@ export const LessonView: React.FC<LessonViewProps> = ({
         <VocabSheet speech={data.speech} />
       </div>
 
-      {/* Bottom Nav */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-around border-t border-slate-100 bg-white px-6 pt-4 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] lg:hidden">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex flex-col items-center gap-1 transition-all ${
-              activeTab === tab.id
-                ? 'scale-110 text-emerald-600'
-                : 'text-slate-400'
-            }`}
-          >
-            <tab.icon size={20} />
-            <span className="text-[10px] font-bold tracking-widest uppercase">
-              {tab.mobileLabel}
-            </span>
-          </button>
-        ))}
-      </nav>
-
-      {/* Desktop Sidebar (Floating Tabs) */}
-      <div className="fixed top-1/2 left-8 z-20 hidden -translate-y-1/2 flex-col gap-4 lg:flex">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex h-14 w-14 items-center justify-center rounded-2xl shadow-lg transition-all ${
-              activeTab === tab.id
-                ? '-translate-x-2 bg-emerald-600 text-white'
-                : 'bg-white text-slate-400 hover:bg-emerald-50 hover:text-emerald-500'
-            }`}
-            title={tab.desktopLabel}
-          >
-            <tab.icon size={24} />
-          </button>
-        ))}
-      </div>
-
-      <footer className="border-t border-slate-100 bg-white py-12 pb-24 text-center lg:pb-12">
+      <footer className="border-t border-slate-100 bg-white py-12 text-center">
         <p className="text-xs font-bold tracking-widest text-slate-400 uppercase">
           © 2026 薄荷外语 · DESIGNED FOR LEARNING
         </p>
