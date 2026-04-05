@@ -36,6 +36,7 @@ export interface VocabOccurrence {
     headword?: string;
     pos?: string;
     def?: string;
+    defZh?: string;
     phonetic?: string;
     audio?: string;
   };
@@ -155,6 +156,7 @@ export const useUserStore = create<UserState>()(
                   sense_headword: senseSnapshot.headword ?? null,
                   sense_pos: senseSnapshot.pos ?? null,
                   sense_def: senseSnapshot.def ?? null,
+                  sense_def_zh: senseSnapshot.defZh ?? null,
                   sense_phonetic: senseSnapshot.phonetic ?? null,
                   sense_audio: senseSnapshot.audio ?? null,
                 },
