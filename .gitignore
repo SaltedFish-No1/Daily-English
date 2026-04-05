@@ -29,6 +29,12 @@ pnpm-debug.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# schema (contains Supabase table definitions including sensitive tables)
+schema.json
+
+# npm lock file (project uses pnpm)
+package-lock.json
+
 # LLM docs
 docs/*
 # .claude/*
