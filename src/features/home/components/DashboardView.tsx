@@ -14,7 +14,6 @@ import {
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useUserStore } from '@/store/useUserStore';
-import { useLearningStats } from '@/hooks/useLearningStats';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
 import { useReviewWords } from '@/hooks/useReviewWords';
 
@@ -29,8 +28,7 @@ function getGreeting(): string {
 }
 
 export function DashboardView() {
-  const { savedWords, history } = useUserStore();
-  const stats = useLearningStats();
+  const { savedWords, history, wordReviewStates } = useUserStore();
   const { dueCount, dueWords } = useReviewWords();
   const {
     isStandalone,
@@ -41,6 +39,35 @@ export function DashboardView() {
     closeInstallDialog,
     confirmInstall,
   } = usePWAInstall();
+
+  // Word stats for dashboard cards
+  const wordStats = useMemo(() => {
+    // 今日单词 = SM-2到期复习词 + 今天新添加的词（去重）
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayMs = todayStart.getTime();
+    const todayNewWords = new Set<string>();
+    for (const [word, occurrences] of Object.entries(savedWords)) {
+      if (occurrences.some((o) => o.savedAt >= todayMs)) {
+        todayNewWords.add(word);
+      }
+    }
+    const dueWordSet = new Set(dueWords);
+    const overlap = [...todayNewWords].filter((w) => dueWordSet.has(w)).length;
+    const todayWordCount = dueCount + todayNewWords.size - overlap;
+
+    // 单词量 = 总收藏词数
+    const totalWordCount = Object.keys(savedWords).filter(
+      (k) => savedWords[k].length > 0
+    ).length;
+
+    // 已背单词 = status === 'mastered' 的词数
+    const masteredCount = Object.values(wordReviewStates).filter(
+      (s) => s.status === 'mastered'
+    ).length;
+
+    return { todayWordCount, totalWordCount, masteredCount };
+  }, [savedWords, wordReviewStates, dueCount, dueWords]);
 
   // Recent vocab
   const recentWordEntries = useMemo(() => {
@@ -163,7 +190,7 @@ export function DashboardView() {
           <p className="mt-1 text-sm text-slate-500">坚持学习，每天都在进步</p>
         </motion.section>
 
-        {/* Learning Stats */}
+        {/* Word Stats */}
         <motion.section
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -172,13 +199,13 @@ export function DashboardView() {
         >
           <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm">
             <div className="mb-1 flex items-center justify-center text-emerald-600">
-              <BookOpen size={18} />
+              <Calendar size={18} />
             </div>
             <p className="text-xl font-bold text-slate-900 sm:text-2xl">
-              {stats.lessonCount}
+              {wordStats.todayWordCount}
             </p>
             <p className="text-[10px] font-bold text-slate-400 sm:text-[11px]">
-              已完成课程
+              今日单词
             </p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm">
@@ -186,10 +213,10 @@ export function DashboardView() {
               <BookMarked size={18} />
             </div>
             <p className="text-xl font-bold text-slate-900 sm:text-2xl">
-              {stats.wordCount}
+              {wordStats.totalWordCount}
             </p>
             <p className="text-[10px] font-bold text-slate-400 sm:text-[11px]">
-              收藏生词
+              单词量
             </p>
           </div>
           <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm">
@@ -197,10 +224,10 @@ export function DashboardView() {
               <Trophy size={18} />
             </div>
             <p className="text-xl font-bold text-slate-900 sm:text-2xl">
-              {stats.avgScore > 0 ? `${stats.avgScore}%` : '--'}
+              {wordStats.masteredCount}
             </p>
             <p className="text-[10px] font-bold text-slate-400 sm:text-[11px]">
-              平均正确率
+              已背单词
             </p>
           </div>
         </motion.section>
