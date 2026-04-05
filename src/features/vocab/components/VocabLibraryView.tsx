@@ -105,7 +105,7 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
 
   return (
     <div className="min-h-screen bg-slate-50 pb-24 lg:pb-8">
-      <header className="sticky top-0 z-40 border-b border-slate-100 bg-white">
+      <header className="hidden sticky top-0 z-40 border-b border-slate-100 bg-white lg:block">
         <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-5 py-4">
           <div className="flex items-center gap-2">
             <BookMarked size={18} className="text-emerald-600" />

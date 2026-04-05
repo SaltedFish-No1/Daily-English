@@ -57,7 +57,7 @@ export const LessonView: React.FC<LessonViewProps> = ({
     <div className="flex min-h-screen flex-col bg-slate-50 pb-24 lg:pb-8">
       <div className="sticky top-0 z-30">
         {/* Header */}
-        <header className="pt-safe border-b border-gray-100 bg-white shadow-sm">
+        <header className="hidden pt-safe border-b border-gray-100 bg-white shadow-sm lg:block">
           <div className="mx-auto max-w-5xl px-5 py-4 sm:py-6">
             <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
               <div className="w-full sm:w-auto">

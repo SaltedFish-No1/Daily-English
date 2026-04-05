@@ -222,7 +222,7 @@ export function ProfileView() {
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 pb-24 lg:pb-8">
-      <header className="pt-safe sticky top-0 z-30 border-b border-gray-100 bg-white shadow-sm">
+      <header className="hidden pt-safe sticky top-0 z-30 border-b border-gray-100 bg-white shadow-sm lg:block">
         <div className="mx-auto max-w-3xl px-5 py-6">
           <h1 className="text-xl font-bold tracking-tight text-slate-900">
             我的
