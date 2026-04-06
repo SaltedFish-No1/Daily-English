@@ -36,7 +36,12 @@ export async function getServerUserId(): Promise<string | null> {
       data: { user },
     } = await supabase.auth.getUser();
     return user?.id ?? null;
-  } catch {
+  } catch (error) {
+    // Re-throw Next.js internal errors (redirects, dynamic rendering bailouts, notFound).
+    // These carry a `digest` property that the framework relies on for control flow.
+    if (typeof error === 'object' && error !== null && 'digest' in error) {
+      throw error;
+    }
     return null;
   }
 }
