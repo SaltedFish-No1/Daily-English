@@ -83,6 +83,11 @@ export async function createTopicManual(params: {
   return json.topic;
 }
 
+/**
+ * Fetch submissions for a topic.
+ * New API returns submissions with inline grade data.
+ * For backward compatibility, also builds a grades record keyed by submissionId.
+ */
 export async function fetchSubmissions(topicId: string): Promise<{
   submissions: WritingSubmission[];
   grades: Record<string, WritingGrade>;
@@ -91,7 +96,32 @@ export async function fetchSubmissions(topicId: string): Promise<{
     `/api/writing/submissions?topicId=${encodeURIComponent(topicId)}`
   );
   if (!res.ok) throw new Error('Failed to fetch submissions');
-  return res.json();
+  const json = await res.json();
+
+  const submissions: WritingSubmission[] = json.submissions;
+
+  // Build grades record from inline grade data for backward compatibility
+  const grades: Record<string, WritingGrade> = {};
+  for (const sub of submissions) {
+    if (sub.grade) {
+      grades[sub.id] = {
+        id: '',
+        submissionId: sub.id,
+        userId: sub.userId,
+        overallScore: sub.grade.overallScore,
+        dimensionScores: sub.grade.dimensionScores,
+        grammarErrors: sub.grade.grammarErrors,
+        vocabularySuggestions: sub.grade.vocabularySuggestions,
+        overallComment: sub.grade.overallComment,
+        modelAnswer: sub.grade.modelAnswer,
+        strengths: sub.grade.strengths,
+        improvements: sub.grade.improvements,
+        createdAt: sub.grade.gradedAt,
+      };
+    }
+  }
+
+  return { submissions, grades };
 }
 
 export async function submitWriting(params: {
@@ -171,10 +201,24 @@ export async function gradeSubmission(
 
   const contentType = res.headers.get('content-type') ?? '';
 
-  // Existing grade — server returns JSON directly
+  // Existing grade — server returns JSON directly (now WritingGradeData format)
   if (contentType.includes('application/json')) {
     const json = await res.json();
-    return json.grade;
+    const gradeData = json.grade;
+    return {
+      id: '',
+      submissionId,
+      userId: '',
+      overallScore: gradeData.overallScore,
+      dimensionScores: gradeData.dimensionScores,
+      grammarErrors: gradeData.grammarErrors,
+      vocabularySuggestions: gradeData.vocabularySuggestions,
+      overallComment: gradeData.overallComment,
+      modelAnswer: gradeData.modelAnswer,
+      strengths: gradeData.strengths,
+      improvements: gradeData.improvements,
+      createdAt: gradeData.gradedAt ?? new Date().toISOString(),
+    };
   }
 
   // New AI grading — server streams partial JSON via streamObject
@@ -190,7 +234,7 @@ export async function gradeSubmission(
     throw new Error('AI 批改结果不完整，请重试。');
   }
 
-  // Construct full WritingGrade from AI result (DB fields filled client-side)
+  // Construct full WritingGrade from AI result
   return {
     id: '',
     submissionId,

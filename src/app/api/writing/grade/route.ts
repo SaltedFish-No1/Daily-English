@@ -1,5 +1,6 @@
 /**
  * @description AI 批改写作：根据评分标准生成结构化批改报告（流式输出）。
+ *   批改结果写入 writing_submissions.grade JSONB 列。
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -9,7 +10,7 @@ import { modelPower } from '@/lib/ai';
 import { getAuthUser } from '@/lib/auth-helper';
 import {
   WritingGradeSchema,
-  mapWritingGradeRow,
+  type WritingGradeData,
   GradingCriteriaDimension,
 } from '@/types/writing';
 
@@ -49,15 +50,10 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // 2. Check for existing grade
-  const { data: existingGrade } = await supabaseAdmin
-    .from('writing_grades')
-    .select('*')
-    .eq('submission_id', submissionId)
-    .single();
-
-  if (existingGrade) {
-    return NextResponse.json({ grade: mapWritingGradeRow(existingGrade) });
+  // 2. Check for existing grade (inline in submission row)
+  if (submission.grade) {
+    const gradeData = submission.grade as WritingGradeData;
+    return NextResponse.json({ grade: gradeData });
   }
 
   // 3. Fetch topic
@@ -130,23 +126,29 @@ Provide your overall comment, strengths, and improvements in Chinese (中文). G
         console.error('[Writing] streamObject produced no valid object');
         return;
       }
-      // 7. Insert grade into DB after stream completes
-      const { error: insertError } = await supabaseAdmin
-        .from('writing_grades')
-        .insert({
-          submission_id: submissionId,
-          user_id: user.id,
+      // 7. Update submission with grade JSONB
+      const gradeData: WritingGradeData = {
+        overallScore: gradeResult.overallScore,
+        dimensionScores: gradeResult.dimensionScores,
+        grammarErrors: gradeResult.grammarErrors,
+        vocabularySuggestions: gradeResult.vocabularySuggestions,
+        overallComment: gradeResult.overallComment,
+        modelAnswer: gradeResult.modelAnswer,
+        strengths: gradeResult.strengths,
+        improvements: gradeResult.improvements,
+        gradedAt: new Date().toISOString(),
+      };
+
+      const { error: updateError } = await supabaseAdmin
+        .from('writing_submissions')
+        .update({
+          grade: gradeData,
           overall_score: gradeResult.overallScore,
-          dimension_scores: gradeResult.dimensionScores,
-          grammar_errors: gradeResult.grammarErrors,
-          vocabulary_suggestions: gradeResult.vocabularySuggestions,
-          overall_comment: gradeResult.overallComment,
-          model_answer: gradeResult.modelAnswer,
-          strengths: gradeResult.strengths,
-          improvements: gradeResult.improvements,
-        });
-      if (insertError) {
-        console.error('[Writing] Insert grade error:', insertError);
+        })
+        .eq('id', submissionId);
+
+      if (updateError) {
+        console.error('[Writing] Update grade error:', updateError);
       }
     },
   });

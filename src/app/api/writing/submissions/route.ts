@@ -1,5 +1,5 @@
 /**
- * @description 获取指定题目下的提交记录及批改结果。
+ * @description 获取指定题目下的提交记录（含内联批改结果）。
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -7,9 +7,7 @@ import { supabaseAdmin } from '@/lib/supabase-server';
 import { getAuthUser } from '@/lib/auth-helper';
 import {
   mapWritingSubmissionRow,
-  mapWritingGradeRow,
   type WritingSubmission,
-  type WritingGrade,
 } from '@/types/writing';
 
 export async function GET(request: NextRequest) {
@@ -26,7 +24,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // Fetch submissions for this topic
+  // Fetch submissions (grade is now an inline JSONB column)
   const { data: submissionRows, error: subError } = await supabaseAdmin
     .from('writing_submissions')
     .select('*')
@@ -46,25 +44,5 @@ export async function GET(request: NextRequest) {
     mapWritingSubmissionRow
   );
 
-  // Fetch grades for these submissions
-  const submissionIds = submissions.map((s) => s.id);
-  const grades: Record<string, WritingGrade> = {};
-
-  if (submissionIds.length > 0) {
-    const { data: gradeRows, error: gradeError } = await supabaseAdmin
-      .from('writing_grades')
-      .select('*')
-      .in('submission_id', submissionIds);
-
-    if (gradeError) {
-      console.error('[Writing] grades query error:', gradeError);
-      // Non-fatal: return submissions without grades
-    } else if (gradeRows) {
-      for (const row of gradeRows) {
-        grades[row.submission_id] = mapWritingGradeRow(row);
-      }
-    }
-  }
-
-  return NextResponse.json({ submissions, grades });
+  return NextResponse.json({ submissions });
 }

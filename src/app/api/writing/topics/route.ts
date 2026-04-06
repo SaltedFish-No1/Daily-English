@@ -32,44 +32,27 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ topics: [] });
   }
 
-  // Fetch submission stats for all topics in one query
+  // Fetch submission stats — overall_score is now a direct column on writing_submissions
   const topicIds = topics.map((t) => t.id);
   const { data: submissions } = await supabaseAdmin
     .from('writing_submissions')
-    .select('id, topic_id')
-    .in('topic_id', topicIds);
-
-  // Fetch grades for these submissions
-  const submissionIds = (submissions ?? []).map((s) => s.id);
-  const { data: grades } = await supabaseAdmin
-    .from('writing_grades')
-    .select('submission_id, overall_score')
-    .in(
-      'submission_id',
-      submissionIds.length > 0 ? submissionIds : ['__none__']
-    );
+    .select('id, topic_id, overall_score, created_at')
+    .in('topic_id', topicIds)
+    .order('created_at', { ascending: true });
 
   // Build stats maps
   const submissionCountMap = new Map<string, number>();
+  const topicScores = new Map<string, number[]>();
+
   for (const s of submissions ?? []) {
     submissionCountMap.set(
       s.topic_id,
       (submissionCountMap.get(s.topic_id) ?? 0) + 1
     );
-  }
-
-  const submissionToTopic = new Map<string, string>();
-  for (const s of submissions ?? []) {
-    submissionToTopic.set(s.id, s.topic_id);
-  }
-
-  const topicScores = new Map<string, number[]>();
-  for (const g of grades ?? []) {
-    const topicId = submissionToTopic.get(g.submission_id);
-    if (topicId) {
-      const scores = topicScores.get(topicId) ?? [];
-      scores.push(Number(g.overall_score));
-      topicScores.set(topicId, scores);
+    if (s.overall_score != null) {
+      const scores = topicScores.get(s.topic_id) ?? [];
+      scores.push(Number(s.overall_score));
+      topicScores.set(s.topic_id, scores);
     }
   }
 

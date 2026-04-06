@@ -1,8 +1,8 @@
 /**
  * @description 课程数据访问层 — 供 Server Component 和 API route 共用。
  *
- *   规范化表结构：lessons + lesson_paragraphs + lesson_focus_words + lesson_quiz_questions
- *   此层负责将多表数据拼装为前端所需的 LessonData / LessonListItem。
+ *   新结构：lessons 表包含 paragraphs / focus_words / quiz_questions 三个 JSONB 列，
+ *   无需拼装子表数据。
  */
 
 import { supabaseAdmin } from '@/lib/supabase-admin';
@@ -17,52 +17,35 @@ import {
 import { type GeneratedLesson } from '@/types/review';
 
 // ---------------------------------------------------------------------------
-// Types for raw DB rows
+// Types for JSONB rows stored in lessons table
 // ---------------------------------------------------------------------------
 
-interface ParagraphRow {
+interface ParagraphJson {
   key: string;
   en: string;
   zh: string;
 }
 
-interface FocusWordRow {
+interface FocusWordJson {
   key: string;
   forms: string[];
 }
 
-interface QuizQuestionRow {
+interface QuizQuestionJson {
   question_key: string;
   question_type: string;
   prompt: string;
-  rationale_en: string | null;
-  rationale_zh: string | null;
-  evidence_refs: string[] | null;
-  payload: Record<string, unknown>;
+  rationale_en?: string | null;
+  rationale_zh?: string | null;
+  evidence_refs?: string[] | null;
+  payload?: Record<string, unknown>;
+  // Allow spread of payload fields at top level (from review generation)
+  [key: string]: unknown;
 }
 
-interface LegacyLessonRow {
-  id: string;
-  slug: string;
-  created_at: string | null;
-  title: string;
-  category: string;
-  teaser: string;
-  tag: string;
-  difficulty: string;
-  published: boolean;
-  featured: boolean;
-  content: LessonData | null;
-}
-
-function isMissingColumn(error: unknown, column: string): boolean {
-  if (!error || typeof error !== 'object') return false;
-  const message =
-    'message' in error && typeof error.message === 'string'
-      ? error.message
-      : '';
-  return message.includes(`column lessons.${column} does not exist`);
-}
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
 
 function toYyyyMmDd(input: string | null | undefined): string | undefined {
   if (!input) return undefined;
@@ -71,6 +54,51 @@ function toYyyyMmDd(input: string | null | undefined): string | undefined {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(
     date.getDate()
   ).padStart(2, '0')}`;
+}
+
+function mapParagraphs(jsonArr: ParagraphJson[] | null): Paragraph[] {
+  return (jsonArr ?? []).map((p) => ({ id: p.key, en: p.en, zh: p.zh }));
+}
+
+function mapFocusWords(jsonArr: FocusWordJson[] | null): FocusWord[] {
+  return (jsonArr ?? []).map((fw) => ({ key: fw.key, forms: fw.forms }));
+}
+
+function mapQuizQuestions(
+  jsonArr: QuizQuestionJson[] | null
+): AnyQuizQuestion[] {
+  return (jsonArr ?? []).map((q) => {
+    const rationale: QuizRationale | undefined =
+      q.rationale_en && q.rationale_zh
+        ? { en: q.rationale_en, zh: q.rationale_zh }
+        : undefined;
+
+    // Extract known fields, rest is payload
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    const {
+      question_key,
+      question_type,
+      prompt,
+      rationale_en: _re,
+      rationale_zh: _rz,
+      evidence_refs,
+      payload,
+      ...rest
+    } = q;
+    /* eslint-enable @typescript-eslint/no-unused-vars */
+
+    // payload can be either a dedicated object or spread at top level
+    const payloadData = payload ?? rest;
+
+    return {
+      id: question_key,
+      type: question_type,
+      prompt,
+      ...(rationale ? { rationale } : {}),
+      ...(evidence_refs?.length ? { evidenceRefs: evidence_refs } : {}),
+      ...payloadData,
+    } as AnyQuizQuestion;
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -113,50 +141,8 @@ export async function getLessons(
 
   const { data, count, error } = await query;
 
-  if (error && !isMissingColumn(error, 'date')) {
+  if (error) {
     throw new Error(`getLessons failed: ${error.message}`);
-  }
-
-  if (error && isMissingColumn(error, 'date')) {
-    let legacyQuery = supabaseAdmin
-      .from('lessons')
-      .select(
-        'id, slug, created_at, title, category, teaser, tag, difficulty, published, featured',
-        { count: 'exact' }
-      )
-      .eq('published', true)
-      .order('slug', { ascending: false })
-      .range(from, to);
-
-    if (difficulty) legacyQuery = legacyQuery.eq('difficulty', difficulty);
-    if (tag) legacyQuery = legacyQuery.eq('tag', tag);
-    if (featured !== undefined)
-      legacyQuery = legacyQuery.eq('featured', featured);
-
-    const {
-      data: legacyData,
-      count: legacyCount,
-      error: legacyErr,
-    } = await legacyQuery;
-
-    if (legacyErr) throw new Error(`getLessons failed: ${legacyErr.message}`);
-
-    const lessons: LessonListItem[] = (
-      (legacyData as LegacyLessonRow[] | null) ?? []
-    ).map((row) => ({
-      id: row.id,
-      date: row.slug,
-      createdAt: toYyyyMmDd(row.created_at) ?? row.slug,
-      title: row.title,
-      category: row.category,
-      teaser: row.teaser,
-      published: row.published,
-      featured: row.featured,
-      tag: row.tag,
-      difficulty: row.difficulty as LessonListItem['difficulty'],
-    }));
-
-    return { lessons, total: legacyCount ?? 0 };
   }
 
   const lessons: LessonListItem[] = (data ?? []).map((row) => ({
@@ -176,114 +162,21 @@ export async function getLessons(
 }
 
 // ---------------------------------------------------------------------------
-// Detail — assemble LessonData from 4 tables
+// Detail — read JSONB columns directly from lessons table
 // ---------------------------------------------------------------------------
 
 export async function getLessonById(id: string): Promise<LessonData | null> {
   const { data: lesson, error: lessonErr } = await supabaseAdmin
     .from('lessons')
     .select(
-      'id, date, title, category, teaser, tag, difficulty, published, featured, speech_enabled, article_title, quiz_title'
+      'id, date, title, category, teaser, tag, difficulty, published, featured, speech_enabled, article_title, quiz_title, paragraphs, focus_words, quiz_questions'
     )
     .eq('id', id)
     .eq('published', true)
     .single();
 
-  if (lessonErr && isMissingColumn(lessonErr, 'date')) {
-    const { data: legacyLesson, error: legacyErr } = await supabaseAdmin
-      .from('lessons')
-      .select(
-        'id, slug, title, category, teaser, tag, difficulty, published, featured, content'
-      )
-      .eq('id', id)
-      .eq('published', true)
-      .single();
-
-    if (legacyErr || !legacyLesson) return null;
-
-    const row = legacyLesson as LegacyLessonRow;
-    const content = row.content ?? ({} as LessonData);
-
-    return {
-      schemaVersion: content.schemaVersion ?? '2.1',
-      meta: {
-        id: row.id,
-        title: row.title,
-        date: row.slug,
-        category: row.category,
-        teaser: row.teaser,
-        published: row.published,
-        featured: row.featured,
-        tag: row.tag,
-        difficulty: row.difficulty as LessonListItem['difficulty'],
-      },
-      speech: content.speech ?? { enabled: true },
-      article: content.article ?? { title: row.title, paragraphs: [] },
-      focusWords: content.focusWords ?? [],
-      quiz: content.quiz ?? { title: 'Knowledge Check', questions: [] },
-    };
-  }
-
   if (lessonErr || !lesson) return null;
 
-  // 2. Fetch child tables in parallel
-  const [paragraphsRes, focusWordsRes, questionsRes] = await Promise.all([
-    supabaseAdmin
-      .from('lesson_paragraphs')
-      .select('key, en, zh')
-      .eq('lesson_id', lesson.id)
-      .order('position', { ascending: true }),
-    supabaseAdmin
-      .from('lesson_focus_words')
-      .select('key, forms')
-      .eq('lesson_id', lesson.id)
-      .order('position', { ascending: true }),
-    supabaseAdmin
-      .from('lesson_quiz_questions')
-      .select(
-        'question_key, question_type, prompt, rationale_en, rationale_zh, evidence_refs, payload'
-      )
-      .eq('lesson_id', lesson.id)
-      .order('position', { ascending: true }),
-  ]);
-
-  // 3. Assemble paragraphs
-  const paragraphs: Paragraph[] = (
-    (paragraphsRes.data as ParagraphRow[] | null) ?? []
-  ).map((row) => ({
-    id: row.key,
-    en: row.en,
-    zh: row.zh,
-  }));
-
-  // 4. Assemble focus words
-  const focusWords: FocusWord[] = (
-    (focusWordsRes.data as FocusWordRow[] | null) ?? []
-  ).map((row) => ({
-    key: row.key,
-    forms: row.forms,
-  }));
-
-  // 5. Assemble quiz questions
-  const questions: AnyQuizQuestion[] = (
-    (questionsRes.data as QuizQuestionRow[] | null) ?? []
-  ).map((row) => {
-    const rationale: QuizRationale | undefined =
-      row.rationale_en && row.rationale_zh
-        ? { en: row.rationale_en, zh: row.rationale_zh }
-        : undefined;
-
-    return {
-      id: row.question_key,
-      type: row.question_type,
-      prompt: row.prompt,
-      ...(rationale ? { rationale } : {}),
-      ...(row.evidence_refs?.length ? { evidenceRefs: row.evidence_refs } : {}),
-      ...row.payload,
-    } as AnyQuizQuestion;
-  });
-
-  // 6. Build the full LessonData
   return {
     schemaVersion: '2.2',
     meta: {
@@ -300,12 +193,12 @@ export async function getLessonById(id: string): Promise<LessonData | null> {
     speech: { enabled: lesson.speech_enabled },
     article: {
       title: lesson.article_title,
-      paragraphs,
+      paragraphs: mapParagraphs(lesson.paragraphs as ParagraphJson[]),
     },
-    focusWords,
+    focusWords: mapFocusWords(lesson.focus_words as FocusWordJson[]),
     quiz: {
       title: lesson.quiz_title,
-      questions,
+      questions: mapQuizQuestions(lesson.quiz_questions as QuizQuestionJson[]),
     },
   };
 }
@@ -321,17 +214,8 @@ export async function getLessonDates(): Promise<string[]> {
     .eq('published', true)
     .order('created_at', { ascending: false });
 
-  if (error && !isMissingColumn(error, 'date')) return [];
-  if (data) return data.map((row) => row.id);
-
-  const { data: legacyData, error: legacyError } = await supabaseAdmin
-    .from('lessons')
-    .select('id')
-    .eq('published', true)
-    .order('slug', { ascending: false });
-
-  if (legacyError || !legacyData) return [];
-  return legacyData.map((row) => row.id);
+  if (error || !data) return [];
+  return data.map((row) => row.id);
 }
 
 export async function getLessonIds(): Promise<string[]> {
@@ -341,17 +225,8 @@ export async function getLessonIds(): Promise<string[]> {
     .eq('published', true)
     .order('created_at', { ascending: false });
 
-  if (error && !isMissingColumn(error, 'date')) return [];
-  if (data) return data.map((row) => row.id);
-
-  const { data: legacyData, error: legacyError } = await supabaseAdmin
-    .from('lessons')
-    .select('id')
-    .eq('published', true)
-    .order('slug', { ascending: false });
-
-  if (legacyError || !legacyData) return [];
-  return legacyData.map((row) => row.id);
+  if (error || !data) return [];
+  return data.map((row) => row.id);
 }
 
 // ---------------------------------------------------------------------------
@@ -359,7 +234,7 @@ export async function getLessonIds(): Promise<string[]> {
 // ---------------------------------------------------------------------------
 
 /**
- * 将 AI 生成的复习课程写入 lessons + 子表，关联到用户。
+ * 将 AI 生成的复习课程写入 lessons 表（JSONB 列），关联到用户。
  * 使用 service-role 客户端绕过 RLS。
  */
 export async function saveReviewLesson(
@@ -370,7 +245,31 @@ export async function saveReviewLesson(
 ): Promise<string> {
   const today = new Date().toISOString().slice(0, 10);
 
-  // 1. Insert main lesson row
+  // 将 paragraphs/focusWords/quizQuestions 序列化为 JSONB 格式
+  const paragraphsJson = object.paragraphs.map((p) => ({
+    key: p.id,
+    en: p.en,
+    zh: p.zh,
+  }));
+
+  const focusWordsJson = object.focusWords.map((fw) => ({
+    key: fw.key,
+    forms: fw.forms,
+  }));
+
+  const quizQuestionsJson = object.quizQuestions.map((q) => {
+    const { id: qId, type, prompt, rationale, ...rest } = q;
+    return {
+      question_key: qId,
+      question_type: type,
+      prompt,
+      rationale_en: rationale?.en ?? null,
+      rationale_zh: rationale?.zh ?? null,
+      evidence_refs: [] as string[],
+      payload: rest,
+    };
+  });
+
   const { data: lesson, error: lessonErr } = await supabaseAdmin
     .from('lessons')
     .insert({
@@ -385,6 +284,9 @@ export async function saveReviewLesson(
       speech_enabled: true,
       article_title: object.title,
       quiz_title: 'Vocabulary & Comprehension Check',
+      paragraphs: paragraphsJson,
+      focus_words: focusWordsJson,
+      quiz_questions: quizQuestionsJson,
       user_id: userId,
       is_review: true,
       review_words: words,
@@ -398,58 +300,7 @@ export async function saveReviewLesson(
     );
   }
 
-  const lessonId = lesson.id;
-
-  // 2. Insert child rows in parallel
-  const paragraphRows = object.paragraphs.map((p, i) => ({
-    lesson_id: lessonId,
-    position: i,
-    key: p.id,
-    en: p.en,
-    zh: p.zh,
-  }));
-
-  const focusWordRows = object.focusWords.map((fw, i) => ({
-    lesson_id: lessonId,
-    position: i,
-    key: fw.key,
-    forms: fw.forms,
-  }));
-
-  const questionRows = object.quizQuestions.map((q, i) => {
-    const { id: qId, type, prompt, rationale, ...rest } = q;
-    return {
-      lesson_id: lessonId,
-      position: i,
-      question_key: qId,
-      question_type: type,
-      prompt,
-      rationale_en: rationale?.en ?? null,
-      rationale_zh: rationale?.zh ?? null,
-      evidence_refs: [],
-      payload: rest,
-    };
-  });
-
-  const results = await Promise.all([
-    paragraphRows.length > 0
-      ? supabaseAdmin.from('lesson_paragraphs').insert(paragraphRows)
-      : null,
-    focusWordRows.length > 0
-      ? supabaseAdmin.from('lesson_focus_words').insert(focusWordRows)
-      : null,
-    questionRows.length > 0
-      ? supabaseAdmin.from('lesson_quiz_questions').insert(questionRows)
-      : null,
-  ]);
-
-  for (const res of results) {
-    if (res?.error) {
-      console.error('[saveReviewLesson] child insert failed:', res.error);
-    }
-  }
-
-  return lessonId;
+  return lesson.id;
 }
 
 /**
@@ -504,7 +355,7 @@ export async function getReviewLessonById(
   const { data: lesson, error: lessonErr } = await supabaseAdmin
     .from('lessons')
     .select(
-      'id, date, title, category, teaser, tag, difficulty, published, featured, speech_enabled, article_title, quiz_title, is_review, review_words'
+      'id, date, title, category, teaser, tag, difficulty, published, featured, speech_enabled, article_title, quiz_title, paragraphs, focus_words, quiz_questions, is_review, review_words'
     )
     .eq('id', lessonId)
     .eq('user_id', userId)
@@ -512,51 +363,6 @@ export async function getReviewLessonById(
     .single();
 
   if (lessonErr || !lesson) return null;
-
-  const [paragraphsRes, focusWordsRes, questionsRes] = await Promise.all([
-    supabaseAdmin
-      .from('lesson_paragraphs')
-      .select('key, en, zh')
-      .eq('lesson_id', lesson.id)
-      .order('position', { ascending: true }),
-    supabaseAdmin
-      .from('lesson_focus_words')
-      .select('key, forms')
-      .eq('lesson_id', lesson.id)
-      .order('position', { ascending: true }),
-    supabaseAdmin
-      .from('lesson_quiz_questions')
-      .select(
-        'question_key, question_type, prompt, rationale_en, rationale_zh, evidence_refs, payload'
-      )
-      .eq('lesson_id', lesson.id)
-      .order('position', { ascending: true }),
-  ]);
-
-  const paragraphs: Paragraph[] = (
-    (paragraphsRes.data as ParagraphRow[] | null) ?? []
-  ).map((row) => ({ id: row.key, en: row.en, zh: row.zh }));
-
-  const focusWords: FocusWord[] = (
-    (focusWordsRes.data as FocusWordRow[] | null) ?? []
-  ).map((row) => ({ key: row.key, forms: row.forms }));
-
-  const questions: AnyQuizQuestion[] = (
-    (questionsRes.data as QuizQuestionRow[] | null) ?? []
-  ).map((row) => {
-    const rationale: QuizRationale | undefined =
-      row.rationale_en && row.rationale_zh
-        ? { en: row.rationale_en, zh: row.rationale_zh }
-        : undefined;
-    return {
-      id: row.question_key,
-      type: row.question_type,
-      prompt: row.prompt,
-      ...(rationale ? { rationale } : {}),
-      ...(row.evidence_refs?.length ? { evidenceRefs: row.evidence_refs } : {}),
-      ...row.payload,
-    } as AnyQuizQuestion;
-  });
 
   return {
     schemaVersion: '2.2',
@@ -574,9 +380,15 @@ export async function getReviewLessonById(
       reviewWords: lesson.review_words ?? [],
     },
     speech: { enabled: lesson.speech_enabled },
-    article: { title: lesson.article_title, paragraphs },
-    focusWords,
-    quiz: { title: lesson.quiz_title, questions },
+    article: {
+      title: lesson.article_title,
+      paragraphs: mapParagraphs(lesson.paragraphs as ParagraphJson[]),
+    },
+    focusWords: mapFocusWords(lesson.focus_words as FocusWordJson[]),
+    quiz: {
+      title: lesson.quiz_title,
+      questions: mapQuizQuestions(lesson.quiz_questions as QuizQuestionJson[]),
+    },
   };
 }
 
@@ -590,26 +402,11 @@ export async function getLessonTitleMap(): Promise<Record<string, string>> {
     .select('id, date, title')
     .eq('published', true);
 
-  if (error && !isMissingColumn(error, 'date')) return {};
-  if (data) {
-    return Object.fromEntries(
-      data.flatMap((row) => [
-        [row.id, row.title] as [string, string],
-        [row.date, row.title] as [string, string],
-      ])
-    );
-  }
-
-  const { data: legacyData, error: legacyError } = await supabaseAdmin
-    .from('lessons')
-    .select('id, slug, title')
-    .eq('published', true);
-
-  if (legacyError || !legacyData) return {};
+  if (error || !data) return {};
   return Object.fromEntries(
-    legacyData.flatMap((row) => [
+    data.flatMap((row) => [
       [row.id, row.title] as [string, string],
-      [row.slug, row.title] as [string, string],
+      [row.date, row.title] as [string, string],
     ])
   );
 }

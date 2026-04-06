@@ -1,6 +1,6 @@
 /**
  * @description 统一词典查询 API：DB 缓存 → dictionaryapi.dev → AI 生成。
- *   所有成功结果写入 Supabase dictionary_cache，下次直接返回。
+ *   所有成功结果写入 Supabase words 表，下次直接返回。
  */
 
 import { after, NextRequest, NextResponse } from 'next/server';
@@ -148,6 +148,27 @@ Rules:
   }
 }
 
+/** 将 DictionaryEntry[] 写入 words 表 */
+async function upsertToWordsTable(
+  word: string,
+  entries: DictionaryEntry[],
+  audioUrl: string | null,
+  source: string
+) {
+  const primaryEntry = entries[0];
+  await supabaseAdmin.from('words').upsert(
+    {
+      word,
+      phonetic: primaryEntry?.phonetic ?? null,
+      audio_url: audioUrl,
+      meanings: entries,
+      source,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'word' }
+  );
+}
+
 export async function POST(request: NextRequest) {
   const auth = await requireApiAuth(request);
   if ('error' in auth) return auth.error;
@@ -164,16 +185,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Missing word' }, { status: 400 });
   }
 
-  // 1. 查 Supabase 缓存
+  // 1. 查 words 表缓存
   const { data: cached } = await supabaseAdmin
-    .from('dictionary_cache')
-    .select('data, audio_url, source')
+    .from('words')
+    .select('meanings, audio_url, source')
     .eq('word', word)
     .single();
 
-  if (cached?.data && hasChinese(cached.data as DictionaryEntry[])) {
+  if (cached?.meanings && hasChinese(cached.meanings as DictionaryEntry[])) {
     return NextResponse.json({
-      data: cached.data,
+      data: cached.meanings,
       source: 'cache',
       audioUrl: cached.audio_url,
       zhStatus: 'full',
@@ -181,7 +202,7 @@ export async function POST(request: NextRequest) {
   }
 
   // 缓存命中但无中文释义，保留作为基础数据待补全
-  const baseEntries = cached?.data as DictionaryEntry[] | null;
+  const baseEntries = cached?.meanings as DictionaryEntry[] | null;
 
   // 2. 请求 dictionaryapi.dev（若无缓存基础数据）
   let entriesToEnrich: DictionaryEntry[] | null = baseEntries;
@@ -206,29 +227,11 @@ export async function POST(request: NextRequest) {
     after(async () => {
       try {
         const enriched = await enrichWithChinese(word, entriesToEnrich);
-        await supabaseAdmin.from('dictionary_cache').upsert(
-          {
-            word,
-            data: enriched,
-            audio_url: audioUrl,
-            source,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: 'word' }
-        );
+        await upsertToWordsTable(word, enriched, audioUrl, source);
       } catch (error) {
         console.error('[Dictionary after() enrichment] Error:', error);
         // 写入无中文版本，下次查询时重试补全
-        await supabaseAdmin.from('dictionary_cache').upsert(
-          {
-            word,
-            data: entriesToEnrich,
-            audio_url: audioUrl,
-            source,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: 'word' }
-        );
+        await upsertToWordsTable(word, entriesToEnrich, audioUrl, source);
       }
     });
 
@@ -288,17 +291,8 @@ Return the data as a JSON object with an "entries" array. Each entry should have
       );
     }
 
-    // 写入缓存
-    void supabaseAdmin.from('dictionary_cache').upsert(
-      {
-        word,
-        data: aiEntries,
-        audio_url: null,
-        source: 'ai_generated',
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: 'word' }
-    );
+    // 写入 words 表
+    void upsertToWordsTable(word, aiEntries, null, 'ai_generated');
 
     return NextResponse.json({
       data: aiEntries,

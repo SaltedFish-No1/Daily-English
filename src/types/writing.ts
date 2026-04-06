@@ -63,11 +63,15 @@ export interface WritingSubmission {
   wordCount: number;
   timeSpentSeconds: number | null;
   inputMethod: InputMethod;
+  /** 批改结果（null 表示未批改） */
+  grade: WritingGradeData | null;
+  /** 冗余字段，方便排序查询 */
+  overallScore: number | null;
   createdAt: string;
 }
 
 // ---------------------------------------------------------------------------
-// Writing grade
+// Writing grade (内联到 writing_submissions.grade JSONB)
 // ---------------------------------------------------------------------------
 
 export interface DimensionScore {
@@ -88,6 +92,23 @@ export interface VocabularySuggestion {
   reason: string;
 }
 
+/** 内联在 writing_submissions.grade JSONB 中的批改数据 */
+export interface WritingGradeData {
+  overallScore: number;
+  dimensionScores: DimensionScore[];
+  grammarErrors: GrammarError[];
+  vocabularySuggestions: VocabularySuggestion[];
+  overallComment: string;
+  modelAnswer: string;
+  strengths: string[];
+  improvements: string[];
+  gradedAt: string;
+}
+
+/**
+ * @deprecated 旧的独立 writing_grades 表类型，保留用于兼容迁移。
+ * 新代码请使用 WritingGradeData。
+ */
 export interface WritingGrade {
   id: string;
   submissionId: string;
@@ -227,10 +248,16 @@ export function mapWritingSubmissionRow(row: any): WritingSubmission {
     wordCount: row.word_count,
     timeSpentSeconds: row.time_spent_seconds,
     inputMethod: row.input_method,
+    grade: (row.grade as WritingGradeData) ?? null,
+    overallScore: row.overall_score != null ? Number(row.overall_score) : null,
     createdAt: row.created_at,
   };
 }
 
+/**
+ * @deprecated 旧的 writing_grades 表行映射，保留用于数据迁移兼容。
+ * 新代码直接从 writing_submissions.grade JSONB 读取。
+ */
 export function mapWritingGradeRow(row: any): WritingGrade {
   return {
     id: row.id,

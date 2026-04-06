@@ -1,6 +1,6 @@
 /**
  * @description TTS 语音生成 API：DB 缓存 → AI SDK TTS → 存入 Supabase Storage。
- *   生成的音频 URL 回填到 dictionary_cache.audio_url。
+ *   生成的音频 URL 回填到 words.audio_url。
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -26,9 +26,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Missing word' }, { status: 400 });
   }
 
-  // 1. 查 dictionary_cache 是否已有音频 URL
+  // 1. 查 words 是否已有音频 URL
   const { data: cached } = await supabaseAdmin
-    .from('dictionary_cache')
+    .from('words')
     .select('audio_url')
     .eq('word', word)
     .single();
@@ -69,9 +69,9 @@ export async function POST(request: NextRequest) {
       data: { publicUrl },
     } = supabaseAdmin.storage.from('tts-audio').getPublicUrl(fileName);
 
-    // 5. 回填 dictionary_cache.audio_url
+    // 5. 回填 words.audio_url
     void supabaseAdmin
-      .from('dictionary_cache')
+      .from('words')
       .update({ audio_url: publicUrl, updated_at: new Date().toISOString() })
       .eq('word', word);
 

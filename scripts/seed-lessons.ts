@@ -1,7 +1,6 @@
 /**
  * Seed script: read merged daily lesson JSON files and insert into
- * normalized Supabase tables (lessons, lesson_paragraphs,
- * lesson_focus_words, lesson_quiz_questions).
+ * Supabase lessons table (with JSONB paragraphs, focus_words, quiz_questions).
  *
  * Usage: npx tsx scripts/seed-lessons.ts
  */
@@ -39,19 +38,6 @@ interface QuizQuestion {
   [key: string]: unknown;
 }
 
-function isLegacySchemaError(error: unknown): boolean {
-  if (!error || typeof error !== 'object') return false;
-  if (!('message' in error)) return false;
-  const message =
-    typeof error.message === 'string' ? error.message : JSON.stringify(error);
-  return (
-    message.includes("Could not find the 'article_title' column") ||
-    message.includes("Could not find the 'date' column") ||
-    message.includes('column lessons.article_title does not exist') ||
-    message.includes('column lessons.date does not exist')
-  );
-}
-
 async function seed() {
   let ok = 0;
   let fail = 0;
@@ -69,106 +55,26 @@ async function seed() {
     }
 
     try {
-      const normalizedPayload = {
-        id: meta.id,
-        date,
-        title: meta.title,
-        category: meta.category,
-        teaser: meta.teaser,
-        tag: meta.tag,
-        difficulty: meta.difficulty,
-        published: meta.published,
-        featured: meta.featured,
-        speech_enabled: lesson.speech?.enabled ?? true,
-        article_title: lesson.article?.title ?? meta.title,
-        quiz_title: lesson.quiz?.title ?? 'Knowledge Check',
-      };
-
-      const { error: lessonErr } = await supabase
-        .from('lessons')
-        .upsert(normalizedPayload, { onConflict: 'date' });
-
-      if (lessonErr && isLegacySchemaError(lessonErr)) {
-        const { error: legacyErr } = await supabase.from('lessons').upsert(
-          {
-            id: meta.id,
-            slug: date,
-            title: meta.title,
-            category: meta.category,
-            teaser: meta.teaser,
-            tag: meta.tag,
-            difficulty: meta.difficulty,
-            published: meta.published,
-            featured: meta.featured,
-            content: lesson,
-          },
-          { onConflict: 'slug' }
-        );
-        if (legacyErr) throw legacyErr;
-
-        console.log(`[OK] ${file} → legacy content mode`);
-        ok++;
-        continue;
-      }
-
-      if (lessonErr) throw lessonErr;
-
-      const lessonId = meta.id;
-
-      // --- 2. Delete old child rows (idempotent re-seed) ---
-      await supabase
-        .from('lesson_quiz_questions')
-        .delete()
-        .eq('lesson_id', lessonId);
-      await supabase
-        .from('lesson_focus_words')
-        .delete()
-        .eq('lesson_id', lessonId);
-      await supabase
-        .from('lesson_paragraphs')
-        .delete()
-        .eq('lesson_id', lessonId);
-
-      // --- 3. Insert paragraphs ---
-      const paragraphs = (lesson.article?.paragraphs ?? []).map(
-        (p: { id: string; en: string; zh: string }, i: number) => ({
-          lesson_id: lessonId,
-          position: i,
+      // Build JSONB arrays
+      const paragraphsJson = (lesson.article?.paragraphs ?? []).map(
+        (p: { id: string; en: string; zh: string }) => ({
           key: p.id,
           en: p.en,
           zh: p.zh,
         })
       );
-      if (paragraphs.length > 0) {
-        const { error: pErr } = await supabase
-          .from('lesson_paragraphs')
-          .insert(paragraphs);
-        if (pErr) throw pErr;
-      }
 
-      // --- 4. Insert focus words ---
-      const focusWords = (lesson.focusWords ?? []).map(
-        (fw: { key: string; forms: string[] }, i: number) => ({
-          lesson_id: lessonId,
-          position: i,
+      const focusWordsJson = (lesson.focusWords ?? []).map(
+        (fw: { key: string; forms: string[] }) => ({
           key: fw.key,
           forms: fw.forms,
         })
       );
-      if (focusWords.length > 0) {
-        const { error: fwErr } = await supabase
-          .from('lesson_focus_words')
-          .insert(focusWords);
-        if (fwErr) throw fwErr;
-      }
 
-      // --- 5. Insert quiz questions ---
-      const questions = (lesson.quiz?.questions ?? []).map(
-        (q: QuizQuestion, i: number) => {
+      const quizQuestionsJson = (lesson.quiz?.questions ?? []).map(
+        (q: QuizQuestion) => {
           const { id: qId, type, prompt, rationale, evidenceRefs, ...rest } = q;
           return {
-            lesson_id: lessonId,
-            position: i,
             question_key: qId,
             question_type: type,
             prompt,
@@ -179,15 +85,32 @@ async function seed() {
           };
         }
       );
-      if (questions.length > 0) {
-        const { error: qErr } = await supabase
-          .from('lesson_quiz_questions')
-          .insert(questions);
-        if (qErr) throw qErr;
-      }
+
+      const { error: lessonErr } = await supabase.from('lessons').upsert(
+        {
+          id: meta.id,
+          date,
+          title: meta.title,
+          category: meta.category,
+          teaser: meta.teaser,
+          tag: meta.tag,
+          difficulty: meta.difficulty,
+          published: meta.published,
+          featured: meta.featured,
+          speech_enabled: lesson.speech?.enabled ?? true,
+          article_title: lesson.article?.title ?? meta.title,
+          quiz_title: lesson.quiz?.title ?? 'Knowledge Check',
+          paragraphs: paragraphsJson,
+          focus_words: focusWordsJson,
+          quiz_questions: quizQuestionsJson,
+        },
+        { onConflict: 'date' }
+      );
+
+      if (lessonErr) throw lessonErr;
 
       console.log(
-        `[OK] ${file} → ${paragraphs.length} paragraphs, ${focusWords.length} words, ${questions.length} questions`
+        `[OK] ${file} → ${paragraphsJson.length} paragraphs, ${focusWordsJson.length} words, ${quizQuestionsJson.length} questions`
       );
       ok++;
     } catch (err) {

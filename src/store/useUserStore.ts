@@ -1,5 +1,7 @@
 /**
  * @description 用户持久化状态：生词收藏、词典缓存、课程历史与测验进度。
+ *   云端同步使用 user_words 表（合并 saved_words + word_review_states）。
+ *   quiz_progress 仅保留在 localStorage 中，不再云端同步。
  */
 
 import { create } from 'zustand';
@@ -24,6 +26,77 @@ const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
  */
 function getAuthUserId(): string | null {
   return useAuthStore.getState().user?.id ?? null;
+}
+
+/**
+ * 根据单词文本获取 words 表中的 word_id。
+ * 如果不存在则先创建一条记录。
+ */
+async function getOrCreateWordId(word: string): Promise<string | null> {
+  // 先查询
+  const { data: existing } = await supabase
+    .from('words')
+    .select('id')
+    .eq('word', word)
+    .single();
+
+  if (existing) return existing.id;
+
+  // 不存在则创建（最简记录，后续词典查询会补全）
+  const { data: created, error } = await supabase
+    .from('words')
+    .upsert({ word, meanings: [], source: 'cache' }, { onConflict: 'word' })
+    .select('id')
+    .single();
+
+  if (error) {
+    console.error('[CloudSync] words upsert:', error);
+    return null;
+  }
+  return created?.id ?? null;
+}
+
+/**
+ * 同步单词收藏 + 复习状态到 user_words 表。
+ */
+async function syncUserWord(
+  userId: string,
+  word: string,
+  occurrences: VocabOccurrence[],
+  reviewState: WordReviewState
+) {
+  const wordId = await getOrCreateWordId(word);
+  if (!wordId) return;
+
+  const occurrencesJson = occurrences.map((occ) => ({
+    lesson_slug: occ.lessonSlug,
+    lesson_title: occ.lessonTitle ?? null,
+    paragraph_index: occ.paragraphIndex,
+    saved_at: occ.savedAt,
+    surface: occ.surface ?? null,
+  }));
+
+  supabase
+    .from('user_words')
+    .upsert(
+      {
+        user_id: userId,
+        word_id: wordId,
+        occurrences: occurrencesJson,
+        interval_days: reviewState.interval,
+        easiness: reviewState.easiness,
+        repetition: reviewState.repetition,
+        next_review_at: reviewState.nextReviewAt,
+        last_reviewed_at: reviewState.lastReviewedAt || null,
+        total_reviews: reviewState.totalReviews,
+        total_correct: reviewState.totalCorrect,
+        status: reviewState.status,
+      },
+      { onConflict: 'user_id,word_id' }
+    )
+    .then(({ error }) => {
+      if (error) console.error('[CloudSync] user_words upsert:', error);
+    });
 }
 
 export interface VocabOccurrence {
@@ -141,35 +214,6 @@ export const useUserStore = create<UserState>()(
             occurrences.push(nextOccurrence);
           }
 
-          // 云端同步：已登录时后台写入
-          const userId = getAuthUserId();
-          if (userId) {
-            supabase
-              .from('saved_words')
-              .upsert(
-                {
-                  user_id: userId,
-                  word: key,
-                  lesson_slug: lessonSlug,
-                  lesson_title: lessonTitle ?? null,
-                  paragraph_index: paragraphIndex,
-                  saved_at: Date.now(),
-                  surface: surface ?? null,
-                  sense_headword: senseSnapshot.headword ?? null,
-                  sense_pos: senseSnapshot.pos ?? null,
-                  sense_def: senseSnapshot.def ?? null,
-                  sense_def_zh: senseSnapshot.defZh ?? null,
-                  sense_phonetic: senseSnapshot.phonetic ?? null,
-                  sense_audio: senseSnapshot.audio ?? null,
-                },
-                { onConflict: 'user_id,word,lesson_slug,paragraph_index' }
-              )
-              .then(({ error }) => {
-                if (error)
-                  console.error('[CloudSync] saved_words upsert:', error);
-              });
-          }
-
           // 自动初始化间隔重复状态（若该词尚未有复习记录）
           const reviewStates = state.wordReviewStates[key]
             ? state.wordReviewStates
@@ -177,6 +221,16 @@ export const useUserStore = create<UserState>()(
                 ...state.wordReviewStates,
                 [key]: initReviewState(),
               };
+
+          // 云端同步：已登录时后台写入 user_words 表
+          const userId = getAuthUserId();
+          if (userId) {
+            const reviewState =
+              reviewStates[key] ?? state.wordReviewStates[key];
+            if (reviewState) {
+              syncUserWord(userId, key, occurrences, reviewState);
+            }
+          }
 
           return {
             savedWords: {
@@ -203,20 +257,30 @@ export const useUserStore = create<UserState>()(
             return state;
           }
 
-          // 云端同步：删除对应记录
+          // 云端同步
           const userId = getAuthUserId();
           if (userId) {
-            supabase
-              .from('saved_words')
-              .delete()
-              .eq('user_id', userId)
-              .eq('word', key)
-              .eq('lesson_slug', lessonSlug)
-              .eq('paragraph_index', paragraphIndex)
-              .then(({ error }) => {
-                if (error)
-                  console.error('[CloudSync] saved_words delete:', error);
+            if (nextOccurrences.length === 0) {
+              // 删除整个 user_words 记录
+              getOrCreateWordId(key).then((wordId) => {
+                if (!wordId) return;
+                supabase
+                  .from('user_words')
+                  .delete()
+                  .eq('user_id', userId)
+                  .eq('word_id', wordId)
+                  .then(({ error }) => {
+                    if (error)
+                      console.error('[CloudSync] user_words delete:', error);
+                  });
               });
+            } else {
+              // 更新 occurrences
+              const reviewState = state.wordReviewStates[key];
+              if (reviewState) {
+                syncUserWord(userId, key, nextOccurrences, reviewState);
+              }
+            }
           }
 
           if (nextOccurrences.length === 0) {
@@ -241,18 +305,21 @@ export const useUserStore = create<UserState>()(
           const key = word.trim().toLowerCase();
           if (!state.savedWords[key]) return state;
 
-          // 云端同步：删除该词所有记录
+          // 云端同步：删除该词的 user_words 记录
           const userId = getAuthUserId();
           if (userId) {
-            supabase
-              .from('saved_words')
-              .delete()
-              .eq('user_id', userId)
-              .eq('word', key)
-              .then(({ error }) => {
-                if (error)
-                  console.error('[CloudSync] saved_words delete word:', error);
-              });
+            getOrCreateWordId(key).then((wordId) => {
+              if (!wordId) return;
+              supabase
+                .from('user_words')
+                .delete()
+                .eq('user_id', userId)
+                .eq('word_id', wordId)
+                .then(({ error }) => {
+                  if (error)
+                    console.error('[CloudSync] user_words delete word:', error);
+                });
+            });
           }
 
           const rest = Object.fromEntries(
@@ -271,7 +338,7 @@ export const useUserStore = create<UserState>()(
             [word.trim().toLowerCase()]: record,
           },
         })),
-      // TTL 缓存（7天）词典查询：先设 loading 占位防止并发请求，完成后替换为真实数据���
+      // TTL 缓存（7天）词典查询：先设 loading 占位防止并发请求，完成后替换为真实数据。
       fetchDictionaryRecord: async (word, force = false) => {
         const key = normalizeDictionaryQuery(word);
         if (!key) return;
@@ -363,39 +430,13 @@ export const useUserStore = create<UserState>()(
             },
           };
         }),
+      // quiz_progress 仅保留在 localStorage，不再云端同步
       setQuizProgress: (key, state) =>
-        set((prev) => {
-          const userId = getAuthUserId();
-          if (userId) {
-            supabase
-              .from('quiz_progress')
-              .upsert(
-                { user_id: userId, persist_key: key, state },
-                { onConflict: 'user_id,persist_key' }
-              )
-              .then(({ error }) => {
-                if (error)
-                  console.error('[CloudSync] quiz_progress upsert:', error);
-              });
-          }
-          return {
-            quizProgress: { ...prev.quizProgress, [key]: state },
-          };
-        }),
+        set((prev) => ({
+          quizProgress: { ...prev.quizProgress, [key]: state },
+        })),
       clearQuizProgress: (key) =>
         set((prev) => {
-          const userId = getAuthUserId();
-          if (userId) {
-            supabase
-              .from('quiz_progress')
-              .delete()
-              .eq('user_id', userId)
-              .eq('persist_key', key)
-              .then(({ error }) => {
-                if (error)
-                  console.error('[CloudSync] quiz_progress delete:', error);
-              });
-          }
           const next = { ...prev.quizProgress };
           delete next[key];
           return { quizProgress: next };
@@ -410,27 +451,8 @@ export const useUserStore = create<UserState>()(
           // 云端同步
           const userId = getAuthUserId();
           if (userId) {
-            supabase
-              .from('word_review_states')
-              .upsert(
-                {
-                  user_id: userId,
-                  word: key,
-                  interval_days: reviewState.interval,
-                  easiness: reviewState.easiness,
-                  repetition: reviewState.repetition,
-                  next_review_at: reviewState.nextReviewAt,
-                  last_reviewed_at: reviewState.lastReviewedAt || null,
-                  total_reviews: reviewState.totalReviews,
-                  total_correct: reviewState.totalCorrect,
-                  status: reviewState.status,
-                },
-                { onConflict: 'user_id,word' }
-              )
-              .then(({ error }) => {
-                if (error)
-                  console.error('[CloudSync] word_review_states init:', error);
-              });
+            const occurrences = state.savedWords[key] ?? [];
+            syncUserWord(userId, key, occurrences, reviewState);
           }
 
           return {
@@ -450,30 +472,8 @@ export const useUserStore = create<UserState>()(
           // 云端同步
           const userId = getAuthUserId();
           if (userId) {
-            supabase
-              .from('word_review_states')
-              .upsert(
-                {
-                  user_id: userId,
-                  word: key,
-                  interval_days: next.interval,
-                  easiness: next.easiness,
-                  repetition: next.repetition,
-                  next_review_at: next.nextReviewAt,
-                  last_reviewed_at: next.lastReviewedAt,
-                  total_reviews: next.totalReviews,
-                  total_correct: next.totalCorrect,
-                  status: next.status,
-                },
-                { onConflict: 'user_id,word' }
-              )
-              .then(({ error }) => {
-                if (error)
-                  console.error(
-                    '[CloudSync] word_review_states update:',
-                    error
-                  );
-              });
+            const occurrences = state.savedWords[key] ?? [];
+            syncUserWord(userId, key, occurrences, next);
           }
 
           return {
@@ -495,7 +495,6 @@ export const useUserStore = create<UserState>()(
         set((state) => {
           const nextStates = { ...state.wordReviewStates };
           const userId = getAuthUserId();
-          const upsertRows: Array<Record<string, unknown>> = [];
 
           for (const { word, quality } of updates) {
             const key = word.trim().toLowerCase();
@@ -505,29 +504,9 @@ export const useUserStore = create<UserState>()(
             nextStates[key] = next;
 
             if (userId) {
-              upsertRows.push({
-                user_id: userId,
-                word: key,
-                interval_days: next.interval,
-                easiness: next.easiness,
-                repetition: next.repetition,
-                next_review_at: next.nextReviewAt,
-                last_reviewed_at: next.lastReviewedAt,
-                total_reviews: next.totalReviews,
-                total_correct: next.totalCorrect,
-                status: next.status,
-              });
+              const occurrences = state.savedWords[key] ?? [];
+              syncUserWord(userId, key, occurrences, next);
             }
-          }
-
-          if (userId && upsertRows.length > 0) {
-            supabase
-              .from('word_review_states')
-              .upsert(upsertRows, { onConflict: 'user_id,word' })
-              .then(({ error }) => {
-                if (error)
-                  console.error('[CloudSync] word_review_states batch:', error);
-              });
           }
 
           return { wordReviewStates: nextStates };
