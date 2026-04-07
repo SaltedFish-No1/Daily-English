@@ -1,7 +1,8 @@
 import * as Sentry from '@sentry/nextjs';
+import { clientEnv } from '@/lib/env/client';
 
 Sentry.init({
-  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+  dsn: clientEnv.NEXT_PUBLIC_SENTRY_DSN,
   enabled: process.env.NODE_ENV === 'production',
 
   // Performance monitoring: sample 20% of transactions

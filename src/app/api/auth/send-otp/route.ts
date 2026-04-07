@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { resend } from '@/lib/resend';
+import { serverEnv } from '@/lib/env/server';
 import { generateOtp, hashOtp } from '@/lib/otp';
 import { buildVerificationEmail } from '@/lib/email-templates/verification';
 
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest) {
     // 发送邮件
     const template = buildVerificationEmail(code);
     const { error: emailError } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL!,
+      from: serverEnv.RESEND_FROM_EMAIL,
       to: email,
       subject: template.subject,
       html: template.html,

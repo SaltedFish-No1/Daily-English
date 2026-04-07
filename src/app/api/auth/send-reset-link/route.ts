@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { resend } from '@/lib/resend';
+import { serverEnv } from '@/lib/env/server';
 import { generateToken, hashToken } from '@/lib/token';
 import { buildPasswordResetEmail } from '@/lib/email-templates/password-reset';
 
@@ -54,13 +55,13 @@ export async function POST(request: NextRequest) {
     }
 
     // 构造重置链接
-    const appUrl = process.env.APP_URL || 'http://localhost:3000';
+    const appUrl = serverEnv.appUrl;
     const resetUrl = `${appUrl}/reset-password?token=${token}&email=${encodeURIComponent(email)}`;
 
     // 发送邮件
     const template = buildPasswordResetEmail(resetUrl);
     const { error: emailError } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL!,
+      from: serverEnv.RESEND_FROM_EMAIL,
       to: email,
       subject: template.subject,
       html: template.html,
