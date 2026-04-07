@@ -180,6 +180,8 @@ export async function getLessons(
 // ---------------------------------------------------------------------------
 
 export async function getLessonById(id: string): Promise<LessonData | null> {
+  console.log('[getLessonById] querying lesson, id:', id);
+
   const { data: lesson, error: lessonErr } = await supabaseAdmin
     .from('lessons')
     .select(
@@ -188,6 +190,12 @@ export async function getLessonById(id: string): Promise<LessonData | null> {
     .eq('id', id)
     .eq('published', true)
     .single();
+
+  console.log('[getLessonById] main query result:', {
+    hasData: !!lesson,
+    error: lessonErr ? lessonErr.message : null,
+    errorCode: lessonErr?.code ?? null,
+  });
 
   if (lessonErr && isMissingColumn(lessonErr, 'date')) {
     const { data: legacyLesson, error: legacyErr } = await supabaseAdmin
@@ -224,7 +232,16 @@ export async function getLessonById(id: string): Promise<LessonData | null> {
     };
   }
 
-  if (lessonErr || !lesson) return null;
+  if (lessonErr || !lesson) {
+    console.log('[getLessonById] no published lesson found, returning null');
+    return null;
+  }
+
+  console.log('[getLessonById] found lesson:', {
+    id: lesson.id,
+    title: lesson.title,
+    date: lesson.date,
+  });
 
   // 2. Fetch child tables in parallel
   const [paragraphsRes, focusWordsRes, questionsRes] = await Promise.all([
@@ -246,6 +263,21 @@ export async function getLessonById(id: string): Promise<LessonData | null> {
       .eq('lesson_id', lesson.id)
       .order('position', { ascending: true }),
   ]);
+
+  console.log('[getLessonById] child table results:', {
+    paragraphs: {
+      count: paragraphsRes.data?.length ?? 0,
+      error: paragraphsRes.error?.message ?? null,
+    },
+    focusWords: {
+      count: focusWordsRes.data?.length ?? 0,
+      error: focusWordsRes.error?.message ?? null,
+    },
+    questions: {
+      count: questionsRes.data?.length ?? 0,
+      error: questionsRes.error?.message ?? null,
+    },
+  });
 
   // 3. Assemble paragraphs
   const paragraphs: Paragraph[] = (
@@ -501,6 +533,13 @@ export async function getReviewLessonById(
   lessonId: string,
   userId: string
 ): Promise<LessonData | null> {
+  console.log(
+    '[getReviewLessonById] querying, lessonId:',
+    lessonId,
+    'userId:',
+    userId
+  );
+
   const { data: lesson, error: lessonErr } = await supabaseAdmin
     .from('lessons')
     .select(
@@ -510,6 +549,12 @@ export async function getReviewLessonById(
     .eq('user_id', userId)
     .eq('is_review', true)
     .single();
+
+  console.log('[getReviewLessonById] query result:', {
+    hasData: !!lesson,
+    error: lessonErr ? lessonErr.message : null,
+    errorCode: lessonErr?.code ?? null,
+  });
 
   if (lessonErr || !lesson) return null;
 

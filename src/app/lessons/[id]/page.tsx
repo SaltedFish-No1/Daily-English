@@ -10,8 +10,19 @@ import { cookies } from 'next/headers';
 import { Metadata } from 'next';
 
 async function resolveLesson(id: string) {
-  const data = await getLessonById(id);
-  if (data) return data;
+  console.log('[resolveLesson] start, id:', id);
+
+  try {
+    const data = await getLessonById(id);
+    console.log(
+      '[resolveLesson] getLessonById result:',
+      data ? 'found' : 'null'
+    );
+    if (data) return data;
+  } catch (err) {
+    console.error('[resolveLesson] getLessonById threw:', err);
+    throw err;
+  }
 
   // Trigger dynamic rendering bailout outside any try-catch so Next.js can
   // detect the dynamic API usage and switch from static to dynamic rendering.
@@ -20,7 +31,20 @@ async function resolveLesson(id: string) {
 
   // Fallback: try loading as user's review lesson
   const userId = await getServerUserId();
-  if (userId) return getReviewLessonById(id, userId);
+  console.log('[resolveLesson] fallback to review lesson, userId:', userId);
+  if (userId) {
+    try {
+      const reviewData = await getReviewLessonById(id, userId);
+      console.log(
+        '[resolveLesson] getReviewLessonById result:',
+        reviewData ? 'found' : 'null'
+      );
+      return reviewData;
+    } catch (err) {
+      console.error('[resolveLesson] getReviewLessonById threw:', err);
+      throw err;
+    }
+  }
   return null;
 }
 

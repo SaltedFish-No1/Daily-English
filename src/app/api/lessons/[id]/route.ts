@@ -19,13 +19,17 @@ export async function GET(
   }
 
   try {
+    console.log('[API /lessons/[id]] fetching lesson, id:', id);
     const lesson = await getLessonById(id);
     if (!lesson) {
+      console.log('[API /lessons/[id]] lesson not found');
       return NextResponse.json({ error: 'Lesson not found' }, { status: 404 });
     }
+    console.log('[API /lessons/[id]] lesson found, title:', lesson.meta?.title);
     return NextResponse.json(lesson);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
+    console.error('[API /lessons/[id]] error:', err);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
