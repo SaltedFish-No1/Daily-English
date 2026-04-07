@@ -198,7 +198,7 @@ export async function getLessonById(
     query = query.eq('published', true);
   }
 
-  const { data: lesson, error: lessonErr } = await query.single();
+  const { data: lesson, error: lessonErr } = await query.maybeSingle();
 
   console.log('[getLessonById] query result:', {
     hasData: !!lesson,
@@ -221,7 +221,8 @@ export async function getLessonById(
       legacyQuery = legacyQuery.eq('published', true);
     }
 
-    const { data: legacyLesson, error: legacyErr } = await legacyQuery.single();
+    const { data: legacyLesson, error: legacyErr } =
+      await legacyQuery.maybeSingle();
 
     if (legacyErr || !legacyLesson) return null;
 

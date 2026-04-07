@@ -5,6 +5,8 @@ import { getServerUserId } from '@/lib/supabase-rsc';
 import { cookies } from 'next/headers';
 import { Metadata } from 'next';
 
+export const dynamic = 'force-dynamic';
+
 async function resolveLesson(id: string) {
   console.log('[resolveLesson] id:', id);
 
