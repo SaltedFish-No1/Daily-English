@@ -179,33 +179,40 @@ export async function getLessons(
 // Detail — assemble LessonData from 4 tables
 // ---------------------------------------------------------------------------
 
-export async function getLessonById(id: string): Promise<LessonData | null> {
-  console.log('[getLessonById] querying lesson, id:', id);
-
-  const { data: lesson, error: lessonErr } = await supabaseAdmin
+export async function getLessonById(
+  id: string,
+  userId?: string
+): Promise<LessonData | null> {
+  let query = supabaseAdmin
     .from('lessons')
     .select(
       'id, date, title, category, teaser, tag, difficulty, published, featured, speech_enabled, article_title, quiz_title'
     )
-    .eq('id', id)
-    .eq('published', true)
-    .single();
+    .eq('id', id);
 
-  console.log('[getLessonById] main query result:', {
-    hasData: !!lesson,
-    error: lessonErr ? lessonErr.message : null,
-    errorCode: lessonErr?.code ?? null,
-  });
+  if (userId) {
+    query = query.or(`published.eq.true,user_id.eq.${userId}`);
+  } else {
+    query = query.eq('published', true);
+  }
+
+  const { data: lesson, error: lessonErr } = await query.single();
 
   if (lessonErr && isMissingColumn(lessonErr, 'date')) {
-    const { data: legacyLesson, error: legacyErr } = await supabaseAdmin
+    let legacyQuery = supabaseAdmin
       .from('lessons')
       .select(
         'id, slug, title, category, teaser, tag, difficulty, published, featured, content'
       )
-      .eq('id', id)
-      .eq('published', true)
-      .single();
+      .eq('id', id);
+
+    if (userId) {
+      legacyQuery = legacyQuery.or(`published.eq.true,user_id.eq.${userId}`);
+    } else {
+      legacyQuery = legacyQuery.eq('published', true);
+    }
+
+    const { data: legacyLesson, error: legacyErr } = await legacyQuery.single();
 
     if (legacyErr || !legacyLesson) return null;
 
@@ -232,16 +239,7 @@ export async function getLessonById(id: string): Promise<LessonData | null> {
     };
   }
 
-  if (lessonErr || !lesson) {
-    console.log('[getLessonById] no published lesson found, returning null');
-    return null;
-  }
-
-  console.log('[getLessonById] found lesson:', {
-    id: lesson.id,
-    title: lesson.title,
-    date: lesson.date,
-  });
+  if (lessonErr || !lesson) return null;
 
   // 2. Fetch child tables in parallel
   const [paragraphsRes, focusWordsRes, questionsRes] = await Promise.all([
@@ -263,21 +261,6 @@ export async function getLessonById(id: string): Promise<LessonData | null> {
       .eq('lesson_id', lesson.id)
       .order('position', { ascending: true }),
   ]);
-
-  console.log('[getLessonById] child table results:', {
-    paragraphs: {
-      count: paragraphsRes.data?.length ?? 0,
-      error: paragraphsRes.error?.message ?? null,
-    },
-    focusWords: {
-      count: focusWordsRes.data?.length ?? 0,
-      error: focusWordsRes.error?.message ?? null,
-    },
-    questions: {
-      count: questionsRes.data?.length ?? 0,
-      error: questionsRes.error?.message ?? null,
-    },
-  });
 
   // 3. Assemble paragraphs
   const paragraphs: Paragraph[] = (
@@ -549,12 +532,6 @@ export async function getReviewLessonById(
     .eq('user_id', userId)
     .eq('is_review', true)
     .single();
-
-  console.log('[getReviewLessonById] query result:', {
-    hasData: !!lesson,
-    error: lessonErr ? lessonErr.message : null,
-    errorCode: lessonErr?.code ?? null,
-  });
 
   if (lessonErr || !lesson) return null;
 

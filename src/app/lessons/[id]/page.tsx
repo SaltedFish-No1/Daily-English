@@ -1,51 +1,23 @@
 import { LessonView } from '@/features/lesson/components/LessonView';
 import { LessonListItem } from '@/types/lesson';
-import {
-  getLessonById,
-  getLessonIds,
-  getReviewLessonById,
-} from '@/lib/lessons-db';
+import { getLessonById, getLessonIds } from '@/lib/lessons-db';
 import { getServerUserId } from '@/lib/supabase-rsc';
 import { cookies } from 'next/headers';
 import { Metadata } from 'next';
 
 async function resolveLesson(id: string) {
-  console.log('[resolveLesson] start, id:', id);
+  // Try published lessons first (preserves static generation for public pages).
+  const publicData = await getLessonById(id);
+  if (publicData) return publicData;
 
-  try {
-    const data = await getLessonById(id);
-    console.log(
-      '[resolveLesson] getLessonById result:',
-      data ? 'found' : 'null'
-    );
-    if (data) return data;
-  } catch (err) {
-    console.error('[resolveLesson] getLessonById threw:', err);
-    throw err;
-  }
-
-  // Trigger dynamic rendering bailout outside any try-catch so Next.js can
-  // detect the dynamic API usage and switch from static to dynamic rendering.
-  // Published lessons return early above, preserving static generation.
+  // Trigger dynamic rendering bailout so Next.js switches from static to
+  // dynamic rendering. Must be outside try-catch.
   await cookies();
 
-  // Fallback: try loading as user's review lesson
+  // Authenticated fallback: also return unpublished lessons owned by this user.
   const userId = await getServerUserId();
-  console.log('[resolveLesson] fallback to review lesson, userId:', userId);
-  if (userId) {
-    try {
-      const reviewData = await getReviewLessonById(id, userId);
-      console.log(
-        '[resolveLesson] getReviewLessonById result:',
-        reviewData ? 'found' : 'null'
-      );
-      return reviewData;
-    } catch (err) {
-      console.error('[resolveLesson] getReviewLessonById threw:', err);
-      throw err;
-    }
-  }
-  return null;
+  if (!userId) return null;
+  return getLessonById(id, userId);
 }
 
 export async function generateMetadata({
