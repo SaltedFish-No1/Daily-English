@@ -15,7 +15,6 @@ import { BookOpen, HelpCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { LessonBreadcrumb } from './LessonBreadcrumb';
 
-
 interface LessonViewProps {
   data: LessonData;
   lessonSlug: string;
@@ -31,13 +30,30 @@ export const LessonView: React.FC<LessonViewProps> = ({
   onReviewComplete,
 }) => {
   const { activeTab, setActiveTab } = useLessonStore();
-  const { saveLessonScore } = useUserStore();
+  const { saveLessonScore, batchUpdateWordReview } = useUserStore();
   const handleQuizComplete = useCallback(
     (score: number, total: number) => {
       saveLessonScore(lessonSlug, score, total, overview.title);
       onReviewComplete?.(score, total);
+
+      // Auto-update spaced repetition state for review lessons.
+      const reviewWords = data.meta.isReview
+        ? data.meta.reviewWords
+        : undefined;
+      if (reviewWords?.length && total > 0) {
+        const pct = score / total;
+        const quality = pct >= 0.8 ? 4 : pct >= 0.5 ? 3 : 1;
+        batchUpdateWordReview(reviewWords.map((word) => ({ word, quality })));
+      }
     },
-    [lessonSlug, saveLessonScore, onReviewComplete, overview.title]
+    [
+      lessonSlug,
+      saveLessonScore,
+      onReviewComplete,
+      overview.title,
+      data.meta,
+      batchUpdateWordReview,
+    ]
   );
 
   const tabs = [
@@ -57,7 +73,7 @@ export const LessonView: React.FC<LessonViewProps> = ({
     <div className="flex min-h-screen flex-col bg-slate-50 pb-24 lg:pb-8">
       <div className="sticky top-0 z-30">
         {/* Header */}
-        <header className="hidden pt-safe border-b border-gray-100 bg-white shadow-sm lg:block">
+        <header className="pt-safe hidden border-b border-gray-100 bg-white shadow-sm lg:block">
           <div className="mx-auto max-w-5xl px-5 py-4 sm:py-6">
             <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
               <div className="w-full sm:w-auto">

@@ -179,33 +179,49 @@ export async function getLessons(
 // Detail — assemble LessonData from 4 tables
 // ---------------------------------------------------------------------------
 
-export async function getLessonById(id: string): Promise<LessonData | null> {
-  console.log('[getLessonById] querying lesson, id:', id);
+export async function getLessonById(
+  id: string,
+  userId?: string
+): Promise<LessonData | null> {
+  console.log('[getLessonById] id:', id, 'userId:', userId ?? 'none');
 
-  const { data: lesson, error: lessonErr } = await supabaseAdmin
+  let query = supabaseAdmin
     .from('lessons')
     .select(
       'id, date, title, category, teaser, tag, difficulty, published, featured, speech_enabled, article_title, quiz_title'
     )
-    .eq('id', id)
-    .eq('published', true)
-    .single();
+    .eq('id', id);
 
-  console.log('[getLessonById] main query result:', {
+  if (userId) {
+    query = query.or(`published.eq.true,user_id.eq.${userId}`);
+  } else {
+    query = query.eq('published', true);
+  }
+
+  const { data: lesson, error: lessonErr } = await query.single();
+
+  console.log('[getLessonById] query result:', {
     hasData: !!lesson,
-    error: lessonErr ? lessonErr.message : null,
-    errorCode: lessonErr?.code ?? null,
+    error: lessonErr?.message ?? null,
+    code: lessonErr?.code ?? null,
   });
 
   if (lessonErr && isMissingColumn(lessonErr, 'date')) {
-    const { data: legacyLesson, error: legacyErr } = await supabaseAdmin
+    console.log('[getLessonById] hit legacy branch (missing date column)');
+    let legacyQuery = supabaseAdmin
       .from('lessons')
       .select(
         'id, slug, title, category, teaser, tag, difficulty, published, featured, content'
       )
-      .eq('id', id)
-      .eq('published', true)
-      .single();
+      .eq('id', id);
+
+    if (userId) {
+      legacyQuery = legacyQuery.or(`published.eq.true,user_id.eq.${userId}`);
+    } else {
+      legacyQuery = legacyQuery.eq('published', true);
+    }
+
+    const { data: legacyLesson, error: legacyErr } = await legacyQuery.single();
 
     if (legacyErr || !legacyLesson) return null;
 
@@ -233,14 +249,16 @@ export async function getLessonById(id: string): Promise<LessonData | null> {
   }
 
   if (lessonErr || !lesson) {
-    console.log('[getLessonById] no published lesson found, returning null');
+    console.log('[getLessonById] no lesson found, returning null');
     return null;
   }
 
   console.log('[getLessonById] found lesson:', {
     id: lesson.id,
     title: lesson.title,
-    date: lesson.date,
+    published: lesson.published,
+    articleTitle: lesson.article_title,
+    quizTitle: lesson.quiz_title,
   });
 
   // 2. Fetch child tables in parallel
@@ -264,7 +282,7 @@ export async function getLessonById(id: string): Promise<LessonData | null> {
       .order('position', { ascending: true }),
   ]);
 
-  console.log('[getLessonById] child table results:', {
+  console.log('[getLessonById] children:', {
     paragraphs: {
       count: paragraphsRes.data?.length ?? 0,
       error: paragraphsRes.error?.message ?? null,
@@ -549,12 +567,6 @@ export async function getReviewLessonById(
     .eq('user_id', userId)
     .eq('is_review', true)
     .single();
-
-  console.log('[getReviewLessonById] query result:', {
-    hasData: !!lesson,
-    error: lessonErr ? lessonErr.message : null,
-    errorCode: lessonErr?.code ?? null,
-  });
 
   if (lessonErr || !lesson) return null;
 

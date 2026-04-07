@@ -1,51 +1,50 @@
 import { LessonView } from '@/features/lesson/components/LessonView';
 import { LessonListItem } from '@/types/lesson';
-import {
-  getLessonById,
-  getLessonIds,
-  getReviewLessonById,
-} from '@/lib/lessons-db';
+import { getLessonById, getLessonIds } from '@/lib/lessons-db';
 import { getServerUserId } from '@/lib/supabase-rsc';
 import { cookies } from 'next/headers';
 import { Metadata } from 'next';
 
 async function resolveLesson(id: string) {
-  console.log('[resolveLesson] start, id:', id);
+  console.log('[resolveLesson] id:', id);
 
   try {
-    const data = await getLessonById(id);
+    const publicData = await getLessonById(id);
     console.log(
-      '[resolveLesson] getLessonById result:',
-      data ? 'found' : 'null'
+      '[resolveLesson] getLessonById(public):',
+      publicData ? `found: ${publicData.meta.title}` : 'null'
     );
-    if (data) return data;
+    if (publicData) return publicData;
   } catch (err) {
-    console.error('[resolveLesson] getLessonById threw:', err);
+    console.error('[resolveLesson] getLessonById(public) threw:', err);
     throw err;
   }
 
-  // Trigger dynamic rendering bailout outside any try-catch so Next.js can
-  // detect the dynamic API usage and switch from static to dynamic rendering.
-  // Published lessons return early above, preserving static generation.
   await cookies();
+  console.log('[resolveLesson] cookies() done');
 
-  // Fallback: try loading as user's review lesson
-  const userId = await getServerUserId();
-  console.log('[resolveLesson] fallback to review lesson, userId:', userId);
-  if (userId) {
-    try {
-      const reviewData = await getReviewLessonById(id, userId);
-      console.log(
-        '[resolveLesson] getReviewLessonById result:',
-        reviewData ? 'found' : 'null'
-      );
-      return reviewData;
-    } catch (err) {
-      console.error('[resolveLesson] getReviewLessonById threw:', err);
-      throw err;
-    }
+  let userId: string | null = null;
+  try {
+    userId = await getServerUserId();
+  } catch (err) {
+    console.error('[resolveLesson] getServerUserId threw:', err);
+    throw err;
   }
-  return null;
+  console.log('[resolveLesson] userId:', userId);
+
+  if (!userId) return null;
+
+  try {
+    const data = await getLessonById(id, userId);
+    console.log(
+      '[resolveLesson] getLessonById(auth):',
+      data ? `found: ${data.meta.title}` : 'null'
+    );
+    return data;
+  } catch (err) {
+    console.error('[resolveLesson] getLessonById(auth) threw:', err);
+    throw err;
+  }
 }
 
 export async function generateMetadata({
@@ -75,6 +74,14 @@ export default async function LessonPage({
 }) {
   const { id } = await params;
   const data = await resolveLesson(id);
+
+  console.log('[LessonPage] data summary:', {
+    hasData: !!data,
+    hasArticle: !!data?.article,
+    articleTitle: data?.article?.title ?? 'MISSING',
+    paragraphCount: data?.article?.paragraphs?.length ?? 0,
+    quizCount: data?.quiz?.questions?.length ?? 0,
+  });
 
   if (!data) {
     return <div>Lesson not found</div>;
