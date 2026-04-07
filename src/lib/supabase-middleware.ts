@@ -5,15 +5,15 @@
 
 import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
+import { clientEnv } from '@/lib/env/client';
 
 export function createSupabaseMiddlewareClient(
   request: NextRequest,
   response: NextResponse
 ) {
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ||
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    clientEnv.NEXT_PUBLIC_SUPABASE_URL,
+    clientEnv.supabaseAnonKey,
     {
       cookies: {
         getAll() {

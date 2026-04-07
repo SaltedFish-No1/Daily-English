@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { getAuthUser, type AuthUser } from './auth-helper';
+import { clientEnv } from '@/lib/env/client';
 
 type AuthSuccess = { user: AuthUser };
 type AuthFailure = { error: NextResponse };
@@ -19,9 +20,8 @@ export async function requireApiAuth(
 ): Promise<AuthSuccess | AuthFailure> {
   // 1. 尝试 cookie-based 认证（与 middleware 一致）
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ||
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    clientEnv.NEXT_PUBLIC_SUPABASE_URL,
+    clientEnv.supabaseAnonKey,
     {
       cookies: {
         getAll() {

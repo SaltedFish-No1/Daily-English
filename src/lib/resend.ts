@@ -4,13 +4,14 @@
  */
 
 import { Resend } from 'resend';
+import { serverEnv } from '@/lib/env/server';
 
 let _client: Resend | null = null;
 
 /** 延迟初始化 Resend 客户端，避免构建阶段读取未设置的环境变量。 */
 export function getResend(): Resend {
   if (!_client) {
-    _client = new Resend(process.env.RESEND_API_KEY);
+    _client = new Resend(serverEnv.RESEND_API_KEY);
   }
   return _client;
 }

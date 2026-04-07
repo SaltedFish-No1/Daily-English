@@ -7,13 +7,7 @@
 
 import { createBrowserClient } from '@supabase/ssr';
 import { SupabaseClient } from '@supabase/supabase-js';
-
-const supabaseUrl =
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseAnonKey =
-  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ||
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-  'placeholder';
+import { clientEnv } from '@/lib/env/client';
 
 let _supabase: SupabaseClient | null = null;
 
@@ -24,7 +18,10 @@ let _supabase: SupabaseClient | null = null;
  */
 export function getSupabase(): SupabaseClient {
   if (!_supabase) {
-    _supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
+    _supabase = createBrowserClient(
+      clientEnv.NEXT_PUBLIC_SUPABASE_URL,
+      clientEnv.supabaseAnonKey
+    );
   }
   return _supabase;
 }
