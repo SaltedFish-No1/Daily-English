@@ -183,6 +183,8 @@ export async function getLessonById(
   id: string,
   userId?: string
 ): Promise<LessonData | null> {
+  console.log('[getLessonById] id:', id, 'userId:', userId ?? 'none');
+
   let query = supabaseAdmin
     .from('lessons')
     .select(
@@ -198,7 +200,14 @@ export async function getLessonById(
 
   const { data: lesson, error: lessonErr } = await query.single();
 
+  console.log('[getLessonById] query result:', {
+    hasData: !!lesson,
+    error: lessonErr?.message ?? null,
+    code: lessonErr?.code ?? null,
+  });
+
   if (lessonErr && isMissingColumn(lessonErr, 'date')) {
+    console.log('[getLessonById] hit legacy branch (missing date column)');
     let legacyQuery = supabaseAdmin
       .from('lessons')
       .select(
@@ -239,7 +248,18 @@ export async function getLessonById(
     };
   }
 
-  if (lessonErr || !lesson) return null;
+  if (lessonErr || !lesson) {
+    console.log('[getLessonById] no lesson found, returning null');
+    return null;
+  }
+
+  console.log('[getLessonById] found lesson:', {
+    id: lesson.id,
+    title: lesson.title,
+    published: lesson.published,
+    articleTitle: lesson.article_title,
+    quizTitle: lesson.quiz_title,
+  });
 
   // 2. Fetch child tables in parallel
   const [paragraphsRes, focusWordsRes, questionsRes] = await Promise.all([
@@ -261,6 +281,21 @@ export async function getLessonById(
       .eq('lesson_id', lesson.id)
       .order('position', { ascending: true }),
   ]);
+
+  console.log('[getLessonById] children:', {
+    paragraphs: {
+      count: paragraphsRes.data?.length ?? 0,
+      error: paragraphsRes.error?.message ?? null,
+    },
+    focusWords: {
+      count: focusWordsRes.data?.length ?? 0,
+      error: focusWordsRes.error?.message ?? null,
+    },
+    questions: {
+      count: questionsRes.data?.length ?? 0,
+      error: questionsRes.error?.message ?? null,
+    },
+  });
 
   // 3. Assemble paragraphs
   const paragraphs: Paragraph[] = (

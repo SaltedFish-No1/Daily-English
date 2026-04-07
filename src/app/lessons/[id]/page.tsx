@@ -6,18 +6,45 @@ import { cookies } from 'next/headers';
 import { Metadata } from 'next';
 
 async function resolveLesson(id: string) {
-  // Try published lessons first (preserves static generation for public pages).
-  const publicData = await getLessonById(id);
-  if (publicData) return publicData;
+  console.log('[resolveLesson] id:', id);
 
-  // Trigger dynamic rendering bailout so Next.js switches from static to
-  // dynamic rendering. Must be outside try-catch.
+  try {
+    const publicData = await getLessonById(id);
+    console.log(
+      '[resolveLesson] getLessonById(public):',
+      publicData ? `found: ${publicData.meta.title}` : 'null'
+    );
+    if (publicData) return publicData;
+  } catch (err) {
+    console.error('[resolveLesson] getLessonById(public) threw:', err);
+    throw err;
+  }
+
   await cookies();
+  console.log('[resolveLesson] cookies() done');
 
-  // Authenticated fallback: also return unpublished lessons owned by this user.
-  const userId = await getServerUserId();
+  let userId: string | null = null;
+  try {
+    userId = await getServerUserId();
+  } catch (err) {
+    console.error('[resolveLesson] getServerUserId threw:', err);
+    throw err;
+  }
+  console.log('[resolveLesson] userId:', userId);
+
   if (!userId) return null;
-  return getLessonById(id, userId);
+
+  try {
+    const data = await getLessonById(id, userId);
+    console.log(
+      '[resolveLesson] getLessonById(auth):',
+      data ? `found: ${data.meta.title}` : 'null'
+    );
+    return data;
+  } catch (err) {
+    console.error('[resolveLesson] getLessonById(auth) threw:', err);
+    throw err;
+  }
 }
 
 export async function generateMetadata({
@@ -47,6 +74,14 @@ export default async function LessonPage({
 }) {
   const { id } = await params;
   const data = await resolveLesson(id);
+
+  console.log('[LessonPage] data summary:', {
+    hasData: !!data,
+    hasArticle: !!data?.article,
+    articleTitle: data?.article?.title ?? 'MISSING',
+    paragraphCount: data?.article?.paragraphs?.length ?? 0,
+    quizCount: data?.quiz?.questions?.length ?? 0,
+  });
 
   if (!data) {
     return <div>Lesson not found</div>;

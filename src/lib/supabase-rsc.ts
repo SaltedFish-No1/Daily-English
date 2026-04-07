@@ -42,6 +42,7 @@ export async function getServerUserId(): Promise<string | null> {
     if (typeof error === 'object' && error !== null && 'digest' in error) {
       throw error;
     }
+    console.error('[getServerUserId] swallowed error:', error);
     return null;
   }
 }
