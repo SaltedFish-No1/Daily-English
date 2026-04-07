@@ -40,8 +40,11 @@ function parseClientEnv(): ClientEnvRaw {
   const result = clientEnvSchema.safeParse(raw);
   if (result.success) return result.data;
 
-  // 构建阶段或本地开发可能缺少变量，回退到占位值避免构建失败
-  if (process.env.NODE_ENV === 'production') {
+  // next build 阶段 NODE_ENV=production 但 NEXT_PHASE 为构建标识，
+  // 此时客户端变量可能尚未注入，需要回退到占位值以免阻断构建。
+  const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
+
+  if (process.env.NODE_ENV === 'production' && !isBuildPhase) {
     console.error(
       '[env/client] 缺少必需的客户端环境变量:',
       result.error.format()
