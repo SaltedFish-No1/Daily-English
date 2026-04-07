@@ -147,6 +147,8 @@ POST   /api/photo-capture        # Image upload
 - **Highlighted words** must use `data-word` attribute to sync with the vocab panel
 - **Validation**: Use Zod schemas for API request/response validation
 - **Streaming**: AI operations (grading, review generation) use streaming responses
+- **Project Rules**: All coding rules are defined in `.rules/` directory. Code MUST strictly follow these rules:
+  - [`.rules/comment-rules.md`](.rules/comment-rules.md) — TypeScript 注释规范（Comment conventions）
 
 ## Environment Variables
 
