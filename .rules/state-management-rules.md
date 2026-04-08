@@ -1,31 +1,29 @@
-# 状态管理规范 / State Management Rules
+# 状态管理规范
 
 > 本规范适用于项目中所有状态管理代码。编写代码时**必须严格遵守**以下规则。
->
-> This specification applies to all state management code. All code **MUST** strictly follow these rules.
 
 ---
 
-## 目录 / Table of Contents
+## 目录
 
-1. [核心原则 / Core Principle](#1-核心原则--core-principle)
-2. [Zustand Store 设计 / Store Design](#2-zustand-store-设计--store-design)
-3. [持久化策略 / Persistence](#3-持久化策略--persistence)
-4. [云端同步 / Cloud Sync](#4-云端同步--cloud-sync)
-5. [TanStack Query 基础 / Query Basics](#5-tanstack-query-基础--query-basics)
-6. [Query Key 约定 / Query Keys](#6-query-key-约定--query-keys)
-7. [自定义 Hook / Custom Hooks](#7-自定义-hook--custom-hooks)
-8. [状态归属速查 / Quick Reference](#8-状态归属速查--quick-reference)
-9. [迁移指南 / Migration](#9-迁移指南--migration)
-10. [反模式 / Anti-Patterns](#10-反模式--anti-patterns)
+1. [核心原则](#1-核心原则)
+2. [Zustand Store 设计](#2-zustand-store-设计)
+3. [持久化策略](#3-持久化策略)
+4. [云端同步](#4-云端同步)
+5. [TanStack Query 基础](#5-tanstack-query-基础)
+6. [Query Key 约定](#6-query-key-约定)
+7. [自定义 Hook](#7-自定义-hook)
+8. [状态归属速查](#8-状态归属速查)
+9. [迁移指南](#9-迁移指南)
+10. [反模式](#10-反模式)
 
 ---
 
-## 1. 核心原则 / Core Principle
+## 1. 核心原则
 
-**一句话**：Zustand 管理客户端/UI 状态，TanStack Query 管理服务端/异步数据。
+**Zustand 管理客户端/UI 状态，TanStack Query 管理服务端/异步数据。**
 
-### 决策流程 / Decision Flow
+### 决策流程
 
 | 问题 | 是 | 否 |
 |------|----|----|
@@ -33,7 +31,7 @@
 | 需要跨组件共享的 UI 状态？ | → Zustand | ↓ |
 | 仅组件内部使用？ | → `useState` | — |
 
-### 现有 Store 职责 / Current Stores
+### 现有 Store 职责
 
 | Store | 类型 | 持久化 | 云端同步 |
 |-------|------|--------|----------|
@@ -45,17 +43,17 @@
 
 ---
 
-## 2. Zustand Store 设计 / Store Design
+## 2. Zustand Store 设计
 
-**适用场景 / When**：创建或修改 `src/store/` 下的 Zustand Store。
+**适用场景**：创建或修改 `src/store/` 下的 Zustand Store。
 
-**要求 / Rules**：
+**要求**：
 - 命名：`use[Domain]Store`，导出为 `const`
 - 单一职责：一个 Store 只管理一个领域
 - State 与 Action 定义在同一个 `interface` 中
 - 禁止在 Store 中存放 API 响应缓存（应使用 TanStack Query）
 
-**示例 / Example**：
+**示例**：
 
 ```typescript
 interface LessonState {
@@ -77,17 +75,17 @@ export const useLessonStore = create<LessonState>((set) => ({
 
 ---
 
-## 3. 持久化策略 / Persistence
+## 3. 持久化策略
 
-**适用场景 / When**：需要在页面刷新后保留状态时。
+**适用场景**：需要在页面刷新后保留状态时。
 
-**要求 / Rules**：
+**要求**：
 - 使用 `zustand/middleware` 的 `persist`
 - localStorage key 统一前缀 `daily-english-`
 - 临时状态（计时器、loading 等）必须通过 `partialize` 排除
 - 每个 Store 仅持久化必要字段，避免 localStorage 膨胀
 
-**示例 / Example**：
+**示例**：
 
 ```typescript
 export const useWritingStore = create<WritingState>()(
@@ -114,17 +112,17 @@ export const useWritingStore = create<WritingState>()(
 
 ---
 
-## 4. 云端同步 / Cloud Sync
+## 4. 云端同步
 
-**适用场景 / When**：已登录用户的状态需同步到 Supabase。
+**适用场景**：已登录用户的状态需同步到 Supabase。
 
-**要求 / Rules**：
+**要求**：
 - 写操作使用 fire-and-forget 模式（不阻塞 UI），错误仅 `console.error`
 - 同步前必须检查 `getAuthUserId()` 是否存在
 - 高频操作（如草稿输入）必须 debounce（≥ 2s）
 - 登录时通过 `useDataSync` 全量拉取云端数据并合并
 
-**示例 / Example**：
+**示例**：
 
 ```typescript
 /** fire-and-forget 将偏好部分字段同步到云端 */
@@ -145,18 +143,18 @@ function syncPreferenceToCloud(partial: Record<string, unknown>) {
 
 ---
 
-## 5. TanStack Query 基础 / Query Basics
+## 5. TanStack Query 基础
 
-**适用场景 / When**：从 API 获取或修改服务端数据。
+**适用场景**：从 API 获取或修改服务端数据。
 
-**要求 / Rules**：
+**要求**：
 - **读取**用 `useQuery`，**写入**用 `useMutation`
 - 需要登录的查询设置 `enabled: !!userId`
 - QueryClient 已配置全局 `staleTime: 60 * 1000`，按需覆盖
 - 写入成功后用 `queryClient.invalidateQueries` 刷新相关缓存
 - 禁止在组件中手动 `useState + fetch` 获取服务端数据
 
-**示例 / Example**：
+**示例**：
 
 ```typescript
 /** 获取写作话题列表 */
@@ -188,16 +186,16 @@ export function useSubmitEssayMutation() {
 
 ---
 
-## 6. Query Key 约定 / Query Keys
+## 6. Query Key 约定
 
-**适用场景 / When**：定义 TanStack Query 的缓存键。
+**适用场景**：定义 TanStack Query 的缓存键。
 
-**要求 / Rules**：
+**要求**：
 - 层级结构：`[领域, 操作, ...参数]`
 - 集中定义在 `src/lib/queryKeys.ts` 中
 - 使用工厂函数返回 key 数组，便于类型安全和 invalidation
 
-**示例 / Example**：
+**示例**：
 
 ```typescript
 // src/lib/queryKeys.ts
@@ -223,17 +221,17 @@ queryClient.invalidateQueries({ queryKey: ['writing'] });
 
 ---
 
-## 7. 自定义 Hook / Custom Hooks
+## 7. 自定义 Hook
 
-**适用场景 / When**：封装 TanStack Query 调用供组件消费。
+**适用场景**：封装 TanStack Query 调用供组件消费。
 
-**要求 / Rules**：
+**要求**：
 - 位置：`src/features/[domain]/hooks/`
 - 命名：查询用 `use[Domain]Query`，变更用 `use[Action]Mutation`
 - 必须导出使用的 `queryKey`，方便外部 invalidation
 - 一个 hook 一个文件，文件名与 hook 同名
 
-**示例 / Example**：
+**示例**：
 
 ```typescript
 // src/features/writing/hooks/useWritingTopicsQuery.ts
@@ -256,7 +254,7 @@ export function useWritingTopicsQuery() {
 
 ---
 
-## 8. 状态归属速查 / Quick Reference
+## 8. 状态归属速查
 
 | 数据 | 归属 | 原因 |
 |------|------|------|
@@ -264,8 +262,8 @@ export function useWritingTopicsQuery() {
 | 词典查询结果 | TanStack Query | API 响应，Query 自带 TTL 缓存 |
 | 写作话题列表 | TanStack Query | 服务端数据 |
 | 写作评分结果 | TanStack Query | API streaming 响应 |
-| 已收藏生词本 | Zustand（`useUserStore`） | 客户端优先数据，需离线可用 + 云端同步 |
-| 复习状态 | Zustand（`useUserStore`） | 客户端优先数据，SM-2 算法本地计算 |
+| 已收藏生词本 | Zustand（`useUserStore`） | 客户端优先，需离线可用 + 云端同步 |
+| 复习状态 | Zustand（`useUserStore`） | 客户端优先，SM-2 算法本地计算 |
 | 测验进度 | Zustand（`useUserStore`） | 临时会话数据 + 客户端优先持久化 |
 | 用户偏好设置 | Zustand（`usePreferenceStore`） | 客户端优先，即时响应 |
 | 写作草稿内容 | Zustand（`useWritingStore`） | 客户端优先，需离线编辑 |
@@ -275,14 +273,13 @@ export function useWritingTopicsQuery() {
 
 ---
 
-## 9. 迁移指南 / Migration
+## 9. 迁移指南
 
 ### 从 `useState + fetch` 迁移到 `useQuery`
 
 **Before**（反模式）：
 
 ```typescript
-// 手动管理 loading/error/data —— 不推荐
 const [topics, setTopics] = useState<WritingTopicWithStats[]>([]);
 const [loading, setLoading] = useState(true);
 
@@ -302,7 +299,6 @@ useEffect(() => { loadTopics(); }, [loadTopics]);
 **After**（推荐）：
 
 ```typescript
-// TanStack Query 自动管理缓存、loading、错误、重试、去重
 const { data: topics = [], isLoading } = useWritingTopicsQuery();
 ```
 
@@ -315,7 +311,7 @@ const { data: topics = [], isLoading } = useWritingTopicsQuery();
 
 ---
 
-## 10. 反模式 / Anti-Patterns
+## 10. 反模式
 
 ### 10.1 在 Zustand 中缓存 API 响应
 
@@ -358,7 +354,6 @@ signOut: () => {
 }
 
 // ✅ Good：通过订阅机制解耦
-// 在各 Store 内部订阅 auth 变化，自行清理
 const unsubscribe = useAuthStore.subscribe(
   (state) => state.user,
   (user) => { if (!user) resetStore(); },
