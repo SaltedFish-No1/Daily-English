@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react';
 import { Camera, Upload, Loader2, X, PenLine, RotateCcw } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { recognizeHandwriting } from '@/features/writing/lib/writingApi';
 
 interface HandwritingOcrModalProps {

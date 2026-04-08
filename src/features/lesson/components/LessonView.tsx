@@ -12,7 +12,7 @@ import { Article } from './Article';
 import { Quiz } from './Quiz';
 import { VocabSheet } from './VocabSheet';
 import { BookOpen, HelpCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { LessonBreadcrumb } from './LessonBreadcrumb';
 
 interface LessonViewProps {

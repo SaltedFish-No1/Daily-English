@@ -7,7 +7,7 @@ import {
   useTransform,
   animate,
   type PanInfo,
-} from 'framer-motion';
+} from 'motion/react';
 
 const SWIPE_THRESHOLD = 100;
 const EXIT_X = 600;

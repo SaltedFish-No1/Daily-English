@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { LessonQuiz } from '@/types/lesson';
 import { ArrowRight, RotateCcw, Layers } from 'lucide-react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { QuestionRenderer } from './quiz/QuestionRenderer';
 import { FullScreenCelebration } from './quiz/FullScreenCelebration';
 import {

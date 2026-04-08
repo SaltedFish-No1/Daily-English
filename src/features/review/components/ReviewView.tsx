@@ -8,7 +8,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { type GeneratedLesson } from '@/types/review';
 import { parsePartialJson } from 'ai';
 import { Sparkles, RefreshCw, ArrowLeft } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';

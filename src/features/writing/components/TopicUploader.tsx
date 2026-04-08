@@ -11,7 +11,7 @@ import {
   Image as ImageIcon,
   Type,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   parseTopicImage,
   createTopicManual,

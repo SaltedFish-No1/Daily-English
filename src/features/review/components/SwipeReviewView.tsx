@@ -5,7 +5,7 @@
  */
 
 import React, { useState, useCallback, useRef } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 import {
   Volume2,
   Undo2,
@@ -62,7 +62,8 @@ function buildReviewWords(
   return words.map((w) => {
     const key = w.trim().toLowerCase();
     const occurrences = savedWords[key] ?? [];
-    const latest = occurrences.length > 0 ? occurrences[occurrences.length - 1] : null;
+    const latest =
+      occurrences.length > 0 ? occurrences[occurrences.length - 1] : null;
     const sense = latest?.senseSnapshot;
     return {
       word: key,
@@ -101,7 +102,9 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [history, setHistory] = useState<SwipeRecord[]>([]);
   const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
-  const [results, setResults] = useState<Array<{ word: string; remembered: boolean }>>([]);
+  const [results, setResults] = useState<
+    Array<{ word: string; remembered: boolean }>
+  >([]);
   const [isAnimating, setIsAnimating] = useState(false);
   /** Direction of the last undo — used for fly-back initial position */
   const [undoFrom, setUndoFrom] = useState<'left' | 'right' | null>(null);
@@ -111,17 +114,14 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
   const currentWord = isFinished ? null : reviewWords[currentIndex];
 
   // ----- Card Flip -----
-  const toggleFlip = useCallback(
-    (idx: number) => {
-      setFlippedCards((prev) => {
-        const next = new Set(prev);
-        if (next.has(idx)) next.delete(idx);
-        else next.add(idx);
-        return next;
-      });
-    },
-    []
-  );
+  const toggleFlip = useCallback((idx: number) => {
+    setFlippedCards((prev) => {
+      const next = new Set(prev);
+      if (next.has(idx)) next.delete(idx);
+      else next.add(idx);
+      return next;
+    });
+  }, []);
 
   // ----- Swipe Handler (called after fly-out animation completes) -----
   const handleSwipe = useCallback(
@@ -134,7 +134,8 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
         ? { ...wordReviewStates[key] }
         : undefined;
 
-      const quality = direction === 'right' ? QUALITY_REMEMBERED : QUALITY_FORGOT;
+      const quality =
+        direction === 'right' ? QUALITY_REMEMBERED : QUALITY_FORGOT;
       updateWordReview(key, quality);
 
       setHistory((prev) => [...prev, { word: key, direction, prevState }]);
@@ -203,7 +204,9 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
           <h2 className="mb-2 text-xl font-bold text-slate-900">复习完成!</h2>
           <div className="mb-6 flex justify-center gap-8">
             <div className="text-center">
-              <p className="text-2xl font-bold text-emerald-600">{remembered}</p>
+              <p className="text-2xl font-bold text-emerald-600">
+                {remembered}
+              </p>
               <p className="text-xs text-slate-400">记住了</p>
             </div>
             <div className="text-center">
@@ -239,7 +242,11 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
                     .filter((r) => !r.remembered)
                     .map((r) => r.word);
                   setReviewWords(
-                    buildReviewWords(forgotWordKeys, savedWords, wordReviewStates)
+                    buildReviewWords(
+                      forgotWordKeys,
+                      savedWords,
+                      wordReviewStates
+                    )
                   );
                   setCurrentIndex(0);
                   setHistory([]);
@@ -266,14 +273,13 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
 
   // ----- Card Stack -----
   const isFlipped = flippedCards.has(currentIndex);
-  const progress = reviewWords.length > 0
-    ? Math.round((currentIndex / reviewWords.length) * 100)
-    : 0;
+  const progress =
+    reviewWords.length > 0
+      ? Math.round((currentIndex / reviewWords.length) * 100)
+      : 0;
 
   // Compute initial x for undo fly-back
-  const initialX = undoFrom
-    ? (undoFrom === 'left' ? -EXIT_X : EXIT_X)
-    : 0;
+  const initialX = undoFrom ? (undoFrom === 'left' ? -EXIT_X : EXIT_X) : 0;
 
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-slate-50">
@@ -328,7 +334,9 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
               {currentWord!.reviewState && (
                 <div className="absolute top-5 left-5">
                   {(() => {
-                    const strength = getMemoryStrength(currentWord!.reviewState!);
+                    const strength = getMemoryStrength(
+                      currentWord!.reviewState!
+                    );
                     const label = strengthLabel(strength);
                     return (
                       <span className={`text-xs font-bold ${label.color}`}>

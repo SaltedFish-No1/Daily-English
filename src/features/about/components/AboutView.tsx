@@ -8,8 +8,12 @@
 
 import { useCallback, useRef, useState } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft, ChevronRight, ExternalLink, Leaf } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 
 /**
  * @description 关于页展示元数据结构。
@@ -30,8 +34,8 @@ interface RepoMeta {
 
 /** 关于页静态展示数据 */
 const FALLBACK: RepoMeta = {
-  version: process.env.NEXT_PUBLIC_APP_VERSION ?? 'v0.1.0',
-  license: 'All Rights Reserved',
+  version: process.env.NEXT_PUBLIC_APP_VERSION ?? '线下版本',
+  license: '保留所有权利',
   ownerAvatar: 'https://avatars.githubusercontent.com/u/138401553',
   ownerLogin: 'SaltedFish-No1',
   ownerUrl: 'https://github.com/SaltedFish-No1',
@@ -104,18 +108,19 @@ export function AboutView() {
     { label: '版本', value: repo.version },
     { label: '许可协议', value: repo.license },
   ];
+  const ownerInitial = repo.ownerLogin.slice(0, 1).toUpperCase();
 
   return (
-    <div className="min-h-screen bg-slate-50/80 pb-28">
+    <div className="bg-background/90 min-h-screen pb-[calc(7rem+env(safe-area-inset-bottom))]">
       {/* Header */}
-      <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-slate-100 bg-white/90 px-4 py-3.5 backdrop-blur-md">
+      <header className="bg-background/85 sticky top-0 z-30 flex items-center gap-3 border-b px-4 py-3.5 backdrop-blur-md">
         <Link
           href="/profile"
-          className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-slate-100"
+          className="hover:bg-muted flex h-8 w-8 items-center justify-center rounded-full transition-colors"
         >
-          <ArrowLeft size={20} className="text-slate-600" />
+          <ArrowLeft size={20} className="text-muted-foreground" />
         </Link>
-        <h1 className="text-base font-semibold text-slate-800">关于</h1>
+        <h1 className="text-foreground text-base font-semibold">关于</h1>
       </header>
 
       <motion.div
@@ -136,10 +141,12 @@ export function AboutView() {
           }}
         >
           <div className="relative">
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon-lg"
               onClick={handleLeafTap}
-              className="flex h-20 w-20 items-center justify-center rounded-[1.5rem] bg-emerald-50 transition-transform active:scale-95"
+              className="h-20 w-20 rounded-3xl bg-emerald-50/90 text-emerald-500 hover:bg-emerald-100/80"
             >
               <motion.div
                 animate={easterEgg ? { rotate: 360, scale: [1, 1.3, 1] } : {}}
@@ -151,7 +158,7 @@ export function AboutView() {
                   strokeWidth={1.8}
                 />
               </motion.div>
-            </button>
+            </Button>
 
             {/* Easter egg particles */}
             <AnimatePresence>
@@ -185,33 +192,36 @@ export function AboutView() {
             </AnimatePresence>
           </div>
 
-          <h2 className="mt-5 text-xl font-bold text-slate-800">薄荷外语</h2>
-          <p className="mt-1.5 text-sm text-slate-400">
+          <h2 className="text-foreground mt-5 text-xl font-bold">薄荷外语</h2>
+          <p className="text-muted-foreground mt-1.5 text-sm">
             用 AI 驱动的沉浸式英语学习应用
           </p>
         </motion.section>
 
         {/* Info Card */}
         <motion.div
-          className="overflow-hidden rounded-2xl bg-white shadow-sm"
           variants={{
             hidden: { opacity: 0, y: 16 },
             visible: { opacity: 1, y: 0 },
           }}
         >
-          {infoItems.map((item, idx) => (
-            <div
-              key={item.label}
-              className={`flex items-center justify-between px-5 py-4 ${
-                idx < infoItems.length - 1 ? 'border-b border-slate-50' : ''
-              }`}
-            >
-              <span className="text-sm text-slate-500">{item.label}</span>
-              <span className="text-sm font-medium text-slate-700">
-                {item.value}
-              </span>
-            </div>
-          ))}
+          <Card className="bg-card/95 gap-0 rounded-2xl border-0 py-0 shadow-sm">
+            {infoItems.map((item, idx) => (
+              <div key={item.label} className="px-5 py-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground text-sm">
+                    {item.label}
+                  </span>
+                  <span className="text-foreground text-sm font-medium">
+                    {item.value}
+                  </span>
+                </div>
+                {idx < infoItems.length - 1 ? (
+                  <Separator className="bg-border/70 mt-4" />
+                ) : null}
+              </div>
+            ))}
+          </Card>
         </motion.div>
 
         {/* Author Card */}
@@ -222,25 +232,26 @@ export function AboutView() {
             visible: { opacity: 1, y: 0 },
           }}
         >
-          <a
-            href={repo.ownerUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-3.5 rounded-2xl bg-white px-5 py-4 shadow-sm transition-colors hover:bg-slate-50"
-          >
-            <img
-              src={repo.ownerAvatar}
-              alt={repo.ownerLogin}
-              className="h-10 w-10 rounded-full bg-slate-100"
-            />
-            <div className="flex-1">
-              <p className="text-sm font-medium text-slate-700">
-                {repo.ownerLogin}
-              </p>
-              <p className="text-xs text-slate-400">作者 · GitHub</p>
-            </div>
-            <ExternalLink size={16} className="text-slate-300" />
-          </a>
+          <Card className="bg-card/95 rounded-2xl border-0 py-0 shadow-sm">
+            <a
+              href={repo.ownerUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="hover:bg-muted/40 flex items-center gap-3.5 px-5 py-4 transition-colors"
+            >
+              <Avatar size="lg">
+                <AvatarImage src={repo.ownerAvatar} alt={repo.ownerLogin} />
+                <AvatarFallback>{ownerInitial}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1">
+                <p className="text-foreground text-sm font-medium">
+                  {repo.ownerLogin}
+                </p>
+                <p className="text-muted-foreground text-xs">作者 · GitHub</p>
+              </div>
+              <ExternalLink size={16} className="text-muted-foreground/60" />
+            </a>
+          </Card>
         </motion.div>
 
         {/* Source Code Link */}
@@ -251,20 +262,22 @@ export function AboutView() {
             visible: { opacity: 1, y: 0 },
           }}
         >
-          <a
-            href="https://github.com/SaltedFish-No1/Daily-English"
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center justify-between rounded-2xl bg-white px-5 py-4 shadow-sm transition-colors hover:bg-slate-50"
-          >
-            <span className="text-sm text-slate-500">源代码</span>
-            <ChevronRight size={16} className="text-slate-300" />
-          </a>
+          <Card className="bg-card/95 rounded-2xl border-0 py-0 shadow-sm">
+            <a
+              href="https://github.com/SaltedFish-No1/Daily-English"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:bg-muted/40 flex items-center justify-between px-5 py-4 transition-colors"
+            >
+              <span className="text-muted-foreground text-sm">源代码</span>
+              <ChevronRight size={16} className="text-muted-foreground/70" />
+            </a>
+          </Card>
         </motion.div>
 
         {/* Footer */}
         <motion.p
-          className="pt-10 pb-4 text-center text-xs text-slate-300"
+          className="text-muted-foreground/70 pt-10 pb-4 text-center text-xs"
           variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
         >
           Made with love for learners

@@ -13,7 +13,7 @@ import {
   CircleCheckBig,
   History,
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import Link from 'next/link';
 import { useUserStore } from '@/store/useUserStore';
 import { supabase } from '@/lib/supabase';

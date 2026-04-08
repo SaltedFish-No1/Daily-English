@@ -13,11 +13,10 @@ import {
   Layers,
 } from 'lucide-react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { useUserStore } from '@/store/useUserStore';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
 import { useReviewWords } from '@/hooks/useReviewWords';
-
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -151,7 +150,7 @@ export function DashboardView() {
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 pb-24 lg:pb-8">
       {/* Header */}
-      <header className="hidden pt-safe sticky top-0 z-30 border-b border-gray-100 bg-white shadow-sm lg:block">
+      <header className="pt-safe sticky top-0 z-30 hidden border-b border-gray-100 bg-white shadow-sm lg:block">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-5 sm:py-6">
           <div>
             <h1 className="text-xl font-bold tracking-tight text-slate-900 sm:text-3xl">
@@ -173,7 +172,6 @@ export function DashboardView() {
                 {installLabel}
               </button>
             )}
-
           </div>
         </div>
       </header>
@@ -251,11 +249,15 @@ export function DashboardView() {
               </div>
               <h3 className="text-sm font-bold text-slate-900">单词闪卡</h3>
               <p className="mt-0.5 text-[11px] text-slate-500">
-                {dueCount} 个词 · 预计 {Math.max(2, Math.round(dueCount * 0.3))} 分钟
+                {dueCount} 个词 · 预计 {Math.max(2, Math.round(dueCount * 0.3))}{' '}
+                分钟
               </p>
               <div className="mt-auto flex items-center pt-3 text-xs font-bold text-amber-600">
                 开始复习
-                <ArrowRight size={14} className="ml-1 transition-transform group-hover:translate-x-1" />
+                <ArrowRight
+                  size={14}
+                  className="ml-1 transition-transform group-hover:translate-x-1"
+                />
               </div>
             </Link>
 
@@ -273,7 +275,10 @@ export function DashboardView() {
               </p>
               <div className="mt-auto flex items-center pt-3 text-xs font-bold text-emerald-600">
                 开始学习
-                <ArrowRight size={14} className="ml-1 transition-transform group-hover:translate-x-1" />
+                <ArrowRight
+                  size={14}
+                  className="ml-1 transition-transform group-hover:translate-x-1"
+                />
               </div>
             </Link>
           </motion.section>
@@ -420,7 +425,6 @@ export function DashboardView() {
           )}
         </motion.section>
       </main>
-
 
       {/* PWA Install Dialog */}
       {installDialog.open && (

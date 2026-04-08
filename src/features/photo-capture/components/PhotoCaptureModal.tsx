@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react';
 import { Camera, Upload, Loader2, X, Check, CheckCircle2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { extractWordsFromPhoto } from '@/features/photo-capture/lib/photoCaptureApi';
 import { PHOTO_CAPTURE_PREFIX } from '@/features/photo-capture/lib/constants';
 import { useUserStore } from '@/store/useUserStore';

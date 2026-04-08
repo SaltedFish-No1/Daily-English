@@ -7,7 +7,7 @@ import { useUserStore } from '@/store/useUserStore';
 import { useSpeech } from '@/hooks/useSpeech';
 import { LessonSpeech } from '@/types/lesson';
 import { X } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { DictionaryContent } from './DictionaryContent';
 import { fetchTTSAudioUrl } from '@/lib/tts-fallback';
 

@@ -10,7 +10,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { GradeScoreCard } from './GradeScoreCard';
 import type { WritingGrade, GradingCriteriaDimension } from '@/types/writing';
 
