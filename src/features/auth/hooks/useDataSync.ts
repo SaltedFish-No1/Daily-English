@@ -1,10 +1,10 @@
+'use client';
+
 /**
  * @author SaltedFish-No1
  * @description 数据同步调度 Hook：监听鉴权状态变化，
  *   在用户登录后自动执行 localStorage → Supabase 数据迁移与合并。
  */
-
-'use client';
 
 import { useEffect, useRef } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';

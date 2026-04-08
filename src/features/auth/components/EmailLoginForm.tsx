@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * @author SaltedFish-No1
  * @description Twitter 风格邮箱认证表单。根据邮箱是否已注册自动分流：
@@ -5,11 +7,10 @@
  *   新账号 → 验证码注册 + 设置密码
  */
 
-'use client';
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { toast } from 'sonner';
 import {
   checkUserExists,
   sendOtp as apiSendOtp,
@@ -48,7 +49,7 @@ export const EmailLoginForm: React.FC = () => {
 
     const { data, error: checkError } = await checkUserExists(email);
     if (checkError) {
-      setError(checkError);
+      toast.error(checkError);
       setIsLoading(false);
       return;
     }
@@ -60,7 +61,7 @@ export const EmailLoginForm: React.FC = () => {
       // 新账号 → 发送验证码，进入注册流程
       const { error: sendError } = await apiSendOtp(email);
       if (sendError) {
-        setError(sendError);
+        toast.error(sendError);
         setIsLoading(false);
         return;
       }
@@ -103,7 +104,7 @@ export const EmailLoginForm: React.FC = () => {
 
     const { data, error: verifyError } = await apiVerifyOtp(email, otpCode);
     if (verifyError || !data?.token_hash) {
-      setError(verifyError ?? '验证失败');
+      toast.error(verifyError ?? '验证失败');
       setIsLoading(false);
       return;
     }
@@ -115,7 +116,7 @@ export const EmailLoginForm: React.FC = () => {
     });
 
     if (sessionError) {
-      setError(sessionError.message);
+      toast.error(sessionError.message);
       setIsLoading(false);
       return;
     }
@@ -124,7 +125,7 @@ export const EmailLoginForm: React.FC = () => {
     if (step === 'register-verify' && password.trim()) {
       const { error: pwError } = await supabase.auth.updateUser({ password });
       if (pwError) {
-        setError(pwError.message);
+        toast.error(pwError.message);
         setIsLoading(false);
         return;
       }
@@ -135,19 +136,21 @@ export const EmailLoginForm: React.FC = () => {
   }, [email, otpCode, password, step, router]);
 
   // ── 发送 OTP ──
-  const handleSendOtp = useCallback(async () => {
+  const handleSendOtp = useCallback(async (): Promise<boolean> => {
     setIsLoading(true);
     setError(null);
     setOtpCode('');
 
     const { error: sendError } = await apiSendOtp(email);
     if (sendError) {
-      setError(sendError);
-    } else {
-      setCooldown(60);
-      setMessage('验证邮件已发送，请查收邮箱并在下方输入验证码。');
+      toast.error(sendError);
+      setIsLoading(false);
+      return false;
     }
+    setCooldown(60);
+    setMessage('验证邮件已发送，请查收邮箱并在下方输入验证码。');
     setIsLoading(false);
+    return true;
   }, [email]);
 
   // ── 忘记密码：发送重置链接 ──
@@ -157,7 +160,7 @@ export const EmailLoginForm: React.FC = () => {
 
     const { error: sendError } = await sendResetLink(email);
     if (sendError) {
-      setError(sendError);
+      toast.error(sendError);
     } else {
       setMessage('密码重置链接已发送到你的邮箱，请查收。');
     }
@@ -209,8 +212,6 @@ export const EmailLoginForm: React.FC = () => {
           onKeyDown={(e) => e.key === 'Enter' && handleContinue()}
           className={inputClass}
         />
-
-        {error && <p className="text-xs text-red-500">{error}</p>}
 
         <Button
           type="button"
@@ -268,8 +269,8 @@ export const EmailLoginForm: React.FC = () => {
             type="button"
             disabled={isLoading}
             onClick={async () => {
-              await handleSendOtp();
-              if (!error) setStep('login-otp');
+              const isSuccess = await handleSendOtp();
+              if (isSuccess) setStep('login-otp');
             }}
             className="text-xs font-bold text-slate-400 transition-colors hover:text-emerald-600 disabled:opacity-50"
           >
@@ -300,8 +301,6 @@ export const EmailLoginForm: React.FC = () => {
           onKeyDown={(e) => e.key === 'Enter' && handleVerifyOtp()}
           className={inputClass}
         />
-
-        {error && <p className="text-xs text-red-500">{error}</p>}
 
         <Button
           type="button"
@@ -368,8 +367,6 @@ export const EmailLoginForm: React.FC = () => {
         onKeyDown={(e) => e.key === 'Enter' && handleVerifyOtp()}
         className={inputClass}
       />
-
-      {error && <p className="text-xs text-red-500">{error}</p>}
 
       <Button
         type="button"

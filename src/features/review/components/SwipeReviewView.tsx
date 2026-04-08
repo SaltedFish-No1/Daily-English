@@ -188,6 +188,26 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
     [speak]
   );
 
+  // 无复习词时显示空状态
+  if (words.length === 0) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <div className="text-center">
+          <p className="text-lg font-bold text-slate-900">没有待复习的词汇</p>
+          <p className="mt-1 text-sm text-slate-500">
+            收藏生词后，系统会根据遗忘曲线安排复习
+          </p>
+          <Link
+            href="/reading"
+            className="mt-4 inline-block rounded-full bg-emerald-600 px-6 py-2 text-sm font-bold text-white hover:bg-emerald-700"
+          >
+            去阅读
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   // ----- Finished Summary -----
   if (isFinished) {
     const remembered = results.filter((r) => r.remembered).length;

@@ -28,6 +28,14 @@ import {
 import { isPhotoCaptureOccurrence } from '@/lib/photo-capture';
 import { useReviewWords } from '@/hooks/useReviewWords';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 
 type SortMode = 'recent' | 'urgency' | 'strength';
 
@@ -377,61 +385,68 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
         )}
       </main>
 
-      {pendingRemoveWord && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-5">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl">
-            <h3 className="mb-2 text-base font-bold text-slate-900">
-              标记已记住
-            </h3>
-            <p className="mb-4 text-sm leading-relaxed text-slate-600">
+      <Dialog
+        open={!!pendingRemoveWord}
+        onOpenChange={(open) => {
+          if (!open) {
+            setPendingRemoveWord(null);
+            setDoubleCheckStep(1);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>标记已记住</DialogTitle>
+            <DialogDescription>
               {doubleCheckStep === 1
                 ? `你确定已经记住单词「${pendingRemoveWord}」了吗？`
                 : `请再次确认：你已经掌握「${pendingRemoveWord}」，并要将它从生词表中移除。`}
-            </p>
-            <div className="flex justify-end gap-2">
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              type="button"
+              onClick={() => {
+                setPendingRemoveWord(null);
+                setDoubleCheckStep(1);
+              }}
+              className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50"
+            >
+              取消
+            </Button>
+            {doubleCheckStep === 1 ? (
               <Button
-                variant="outline"
                 type="button"
-                onClick={() => {
-                  setPendingRemoveWord(null);
-                  setDoubleCheckStep(1);
-                }}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50"
+                onClick={() => setDoubleCheckStep(2)}
+                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700"
               >
-                取消
+                我记住了
               </Button>
-              {doubleCheckStep === 1 ? (
-                <Button
-                  type="button"
-                  onClick={() => setDoubleCheckStep(2)}
-                  className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700"
-                >
-                  我记住了
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  disabled={isRemoving}
-                  onClick={() => {
-                    setIsRemoving(true);
-                    try {
-                      removeWord(pendingRemoveWord);
-                      toast.success('已从词汇本移除');
-                      setPendingRemoveWord(null);
-                      setDoubleCheckStep(1);
-                    } finally {
-                      setIsRemoving(false);
-                    }
-                  }}
-                  className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700 disabled:opacity-50"
-                >
-                  {isRemoving ? '移除中...' : '确认我已记住'}
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+            ) : (
+              <Button
+                type="button"
+                disabled={isRemoving}
+                onClick={() => {
+                  if (!pendingRemoveWord) return;
+                  setIsRemoving(true);
+                  try {
+                    removeWord(pendingRemoveWord);
+                    toast.success('已从词汇本移除');
+                    setPendingRemoveWord(null);
+                    setDoubleCheckStep(1);
+                  } finally {
+                    setIsRemoving(false);
+                  }
+                }}
+                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700 disabled:opacity-50"
+              >
+                {isRemoving ? '移除中...' : '确认我已记住'}
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

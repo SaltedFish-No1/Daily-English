@@ -33,14 +33,16 @@ type GenerationState =
   | { status: 'error'; message: string };
 
 export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
-  const [state, setState] = useState<GenerationState>({ status: 'idle' });
+  const [generationState, setGenerationState] = useState<GenerationState>({
+    status: 'idle',
+  });
   const router = useRouter();
   const queryClient = useQueryClient();
   const hasTriggered = useRef(false);
 
   const generateMutation = useMutation({
     mutationFn: async () => {
-      setState({ status: 'generating', progress: null });
+      setGenerationState({ status: 'generating', progress: null });
 
       const res = await generateReviewLesson(words, difficulty);
 
@@ -55,7 +57,7 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
 
         const { value: partial } = await parsePartialJson(accumulated);
         if (partial != null) {
-          setState({
+          setGenerationState({
             status: 'generating',
             progress: partial as Partial<GeneratedLesson>,
           });
@@ -75,7 +77,7 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
       }
 
       // Save to database and redirect to the persisted lesson page.
-      setState({ status: 'saving' });
+      setGenerationState({ status: 'saving' });
 
       return saveReviewLesson(finalObject, words, difficulty);
     },
@@ -88,7 +90,7 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
     onError: (err) => {
       const message = err instanceof Error ? err.message : '生成失败，请重试';
       toast.error(message);
-      setState({
+      setGenerationState({
         status: 'error',
         message,
       });
@@ -106,14 +108,35 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
     }
   }, [words, generate]);
 
+  // 无复习词时显示空状态
+  if (words.length === 0) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <div className="text-center">
+          <p className="text-lg font-bold text-slate-900">没有待复习的词汇</p>
+          <p className="mt-1 text-sm text-slate-500">
+            收藏生词后，系统会根据遗忘曲线安排复习
+          </p>
+          <Link
+            href="/reading"
+            className="mt-4 inline-block rounded-full bg-emerald-600 px-6 py-2 text-sm font-bold text-white hover:bg-emerald-700"
+          >
+            去阅读
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   // Loading state (generating or saving)
   if (
-    state.status === 'idle' ||
-    state.status === 'generating' ||
-    state.status === 'saving'
+    generationState.status === 'idle' ||
+    generationState.status === 'generating' ||
+    generationState.status === 'saving'
   ) {
-    const progress = state.status === 'generating' ? state.progress : null;
-    const isSaving = state.status === 'saving';
+    const progress =
+      generationState.status === 'generating' ? generationState.progress : null;
+    const isSaving = generationState.status === 'saving';
 
     // Calculate real progress based on which schema fields have arrived
     const progressSteps = [
@@ -197,7 +220,7 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
           <Sparkles size={32} className="text-red-500" />
         </div>
         <h2 className="mb-2 text-lg font-bold text-slate-900">生成失败</h2>
-        <p className="mb-6 text-sm text-slate-500">{state.message}</p>
+        <p className="mb-6 text-sm text-slate-500">{generationState.message}</p>
         <div className="flex justify-center gap-3">
           <Link
             href="/reading"

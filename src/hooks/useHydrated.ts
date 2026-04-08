@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description 客户端水合检测 Hook — 使用 useSyncExternalStore 安全判断是否已在客户端渲染。
  */
 

@@ -7,7 +7,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PenLine, Plus, ArrowLeft, BookOpen } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 
 import { TopicCard } from './TopicCard';
 import { TopicUploader } from './TopicUploader';
@@ -120,14 +120,11 @@ export function WritingView() {
       </main>
 
       {/* Uploader modal */}
-      <AnimatePresence>
-        {showUploader && (
-          <TopicUploader
-            onTopicCreated={handleTopicCreated}
-            onClose={() => setShowUploader(false)}
-          />
-        )}
-      </AnimatePresence>
+      <TopicUploader
+        open={showUploader}
+        onTopicCreated={handleTopicCreated}
+        onClose={() => setShowUploader(false)}
+      />
     </div>
   );
 }

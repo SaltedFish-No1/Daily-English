@@ -1,10 +1,10 @@
+'use client';
+
 /**
  * @author SaltedFish-No1
  * @description Header 用户菜单组件：已登录时显示头像与登出下拉菜单，
  *   未登录时显示"登录"按钮链接到登录页。
  */
-
-'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';

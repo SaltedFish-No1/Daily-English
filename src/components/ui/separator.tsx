@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @author shadcn/ui
+ * @description shadcn/ui Separator 组件 — 水平或垂直分隔线。
+ */
 import { Separator as SeparatorPrimitive } from '@base-ui/react/separator';
 
 import { cn } from '@/lib/utils';

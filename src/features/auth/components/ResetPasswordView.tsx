@@ -1,10 +1,10 @@
+'use client';
+
 /**
  * @author SaltedFish-No1
  * @description 密码重置表单视图 — 用户通过邮件链接到达此页面，输入新密码并确认后完成重置。
  *   重置成功后 3 秒自动跳转至登录页。
  */
-
-'use client';
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';

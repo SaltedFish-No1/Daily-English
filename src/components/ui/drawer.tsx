@@ -1,8 +1,9 @@
+'use client';
+
 /**
  * @author shadcn/ui
  * @description shadcn/ui Drawer 组件 — 基于 Vaul 的底部抽屉，用于移动端操作面板。
  */
-'use client';
 
 import * as React from 'react';
 import { Drawer as DrawerPrimitive } from 'vaul';

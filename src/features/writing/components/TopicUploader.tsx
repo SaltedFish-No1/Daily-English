@@ -4,7 +4,7 @@
  * @author SaltedFish-No1
  * @description 写作题目上传组件，支持图片上传解析或手动输入创建写作题目。
  */
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   Camera,
   Upload,
@@ -16,26 +16,31 @@ import {
   Type,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { motion, AnimatePresence } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import {
   parseTopicImage,
   createTopicManual,
   fetchCriteria,
 } from '@/features/writing/lib/writingApi';
 import type { GradingCriteria, WritingTopic } from '@/types/writing';
-import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Drawer, DrawerContent } from '@/components/ui/drawer';
 
 type InputMode = 'image' | 'manual';
 
 interface TopicUploaderProps {
+  open: boolean;
   onTopicCreated: (topic: WritingTopic) => void;
   onClose: () => void;
 }
 
-export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
+export function TopicUploader({
+  open,
+  onTopicCreated,
+  onClose,
+}: TopicUploaderProps) {
   const [criteria, setCriteria] = useState<GradingCriteria[]>([]);
   const [isCriteriaLoading, setIsCriteriaLoading] = useState(true);
   const [selectedCriteria, setSelectedCriteria] = useState('');
@@ -138,271 +143,265 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[70] flex items-end justify-center bg-black/40 sm:items-center"
-      onClick={(e) => e.target === e.currentTarget && onClose()}
-    >
-      <motion.div
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 100, opacity: 0 }}
-        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white p-6 shadow-2xl sm:rounded-3xl"
-      >
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-slate-900">新建写作题目</h2>
-          <Button
-            variant="ghost"
-            onClick={onClose}
-            className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100"
-          >
-            <X size={20} />
-          </Button>
-        </div>
-
-        {/* Criteria selector */}
-        <label className="mb-1 block text-xs font-semibold text-slate-500">
-          评分标准
-        </label>
-        <div className="relative mb-4">
-          <select
-            value={selectedCriteria}
-            onChange={(e) => setSelectedCriteria(e.target.value)}
-            disabled={isCriteriaLoading}
-            className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 pr-9 text-sm text-slate-900 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100 disabled:opacity-50"
-          >
-            {isCriteriaLoading && <option value="">加载中...</option>}
-            {criteria.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.label}
-              </option>
-            ))}
-          </select>
-          <ChevronDown
-            size={16}
-            className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-slate-400"
-          />
-        </div>
-
-        {/* Input mode toggle */}
-        <div className="mb-4 flex gap-2">
-          <Button
-            variant="ghost"
-            onClick={() => {
-              setInputMode('manual');
-              setParsedData(null);
-            }}
-            className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-semibold transition-all ${
-              inputMode === 'manual'
-                ? 'bg-violet-100 text-violet-700'
-                : 'bg-slate-50 text-slate-400 hover:text-slate-600'
-            }`}
-          >
-            <Type size={14} />
-            手动输入题目
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={() => setInputMode('image')}
-            className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-semibold transition-all ${
-              inputMode === 'image'
-                ? 'bg-violet-100 text-violet-700'
-                : 'bg-slate-50 text-slate-400 hover:text-slate-600'
-            }`}
-          >
-            <ImageIcon size={14} />
-            拍照上传题目
-          </Button>
-        </div>
-
-        <AnimatePresence mode="wait">
-          {inputMode === 'image' ? (
-            <motion.div
-              key="image-mode"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+    <Drawer open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
+      <DrawerContent className="max-h-[85vh]">
+        <div className="overflow-y-auto p-6 pt-4">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-bold text-slate-900">新建写作题目</h2>
+            <Button
+              variant="ghost"
+              onClick={onClose}
+              className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100"
             >
-              {parsedData ? (
-                /* Post-parse: show extracted text for review/editing */
-                <div className="mb-4 flex flex-col gap-3">
-                  {imagePreview && (
-                    <div className="relative overflow-hidden rounded-xl border border-slate-200">
-                      <img
-                        src={imagePreview}
-                        alt="题目图片"
-                        className="max-h-32 w-full bg-slate-50 object-contain"
+              <X size={20} />
+            </Button>
+          </div>
+
+          {/* Criteria selector */}
+          <label className="mb-1 block text-xs font-semibold text-slate-500">
+            评分标准
+          </label>
+          <div className="relative mb-4">
+            <select
+              value={selectedCriteria}
+              onChange={(e) => setSelectedCriteria(e.target.value)}
+              disabled={isCriteriaLoading}
+              className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 pr-9 text-sm text-slate-900 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100 disabled:opacity-50"
+            >
+              {isCriteriaLoading && <option value="">加载中...</option>}
+              {criteria.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
+            <ChevronDown
+              size={16}
+              className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-slate-400"
+            />
+          </div>
+
+          {/* Input mode toggle */}
+          <div className="mb-4 flex gap-2">
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setInputMode('manual');
+                setParsedData(null);
+              }}
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-semibold transition-all ${
+                inputMode === 'manual'
+                  ? 'bg-violet-100 text-violet-700'
+                  : 'bg-slate-50 text-slate-400 hover:text-slate-600'
+              }`}
+            >
+              <Type size={14} />
+              手动输入题目
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => setInputMode('image')}
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-semibold transition-all ${
+                inputMode === 'image'
+                  ? 'bg-violet-100 text-violet-700'
+                  : 'bg-slate-50 text-slate-400 hover:text-slate-600'
+              }`}
+            >
+              <ImageIcon size={14} />
+              拍照上传题目
+            </Button>
+          </div>
+
+          <AnimatePresence mode="wait">
+            {inputMode === 'image' ? (
+              <motion.div
+                key="image-mode"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                {parsedData ? (
+                  /* Post-parse: show extracted text for review/editing */
+                  <div className="mb-4 flex flex-col gap-3">
+                    {imagePreview && (
+                      <div className="relative overflow-hidden rounded-xl border border-slate-200">
+                        <img
+                          src={imagePreview}
+                          alt="题目图片"
+                          className="max-h-32 w-full bg-slate-50 object-contain"
+                        />
+                      </div>
+                    )}
+                    <div>
+                      <label className="mb-1 block text-xs font-semibold text-slate-500">
+                        题目标题（选填）
+                      </label>
+                      <Input
+                        value={parsedData.title}
+                        onChange={(e) =>
+                          setParsedData({
+                            ...parsedData,
+                            title: e.target.value,
+                          })
+                        }
+                        placeholder="例如：IELTS Task 2 - Education"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100"
                       />
                     </div>
-                  )}
-                  <div>
-                    <label className="mb-1 block text-xs font-semibold text-slate-500">
-                      题目标题（选填）
-                    </label>
-                    <Input
-                      value={parsedData.title}
-                      onChange={(e) =>
-                        setParsedData({ ...parsedData, title: e.target.value })
-                      }
-                      placeholder="例如：IELTS Task 2 - Education"
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100"
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-1 block text-xs font-semibold text-slate-500">
-                      写作题目内容
-                    </label>
-                    <Textarea
-                      value={parsedData.writingPrompt}
-                      onChange={(e) =>
-                        setParsedData({
-                          ...parsedData,
-                          writingPrompt: e.target.value,
-                        })
-                      }
-                      placeholder="请输入完整的写作题目要求..."
-                      rows={5}
-                      className="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm leading-relaxed text-slate-900 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100"
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-1 block text-xs font-semibold text-slate-500">
-                      字数要求（选填）
-                    </label>
-                    <Input
-                      type="number"
-                      value={parsedData.wordLimit ?? ''}
-                      onChange={(e) =>
-                        setParsedData({
-                          ...parsedData,
-                          wordLimit: e.target.value
-                            ? Number(e.target.value)
-                            : null,
-                        })
-                      }
-                      placeholder="例如：250"
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100"
-                    />
-                  </div>
-                  <Button
-                    variant="link"
-                    onClick={() => {
-                      setParsedData(null);
-                      setImageFile(null);
-                      setImagePreview(null);
-                    }}
-                    className="self-start text-xs font-medium text-violet-600 hover:text-violet-800"
-                  >
-                    重新上传图片
-                  </Button>
-                </div>
-              ) : (
-                /* Pre-parse: image upload area */
-                <>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-
-                  {imagePreview ? (
-                    <div className="relative mb-4 overflow-hidden rounded-2xl border border-slate-200">
-                      <img
-                        src={imagePreview}
-                        alt="Preview"
-                        className="max-h-64 w-full bg-slate-50 object-contain"
+                    <div>
+                      <label className="mb-1 block text-xs font-semibold text-slate-500">
+                        写作题目内容
+                      </label>
+                      <Textarea
+                        value={parsedData.writingPrompt}
+                        onChange={(e) =>
+                          setParsedData({
+                            ...parsedData,
+                            writingPrompt: e.target.value,
+                          })
+                        }
+                        placeholder="请输入完整的写作题目要求..."
+                        rows={5}
+                        className="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm leading-relaxed text-slate-900 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100"
                       />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-xs font-semibold text-slate-500">
+                        字数要求（选填）
+                      </label>
+                      <Input
+                        type="number"
+                        value={parsedData.wordLimit ?? ''}
+                        onChange={(e) =>
+                          setParsedData({
+                            ...parsedData,
+                            wordLimit: e.target.value
+                              ? Number(e.target.value)
+                              : null,
+                          })
+                        }
+                        placeholder="例如：250"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100"
+                      />
+                    </div>
+                    <Button
+                      variant="link"
+                      onClick={() => {
+                        setParsedData(null);
+                        setImageFile(null);
+                        setImagePreview(null);
+                      }}
+                      className="self-start text-xs font-medium text-violet-600 hover:text-violet-800"
+                    >
+                      重新上传图片
+                    </Button>
+                  </div>
+                ) : (
+                  /* Pre-parse: image upload area */
+                  <>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+
+                    {imagePreview ? (
+                      <div className="relative mb-4 overflow-hidden rounded-2xl border border-slate-200">
+                        <img
+                          src={imagePreview}
+                          alt="Preview"
+                          className="max-h-64 w-full bg-slate-50 object-contain"
+                        />
+                        <Button
+                          variant="ghost"
+                          onClick={() => {
+                            setImageFile(null);
+                            setImagePreview(null);
+                          }}
+                          className="absolute top-2 right-2 rounded-full bg-black/50 p-1.5 text-white hover:bg-black/70"
+                        >
+                          <X size={14} />
+                        </Button>
+                      </div>
+                    ) : (
                       <Button
                         variant="ghost"
-                        onClick={() => {
-                          setImageFile(null);
-                          setImagePreview(null);
-                        }}
-                        className="absolute top-2 right-2 rounded-full bg-black/50 p-1.5 text-white hover:bg-black/70"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="mb-4 flex w-full flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 py-10 text-slate-400 transition-colors hover:border-violet-300 hover:text-violet-500"
                       >
-                        <X size={14} />
+                        <div className="flex gap-2">
+                          <Camera size={24} />
+                          <Upload size={24} />
+                        </div>
+                        <span className="text-sm font-medium">
+                          拍照或选择题目图片
+                        </span>
                       </Button>
-                    </div>
-                  ) : (
-                    <Button
-                      variant="ghost"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="mb-4 flex w-full flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 py-10 text-slate-400 transition-colors hover:border-violet-300 hover:text-violet-500"
-                    >
-                      <div className="flex gap-2">
-                        <Camera size={24} />
-                        <Upload size={24} />
-                      </div>
-                      <span className="text-sm font-medium">
-                        拍照或选择题目图片
-                      </span>
-                    </Button>
-                  )}
-                </>
-              )}
-            </motion.div>
-          ) : (
-            <motion.div
-              key="manual-mode"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="mb-4 flex flex-col gap-3"
-            >
-              <div>
-                <label className="mb-1 block text-xs font-semibold text-slate-500">
-                  题目标题（选填）
-                </label>
-                <Input
-                  value={manualTitle}
-                  onChange={(e) => setManualTitle(e.target.value)}
-                  placeholder="例如：IELTS Task 2 - Education"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs font-semibold text-slate-500">
-                  写作题目内容
-                </label>
-                <Textarea
-                  value={manualPrompt}
-                  onChange={(e) => setManualPrompt(e.target.value)}
-                  placeholder="请输入完整的写作题目要求..."
-                  rows={5}
-                  className="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm leading-relaxed text-slate-900 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100"
-                />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                    )}
+                  </>
+                )}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="manual-mode"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="mb-4 flex flex-col gap-3"
+              >
+                <div>
+                  <label className="mb-1 block text-xs font-semibold text-slate-500">
+                    题目标题（选填）
+                  </label>
+                  <Input
+                    value={manualTitle}
+                    onChange={(e) => setManualTitle(e.target.value)}
+                    placeholder="例如：IELTS Task 2 - Education"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-semibold text-slate-500">
+                    写作题目内容
+                  </label>
+                  <Textarea
+                    value={manualPrompt}
+                    onChange={(e) => setManualPrompt(e.target.value)}
+                    placeholder="请输入完整的写作题目要求..."
+                    rows={5}
+                    className="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm leading-relaxed text-slate-900 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100"
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-        <Button
-          onClick={handleSubmit}
-          disabled={!canSubmit}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 py-3 text-sm font-bold text-white shadow-lg shadow-violet-200 transition-all hover:bg-violet-700 disabled:opacity-50 disabled:shadow-none"
-        >
-          {isParsing ? (
-            <>
-              <Loader2 size={18} className="animate-spin" />
-              AI 识别中...
-            </>
-          ) : isUploading ? (
-            <>
-              <Loader2 size={18} className="animate-spin" />
-              创建中...
-            </>
-          ) : (
-            <>
-              <Check size={18} />
-              {inputMode === 'image' && !parsedData ? '开始识别' : '确认提交'}
-            </>
-          )}
-        </Button>
-      </motion.div>
-    </motion.div>
+          <Button
+            onClick={handleSubmit}
+            disabled={!canSubmit}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 py-3 text-sm font-bold text-white shadow-lg shadow-violet-200 transition-all hover:bg-violet-700 disabled:opacity-50 disabled:shadow-none"
+          >
+            {isParsing ? (
+              <>
+                <Loader2 size={18} className="animate-spin" />
+                AI 识别中...
+              </>
+            ) : isUploading ? (
+              <>
+                <Loader2 size={18} className="animate-spin" />
+                创建中...
+              </>
+            ) : (
+              <>
+                <Check size={18} />
+                {inputMode === 'image' && !parsedData ? '开始识别' : '确认提交'}
+              </>
+            )}
+          </Button>
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 }

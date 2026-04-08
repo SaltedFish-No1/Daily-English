@@ -19,6 +19,7 @@ import {
 import Link from 'next/link';
 import { motion } from 'motion/react';
 import { Button } from '@/components/ui/button';
+import { PWAInstallDialog } from '@/components/PWAInstallDialog';
 import { DashboardSkeleton } from '@/components/skeletons/DashboardSkeleton';
 import { useHydrated } from '@/hooks/useHydrated';
 import { useUserStore } from '@/store/useUserStore';
@@ -447,39 +448,14 @@ export function DashboardView() {
       </main>
 
       {/* PWA Install Dialog */}
-      {installDialog.open && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/40 p-5">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl">
-            <h3 className="mb-2 text-base font-bold text-slate-900">
-              {installDialog.title}
-            </h3>
-            <p className="mb-5 text-sm leading-relaxed text-slate-600">
-              {installDialog.message}
-            </p>
-            <div className="flex justify-end gap-2">
-              {installDialog.showConfirm && (
-                <Button
-                  variant="outline"
-                  onClick={closeInstallDialog}
-                  className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50"
-                >
-                  取消
-                </Button>
-              )}
-              <Button
-                onClick={
-                  installDialog.showConfirm
-                    ? confirmInstall
-                    : closeInstallDialog
-                }
-                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700"
-              >
-                {installDialog.showConfirm ? '确认安装' : '知道了'}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <PWAInstallDialog
+        open={installDialog.open}
+        title={installDialog.title}
+        message={installDialog.message}
+        showConfirm={installDialog.showConfirm}
+        onConfirm={confirmInstall}
+        onClose={closeInstallDialog}
+      />
     </div>
   );
 }

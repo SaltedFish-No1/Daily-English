@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @author shadcn/ui
+ * @description shadcn/ui Avatar 组件 — 用户头像，支持图片与 fallback 文本。
+ */
 import * as React from 'react';
 import { Avatar as AvatarPrimitive } from '@base-ui/react/avatar';
 

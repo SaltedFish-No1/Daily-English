@@ -1,12 +1,13 @@
+'use client';
+
 /**
  * @author SaltedFish-No1
  * @description 手机号 + 短信验证码登录表单，支持 60 秒倒计时。
  */
 
-'use client';
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -23,7 +24,6 @@ export const PhoneLoginForm: React.FC = () => {
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [countdown, setCountdown] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (countdown <= 0) return;
@@ -36,12 +36,11 @@ export const PhoneLoginForm: React.FC = () => {
   const sendOtp = useCallback(async () => {
     if (!phone.trim()) return;
     setIsLoading(true);
-    setError(null);
     const { error: authError } = await supabase.auth.signInWithOtp({
       phone: fullPhone,
     });
     if (authError) {
-      setError(authError.message);
+      toast.error(authError.message);
     } else {
       setStep('otp');
       setCountdown(COUNTDOWN_SECONDS);
@@ -52,14 +51,13 @@ export const PhoneLoginForm: React.FC = () => {
   const verifyOtp = useCallback(async () => {
     if (!otp.trim()) return;
     setIsLoading(true);
-    setError(null);
     const { error: authError } = await supabase.auth.verifyOtp({
       phone: fullPhone,
       token: otp,
       type: 'sms',
     });
     if (authError) {
-      setError(authError.message);
+      toast.error(authError.message);
     }
     setIsLoading(false);
   }, [otp, fullPhone]);
@@ -90,8 +88,6 @@ export const PhoneLoginForm: React.FC = () => {
           className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 transition-colors outline-none placeholder:text-slate-400 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400"
         />
       )}
-
-      {error && <p className="text-xs text-red-500">{error}</p>}
 
       {step === 'phone' ? (
         <Button

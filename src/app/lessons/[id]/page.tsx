@@ -12,45 +12,15 @@ import { Metadata } from 'next';
 export const dynamic = 'force-dynamic';
 
 async function resolveLesson(id: string) {
-  console.log('[resolveLesson] id:', id);
-
-  try {
-    const publicData = await getLessonById(id);
-    console.log(
-      '[resolveLesson] getLessonById(public):',
-      publicData ? `found: ${publicData.meta.title}` : 'null'
-    );
-    if (publicData) return publicData;
-  } catch (err) {
-    console.error('[resolveLesson] getLessonById(public) threw:', err);
-    throw err;
-  }
+  // 先尝试公开课程，再尝试登录用户的私有课程
+  const publicData = await getLessonById(id);
+  if (publicData) return publicData;
 
   await cookies();
-  console.log('[resolveLesson] cookies() done');
-
-  let userId: string | null = null;
-  try {
-    userId = await getServerUserId();
-  } catch (err) {
-    console.error('[resolveLesson] getServerUserId threw:', err);
-    throw err;
-  }
-  console.log('[resolveLesson] userId:', userId);
-
+  const userId = await getServerUserId();
   if (!userId) return null;
 
-  try {
-    const data = await getLessonById(id, userId);
-    console.log(
-      '[resolveLesson] getLessonById(auth):',
-      data ? `found: ${data.meta.title}` : 'null'
-    );
-    return data;
-  } catch (err) {
-    console.error('[resolveLesson] getLessonById(auth) threw:', err);
-    throw err;
-  }
+  return getLessonById(id, userId);
 }
 
 export async function generateMetadata({
@@ -80,14 +50,6 @@ export default async function LessonPage({
 }) {
   const { id } = await params;
   const data = await resolveLesson(id);
-
-  console.log('[LessonPage] data summary:', {
-    hasData: !!data,
-    hasArticle: !!data?.article,
-    articleTitle: data?.article?.title ?? 'MISSING',
-    paragraphCount: data?.article?.paragraphs?.length ?? 0,
-    quizCount: data?.quiz?.questions?.length ?? 0,
-  });
 
   if (!data) {
     return <div>Lesson not found</div>;

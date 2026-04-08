@@ -1,3 +1,7 @@
+/**
+ * @author shadcn/ui
+ * @description shadcn/ui Card 组件 — 卡片容器，包含 Header/Title/Description/Content/Footer 子组件。
+ */
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';

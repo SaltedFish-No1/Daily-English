@@ -1,10 +1,10 @@
+'use client';
+
 /**
  * @author SaltedFish-No1
  * @description 登录页主视图，提供邮箱 OTP 统一认证入口
  *   和访客模式跳过入口。
  */
-
-'use client';
 
 import React from 'react';
 import { EmailLoginForm } from '@/features/auth/components/EmailLoginForm';

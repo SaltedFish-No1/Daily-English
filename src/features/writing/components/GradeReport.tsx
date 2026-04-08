@@ -35,26 +35,26 @@ function CollapsibleSection({
   defaultOpen?: boolean;
   children: React.ReactNode;
 }) {
-  const [open, setOpen] = useState(defaultOpen);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   return (
     <div className="rounded-2xl border border-slate-100 bg-white shadow-sm">
       <Button
         variant="ghost"
-        onClick={() => setOpen(!open)}
+        onClick={() => setIsOpen(!isOpen)}
         className="flex w-full items-center justify-between p-4"
       >
         <span className="flex items-center gap-2 text-sm font-bold text-slate-900">
           <Icon size={16} />
           {title}
         </span>
-        {open ? (
+        {isOpen ? (
           <ChevronUp size={16} className="text-slate-400" />
         ) : (
           <ChevronDown size={16} className="text-slate-400" />
         )}
       </Button>
       <AnimatePresence>
-        {open && (
+        {isOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}

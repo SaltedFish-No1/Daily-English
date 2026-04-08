@@ -38,6 +38,7 @@ import {
 } from '@/store/usePreferenceStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { PWAInstallDialog } from '@/components/PWAInstallDialog';
 
 const EXAM_GOALS: { value: ExamGoal; label: string }[] = [
   { value: 'ielts', label: '雅思 IELTS' },
@@ -574,41 +575,14 @@ export function ProfileView() {
       </main>
 
       {/* PWA Install Dialog */}
-      {installDialog.open && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/40 p-5">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl">
-            <h3 className="mb-2 text-base font-bold text-slate-900">
-              {installDialog.title}
-            </h3>
-            <p className="mb-5 text-sm leading-relaxed text-slate-600">
-              {installDialog.message}
-            </p>
-            <div className="flex justify-end gap-2">
-              {installDialog.showConfirm && (
-                <Button
-                  variant="outline"
-                  type="button"
-                  onClick={closeInstallDialog}
-                  className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50"
-                >
-                  取消
-                </Button>
-              )}
-              <Button
-                type="button"
-                onClick={
-                  installDialog.showConfirm
-                    ? confirmInstall
-                    : closeInstallDialog
-                }
-                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700"
-              >
-                {installDialog.showConfirm ? '确认安装' : '知道了'}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <PWAInstallDialog
+        open={installDialog.open}
+        title={installDialog.title}
+        message={installDialog.message}
+        showConfirm={installDialog.showConfirm}
+        onConfirm={confirmInstall}
+        onClose={closeInstallDialog}
+      />
     </div>
   );
 }

@@ -1,12 +1,13 @@
+'use client';
+
 /**
  * @author SaltedFish-No1
  * @description OAuth 社交登录按钮组，支持 GitHub 和 Google 登录。
  */
 
-'use client';
-
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import type { OAuthProvider } from '@/types/auth';
@@ -60,12 +61,12 @@ const providers: OAuthProvider[] = ['github', 'google'];
  * @return OAuth 按钮组组件。
  */
 export const OAuthButtons: React.FC = () => {
-  const [loading, setLoading] = useState<OAuthProvider | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [loadingProvider, setLoadingProvider] = useState<OAuthProvider | null>(
+    null
+  );
 
   const handleOAuthLogin = async (provider: OAuthProvider) => {
-    setLoading(provider);
-    setError(null);
+    setLoadingProvider(provider);
     const { error: authError } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
@@ -76,9 +77,9 @@ export const OAuthButtons: React.FC = () => {
       },
     });
     if (authError) {
-      setError(authError.message);
+      toast.error(authError.message);
     }
-    setLoading(null);
+    setLoadingProvider(null);
   };
 
   return (
@@ -90,17 +91,20 @@ export const OAuthButtons: React.FC = () => {
             <Button
               key={provider}
               variant="outline"
-              disabled={loading !== null}
+              disabled={loadingProvider !== null}
               onClick={() => handleOAuthLogin(provider)}
               className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 transition-colors hover:border-emerald-200 hover:bg-emerald-50 disabled:opacity-50"
             >
-              {loading === provider ? <Spinner size="sm" /> : config.icon}
+              {loadingProvider === provider ? (
+                <Spinner size="sm" />
+              ) : (
+                config.icon
+              )}
               {config.label}
             </Button>
           );
         })}
       </div>
-      {error && <p className="text-center text-xs text-red-500">{error}</p>}
     </div>
   );
 };

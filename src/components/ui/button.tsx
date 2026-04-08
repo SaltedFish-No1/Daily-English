@@ -1,3 +1,7 @@
+/**
+ * @author shadcn/ui
+ * @description shadcn/ui Button 组件 — 多变体按钮，支持 default/outline/secondary/ghost/link/destructive。
+ */
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
 import { cva, type VariantProps } from 'class-variance-authority';
 

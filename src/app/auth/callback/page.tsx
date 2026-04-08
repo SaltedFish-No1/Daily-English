@@ -1,10 +1,10 @@
+'use client';
+
 /**
  * @author SaltedFish-No1
  * @description OAuth 回调页面：接收 Supabase 重定向带回的授权码，
  *   完成 PKCE 令牌交换后跳转回首页。
  */
-
-'use client';
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
