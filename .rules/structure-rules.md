@@ -1,42 +1,31 @@
-# 项目结构规范 / Project Structure Conventions
+# 项目结构规范
 
 > 本规范适用于项目中所有目录和文件的组织方式。新增代码时**必须严格遵守**以下结构约定。
->
-> This specification governs all directory and file organization. All new code **MUST** strictly follow these structural conventions.
 
 ---
 
-## 目录 / Table of Contents
+## 目录
 
-1. [顶层目录职责 / Top-Level Directory Responsibilities](#1-顶层目录职责--top-level-directory-responsibilities)
-2. [Feature 模块结构 / Feature Module Structure](#2-feature-模块结构--feature-module-structure)
-3. [共享代码 vs Feature 代码 / Shared vs Feature-Specific Code](#3-共享代码-vs-feature-代码--shared-vs-feature-specific-code)
-4. [文件命名规范 / File Naming Conventions](#4-文件命名规范--file-naming-conventions)
-5. [导入路径规范 / Import Path Conventions](#5-导入路径规范--import-path-conventions)
-6. [页面路由组织 / Page Route Organization](#6-页面路由组织--page-route-organization)
-7. [API 路由组织 / API Route Organization](#7-api-路由组织--api-route-organization)
-8. [状态管理文件规范 / State Management](#8-状态管理文件规范--state-management)
-9. [测试文件组织 / Test File Organization](#9-测试文件组织--test-file-organization)
-10. [环境变量管理 / Environment Variables](#10-环境变量管理--environment-variables)
-11. [深层嵌套指南 / Deep Nesting Guidelines](#11-深层嵌套指南--deep-nesting-guidelines)
-12. [反模式 / Anti-Patterns](#12-反模式--anti-patterns)
-
----
-
-## 语言风格 / Language Style
-
-与注释规范一致：
-
-- **中文为主**：描述性文字使用中文，贴近团队阅读习惯。
-- **技术术语不翻译**：如 `feature`、`hook`、`store`、`barrel export`、`middleware` 等可直接使用英文原文。
+1. [顶层目录职责](#1-顶层目录职责)
+2. [Feature 模块结构](#2-feature-模块结构)
+3. [共享代码 vs Feature 代码](#3-共享代码-vs-feature-代码)
+4. [文件命名规范](#4-文件命名规范)
+5. [导入路径规范](#5-导入路径规范)
+6. [页面路由组织](#6-页面路由组织)
+7. [API 路由组织](#7-api-路由组织)
+8. [状态管理文件规范](#8-状态管理文件规范)
+9. [测试文件组织](#9-测试文件组织)
+10. [环境变量管理](#10-环境变量管理)
+11. [深层嵌套指南](#11-深层嵌套指南)
+12. [反模式](#12-反模式)
 
 ---
 
-## 1. 顶层目录职责 / Top-Level Directory Responsibilities
+## 1. 顶层目录职责
 
-**适用场景 / When**：在 `src/` 下创建新文件或新目录时。
+**适用场景**：在 `src/` 下创建新文件或新目录时。
 
-**要求 / Rules**：
+**要求**：
 
 | 目录 | 职责 | 约束 |
 |------|------|------|
@@ -56,7 +45,7 @@
 
 > 禁止在 `src/` 下新建未列出的顶层目录。
 
-**示例 / Example**：
+**示例**：
 
 ```
 src/
@@ -75,11 +64,11 @@ src/
 
 ---
 
-## 2. Feature 模块结构 / Feature Module Structure
+## 2. Feature 模块结构
 
-**适用场景 / When**：新增 feature 或向现有 feature 添加文件时。
+**适用场景**：新增 feature 或向现有 feature 添加文件时。
 
-**要求 / Rules**：
+**要求**：
 
 标准 feature 目录结构：
 
@@ -98,7 +87,7 @@ src/features/[feature-name]/
 - **禁止**在 feature 根目录创建上述四项以外的子目录（如 `services/`、`utils/`、`constants/`）
 - **禁止**在 feature 根目录直接放置松散的 `.ts` / `.tsx` 文件（`types.ts` 除外）
 
-**示例 / Example**：
+**示例**：
 
 最小 feature（about）：
 
@@ -141,11 +130,11 @@ src/features/photo-capture/
 
 ---
 
-## 3. 共享代码 vs Feature 代码 / Shared vs Feature-Specific Code
+## 3. 共享代码 vs Feature 代码
 
-**适用场景 / When**：新增 hook、工具函数、类型定义或组件时，判断其归属位置。
+**适用场景**：新增 hook、工具函数、类型定义或组件时，判断其归属位置。
 
-**要求 / Rules**：
+**要求**：
 
 | 使用范围 | 放置位置 |
 |----------|---------|
@@ -158,7 +147,7 @@ src/features/photo-capture/
 - 提升时**必须**同步更新所有导入路径
 - 跨 feature 导入（`@/features/A/` 内导入 `@/features/B/`）应视为代码异味，需评估是否将被导入的模块提升为共享代码
 
-**示例 / Example**：
+**示例**：
 
 正确 — 共享 hook（被 3+ features 使用）：
 
@@ -184,11 +173,11 @@ import { CEFRGuideDialog } from '@/features/home/components/CEFRGuideDialog';
 
 ---
 
-## 4. 文件命名规范 / File Naming Conventions
+## 4. 文件命名规范
 
-**适用场景 / When**：创建任何新的 `.ts` / `.tsx` 文件时。
+**适用场景**：创建任何新的 `.ts` / `.tsx` 文件时。
 
-**要求 / Rules**：
+**要求**：
 
 | 文件类型 | 命名规则 | 示例 |
 |----------|---------|------|
@@ -214,11 +203,11 @@ import { CEFRGuideDialog } from '@/features/home/components/CEFRGuideDialog';
 
 ---
 
-## 5. 导入路径规范 / Import Path Conventions
+## 5. 导入路径规范
 
-**适用场景 / When**：编写任何 `import` 语句时。
+**适用场景**：编写任何 `import` 语句时。
 
-**要求 / Rules**：
+**要求**：
 
 1. **必须使用 `@/` 路径别名**：所有跨 `src/` 子目录的导入必须使用 `@/` 前缀（映射到 `src/`）
 2. **禁止使用相对路径跨越模块边界**：如 `../../lib/supabase` 必须写为 `@/lib/supabase`
@@ -230,7 +219,7 @@ import { CEFRGuideDialog } from '@/features/home/components/CEFRGuideDialog';
    - `@/features/[current-feature]/` 当前 feature 内模块
    - 相对路径 `./`
 
-**示例 / Example**：
+**示例**：
 
 正确：
 
@@ -258,11 +247,11 @@ import { supabase } from '../../lib/supabase';
 
 ---
 
-## 6. 页面路由组织 / Page Route Organization
+## 6. 页面路由组织
 
-**适用场景 / When**：在 `src/app/` 下创建或修改页面路由时。
+**适用场景**：在 `src/app/` 下创建或修改页面路由时。
 
-**要求 / Rules**：
+**要求**：
 
 - `page.tsx` **必须是薄壳（thin shell）**：仅负责导入 feature View 组件 + 可选的 server 端数据获取
 - **禁止**在 `page.tsx` 中编写业务 UI 逻辑 — 必须委托给 `@/features/[name]/components/[Name]View`
@@ -270,7 +259,7 @@ import { supabase } from '../../lib/supabase';
 - 需要 `useSearchParams` 等 client API 时，将客户端逻辑封装在 feature 组件中，page 用 `<Suspense>` 包裹
 - 动态路由使用 `[param]` 命名法，参数名应语义化（如 `[id]`、`[topicId]`）
 
-**示例 / Example**：
+**示例**：
 
 最小 page（最常见模式）：
 
@@ -323,11 +312,11 @@ export default function ReviewPage() {
 
 ---
 
-## 7. API 路由组织 / API Route Organization
+## 7. API 路由组织
 
-**适用场景 / When**：在 `src/app/api/` 下创建或修改后端 API 端点时。
+**适用场景**：在 `src/app/api/` 下创建或修改后端 API 端点时。
 
-**要求 / Rules**：
+**要求**：
 
 - API routes 按**领域**分组：`api/auth/`、`api/writing/`、`api/review/` 等
 - 目录结构：`src/app/api/[domain]/[action]/route.ts`
@@ -339,7 +328,7 @@ export default function ReviewPage() {
 - 动作类 API 用动词短语命名目录：`send-otp/`、`verify-otp/`、`reset-password-with-token/`
 - **业务逻辑应委托给 `src/lib/`**，`route.ts` 只负责请求解析、鉴权、错误处理和响应构造
 
-**示例 / Example**：
+**示例**：
 
 ```
 src/app/api/
@@ -371,11 +360,11 @@ src/app/api/
 
 ---
 
-## 8. 状态管理文件规范 / State Management
+## 8. 状态管理文件规范
 
-**适用场景 / When**：创建或修改 Zustand store 时。
+**适用场景**：创建或修改 Zustand store 时。
 
-**要求 / Rules**：
+**要求**：
 
 - 所有 Zustand store **必须**放在 `src/store/`
 - 每个 store 一个文件，命名 `use[Domain]Store.ts`
@@ -394,18 +383,18 @@ src/app/api/
 
 ---
 
-## 9. 测试文件组织 / Test File Organization
+## 9. 测试文件组织
 
-**适用场景 / When**：编写单元测试或集成测试时。
+**适用场景**：编写单元测试或集成测试时。
 
-**要求 / Rules**：
+**要求**：
 
 - 单元测试**必须**放在 `src/__tests__/`，镜像源码目录结构
 - 测试文件命名：`[module].test.ts`
 - E2E 测试放在项目根目录 `e2e/`（Playwright）
 - 测试运行器为 Vitest（`pnpm test`）
 
-**示例 / Example**：
+**示例**：
 
 ```
 src/__tests__/
@@ -423,11 +412,11 @@ src/__tests__/
 
 ---
 
-## 10. 环境变量管理 / Environment Variables
+## 10. 环境变量管理
 
-**适用场景 / When**：新增或使用环境变量时。
+**适用场景**：新增或使用环境变量时。
 
-**要求 / Rules**：
+**要求**：
 
 - 客户端环境变量（`NEXT_PUBLIC_*`）**必须**通过 `@/lib/env/client.ts` 读取
 - 服务端环境变量**必须**通过 `@/lib/env/server.ts` 读取
@@ -435,12 +424,11 @@ src/__tests__/
 - **禁止**在业务代码中直接使用 `process.env`
 - **禁止**在 `'use client'` 文件中导入 `@/lib/env/server`
 
-**示例 / Example**：
+**示例**：
 
 正确：
 
 ```typescript
-// Server-side
 import { serverEnv } from '@/lib/env/server';
 const apiKey = serverEnv.OPENAI_API_KEY;
 ```
@@ -454,11 +442,11 @@ const apiKey = process.env.OPENAI_API_KEY;
 
 ---
 
-## 11. 深层嵌套指南 / Deep Nesting Guidelines
+## 11. 深层嵌套指南
 
-**适用场景 / When**：Feature 的 `components/` 目录文件数量增长，需要子分组时。
+**适用场景**：Feature 的 `components/` 目录文件数量增长，需要子分组时。
 
-**要求 / Rules**：
+**要求**：
 
 - Feature 内组件目录默认保持扁平
 - 子分组仅在有明确的、内聚的子领域时才允许（如 `quiz/` 包含评分策略 + 题型组件）
@@ -466,7 +454,7 @@ const apiKey = process.env.OPENAI_API_KEY;
 - 子目录至少包含 **3 个相关文件**才可创建
 - Barrel export（`index.ts`）仅在深层嵌套的子模块聚合时使用
 
-**示例 / Example**：
+**示例**：
 
 合理的深层嵌套（策略模式 + 注册表模式）：
 
@@ -496,9 +484,9 @@ src/features/lesson/components/
 
 ---
 
-## 12. 反模式 / Anti-Patterns
+## 12. 反模式
 
-**适用场景 / When**：代码审查或提交前自检时。
+**适用场景**：代码审查或提交前自检时。
 
 1. **禁止将 feature 组件放入 `src/components/`**
    `src/components/` 仅限全局 app-shell 组件（`AppShell`、`AppNavBar`）。Feature 组件必须放入 `src/features/[name]/components/`。
@@ -532,10 +520,10 @@ src/features/lesson/components/
 
 ---
 
-## 快速参考 / Quick Reference
+## 快速参考
 
-| 场景 / Scenario | 位置 / Location | 命名 / Naming |
-|-----------------|-----------------|---------------|
+| 场景 | 位置 | 命名 |
+|------|------|------|
 | 全局 Shell 组件 | `src/components/` | `PascalCase.tsx` |
 | Feature 组件 | `src/features/[name]/components/` | `PascalCase.tsx` |
 | Feature Hook | `src/features/[name]/hooks/` | `useCamelCase.ts` |
