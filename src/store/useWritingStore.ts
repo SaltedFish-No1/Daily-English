@@ -1,5 +1,7 @@
 /**
+ * @author SaltedFish-No1
  * @description 写作练习客户端状态：计时器与草稿持久化。
+ *   通过 localStorage 持久化草稿（partialize 仅持久化 currentTopicId 和 currentDraftText），
  *   已登录时自动同步草稿到 Supabase writing_drafts 表。
  */
 
@@ -8,6 +10,7 @@ import { persist } from 'zustand/middleware';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/store/useAuthStore';
 
+/** @description 获取当前登录用户 ID，未登录返回 null */
 function getAuthUserId(): string | null {
   return useAuthStore.getState().user?.id ?? null;
 }
@@ -34,26 +37,43 @@ function syncDraftToCloud() {
 }
 
 /** 防抖同步：setDraftText 每次击键触发，2 秒内合并为一次请求 */
+/** 防抖计时器句柄，用于合并连续击键产生的同步请求 */
 let draftSyncTimer: ReturnType<typeof setTimeout> | null = null;
 function syncDraftToCloudDebounced() {
   if (draftSyncTimer) clearTimeout(draftSyncTimer);
   draftSyncTimer = setTimeout(() => syncDraftToCloud(), 2000);
 }
 
+/**
+ * @description 写作练习状态接口：包含计时器（会话级）和草稿（持久化）两部分。
+ */
 interface WritingState {
-  // Timer (not persisted — ephemeral session state)
+  /* ────── 计时器（不持久化，会话级状态） ────── */
+
+  /** 已计时秒数，默认 0 */
   timerSeconds: number;
+  /** 计时器是否正在运行，默认 false */
   timerRunning: boolean;
+  /** 开始计时 */
   startTimer: () => void;
+  /** 暂停计时 */
   stopTimer: () => void;
+  /** 重置计时器（归零并停止） */
   resetTimer: () => void;
+  /** 计时器每秒 tick，仅在 timerRunning 为 true 时递增 */
   tickTimer: () => void;
 
-  // Draft (persisted — survives page refresh)
+  /* ────── 草稿（持久化，支持云端同步） ────── */
+
+  /** 当前写作话题 ID，null 表示未选择话题 */
   currentTopicId: string | null;
+  /** 当前草稿文本内容，默认空字符串 */
   currentDraftText: string;
+  /** 设置当前话题并立即同步云端 */
   setCurrentTopic: (topicId: string | null) => void;
+  /** 更新草稿文本，防抖 2 秒后同步云端 */
   setDraftText: (text: string) => void;
+  /** 清空草稿与计时器并立即同步云端 */
   clearDraft: () => void;
   /** 重置所有写作状态（登出时清理 localStorage） */
   resetStore: () => void;

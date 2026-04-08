@@ -1,5 +1,7 @@
 /**
- * @description 用户持久化状态：生词收藏、词典缓存、课程历史与测验进度。
+ * @author SaltedFish-No1
+ * @description 用户数据 Store — 管理生词本、词典缓存、课程历史、测验进度和间隔重复状态。
+ *   通过 localStorage 持久化，登录后各操作 fire-and-forget 同步至 Supabase。
  */
 
 import { create } from 'zustand';
@@ -16,6 +18,7 @@ import {
   calculateNextReview,
 } from '@/lib/spaced-repetition';
 
+/** 词典缓存有效期：7 天（毫秒） */
 const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
@@ -26,37 +29,69 @@ function getAuthUserId(): string | null {
   return useAuthStore.getState().user?.id ?? null;
 }
 
+/**
+ * @description 生词出处记录 — 记录某个词在某篇课文某段落中被收藏时的快照信息。
+ */
 export interface VocabOccurrence {
+  /** 所属课程 slug */
   lessonSlug: string;
+  /** 所属课程标题，可选（历史数据可能缺失） */
   lessonTitle?: string;
+  /** 所在段落索引（从 0 开始） */
   paragraphIndex: number;
+  /** 收藏时间戳（ms） */
   savedAt: number;
+  /** 用户点击的原始词形，可选（如 "running"） */
   surface?: string;
+  /** 收藏时的词义快照，避免词典数据变动导致释义丢失 */
   senseSnapshot: {
+    /** 词典词头 */
     headword?: string;
+    /** 词性（如 noun、verb） */
     pos?: string;
+    /** 英文释义 */
     def?: string;
+    /** 中文释义 */
     defZh?: string;
+    /** 音标 */
     phonetic?: string;
+    /** 发音音频 URL */
     audio?: string;
   };
 }
 
+/** @description 已收藏生词索引（key: 小写词形，value: 该词的所有出处记录） */
 export type SavedVocabIndex = Record<string, VocabOccurrence[]>;
+/** @description 本地词典查询缓存索引（key: 小写词形，value: 缓存记录） */
 export type DictionaryCacheIndex = Record<string, DictionaryCacheRecord>;
 
+/**
+ * @description 课程完成记录 — 保存用户某课的测验成绩与完成时间。
+ */
 export interface LessonHistory {
+  /** 课程 slug */
   slug: string;
+  /** 课程标题，可选 */
   title?: string;
+  /** 测验得分 */
   score: number;
+  /** 测验总题数 */
   total: number;
+  /** 完成时间戳（ms） */
   completedAt: number;
 }
 
+/**
+ * @description 用户数据状态接口：生词本、词典缓存、课程历史、测验进度与间隔重复。
+ */
 interface UserState {
+  /** 已收藏的生词索引（key: 小写词形） */
   savedWords: SavedVocabIndex;
+  /** 本地词典查询缓存，减少重复 API 调用 */
   dictionaryCache: DictionaryCacheIndex;
+  /** 课程完成记录（key: slug） */
   history: Record<string, LessonHistory>;
+  /** 收藏或更新生词出处记录，按 (lessonSlug, paragraphIndex) 去重；已登录时同步云端 */
   upsertVocabOccurrence: (params: {
     word: string;
     lessonSlug: string;
@@ -65,25 +100,33 @@ interface UserState {
     surface?: string;
     senseSnapshot: VocabOccurrence['senseSnapshot'];
   }) => void;
+  /** 删除特定出处记录；若该词无剩余出处则整词移除；已登录时同步云端 */
   removeVocabOccurrence: (params: {
     word: string;
     lessonSlug: string;
     paragraphIndex: number;
   }) => void;
+  /** 删除某个词的所有出处记录；已登录时同步云端 */
   removeWord: (word: string) => void;
+  /** 手动写入词典缓存记录 */
   setDictionaryCacheRecord: (
     word: string,
     record: DictionaryCacheRecord
   ) => void;
+  /** 带 TTL 的词典查询：缓存过期或 force=true 时发起 API 请求并更新缓存 */
   fetchDictionaryRecord: (word: string, force?: boolean) => Promise<void>;
+  /** 保存课程测验成绩；已登录时同步云端 */
   saveLessonScore: (
     slug: string,
     score: number,
     total: number,
     title?: string
   ) => void;
+  /** 测验进度持久化（key: 话题标识） */
   quizProgress: Record<string, QuizPersistState>;
+  /** 保存或更新测验进度；已登录时同步云端 */
   setQuizProgress: (key: string, state: QuizPersistState) => void;
+  /** 清除指定测验进度；已登录时同步云端 */
   clearQuizProgress: (key: string) => void;
   /** 间隔重复：每个词的复习状态 */
   wordReviewStates: Record<string, WordReviewState>;
