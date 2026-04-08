@@ -8,6 +8,7 @@ import { useSpeech } from '@/hooks/useSpeech';
 import { LessonSpeech } from '@/types/lesson';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Button } from '@/components/ui/button';
 import { DictionaryContent } from './DictionaryContent';
 import { fetchTTSAudioUrl } from '@/lib/tts-fallback';
 
@@ -180,13 +181,13 @@ export const VocabSheet: React.FC<VocabSheetProps> = ({ speech }) => {
               {/* Drag Handle */}
               <div className="absolute top-3 left-1/2 h-1.5 w-12 -translate-x-1/2 rounded-full bg-slate-200 lg:hidden" />
 
-              <button
-                type="button"
+              <Button
+                variant="ghost"
                 onClick={handleClose}
                 className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-700 active:scale-95 lg:hidden"
               >
                 <X size={18} />
-              </button>
+              </Button>
               <DictionaryContent
                 queryWord={queryWord}
                 selectedSurface={selectedSurface}

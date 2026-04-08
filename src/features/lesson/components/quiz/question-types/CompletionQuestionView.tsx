@@ -7,6 +7,7 @@
 
 import React, { useMemo } from 'react';
 import { CompletionQuestion } from '../types';
+import { Input } from '@/components/ui/input';
 
 interface CompletionQuestionViewProps {
   question: CompletionQuestion;
@@ -80,7 +81,7 @@ export const CompletionQuestionView: React.FC<CompletionQuestionViewProps> = ({
                 : '';
             return (
               <span key={idx} className="mx-1 inline-flex flex-col">
-                <input
+                <Input
                   value={v}
                   disabled={disabled}
                   onChange={(e) =>

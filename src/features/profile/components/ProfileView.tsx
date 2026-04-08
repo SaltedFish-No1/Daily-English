@@ -35,6 +35,7 @@ import {
   type DifficultyPref,
 } from '@/store/usePreferenceStore';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 const EXAM_GOALS: { value: ExamGoal; label: string }[] = [
   { value: 'ielts', label: '雅思 IELTS' },
@@ -161,7 +162,7 @@ export function ProfileView() {
   const prefs = usePreferenceStore();
 
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
-  const [editingNickname, setEditingNickname] = useState(false);
+  const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [nicknameDraft, setNicknameDraft] = useState(prefs.nickname);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const {
@@ -218,7 +219,7 @@ export function ProfileView() {
     const trimmed = nicknameDraft.trim();
     if (trimmed) prefs.setNickname(trimmed);
     else setNicknameDraft(prefs.nickname);
-    setEditingNickname(false);
+    setIsEditingNickname(false);
   };
 
   const handleClearCache = () => {
@@ -280,8 +281,8 @@ export function ProfileView() {
 
             <div className="min-w-0 flex-1">
               {/* Nickname */}
-              {editingNickname ? (
-                <input
+              {isEditingNickname ? (
+                <Input
                   value={nicknameDraft}
                   onChange={(e) => setNicknameDraft(e.target.value)}
                   onBlur={handleNicknameSubmit}
@@ -295,7 +296,7 @@ export function ProfileView() {
                   variant="ghost"
                   onClick={() => {
                     setNicknameDraft(prefs.nickname);
-                    setEditingNickname(true);
+                    setIsEditingNickname(true);
                   }}
                   className="text-left text-base font-bold text-slate-900 transition-colors hover:text-emerald-700"
                   title="点击编辑昵称"

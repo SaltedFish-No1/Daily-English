@@ -14,8 +14,11 @@ import { motion } from 'motion/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/lib/supabase';
 import { queryKeys } from '@/lib/queryKeys';
+import {
+  generateReviewLesson,
+  saveReviewLesson,
+} from '@/features/review/lib/reviewApi';
 
 interface ReviewViewProps {
   words: string[];
@@ -38,16 +41,7 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
     mutationFn: async () => {
       setState({ status: 'generating', progress: null });
 
-      const res = await fetch('/api/review/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ words, difficulty }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || `HTTP ${res.status}`);
-      }
+      const res = await generateReviewLesson(words, difficulty);
 
       const reader = res.body!.getReader();
       const decoder = new TextDecoder();
@@ -82,27 +76,7 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
       // Save to database and redirect to the persisted lesson page.
       setState({ status: 'saving' });
 
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      const saveRes = await fetch('/api/review/save', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(session?.access_token
-            ? { Authorization: `Bearer ${session.access_token}` }
-            : {}),
-        },
-        body: JSON.stringify({ lesson: finalObject, words, difficulty }),
-      });
-
-      if (!saveRes.ok) {
-        const err = await saveRes.json().catch(() => ({}));
-        throw new Error(err.error || '保存失败，请重试');
-      }
-
-      return saveRes.json();
+      return saveReviewLesson(finalObject, words, difficulty);
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({

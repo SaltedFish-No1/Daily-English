@@ -78,7 +78,7 @@ const createParticles = (): Particle[] =>
 export function AboutView() {
   const repo = FALLBACK;
   const [, setTapCount] = useState(0);
-  const [easterEgg, setEasterEgg] = useState(false);
+  const [isEasterEgg, setIsEasterEgg] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -87,7 +87,7 @@ export function AboutView() {
    * @returns void
    */
   const handleLeafTap = useCallback(() => {
-    if (easterEgg) return;
+    if (isEasterEgg) return;
 
     if (timerRef.current) clearTimeout(timerRef.current);
 
@@ -95,15 +95,15 @@ export function AboutView() {
       const next = prev + 1;
       if (next >= 5) {
         setParticles(createParticles());
-        setEasterEgg(true);
-        setTimeout(() => setEasterEgg(false), 2500);
+        setIsEasterEgg(true);
+        setTimeout(() => setIsEasterEgg(false), 2500);
         return 0;
       }
       return next;
     });
 
     timerRef.current = setTimeout(() => setTapCount(0), 400);
-  }, [easterEgg]);
+  }, [isEasterEgg]);
 
   const infoItems = [
     { label: '版本', value: repo.version },
@@ -150,7 +150,7 @@ export function AboutView() {
               className="h-20 w-20 rounded-3xl bg-emerald-50/90 text-emerald-500 hover:bg-emerald-100/80"
             >
               <motion.div
-                animate={easterEgg ? { rotate: 360, scale: [1, 1.3, 1] } : {}}
+                animate={isEasterEgg ? { rotate: 360, scale: [1, 1.3, 1] } : {}}
                 transition={{ duration: 0.8, ease: 'easeInOut' }}
               >
                 <Leaf
@@ -163,7 +163,7 @@ export function AboutView() {
 
             {/* Easter egg particles */}
             <AnimatePresence>
-              {easterEgg &&
+              {isEasterEgg &&
                 particles.map((p) => (
                   <motion.div
                     key={p.id}

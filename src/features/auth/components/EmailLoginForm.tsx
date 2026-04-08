@@ -17,6 +17,7 @@ import {
   sendResetLink,
 } from '../lib/authApi';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 type Step = 'email' | 'login-password' | 'login-otp' | 'register-verify';
 
@@ -26,7 +27,7 @@ export const EmailLoginForm: React.FC = () => {
   const [password, setPassword] = useState('');
   const [otpCode, setOtpCode] = useState('');
   const [step, setStep] = useState<Step>('email');
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(0);
@@ -41,14 +42,14 @@ export const EmailLoginForm: React.FC = () => {
   // ── 输入邮箱，点击继续 ──
   const handleContinue = useCallback(async () => {
     if (!email.trim()) return;
-    setLoading(true);
+    setIsLoading(true);
     setError(null);
     setMessage(null);
 
     const { data, error: checkError } = await checkUserExists(email);
     if (checkError) {
       setError(checkError);
-      setLoading(false);
+      setIsLoading(false);
       return;
     }
 
@@ -60,20 +61,20 @@ export const EmailLoginForm: React.FC = () => {
       const { error: sendError } = await apiSendOtp(email);
       if (sendError) {
         setError(sendError);
-        setLoading(false);
+        setIsLoading(false);
         return;
       }
       setCooldown(60);
       setMessage('验证邮件已发送，请查收邮箱并在下方输入验证码。');
       setStep('register-verify');
     }
-    setLoading(false);
+    setIsLoading(false);
   }, [email]);
 
   // ── 密码登录 ──
   const handlePasswordLogin = useCallback(async () => {
     if (!password.trim()) return;
-    setLoading(true);
+    setIsLoading(true);
     setError(null);
 
     const { error: signInError } = await supabase.auth.signInWithPassword({
@@ -90,20 +91,20 @@ export const EmailLoginForm: React.FC = () => {
     } else {
       router.replace('/');
     }
-    setLoading(false);
+    setIsLoading(false);
   }, [email, password, router]);
 
   // ── OTP 验证（登录 / 注册共用） ──
   const handleVerifyOtp = useCallback(async () => {
     if (!otpCode.trim()) return;
-    setLoading(true);
+    setIsLoading(true);
     setError(null);
     setMessage(null);
 
     const { data, error: verifyError } = await apiVerifyOtp(email, otpCode);
     if (verifyError || !data?.token_hash) {
       setError(verifyError ?? '验证失败');
-      setLoading(false);
+      setIsLoading(false);
       return;
     }
 
@@ -115,7 +116,7 @@ export const EmailLoginForm: React.FC = () => {
 
     if (sessionError) {
       setError(sessionError.message);
-      setLoading(false);
+      setIsLoading(false);
       return;
     }
 
@@ -124,18 +125,18 @@ export const EmailLoginForm: React.FC = () => {
       const { error: pwError } = await supabase.auth.updateUser({ password });
       if (pwError) {
         setError(pwError.message);
-        setLoading(false);
+        setIsLoading(false);
         return;
       }
     }
 
     router.replace('/');
-    setLoading(false);
+    setIsLoading(false);
   }, [email, otpCode, password, step, router]);
 
   // ── 发送 OTP ──
   const handleSendOtp = useCallback(async () => {
-    setLoading(true);
+    setIsLoading(true);
     setError(null);
     setOtpCode('');
 
@@ -146,12 +147,12 @@ export const EmailLoginForm: React.FC = () => {
       setCooldown(60);
       setMessage('验证邮件已发送，请查收邮箱并在下方输入验证码。');
     }
-    setLoading(false);
+    setIsLoading(false);
   }, [email]);
 
   // ── 忘记密码：发送重置链接 ──
   const handleForgotPassword = useCallback(async () => {
-    setLoading(true);
+    setIsLoading(true);
     setError(null);
 
     const { error: sendError } = await sendResetLink(email);
@@ -160,7 +161,7 @@ export const EmailLoginForm: React.FC = () => {
     } else {
       setMessage('密码重置链接已发送到你的邮箱，请查收。');
     }
-    setLoading(false);
+    setIsLoading(false);
   }, [email]);
 
   // ── 切换回邮箱输入 ──
@@ -200,7 +201,7 @@ export const EmailLoginForm: React.FC = () => {
   if (step === 'email') {
     return (
       <div className="space-y-4">
-        <input
+        <Input
           type="email"
           placeholder="邮箱地址"
           value={email}
@@ -213,11 +214,11 @@ export const EmailLoginForm: React.FC = () => {
 
         <Button
           type="button"
-          disabled={loading || !email.trim()}
+          disabled={isLoading || !email.trim()}
           onClick={handleContinue}
           className="h-12 w-full rounded-xl bg-emerald-600 text-sm font-bold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
         >
-          {loading ? '检查中...' : '继续'}
+          {isLoading ? '检查中...' : '继续'}
         </Button>
       </div>
     );
@@ -231,7 +232,7 @@ export const EmailLoginForm: React.FC = () => {
       <div className="space-y-4">
         {emailBar}
 
-        <input
+        <Input
           type="password"
           placeholder="输入密码"
           value={password}
@@ -245,18 +246,18 @@ export const EmailLoginForm: React.FC = () => {
 
         <Button
           type="button"
-          disabled={loading || !password.trim()}
+          disabled={isLoading || !password.trim()}
           onClick={handlePasswordLogin}
           className="h-12 w-full rounded-xl bg-emerald-600 text-sm font-bold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
         >
-          {loading ? '登录中...' : '登录'}
+          {isLoading ? '登录中...' : '登录'}
         </Button>
 
         <div className="flex items-center justify-between">
           <Button
             variant="ghost"
             type="button"
-            disabled={loading}
+            disabled={isLoading}
             onClick={handleForgotPassword}
             className="text-xs font-bold text-slate-400 transition-colors hover:text-emerald-600 disabled:opacity-50"
           >
@@ -265,7 +266,7 @@ export const EmailLoginForm: React.FC = () => {
           <Button
             variant="ghost"
             type="button"
-            disabled={loading}
+            disabled={isLoading}
             onClick={async () => {
               await handleSendOtp();
               if (!error) setStep('login-otp');
@@ -289,7 +290,7 @@ export const EmailLoginForm: React.FC = () => {
 
         {message && <p className="text-xs text-emerald-600">{message}</p>}
 
-        <input
+        <Input
           type="text"
           inputMode="numeric"
           placeholder="输入 6 位验证码"
@@ -304,18 +305,18 @@ export const EmailLoginForm: React.FC = () => {
 
         <Button
           type="button"
-          disabled={loading || otpCode.length < 6}
+          disabled={isLoading || otpCode.length < 6}
           onClick={handleVerifyOtp}
           className="h-12 w-full rounded-xl bg-emerald-600 text-sm font-bold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
         >
-          {loading ? '验证中...' : '验证'}
+          {isLoading ? '验证中...' : '验证'}
         </Button>
 
         <div className="flex items-center justify-between">
           <Button
             variant="ghost"
             type="button"
-            disabled={loading || cooldown > 0}
+            disabled={isLoading || cooldown > 0}
             onClick={handleSendOtp}
             className="text-xs font-bold text-slate-400 transition-colors hover:text-emerald-600 disabled:opacity-50"
           >
@@ -324,7 +325,7 @@ export const EmailLoginForm: React.FC = () => {
           <Button
             variant="ghost"
             type="button"
-            disabled={loading}
+            disabled={isLoading}
             onClick={() => {
               setError(null);
               setMessage(null);
@@ -349,7 +350,7 @@ export const EmailLoginForm: React.FC = () => {
 
       {message && <p className="text-xs text-emerald-600">{message}</p>}
 
-      <input
+      <Input
         type="text"
         inputMode="numeric"
         placeholder="输入 6 位验证码"
@@ -359,7 +360,7 @@ export const EmailLoginForm: React.FC = () => {
         className={inputClass}
       />
 
-      <input
+      <Input
         type="password"
         placeholder="设置密码（至少 6 位）"
         value={password}
@@ -372,17 +373,17 @@ export const EmailLoginForm: React.FC = () => {
 
       <Button
         type="button"
-        disabled={loading || otpCode.length < 6 || password.length < 6}
+        disabled={isLoading || otpCode.length < 6 || password.length < 6}
         onClick={handleVerifyOtp}
         className="h-12 w-full rounded-xl bg-emerald-600 text-sm font-bold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
       >
-        {loading ? '创建中...' : '创建账号'}
+        {isLoading ? '创建中...' : '创建账号'}
       </Button>
 
       <Button
         variant="ghost"
         type="button"
-        disabled={loading || cooldown > 0}
+        disabled={isLoading || cooldown > 0}
         onClick={handleSendOtp}
         className="w-full text-center text-xs font-bold text-slate-400 transition-colors hover:text-emerald-600 disabled:opacity-50"
       >

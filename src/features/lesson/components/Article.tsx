@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { buildRenderableTokens } from '@/lib/focus-words';
+import { Button } from '@/components/ui/button';
 import { useLessonStore } from '@/store/useLessonStore';
 import { FocusWord, LessonArticle } from '@/types/lesson';
 
@@ -82,9 +83,9 @@ export const Article: React.FC<ArticleProps> = ({
         paragraphIndex === selectedWordContext.paragraphIndex;
 
       return (
-        <button
+        <Button
           key={`${paragraphIndex}-${tokenIndex}-${query}-${token.text}`}
-          type="button"
+          variant="ghost"
           onClick={() =>
             handleWordSelect(
               token.text,
@@ -102,7 +103,7 @@ export const Article: React.FC<ArticleProps> = ({
           }
         >
           {token.text}
-        </button>
+        </Button>
       );
     });
   };
@@ -126,13 +127,13 @@ export const Article: React.FC<ArticleProps> = ({
                 dangerouslySetInnerHTML={{ __html: articleHintHtml }}
               />
             </div>
-            <button
-              type="button"
+            <Button
+              variant="ghost"
               onClick={() => setShowHint(false)}
               className="rounded-md px-2 py-1 text-xs font-bold text-slate-500 transition-colors hover:bg-white/60 hover:text-slate-700"
             >
               关闭
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -149,8 +150,8 @@ export const Article: React.FC<ArticleProps> = ({
             <p className="mb-2">{renderInteractiveText(p.en, i)}</p>
             {p.zh && (
               <div className="mb-2 flex justify-end">
-                <button
-                  type="button"
+                <Button
+                  variant="ghost"
                   onClick={(e) => {
                     e.stopPropagation();
                     toggleTranslation(i);
@@ -162,7 +163,7 @@ export const Article: React.FC<ArticleProps> = ({
                   }`}
                 >
                   {visibleTranslations[i] ? '隐藏翻译' : '显示翻译'}
-                </button>
+                </Button>
               </div>
             )}
             {visibleTranslations[i] && p.zh && (

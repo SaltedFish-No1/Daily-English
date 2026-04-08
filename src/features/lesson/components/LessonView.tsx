@@ -14,6 +14,7 @@ import { Quiz } from './Quiz';
 import { VocabSheet } from './VocabSheet';
 import { BookOpen, HelpCircle } from 'lucide-react';
 import { motion } from 'motion/react';
+import { Button } from '@/components/ui/button';
 import { LessonBreadcrumb } from './LessonBreadcrumb';
 
 interface LessonViewProps {
@@ -94,8 +95,9 @@ export const LessonView: React.FC<LessonViewProps> = ({
         <div className="border-b border-slate-100 bg-white">
           <div className="mx-auto flex max-w-5xl items-center gap-1 px-5 py-2">
             {tabs.map((tab) => (
-              <button
+              <Button
                 key={tab.id}
+                variant="ghost"
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-bold transition-all ${
                   activeTab === tab.id
@@ -105,7 +107,7 @@ export const LessonView: React.FC<LessonViewProps> = ({
               >
                 <tab.icon size={16} />
                 {tab.label}
-              </button>
+              </Button>
             ))}
           </div>
         </div>

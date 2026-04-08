@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import { Button } from '@/components/ui/button';
 import { questionRendererRegistry } from './registry';
 import {
   AnyQuizQuestion,
@@ -42,9 +43,9 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
       <div className="space-y-4">
         <div className="space-y-3">
           {question.options.map((option, i) => (
-            <button
+            <Button
               key={i}
-              type="button"
+              variant="ghost"
               onClick={() =>
                 onAnswerChange({
                   questionId,
@@ -73,7 +74,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
               <span className="text-sm font-medium text-slate-700 sm:text-base">
                 {option.text}
               </span>
-            </button>
+            </Button>
           ))}
         </div>
       </div>

@@ -6,6 +6,7 @@
  */
 import { useCallback } from 'react';
 import { useWritingStore } from '@/store/useWritingStore';
+import { Textarea } from '@/components/ui/textarea';
 
 interface WritingEditorProps {
   wordLimit?: number | null;
@@ -37,7 +38,7 @@ export function WritingEditor({ wordLimit }: WritingEditorProps) {
 
   return (
     <div className="flex flex-1 flex-col">
-      <textarea
+      <Textarea
         value={currentDraftText}
         onChange={handleChange}
         placeholder="Start writing your answer here..."

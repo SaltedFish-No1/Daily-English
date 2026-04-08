@@ -7,6 +7,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { Camera, Upload, Loader2, X, PenLine, RotateCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Button } from '@/components/ui/button';
 import { recognizeHandwriting } from '@/features/writing/lib/writingApi';
 
 interface HandwritingOcrModalProps {
@@ -24,7 +25,7 @@ export function HandwritingOcrModal({
 }: HandwritingOcrModalProps) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [recognizing, setRecognizing] = useState(false);
+  const [isRecognizing, setIsRecognizing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [extractedText, setExtractedText] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -32,13 +33,13 @@ export function HandwritingOcrModal({
   const reset = useCallback(() => {
     setImageFile(null);
     setImagePreview(null);
-    setRecognizing(false);
+    setIsRecognizing(false);
     setError(null);
     setExtractedText(null);
   }, []);
 
   function handleClose() {
-    if (recognizing) return;
+    if (isRecognizing) return;
     reset();
     onClose();
   }
@@ -56,7 +57,7 @@ export function HandwritingOcrModal({
 
   async function handleRecognize() {
     if (!imageFile) return;
-    setRecognizing(true);
+    setIsRecognizing(true);
     setError(null);
     try {
       const text = await recognizeHandwriting(imageFile);
@@ -68,7 +69,7 @@ export function HandwritingOcrModal({
     } catch (err) {
       setError(err instanceof Error ? err.message : '识别失败');
     } finally {
-      setRecognizing(false);
+      setIsRecognizing(false);
     }
   }
 
@@ -97,7 +98,7 @@ export function HandwritingOcrModal({
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[60] flex items-end justify-center bg-black/40 sm:items-center"
           onClick={(e) =>
-            !recognizing && e.target === e.currentTarget && handleClose()
+            !isRecognizing && e.target === e.currentTarget && handleClose()
           }
         >
           <motion.div
@@ -111,13 +112,14 @@ export function HandwritingOcrModal({
               <h2 className="text-lg font-bold text-slate-900">
                 {hasResult ? '识别结果' : '手写识别'}
               </h2>
-              <button
+              <Button
+                variant="ghost"
                 onClick={handleClose}
-                disabled={recognizing}
+                disabled={isRecognizing}
                 className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <X size={20} />
-              </button>
+              </Button>
             </div>
 
             {hasResult ? (
@@ -134,20 +136,21 @@ export function HandwritingOcrModal({
                   </p>
                 )}
                 <div className="flex gap-3">
-                  <button
+                  <Button
+                    variant="outline"
                     onClick={handleRetry}
                     className="flex flex-1 items-center justify-center gap-2 rounded-xl border-2 border-slate-200 py-3 text-sm font-bold text-slate-600 transition-all hover:bg-slate-50"
                   >
                     <RotateCcw size={16} />
                     重新拍照
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={handleFill}
                     className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-violet-600 py-3 text-sm font-bold text-white shadow-lg shadow-violet-200 transition-all hover:bg-violet-700"
                   >
                     <PenLine size={16} />
                     填入编辑器
-                  </button>
+                  </Button>
                 </div>
               </>
             ) : (
@@ -175,17 +178,18 @@ export function HandwritingOcrModal({
                         alt="Preview"
                         className="max-h-64 w-full bg-slate-50 object-contain"
                       />
-                      <button
+                      <Button
+                        variant="ghost"
                         onClick={() => {
                           setImageFile(null);
                           setImagePreview(null);
                           setError(null);
                         }}
-                        disabled={recognizing}
+                        disabled={isRecognizing}
                         className="absolute top-2 right-2 rounded-full bg-black/50 p-1.5 text-white hover:bg-black/70 disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         <X size={14} />
-                      </button>
+                      </Button>
                     </motion.div>
                   ) : (
                     <motion.button
@@ -213,12 +217,12 @@ export function HandwritingOcrModal({
                   </p>
                 )}
 
-                <button
+                <Button
                   onClick={handleRecognize}
-                  disabled={!imageFile || recognizing}
+                  disabled={!imageFile || isRecognizing}
                   className="flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 py-3 text-sm font-bold text-white shadow-lg shadow-violet-200 transition-all hover:bg-violet-700 disabled:opacity-50 disabled:shadow-none"
                 >
-                  {recognizing ? (
+                  {isRecognizing ? (
                     <>
                       <Loader2 size={18} className="animate-spin" />
                       AI 识别中...
@@ -229,11 +233,11 @@ export function HandwritingOcrModal({
                       识别文字
                     </>
                   )}
-                </button>
+                </Button>
               </>
             )}
 
-            {recognizing && (
+            {isRecognizing && (
               <div className="absolute inset-0 z-10 flex items-center justify-center rounded-t-3xl bg-white/70 backdrop-blur-[1px] sm:rounded-3xl">
                 <div className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow">
                   <Loader2 size={16} className="animate-spin" />

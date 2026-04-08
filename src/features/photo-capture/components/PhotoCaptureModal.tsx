@@ -21,27 +21,27 @@ interface PhotoCaptureModalProps {
 export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [extracting, setExtracting] = useState(false);
+  const [isExtracting, setIsExtracting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [extractedWords, setExtractedWords] = useState<ExtractedWord[]>([]);
   const [selectedIndices, setSelectedIndices] = useState<Set<number>>(
     new Set()
   );
-  const [saved, setSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const reset = useCallback(() => {
     setImageFile(null);
     setImagePreview(null);
-    setExtracting(false);
+    setIsExtracting(false);
     setError(null);
     setExtractedWords([]);
     setSelectedIndices(new Set());
-    setSaved(false);
+    setIsSaved(false);
   }, []);
 
   function handleClose() {
-    if (extracting) return;
+    if (isExtracting) return;
     reset();
     onClose();
   }
@@ -52,7 +52,7 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
     setImageFile(file);
     setError(null);
     setExtractedWords([]);
-    setSaved(false);
+    setIsSaved(false);
     const reader = new FileReader();
     reader.onload = () => setImagePreview(reader.result as string);
     reader.readAsDataURL(file);
@@ -60,7 +60,7 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
 
   async function handleExtract() {
     if (!imageFile) return;
-    setExtracting(true);
+    setIsExtracting(true);
     setError(null);
     try {
       const words = await extractWordsFromPhoto(imageFile);
@@ -73,7 +73,7 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
     } catch (err) {
       setError(err instanceof Error ? err.message : '识别失败');
     } finally {
-      setExtracting(false);
+      setIsExtracting(false);
     }
   }
 
@@ -112,7 +112,7 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
       void store.fetchDictionaryRecord(w.word);
     }
 
-    setSaved(true);
+    setIsSaved(true);
   }
 
   // Phase detection
@@ -127,7 +127,7 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[60] flex items-end justify-center bg-black/40 sm:items-center"
           onClick={(e) =>
-            !extracting && e.target === e.currentTarget && handleClose()
+            !isExtracting && e.target === e.currentTarget && handleClose()
           }
         >
           <motion.div
@@ -139,12 +139,12 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
             {/* Header */}
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-bold text-slate-900">
-                {saved ? '保存成功' : hasExtracted ? '识别结果' : '拍照识词'}
+                {isSaved ? '保存成功' : hasExtracted ? '识别结果' : '拍照识词'}
               </h2>
               <Button
                 variant="ghost"
                 onClick={handleClose}
-                disabled={extracting}
+                disabled={isExtracting}
                 className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <X size={20} />
@@ -152,7 +152,7 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
             </div>
 
             {/* Success State */}
-            {saved ? (
+            {isSaved ? (
               <div className="flex flex-col items-center gap-3 py-8">
                 <CheckCircle2 size={48} className="text-emerald-500" />
                 <p className="text-sm font-semibold text-slate-700">
@@ -254,7 +254,7 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
                           setImagePreview(null);
                           setError(null);
                         }}
-                        disabled={extracting}
+                        disabled={isExtracting}
                         className="absolute top-2 right-2 rounded-full bg-black/50 p-1.5 text-white hover:bg-black/70 disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         <X size={14} />
@@ -288,10 +288,10 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
 
                 <Button
                   onClick={handleExtract}
-                  disabled={!imageFile || extracting}
+                  disabled={!imageFile || isExtracting}
                   className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-200 transition-all hover:bg-emerald-700 disabled:opacity-50 disabled:shadow-none"
                 >
-                  {extracting ? (
+                  {isExtracting ? (
                     <>
                       <Loader2 size={18} className="animate-spin" />
                       AI 识别中...
@@ -305,7 +305,7 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
                 </Button>
               </>
             )}
-            {extracting && (
+            {isExtracting && (
               <div className="absolute inset-0 z-10 flex items-center justify-center rounded-t-3xl bg-white/70 backdrop-blur-[1px] sm:rounded-3xl">
                 <div className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow">
                   <Loader2 size={16} className="animate-spin" />

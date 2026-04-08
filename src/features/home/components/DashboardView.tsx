@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'motion/react';
+import { Button } from '@/components/ui/button';
 import { useUserStore } from '@/store/useUserStore';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
 import { useReviewWords } from '@/hooks/useReviewWords';
@@ -166,15 +167,15 @@ export function DashboardView() {
           </div>
           <div className="flex items-center gap-2">
             {!isStandalone && (
-              <button
-                type="button"
+              <Button
+                variant="outline"
                 onClick={handleInstall}
                 className="flex h-10 items-center justify-center gap-1.5 rounded-full border border-emerald-100 bg-emerald-50 px-3 text-xs font-bold text-emerald-600 transition-colors hover:bg-emerald-100"
                 title={installTitle}
               >
                 <Download size={14} />
                 {installLabel}
-              </button>
+              </Button>
             )}
           </div>
         </div>
@@ -442,16 +443,15 @@ export function DashboardView() {
             </p>
             <div className="flex justify-end gap-2">
               {installDialog.showConfirm && (
-                <button
-                  type="button"
+                <Button
+                  variant="outline"
                   onClick={closeInstallDialog}
                   className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50"
                 >
                   取消
-                </button>
+                </Button>
               )}
-              <button
-                type="button"
+              <Button
                 onClick={
                   installDialog.showConfirm
                     ? confirmInstall
@@ -460,7 +460,7 @@ export function DashboardView() {
                 className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700"
               >
                 {installDialog.showConfirm ? '确认安装' : '知道了'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

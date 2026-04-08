@@ -15,6 +15,7 @@ import {
   ChevronUp,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Button } from '@/components/ui/button';
 import { GradeScoreCard } from './GradeScoreCard';
 import type { WritingGrade, GradingCriteriaDimension } from '@/types/writing';
 
@@ -37,7 +38,8 @@ function CollapsibleSection({
   const [open, setOpen] = useState(defaultOpen);
   return (
     <div className="rounded-2xl border border-slate-100 bg-white shadow-sm">
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setOpen(!open)}
         className="flex w-full items-center justify-between p-4"
       >
@@ -50,7 +52,7 @@ function CollapsibleSection({
         ) : (
           <ChevronDown size={16} className="text-slate-400" />
         )}
-      </button>
+      </Button>
       <AnimatePresence>
         {open && (
           <motion.div

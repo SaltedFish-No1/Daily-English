@@ -11,6 +11,7 @@ import { normalizeDictionaryQuery } from '@/lib/dictionary';
 import { DictionaryEntry, DictionaryMeaning } from '@/types/dictionary';
 import { DictionaryCacheRecord } from '@/types/dictionary';
 import { X, Volume2, Bookmark, BookmarkCheck } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface DictionaryContentProps {
   queryWord: string;
@@ -108,13 +109,12 @@ export const DictionaryContent: React.FC<DictionaryContentProps> = ({
           <h4 className="font-bold text-slate-700">查询失败</h4>
           <p className="text-sm text-slate-500">请检查网络连接后重试</p>
         </div>
-        <button
-          type="button"
+        <Button
           onClick={onRetry}
           className="mt-2 rounded-xl bg-slate-900 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-slate-800 active:scale-95"
         >
           重新查询
-        </button>
+        </Button>
       </div>
     );
   }
@@ -132,13 +132,13 @@ export const DictionaryContent: React.FC<DictionaryContentProps> = ({
             <span className="font-bold">&quot;{queryWord}&quot;</span>
           </p>
         </div>
-        <button
-          type="button"
+        <Button
+          variant="outline"
           onClick={onRetry}
           className="mt-2 rounded-xl border border-slate-200 bg-white px-6 py-2.5 text-sm font-bold text-slate-600 transition-colors hover:bg-slate-50 active:scale-95"
         >
           重试
-        </button>
+        </Button>
       </div>
     );
   }
@@ -152,9 +152,9 @@ export const DictionaryContent: React.FC<DictionaryContentProps> = ({
               {primaryEntry.word}
             </h3>
             <div className="flex shrink-0 items-center gap-2 lg:gap-3">
-              <button
+              <Button
+                variant="ghost"
                 onClick={onSave}
-                type="button"
                 title={isSavedAtCurrentPoint ? '取消收藏' : '收藏'}
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-emerald-100 hover:text-emerald-600 active:scale-95 lg:h-12 lg:w-12"
               >
@@ -163,15 +163,16 @@ export const DictionaryContent: React.FC<DictionaryContentProps> = ({
                 ) : (
                   <Bookmark size={22} />
                 )}
-              </button>
+              </Button>
               {speechEnabled && (
-                <button
+                <Button
+                  variant="ghost"
                   onClick={onSpeak}
                   title="播放发音"
                   className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 transition-colors hover:bg-emerald-200 active:scale-95 lg:h-12 lg:w-12"
                 >
                   <Volume2 size={22} />
-                </button>
+                </Button>
               )}
             </div>
           </div>
@@ -209,9 +210,9 @@ export const DictionaryContent: React.FC<DictionaryContentProps> = ({
             </div>
             <div className="flex flex-wrap gap-2.5">
               {primaryEntry.phonetics.map((phonetic, phoneticIndex) => (
-                <button
+                <Button
                   key={`${phonetic.text ?? 'phonetic'}-${phoneticIndex}`}
-                  type="button"
+                  variant="ghost"
                   onClick={() => {
                     if (phonetic.audio) {
                       const audio = new Audio(phonetic.audio);
@@ -229,7 +230,7 @@ export const DictionaryContent: React.FC<DictionaryContentProps> = ({
                     className="text-slate-400 group-hover:text-emerald-600"
                   />
                   <span>{phonetic.text || 'Play'}</span>
-                </button>
+                </Button>
               ))}
             </div>
           </div>

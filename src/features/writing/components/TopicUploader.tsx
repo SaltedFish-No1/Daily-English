@@ -24,6 +24,8 @@ import {
 import type { GradingCriteria, WritingTopic } from '@/types/writing';
 import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 type InputMode = 'image' | 'manual';
 
@@ -34,15 +36,15 @@ interface TopicUploaderProps {
 
 export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
   const [criteria, setCriteria] = useState<GradingCriteria[]>([]);
-  const [criteriaLoading, setCriteriaLoading] = useState(true);
+  const [isCriteriaLoading, setIsCriteriaLoading] = useState(true);
   const [selectedCriteria, setSelectedCriteria] = useState('');
   const [inputMode, setInputMode] = useState<InputMode>('manual');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [manualTitle, setManualTitle] = useState('');
   const [manualPrompt, setManualPrompt] = useState('');
-  const [uploading, setUploading] = useState(false);
-  const [parsing, setParsing] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isParsing, setIsParsing] = useState(false);
   const [parsedData, setParsedData] = useState<{
     imageUrl: string;
     title: string;
@@ -62,7 +64,7 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
         setError('评分标准加载失败，请刷新重试');
       })
       .finally(() => {
-        setCriteriaLoading(false);
+        setIsCriteriaLoading(false);
       });
   }, []);
 
@@ -78,8 +80,8 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
 
   const canSubmit =
     selectedCriteria &&
-    !uploading &&
-    !parsing &&
+    !isUploading &&
+    !isParsing &&
     (inputMode === 'image'
       ? parsedData
         ? parsedData.writingPrompt.trim().length > 0
@@ -92,7 +94,7 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
 
     if (inputMode === 'image' && !parsedData && imageFile) {
       // Step 1: Parse image → show extracted text for review
-      setParsing(true);
+      setIsParsing(true);
       try {
         const { imageUrl, extraction } = await parseTopicImage(imageFile);
         setParsedData({
@@ -104,13 +106,13 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
       } catch (err) {
         setError(err instanceof Error ? err.message : '图片识别失败');
       } finally {
-        setParsing(false);
+        setIsParsing(false);
       }
       return;
     }
 
     // Step 2 (image confirmed) or manual mode: save to DB
-    setUploading(true);
+    setIsUploading(true);
     try {
       let topic: WritingTopic;
       if (inputMode === 'image' && parsedData) {
@@ -132,7 +134,7 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
     } catch (err) {
       setError(err instanceof Error ? err.message : '创建失败');
     } finally {
-      setUploading(false);
+      setIsUploading(false);
     }
   }
 
@@ -169,10 +171,10 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
           <select
             value={selectedCriteria}
             onChange={(e) => setSelectedCriteria(e.target.value)}
-            disabled={criteriaLoading}
+            disabled={isCriteriaLoading}
             className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 pr-9 text-sm text-slate-900 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100 disabled:opacity-50"
           >
-            {criteriaLoading && <option value="">加载中...</option>}
+            {isCriteriaLoading && <option value="">加载中...</option>}
             {criteria.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.label}
@@ -240,7 +242,7 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
                     <label className="mb-1 block text-xs font-semibold text-slate-500">
                       题目标题（选填）
                     </label>
-                    <input
+                    <Input
                       value={parsedData.title}
                       onChange={(e) =>
                         setParsedData({ ...parsedData, title: e.target.value })
@@ -253,7 +255,7 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
                     <label className="mb-1 block text-xs font-semibold text-slate-500">
                       写作题目内容
                     </label>
-                    <textarea
+                    <Textarea
                       value={parsedData.writingPrompt}
                       onChange={(e) =>
                         setParsedData({
@@ -270,7 +272,7 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
                     <label className="mb-1 block text-xs font-semibold text-slate-500">
                       字数要求（选填）
                     </label>
-                    <input
+                    <Input
                       type="number"
                       value={parsedData.wordLimit ?? ''}
                       onChange={(e) =>
@@ -356,7 +358,7 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
                 <label className="mb-1 block text-xs font-semibold text-slate-500">
                   题目标题（选填）
                 </label>
-                <input
+                <Input
                   value={manualTitle}
                   onChange={(e) => setManualTitle(e.target.value)}
                   placeholder="例如：IELTS Task 2 - Education"
@@ -367,7 +369,7 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
                 <label className="mb-1 block text-xs font-semibold text-slate-500">
                   写作题目内容
                 </label>
-                <textarea
+                <Textarea
                   value={manualPrompt}
                   onChange={(e) => setManualPrompt(e.target.value)}
                   placeholder="请输入完整的写作题目要求..."
@@ -388,12 +390,12 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
           disabled={!canSubmit}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 py-3 text-sm font-bold text-white shadow-lg shadow-violet-200 transition-all hover:bg-violet-700 disabled:opacity-50 disabled:shadow-none"
         >
-          {parsing ? (
+          {isParsing ? (
             <>
               <Loader2 size={18} className="animate-spin" />
               AI 识别中...
             </>
-          ) : uploading ? (
+          ) : isUploading ? (
             <>
               <Loader2 size={18} className="animate-spin" />
               创建中...

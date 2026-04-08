@@ -7,6 +7,7 @@
 
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { Button } from '@/components/ui/button';
 import type { OAuthProvider } from '@/types/auth';
 
 const providerConfig: Record<
@@ -85,9 +86,9 @@ export const OAuthButtons: React.FC = () => {
         {providers.map((provider) => {
           const config = providerConfig[provider];
           return (
-            <button
+            <Button
               key={provider}
-              type="button"
+              variant="outline"
               disabled={loading !== null}
               onClick={() => handleOAuthLogin(provider)}
               className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 transition-colors hover:border-emerald-200 hover:bg-emerald-50 disabled:opacity-50"
@@ -98,7 +99,7 @@ export const OAuthButtons: React.FC = () => {
                 config.icon
               )}
               {config.label}
-            </button>
+            </Button>
           );
         })}
       </div>
