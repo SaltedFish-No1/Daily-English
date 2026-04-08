@@ -8,6 +8,7 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { toast } from 'sonner';
 import { resetPasswordWithToken } from '@/features/auth/lib/authApi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -55,11 +56,12 @@ export function ResetPasswordView() {
       password
     );
     if (resetError) {
-      setError(resetError);
+      toast.error(resetError);
       setIsLoading(false);
       return;
     }
 
+    toast.success('密码重置成功，即将跳转登录页');
     setIsSuccess(true);
     setIsLoading(false);
   }, [email, token, password, confirmPassword]);

@@ -27,6 +27,7 @@ import {
 import { useLearningStats } from '@/hooks/useLearningStats';
 import { useReviewWords } from '@/hooks/useReviewWords';
 import { useReviewLessonsQuery } from '@/features/reading/hooks/useReviewLessonsQuery';
+import { StatsCardSkeleton } from '@/components/skeletons/StatsCardSkeleton';
 
 interface ReadingViewProps {
   lessons: LessonListItem[];
@@ -42,7 +43,8 @@ export const ReadingView: React.FC<ReadingViewProps> = ({ lessons }) => {
   const stats = useLearningStats();
   const { dueCount, dueWords } = useReviewWords();
 
-  const { data: reviewLessons = [] } = useReviewLessonsQuery();
+  const { data: reviewLessons = [], isPending: isReviewPending } =
+    useReviewLessonsQuery();
 
   const [difficultyGuide, setDifficultyGuide] = useState<DifficultyGuideState>({
     open: false,
@@ -180,7 +182,19 @@ export const ReadingView: React.FC<ReadingViewProps> = ({ lessons }) => {
         )}
 
         {/* Review History */}
-        {reviewLessons.length > 0 && (
+        {isReviewPending ? (
+          <section className="mb-8">
+            <div className="mb-4 flex items-center gap-2">
+              <History size={16} className="text-slate-500" />
+              <h2 className="text-sm font-bold tracking-widest text-slate-500 uppercase">
+                复习文章历史
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <StatsCardSkeleton count={3} />
+            </div>
+          </section>
+        ) : reviewLessons.length > 0 ? (
           <section className="mb-8">
             <div className="mb-4 flex items-center gap-2">
               <History size={16} className="text-slate-500" />
@@ -238,7 +252,7 @@ export const ReadingView: React.FC<ReadingViewProps> = ({ lessons }) => {
               })}
             </div>
           </section>
-        )}
+        ) : null}
 
         {/* Lesson Cards */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3">

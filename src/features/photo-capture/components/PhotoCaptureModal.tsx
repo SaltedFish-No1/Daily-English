@@ -6,6 +6,7 @@
  */
 import { useState, useRef, useCallback } from 'react';
 import { Camera, Upload, Loader2, X, Check, CheckCircle2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'motion/react';
 import { extractWordsFromPhoto } from '@/features/photo-capture/lib/photoCaptureApi';
 import { PHOTO_CAPTURE_PREFIX } from '@/lib/photo-capture';
@@ -22,7 +23,6 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isExtracting, setIsExtracting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [extractedWords, setExtractedWords] = useState<ExtractedWord[]>([]);
   const [selectedIndices, setSelectedIndices] = useState<Set<number>>(
     new Set()
@@ -34,7 +34,6 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
     setImageFile(null);
     setImagePreview(null);
     setIsExtracting(false);
-    setError(null);
     setExtractedWords([]);
     setSelectedIndices(new Set());
     setIsSaved(false);
@@ -50,7 +49,6 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
     const file = e.target.files?.[0];
     if (!file) return;
     setImageFile(file);
-    setError(null);
     setExtractedWords([]);
     setIsSaved(false);
     const reader = new FileReader();
@@ -61,17 +59,16 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
   async function handleExtract() {
     if (!imageFile) return;
     setIsExtracting(true);
-    setError(null);
     try {
       const words = await extractWordsFromPhoto(imageFile);
       if (words.length === 0) {
-        setError('未识别到任何英文单词，请尝试更清晰的图片');
+        toast.error('未识别到任何英文单词，请尝试更清晰的图片');
         return;
       }
       setExtractedWords(words);
       setSelectedIndices(new Set(words.map((_, i) => i)));
     } catch (err) {
-      setError(err instanceof Error ? err.message : '识别失败');
+      toast.error(err instanceof Error ? err.message : '识别失败');
     } finally {
       setIsExtracting(false);
     }
@@ -113,6 +110,7 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
     }
 
     setIsSaved(true);
+    toast.success('已保存到词汇本');
   }
 
   // Phase detection
@@ -125,7 +123,7 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[60] flex items-end justify-center bg-black/40 sm:items-center"
+          className="fixed inset-0 z-[60] flex items-end justify-center bg-black/40 backdrop-blur-md sm:items-center"
           onClick={(e) =>
             !isExtracting && e.target === e.currentTarget && handleClose()
           }
@@ -252,7 +250,6 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
                         onClick={() => {
                           setImageFile(null);
                           setImagePreview(null);
-                          setError(null);
                         }}
                         disabled={isExtracting}
                         className="absolute top-2 right-2 rounded-full bg-black/50 p-1.5 text-white hover:bg-black/70 disabled:cursor-not-allowed disabled:opacity-40"
@@ -280,12 +277,6 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
                   )}
                 </AnimatePresence>
 
-                {error && (
-                  <p className="mb-3 text-center text-sm text-red-500">
-                    {error}
-                  </p>
-                )}
-
                 <Button
                   onClick={handleExtract}
                   disabled={!imageFile || isExtracting}
@@ -306,7 +297,7 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
               </>
             )}
             {isExtracting && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center rounded-t-3xl bg-white/70 backdrop-blur-[1px] sm:rounded-3xl">
+              <div className="absolute inset-0 z-10 flex items-center justify-center rounded-t-3xl bg-white/70 backdrop-blur-md sm:rounded-3xl">
                 <div className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow">
                   <Loader2 size={16} className="animate-spin" />
                   AI 识别中...

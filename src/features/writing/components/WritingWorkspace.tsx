@@ -18,6 +18,7 @@ import {
   History,
   Trophy,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'motion/react';
 import { WritingTimerDisplay, WritingTimerControls } from './WritingTimer';
 import { WritingEditor } from './WritingEditor';
@@ -31,6 +32,7 @@ import { useWritingCriteriaQuery } from '@/features/writing/hooks/useWritingCrit
 import { useSubmitEssayMutation } from '@/features/writing/hooks/useSubmitEssayMutation';
 import { gradeSubmission } from '@/features/writing/lib/writingApi';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import type {
   WritingTopic,
   WritingGrade,
@@ -89,7 +91,6 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
   const [grade, setGrade] = useState<WritingGrade | null>(null);
   const [partialGrade, setPartialGrade] =
     useState<Partial<WritingGradeResult> | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [isOcrModalOpen, setIsOcrModalOpen] = useState(false);
 
   // 初始化 currentTopic（仅在 topic 加载完成后）
@@ -106,7 +107,6 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
 
   const handleSubmit = useCallback(async () => {
     if (!topic || wordCount === 0) return;
-    setError(null);
     setPhase('submitting');
     stopTimer();
 
@@ -127,7 +127,7 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
       setPhase('report');
       clearDraft();
     } catch (err) {
-      setError(err instanceof Error ? err.message : '提交失败');
+      toast.error(err instanceof Error ? err.message : '提交失败');
       setPhase('writing');
     }
   }, [
@@ -154,15 +154,31 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
   const handleNewAttempt = useCallback(() => {
     setPhase('writing');
     setGrade(null);
-    setError(null);
     resetTimer();
     setCurrentTopic(topicId);
   }, [resetTimer, setCurrentTopic, topicId]);
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
-        <Loader2 size={32} className="animate-spin text-violet-400" />
+      <div className="min-h-screen bg-slate-50 px-5 pt-6">
+        <div className="mx-auto max-w-3xl">
+          {/* Header skeleton */}
+          <div className="mb-5 flex items-center gap-3">
+            <Skeleton className="h-8 w-8 rounded-lg" />
+            <Skeleton className="h-5 w-40" />
+          </div>
+          {/* Topic prompt skeleton */}
+          <div className="mb-4 rounded-2xl border border-violet-100 bg-violet-50/30 p-4">
+            <Skeleton className="mb-2 h-4 w-20" />
+            <Skeleton className="mb-1 h-3.5 w-full" />
+            <Skeleton className="mb-1 h-3.5 w-full" />
+            <Skeleton className="h-3.5 w-2/3" />
+          </div>
+          {/* Editor skeleton */}
+          <Skeleton className="mb-4 h-48 w-full rounded-2xl" />
+          {/* Submit button skeleton */}
+          <Skeleton className="h-12 w-full rounded-xl" />
+        </div>
       </div>
     );
   }
@@ -267,17 +283,26 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
               </div>
               <WritingEditor wordLimit={topic.wordLimit} />
 
-              {error && (
-                <p className="text-center text-sm text-red-500">{error}</p>
-              )}
-
               <Button
                 onClick={handleSubmit}
-                disabled={wordCount === 0}
+                disabled={
+                  wordCount === 0 ||
+                  submitMutation.isPending ||
+                  phase !== 'writing'
+                }
                 className="flex items-center justify-center gap-2 rounded-xl bg-violet-600 py-3 text-sm font-bold text-white shadow-lg shadow-violet-200 transition-all hover:bg-violet-700 disabled:opacity-50 disabled:shadow-none"
               >
-                <Send size={16} />
-                提交并 AI 批改
+                {submitMutation.isPending ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    提交中...
+                  </>
+                ) : (
+                  <>
+                    <Send size={16} />
+                    提交并 AI 批改
+                  </>
+                )}
               </Button>
             </motion.div>
           )}

@@ -4,6 +4,7 @@
  */
 import { Suspense } from 'react';
 import { IntroView } from '@/features/intro/components/IntroView';
+import { Spinner } from '@/components/ui/spinner';
 
 export const metadata = {
   title: '薄荷外语 — 每日沉浸式英语学习',
@@ -16,7 +17,7 @@ export default function IntroPage() {
     <Suspense
       fallback={
         <div className="flex min-h-screen items-center justify-center bg-slate-950">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-600 border-t-emerald-400" />
+          <Spinner size="md" />
         </div>
       }
     >

@@ -6,11 +6,12 @@
  */
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { PenLine, Plus, Loader2, ArrowLeft, BookOpen } from 'lucide-react';
+import { PenLine, Plus, ArrowLeft, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 import { TopicCard } from './TopicCard';
 import { TopicUploader } from './TopicUploader';
+import { TopicCardSkeleton } from '@/components/skeletons/TopicCardSkeleton';
 import { useWritingTopicsQuery } from '@/features/writing/hooks/useWritingTopicsQuery';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Button } from '@/components/ui/button';
@@ -95,10 +96,7 @@ export function WritingView() {
 
         {/* Topic list */}
         {isLoading ? (
-          <div className="flex flex-col items-center gap-3 py-16 text-slate-400">
-            <Loader2 size={32} className="animate-spin" />
-            <span className="text-sm">加载中...</span>
-          </div>
+          <TopicCardSkeleton count={3} />
         ) : topics.length === 0 ? (
           <div className="flex flex-col items-center gap-3 py-16 text-slate-400">
             <BookOpen size={40} className="text-slate-200" />

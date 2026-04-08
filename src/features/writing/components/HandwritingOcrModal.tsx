@@ -6,6 +6,7 @@
  */
 import { useState, useRef, useCallback } from 'react';
 import { Camera, Upload, Loader2, X, PenLine, RotateCcw } from 'lucide-react';
+import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from '@/components/ui/button';
 import { recognizeHandwriting } from '@/features/writing/lib/writingApi';
@@ -26,7 +27,6 @@ export function HandwritingOcrModal({
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isRecognizing, setIsRecognizing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [extractedText, setExtractedText] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -34,7 +34,6 @@ export function HandwritingOcrModal({
     setImageFile(null);
     setImagePreview(null);
     setIsRecognizing(false);
-    setError(null);
     setExtractedText(null);
   }, []);
 
@@ -48,7 +47,6 @@ export function HandwritingOcrModal({
     const file = e.target.files?.[0];
     if (!file) return;
     setImageFile(file);
-    setError(null);
     setExtractedText(null);
     const reader = new FileReader();
     reader.onload = () => setImagePreview(reader.result as string);
@@ -58,16 +56,15 @@ export function HandwritingOcrModal({
   async function handleRecognize() {
     if (!imageFile) return;
     setIsRecognizing(true);
-    setError(null);
     try {
       const text = await recognizeHandwriting(imageFile);
       if (!text.trim()) {
-        setError('未识别到任何英文文本，请尝试更清晰的图片');
+        toast.error('未识别到任何英文文本，请尝试更清晰的图片');
         return;
       }
       setExtractedText(text);
     } catch (err) {
-      setError(err instanceof Error ? err.message : '识别失败');
+      toast.error(err instanceof Error ? err.message : '识别失败');
     } finally {
       setIsRecognizing(false);
     }
@@ -83,7 +80,6 @@ export function HandwritingOcrModal({
   function handleRetry() {
     setImageFile(null);
     setImagePreview(null);
-    setError(null);
     setExtractedText(null);
   }
 
@@ -96,7 +92,7 @@ export function HandwritingOcrModal({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[60] flex items-end justify-center bg-black/40 sm:items-center"
+          className="fixed inset-0 z-[60] flex items-end justify-center bg-black/40 backdrop-blur-md sm:items-center"
           onClick={(e) =>
             !isRecognizing && e.target === e.currentTarget && handleClose()
           }
@@ -183,7 +179,6 @@ export function HandwritingOcrModal({
                         onClick={() => {
                           setImageFile(null);
                           setImagePreview(null);
-                          setError(null);
                         }}
                         disabled={isRecognizing}
                         className="absolute top-2 right-2 rounded-full bg-black/50 p-1.5 text-white hover:bg-black/70 disabled:cursor-not-allowed disabled:opacity-40"
@@ -211,12 +206,6 @@ export function HandwritingOcrModal({
                   )}
                 </AnimatePresence>
 
-                {error && (
-                  <p className="mb-3 text-center text-sm text-red-500">
-                    {error}
-                  </p>
-                )}
-
                 <Button
                   onClick={handleRecognize}
                   disabled={!imageFile || isRecognizing}
@@ -238,7 +227,7 @@ export function HandwritingOcrModal({
             )}
 
             {isRecognizing && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center rounded-t-3xl bg-white/70 backdrop-blur-[1px] sm:rounded-3xl">
+              <div className="absolute inset-0 z-10 flex items-center justify-center rounded-t-3xl bg-white/70 backdrop-blur-md sm:rounded-3xl">
                 <div className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow">
                   <Loader2 size={16} className="animate-spin" />
                   AI 识别中...

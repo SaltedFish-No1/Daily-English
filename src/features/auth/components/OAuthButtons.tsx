@@ -8,6 +8,7 @@
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import type { OAuthProvider } from '@/types/auth';
 
 const providerConfig: Record<
@@ -93,11 +94,7 @@ export const OAuthButtons: React.FC = () => {
               onClick={() => handleOAuthLogin(provider)}
               className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 transition-colors hover:border-emerald-200 hover:bg-emerald-50 disabled:opacity-50"
             >
-              {loading === provider ? (
-                <span className="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-emerald-600" />
-              ) : (
-                config.icon
-              )}
+              {loading === provider ? <Spinner size="sm" /> : config.icon}
               {config.label}
             </Button>
           );

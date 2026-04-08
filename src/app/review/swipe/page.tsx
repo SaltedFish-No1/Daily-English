@@ -10,6 +10,7 @@
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { SwipeReviewView } from '@/features/review/components/SwipeReviewView';
+import { Spinner } from '@/components/ui/spinner';
 
 function SwipeReviewContent() {
   const searchParams = useSearchParams();
@@ -47,7 +48,7 @@ export default function SwipeReviewPage() {
     <Suspense
       fallback={
         <div className="flex min-h-screen items-center justify-center bg-slate-50">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-200 border-t-emerald-600" />
+          <Spinner size="md" />
         </div>
       }
     >

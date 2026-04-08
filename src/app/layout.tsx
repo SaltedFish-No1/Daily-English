@@ -8,6 +8,7 @@ import './globals.css';
 import Providers from './providers';
 import { AppShell } from '@/components/AppShell';
 import { cn } from '@/lib/utils';
+import { Toaster } from 'sonner';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -76,6 +77,11 @@ export default function RootLayout({
         <Providers>
           <AppShell>{children}</AppShell>
         </Providers>
+        <Toaster
+          position="bottom-center"
+          className="lg:!top-4 lg:!right-4 lg:!bottom-auto lg:!left-auto"
+          toastOptions={{ duration: 3000 }}
+        />
       </body>
     </html>
   );

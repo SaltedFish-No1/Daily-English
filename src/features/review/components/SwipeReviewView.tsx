@@ -432,7 +432,8 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
           {/* Forgot (left swipe) */}
           <motion.button
             onClick={() => cardRef.current?.swipeLeft()}
-            className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-red-200 bg-white text-red-500 shadow-md transition-all hover:border-red-300 hover:bg-red-50"
+            disabled={isAnimating}
+            className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-red-200 bg-white text-red-500 shadow-md transition-all hover:border-red-300 hover:bg-red-50 disabled:opacity-30 disabled:hover:bg-white"
             whileTap={{ scale: 0.9 }}
           >
             <X size={28} strokeWidth={3} />
@@ -441,7 +442,8 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
           {/* Remembered (right swipe) */}
           <motion.button
             onClick={() => cardRef.current?.swipeRight()}
-            className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-emerald-200 bg-white text-emerald-500 shadow-md transition-all hover:border-emerald-300 hover:bg-emerald-50"
+            disabled={isAnimating}
+            className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-emerald-200 bg-white text-emerald-500 shadow-md transition-all hover:border-emerald-300 hover:bg-emerald-50 disabled:opacity-30 disabled:hover:bg-white"
             whileTap={{ scale: 0.9 }}
           >
             <Check size={28} strokeWidth={3} />

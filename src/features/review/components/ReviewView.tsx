@@ -9,6 +9,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { type GeneratedLesson } from '@/types/review';
 import { parsePartialJson } from 'ai';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { Sparkles, RefreshCw, ArrowLeft } from 'lucide-react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
@@ -85,9 +86,11 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
       router.replace(`/lessons/${data.lessonId}`);
     },
     onError: (err) => {
+      const message = err instanceof Error ? err.message : '生成失败，请重试';
+      toast.error(message);
       setState({
         status: 'error',
-        message: err instanceof Error ? err.message : '生成失败，请重试',
+        message,
       });
     },
   });

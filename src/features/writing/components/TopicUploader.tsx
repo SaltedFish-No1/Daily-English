@@ -15,6 +15,7 @@ import {
   Image as ImageIcon,
   Type,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   parseTopicImage,
@@ -51,7 +52,6 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
     writingPrompt: string;
     wordLimit: number | null;
   } | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -61,7 +61,7 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
         if (list.length > 0) setSelectedCriteria(list[0].id);
       })
       .catch(() => {
-        setError('评分标准加载失败，请刷新重试');
+        toast.error('评分标准加载失败，请刷新重试');
       })
       .finally(() => {
         setIsCriteriaLoading(false);
@@ -72,7 +72,6 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
     const file = e.target.files?.[0];
     if (!file) return;
     setImageFile(file);
-    setError(null);
     const reader = new FileReader();
     reader.onload = () => setImagePreview(reader.result as string);
     reader.readAsDataURL(file);
@@ -90,7 +89,6 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
 
   async function handleSubmit() {
     if (!canSubmit) return;
-    setError(null);
 
     if (inputMode === 'image' && !parsedData && imageFile) {
       // Step 1: Parse image → show extracted text for review
@@ -104,7 +102,7 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
           wordLimit: extraction.wordLimit,
         });
       } catch (err) {
-        setError(err instanceof Error ? err.message : '图片识别失败');
+        toast.error(err instanceof Error ? err.message : '图片识别失败');
       } finally {
         setIsParsing(false);
       }
@@ -130,9 +128,10 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
           writingPrompt: manualPrompt.trim(),
         });
       }
+      toast.success('题目创建成功');
       onTopicCreated(topic);
     } catch (err) {
-      setError(err instanceof Error ? err.message : '创建失败');
+      toast.error(err instanceof Error ? err.message : '创建失败');
     } finally {
       setIsUploading(false);
     }
@@ -380,10 +379,6 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
             </motion.div>
           )}
         </AnimatePresence>
-
-        {error && (
-          <p className="mb-3 text-center text-sm text-red-500">{error}</p>
-        )}
 
         <Button
           onClick={handleSubmit}

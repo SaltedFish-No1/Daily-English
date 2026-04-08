@@ -5,6 +5,7 @@
 
 import { Suspense } from 'react';
 import { ResetPasswordView } from '@/features/auth/components/ResetPasswordView';
+import { Spinner } from '@/components/ui/spinner';
 
 export default function ResetPasswordPage() {
   return (
@@ -12,7 +13,7 @@ export default function ResetPasswordPage() {
       fallback={
         <div className="flex min-h-screen items-center justify-center bg-slate-50">
           <div className="text-center">
-            <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-slate-300 border-t-emerald-600" />
+            <Spinner size="md" className="mx-auto mb-4" />
             <p className="text-sm font-bold text-slate-500">加载中...</p>
           </div>
         </div>

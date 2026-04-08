@@ -24,7 +24,9 @@ import {
   User,
   CircleCheckBig,
   Download,
+  Loader2,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import Link from 'next/link';
 import { useUserStore } from '@/store/useUserStore';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -164,6 +166,10 @@ export function ProfileView() {
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [nicknameDraft, setNicknameDraft] = useState(prefs.nickname);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  const [isSavingNickname, setIsSavingNickname] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const {
     isStandalone,
@@ -203,11 +209,15 @@ export function ProfileView() {
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
+      setIsUploading(true);
       try {
         const dataUrl = await compressImage(file);
         prefs.setAvatarUrl(dataUrl);
+        toast.success('头像更新成功');
       } catch {
-        console.error('Failed to process avatar image');
+        toast.error('头像更新失败');
+      } finally {
+        setIsUploading(false);
       }
       // reset so same file can be re-selected
       e.target.value = '';
@@ -217,23 +227,43 @@ export function ProfileView() {
 
   const handleNicknameSubmit = () => {
     const trimmed = nicknameDraft.trim();
-    if (trimmed) prefs.setNickname(trimmed);
-    else setNicknameDraft(prefs.nickname);
-    setIsEditingNickname(false);
+    setIsSavingNickname(true);
+    try {
+      if (trimmed) {
+        prefs.setNickname(trimmed);
+        toast.success('昵称已更新');
+      } else {
+        setNicknameDraft(prefs.nickname);
+      }
+    } finally {
+      setIsSavingNickname(false);
+      setIsEditingNickname(false);
+    }
   };
 
   const handleClearCache = () => {
     if (
       confirm('确定要清除词典缓存吗？共 ' + cacheCount + ' 条记录将被清除。')
     ) {
-      useUserStore.setState({ dictionaryCache: {} });
+      setIsClearing(true);
+      try {
+        useUserStore.setState({ dictionaryCache: {} });
+        toast.success('缓存已清除');
+      } finally {
+        setIsClearing(false);
+      }
     }
   };
 
   const handleSignOut = async () => {
     if (confirm('确定要退出登录吗？')) {
-      await signOut();
-      window.location.href = '/login';
+      setIsSigningOut(true);
+      try {
+        await signOut();
+        window.location.href = '/login';
+      } finally {
+        setIsSigningOut(false);
+      }
     }
   };
 
@@ -255,10 +285,13 @@ export function ProfileView() {
             <Button
               variant="ghost"
               onClick={() => fileInputRef.current?.click()}
-              className="group relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-emerald-50 ring-2 ring-emerald-200 transition-transform hover:scale-105 active:scale-95"
+              disabled={isUploading}
+              className="group relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-emerald-50 ring-2 ring-emerald-200 transition-transform hover:scale-105 active:scale-95 disabled:opacity-60"
               title="点击上传头像"
             >
-              {prefs.avatarUrl ? (
+              {isUploading ? (
+                <Loader2 size={24} className="animate-spin text-emerald-500" />
+              ) : prefs.avatarUrl ? (
                 <img
                   src={prefs.avatarUrl}
                   alt="头像"
@@ -267,9 +300,11 @@ export function ProfileView() {
               ) : (
                 <User size={28} className="text-emerald-400" />
               )}
-              <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
-                <Camera size={18} className="text-white" />
-              </div>
+              {!isUploading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
+                  <Camera size={18} className="text-white" />
+                </div>
+              )}
             </Button>
             <input
               ref={fileInputRef}
@@ -289,7 +324,8 @@ export function ProfileView() {
                   onKeyDown={(e) => e.key === 'Enter' && handleNicknameSubmit()}
                   maxLength={20}
                   autoFocus
-                  className="w-full rounded-lg border border-emerald-300 bg-emerald-50/50 px-2 py-1 text-base font-bold text-slate-900 outline-none focus:ring-2 focus:ring-emerald-400"
+                  disabled={isSavingNickname}
+                  className="w-full rounded-lg border border-emerald-300 bg-emerald-50/50 px-2 py-1 text-base font-bold text-slate-900 outline-none focus:ring-2 focus:ring-emerald-400 disabled:opacity-60"
                 />
               ) : (
                 <Button
@@ -483,10 +519,15 @@ export function ProfileView() {
             <Button
               variant="ghost"
               onClick={handleClearCache}
-              className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-slate-50"
+              disabled={isClearing}
+              className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-slate-50 disabled:opacity-50"
             >
               <span className="text-slate-400">
-                <Trash2 size={18} />
+                {isClearing ? (
+                  <Loader2 size={18} className="animate-spin" />
+                ) : (
+                  <Trash2 size={18} />
+                )}
               </span>
               <span className="flex-1 text-sm font-medium text-slate-700">
                 清除词典缓存
@@ -513,13 +554,18 @@ export function ProfileView() {
               <Button
                 variant="destructive"
                 onClick={handleSignOut}
-                className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-red-50"
+                disabled={isSigningOut}
+                className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-red-50 disabled:opacity-50"
               >
                 <span className="text-red-400">
-                  <LogOut size={18} />
+                  {isSigningOut ? (
+                    <Loader2 size={18} className="animate-spin" />
+                  ) : (
+                    <LogOut size={18} />
+                  )}
                 </span>
                 <span className="flex-1 text-sm font-medium text-red-600">
-                  退出登录
+                  {isSigningOut ? '退出中...' : '退出登录'}
                 </span>
               </Button>
             )}

@@ -114,7 +114,7 @@ export function AboutView() {
   return (
     <div className="bg-background/90 min-h-screen pb-[calc(7rem+env(safe-area-inset-bottom))]">
       {/* Header */}
-      <header className="bg-background/85 sticky top-0 z-30 flex items-center gap-3 border-b px-4 py-3.5 backdrop-blur-md">
+      <header className="sticky top-0 z-30 flex items-center gap-3 border-b bg-white/70 px-4 py-3.5 backdrop-blur-md">
         <Link
           href="/profile"
           className="hover:bg-muted flex h-8 w-8 items-center justify-center rounded-full transition-colors"

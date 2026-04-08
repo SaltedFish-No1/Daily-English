@@ -4,7 +4,7 @@
  * @author SaltedFish-No1
  * @description 首页仪表盘视图，展示学习进度统计、每日推荐课程及快捷入口。
  */
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import {
   BookOpen,
   BookMarked,
@@ -19,6 +19,8 @@ import {
 import Link from 'next/link';
 import { motion } from 'motion/react';
 import { Button } from '@/components/ui/button';
+import { DashboardSkeleton } from '@/components/skeletons/DashboardSkeleton';
+import { useHydrated } from '@/hooks/useHydrated';
 import { useUserStore } from '@/store/useUserStore';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
 import { useReviewWords } from '@/hooks/useReviewWords';
@@ -35,6 +37,9 @@ function getGreeting(): string {
 export function DashboardView() {
   const { savedWords, history, wordReviewStates } = useUserStore();
   const { dueCount, dueWords } = useReviewWords();
+  const isHydrated = useHydrated();
+
+  const [isInstallClicked, setIsInstallClicked] = useState(false);
   const {
     isStandalone,
     installDialog,
@@ -44,6 +49,11 @@ export function DashboardView() {
     closeInstallDialog,
     confirmInstall,
   } = usePWAInstall();
+
+  const handleInstallClick = useCallback(() => {
+    setIsInstallClicked(true);
+    handleInstall();
+  }, [handleInstall]);
 
   // Word stats for dashboard cards
   const wordStats = useMemo(() => {
@@ -152,6 +162,10 @@ export function DashboardView() {
     },
   };
 
+  if (!isHydrated) {
+    return <DashboardSkeleton />;
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 pb-24 lg:pb-8">
       {/* Header */}
@@ -169,8 +183,9 @@ export function DashboardView() {
             {!isStandalone && (
               <Button
                 variant="outline"
-                onClick={handleInstall}
-                className="flex h-10 items-center justify-center gap-1.5 rounded-full border border-emerald-100 bg-emerald-50 px-3 text-xs font-bold text-emerald-600 transition-colors hover:bg-emerald-100"
+                onClick={handleInstallClick}
+                disabled={isInstallClicked}
+                className="flex h-10 items-center justify-center gap-1.5 rounded-full border border-emerald-100 bg-emerald-50 px-3 text-xs font-bold text-emerald-600 transition-colors hover:bg-emerald-100 disabled:opacity-50"
                 title={installTitle}
               >
                 <Download size={14} />
