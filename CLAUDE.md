@@ -45,30 +45,58 @@ src/
 │   │   ├── tts/            # Text-to-speech
 │   │   ├── writing/        # Essay submission & AI grading
 │   │   └── photo-capture/  # Image upload/OCR
+│   ├── about/              # About page
+│   ├── auth/callback/      # Supabase OAuth callback
+│   ├── intro/              # Product intro (public)
+│   ├── learn/              # Learning center
 │   ├── lessons/[id]/       # Lesson detail page
-│   ├── vocab/              # Vocabulary library
-│   ├── reading/            # Reading practice
-│   ├── review/             # AI-generated review lessons
-│   ├── writing/[topicId]/  # Writing exercises
-│   ├── profile/            # User profile
 │   ├── login/              # Authentication pages
+│   ├── profile/            # User profile
+│   ├── reading/            # Reading practice
+│   ├── reset-password/     # Password reset
+│   ├── review/             # AI-generated review lessons
+│   ├── review/swipe/       # Swipe-based review interface
+│   ├── vocab/              # Vocabulary library
+│   ├── writing/[topicId]/  # Writing exercises
 │   └── providers.tsx       # React Query + Auth providers
 ├── components/             # Global UI components (AppShell, AppNavBar)
 ├── features/               # Feature-based modules
+│   ├── about/              # About page
 │   ├── auth/               # Authentication components & hooks
+│   ├── home/               # Dashboard, CEFR guide dialog
+│   ├── intro/              # Product intro page
+│   ├── learn/              # Learning center
 │   ├── lesson/             # Lesson article, quiz, vocab panel
-│   ├── vocab/              # Vocabulary management
+│   ├── photo-capture/      # Photo capture modal & API
+│   ├── profile/            # User profile
 │   ├── reading/            # Reading feature components
 │   ├── review/             # Review lesson components
+│   ├── vocab/              # Vocabulary management
 │   └── writing/            # Writing practice components
 ├── hooks/                  # Shared custom React hooks
 ├── lib/                    # Core utilities
-│   ├── ai.ts               # Centralized AI model config
-│   ├── supabase/           # Supabase client (browser & server)
-│   ├── auth-helper.ts      # Auth utilities
+│   ├── ai.ts               # AI model config
+│   ├── ai-middleware.ts     # AI logging middleware
 │   ├── api-auth.ts         # API route auth middleware
-│   ├── dictionary-quality.ts # Dictionary validation
+│   ├── auth-helper.ts      # Auth utilities
+│   ├── dictionary.ts       # Dictionary service
+│   ├── dictionary-fallback.ts # AI dictionary fallback
+│   ├── dictionary-quality.ts  # Dictionary validation
+│   ├── focusWords.ts       # Focus word utilities
+│   ├── lesson.ts           # Lesson utilities
+│   ├── lessons-db.ts       # Lesson DB queries
+│   ├── otp.ts              # OTP generation
+│   ├── resend.ts           # Email service (Resend)
 │   ├── spaced-repetition.ts  # Review scheduling algorithm
+│   ├── supabase.ts         # Supabase browser client
+│   ├── supabase-admin.ts   # Supabase admin client
+│   ├── supabase-middleware.ts # Supabase middleware client
+│   ├── supabase-rsc.ts     # Supabase RSC client
+│   ├── supabase-server.ts  # Supabase server client
+│   ├── token.ts            # Token utilities
+│   ├── tts-fallback.ts     # TTS fallback
+│   ├── utils.ts            # Shared utilities
+│   ├── env/                # Environment variable config
 │   └── email-templates/    # Email HTML templates
 ├── store/                  # Zustand stores
 ├── types/                  # TypeScript type definitions
@@ -124,17 +152,37 @@ Database init scripts are in `scripts/` (SQL files for table creation).
 ## API Routes
 
 ```
-GET    /api/lessons              # List lessons (with filters)
-GET    /api/lessons/[id]         # Lesson detail
-POST   /api/auth/send-otp        # Request email OTP
-POST   /api/auth/verify-otp      # Verify OTP
-POST   /api/auth/send-reset-link # Password reset email
-POST   /api/dictionary           # Word lookup
-GET    /api/tts                  # Text-to-speech audio
-POST   /api/writing/submit       # Submit essay
-POST   /api/writing/grade        # AI grading (streaming)
-POST   /api/review/generate      # AI review lesson (streaming)
-POST   /api/photo-capture        # Image upload
+# Auth
+POST   /api/auth/send-otp                  # Request email OTP
+POST   /api/auth/verify-otp                # Verify OTP
+POST   /api/auth/check-user                # Check user existence
+POST   /api/auth/send-reset-link           # Password reset email
+POST   /api/auth/reset-password-with-token # Reset password with token
+
+# Lessons
+GET    /api/lessons                         # List lessons (with filters)
+GET    /api/lessons/[id]                    # Lesson detail
+
+# Review
+POST   /api/review/generate                # AI review lesson (streaming)
+GET    /api/review/lessons                  # List review lessons
+GET    /api/review/lessons/[id]            # Review lesson detail
+POST   /api/review/save                    # Save review progress
+
+# Writing
+POST   /api/writing/submit                 # Submit essay
+POST   /api/writing/grade                  # AI grading (streaming)
+GET    /api/writing/topics                 # List writing topics
+GET    /api/writing/submissions            # List submissions
+POST   /api/writing/create-topic           # Create writing topic
+GET    /api/writing/criteria               # Get grading criteria
+POST   /api/writing/ocr                    # Image OCR for writing
+POST   /api/writing/parse-topic-image      # Parse topic from image
+
+# Utility
+POST   /api/dictionary                     # Word lookup
+GET    /api/tts                            # Text-to-speech audio
+POST   /api/photo-capture                  # Image upload
 ```
 
 ## Code Conventions
@@ -150,6 +198,7 @@ POST   /api/photo-capture        # Image upload
 - **Project Rules**: All coding rules are defined in `.rules/` directory. Code MUST strictly follow these rules:
   - [`.rules/comment-rules.md`](.rules/comment-rules.md) — TypeScript 注释规范（Comment conventions）
   - [`.rules/state-management-rules.md`](.rules/state-management-rules.md) — 状态管理规范（State management rules）
+  - [`.rules/naming-rules.md`](.rules/naming-rules.md) — TypeScript 命名规范（Naming conventions）
 
 ## Environment Variables
 
@@ -192,3 +241,22 @@ Environment: Ubuntu, Node.js 20, pnpm 10 with dependency caching.
 - `SUPABASE_SERVICE_ROLE_KEY` is server-only — never expose to client
 - Auth middleware in `src/middleware.ts` protects routes
 - Public paths: `/login`, `/intro`, `/reset-password`
+
+## AI-Assisted Development (Claude Code)
+
+This project uses [Claude Code](https://claude.ai/code) (Anthropic's Harness AI) as the primary AI-assisted development tool.
+
+### Project Memory
+
+This `CLAUDE.md` file serves as Claude Code's project memory — it is automatically loaded at the start of every session to provide full project context. Keep it up to date when architecture, commands, conventions, or dependencies change.
+
+### Project Rules
+
+The `.rules/` directory contains coding conventions that Claude Code must strictly follow during development. New rule files can be added to `.rules/` and referenced from the "Code Conventions" section above.
+
+### Development Workflow
+
+- Feature branches use the `claude/` prefix for AI-assisted work (e.g., `claude/fix-lesson-card-error`)
+- Pre-commit hooks (Husky + lint-staged) run automatically on all commits, including those made by Claude Code
+- Run `pnpm test` and `pnpm lint` before pushing to ensure CI passes
+- The `.claude/` directory stores session-local settings and hooks — it is gitignored by default
