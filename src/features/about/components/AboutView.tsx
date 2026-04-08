@@ -1,68 +1,55 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+/**
+ * @author SaltedFish-No1
+ * @description 关于页组件文件：展示应用品牌信息、仓库元数据、作者信息与源码入口。
+ *   页面包含彩蛋交互（连续点击叶子图标触发粒子动画）。
+ */
+
+import { useCallback, useRef, useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ChevronRight, ExternalLink, Leaf } from 'lucide-react';
 
-interface RepoData {
-  pushedAt: string;
+/**
+ * @description 关于页展示元数据结构。
+ *   用于渲染「版本」「许可协议」与作者卡片信息。
+ */
+interface RepoMeta {
+  /** 当前版本号 */
+  version: string;
+  /** SPDX 许可标识，缺失时展示默认值 */
   license: string;
+  /** 作者头像 URL */
   ownerAvatar: string;
+  /** 作者 GitHub 用户名 */
   ownerLogin: string;
+  /** 作者 GitHub 主页链接 */
   ownerUrl: string;
 }
 
-const FALLBACK: RepoData = {
-  pushedAt: '2026-04-01',
+/** 关于页静态展示数据 */
+const FALLBACK: RepoMeta = {
+  version: process.env.NEXT_PUBLIC_APP_VERSION ?? 'v0.1.0',
   license: 'All Rights Reserved',
   ownerAvatar: 'https://avatars.githubusercontent.com/u/138401553',
   ownerLogin: 'SaltedFish-No1',
   ownerUrl: 'https://github.com/SaltedFish-No1',
 };
 
+/** 彩蛋粒子数量 */
 const PARTICLE_COUNT = 10;
+type Particle = {
+  id: number;
+  x: number;
+  y: number;
+  rotate: number;
+  scale: number;
+  delay: number;
+};
 
-export function AboutView() {
-  const [repo, setRepo] = useState<RepoData>(FALLBACK);
-  const [tapCount, setTapCount] = useState(0);
-  const [easterEgg, setEasterEgg] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    fetch('https://api.github.com/repos/SaltedFish-No1/Daily-English')
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((data) => {
-        setRepo({
-          pushedAt: data.pushed_at?.slice(0, 10) ?? FALLBACK.pushedAt,
-          license: data.license?.spdx_id || FALLBACK.license,
-          ownerAvatar: data.owner?.avatar_url ?? FALLBACK.ownerAvatar,
-          ownerLogin: data.owner?.login ?? FALLBACK.ownerLogin,
-          ownerUrl: data.owner?.html_url ?? FALLBACK.ownerUrl,
-        });
-      })
-      .catch(() => {});
-  }, []);
-
-  const handleLeafTap = useCallback(() => {
-    if (easterEgg) return;
-
-    if (timerRef.current) clearTimeout(timerRef.current);
-
-    setTapCount((prev) => {
-      const next = prev + 1;
-      if (next >= 5) {
-        setEasterEgg(true);
-        setTimeout(() => setEasterEgg(false), 2500);
-        return 0;
-      }
-      return next;
-    });
-
-    timerRef.current = setTimeout(() => setTapCount(0), 400);
-  }, [easterEgg]);
-
-  const particles = Array.from({ length: PARTICLE_COUNT }, (_, i) => {
+const createParticles = (): Particle[] =>
+  Array.from({ length: PARTICLE_COUNT }, (_, i) => {
     const angle = (360 / PARTICLE_COUNT) * i;
     const rad = (angle * Math.PI) / 180;
     const distance = 60 + Math.random() * 40;
@@ -76,9 +63,45 @@ export function AboutView() {
     };
   });
 
+/**
+ * @author SaltedFish-No1
+ * @description 关于页主视图组件：负责数据拉取、彩蛋交互与页面内容渲染。
+ *
+ * @param props 无入参（页面级组件）
+ * @return 关于页面 UI
+ */
+export function AboutView() {
+  const repo = FALLBACK;
+  const [, setTapCount] = useState(0);
+  const [easterEgg, setEasterEgg] = useState(false);
+  const [particles, setParticles] = useState<Particle[]>([]);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  /**
+   * @description 处理叶子图标点击：在短时间内累计点击次数，达到阈值触发彩蛋动画。
+   * @returns void
+   */
+  const handleLeafTap = useCallback(() => {
+    if (easterEgg) return;
+
+    if (timerRef.current) clearTimeout(timerRef.current);
+
+    setTapCount((prev) => {
+      const next = prev + 1;
+      if (next >= 5) {
+        setParticles(createParticles());
+        setEasterEgg(true);
+        setTimeout(() => setEasterEgg(false), 2500);
+        return 0;
+      }
+      return next;
+    });
+
+    timerRef.current = setTimeout(() => setTapCount(0), 400);
+  }, [easterEgg]);
+
   const infoItems = [
-    { label: '版本', value: 'v0.1.0' },
-    { label: '最后更新', value: repo.pushedAt },
+    { label: '版本', value: repo.version },
     { label: '许可协议', value: repo.license },
   ];
 
@@ -107,7 +130,10 @@ export function AboutView() {
         {/* App Identity */}
         <motion.section
           className="flex flex-col items-center pt-12 pb-8"
-          variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}
+          variants={{
+            hidden: { opacity: 0, y: 16 },
+            visible: { opacity: 1, y: 0 },
+          }}
         >
           <div className="relative">
             <button
@@ -119,7 +145,11 @@ export function AboutView() {
                 animate={easterEgg ? { rotate: 360, scale: [1, 1.3, 1] } : {}}
                 transition={{ duration: 0.8, ease: 'easeInOut' }}
               >
-                <Leaf size={36} className="text-emerald-500" strokeWidth={1.8} />
+                <Leaf
+                  size={36}
+                  className="text-emerald-500"
+                  strokeWidth={1.8}
+                />
               </motion.div>
             </button>
 
@@ -164,7 +194,10 @@ export function AboutView() {
         {/* Info Card */}
         <motion.div
           className="overflow-hidden rounded-2xl bg-white shadow-sm"
-          variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}
+          variants={{
+            hidden: { opacity: 0, y: 16 },
+            visible: { opacity: 1, y: 0 },
+          }}
         >
           {infoItems.map((item, idx) => (
             <div
@@ -184,7 +217,10 @@ export function AboutView() {
         {/* Author Card */}
         <motion.div
           className="mt-4"
-          variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}
+          variants={{
+            hidden: { opacity: 0, y: 16 },
+            visible: { opacity: 1, y: 0 },
+          }}
         >
           <a
             href={repo.ownerUrl}
@@ -210,7 +246,10 @@ export function AboutView() {
         {/* Source Code Link */}
         <motion.div
           className="mt-4"
-          variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}
+          variants={{
+            hidden: { opacity: 0, y: 16 },
+            visible: { opacity: 1, y: 0 },
+          }}
         >
           <a
             href="https://github.com/SaltedFish-No1/Daily-English"

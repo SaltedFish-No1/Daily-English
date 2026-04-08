@@ -1,8 +1,11 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Merriweather } from 'next/font/google';
+import { Inter, Merriweather, Geist } from 'next/font/google';
 import './globals.css';
 import Providers from './providers';
 import { AppShell } from '@/components/AppShell';
+import { cn } from '@/lib/utils';
+
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 const inter = Inter({
   subsets: ['latin'],
@@ -56,7 +59,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" className={`${inter.variable} ${merriweather.variable}`}>
+    <html
+      lang="zh-CN"
+      className={cn(
+        inter.variable,
+        merriweather.variable,
+        'font-sans',
+        geist.variable
+      )}
+    >
       <body className="antialiased">
         <Providers>
           <AppShell>{children}</AppShell>
