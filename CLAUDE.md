@@ -109,26 +109,18 @@ scripts/                    # DB seed & migration scripts
 ## Architecture Patterns
 
 ### Feature-Based Modules
-Each feature in `src/features/` is self-contained with its own components, hooks, and utilities. Keep related code together rather than splitting by type.
+Each feature in `src/features/` is self-contained with its own components, hooks, and utilities.
+> Full rules: `.rules/structure-rules.md` §2 "Feature 模块结构"
 
 ### Server vs Client Components
-- Pages and layouts are Server Components by default
-- Client components must be explicitly marked with `'use client'`
+- Pages are Server Components by default; client components need `'use client'`
 - API routes handle server-side logic (AI calls, DB mutations)
+- Pages must be thin shells delegating to feature View components
+> Full rules: `.rules/structure-rules.md` §6 "页面路由组织"
 
-### State Management Layers
-| Store | Persisted | Purpose |
-|-------|-----------|---------|
-| `useAuthStore` | No | Session, auth token, user ID |
-| `useUserStore` | localStorage | Vocab, dictionary cache, quiz history |
-| `useLessonStore` | No | Tab state, quiz progress |
-| `usePreferenceStore` | localStorage | User settings |
-| `useWritingStore` | No | Writing editor state |
-
-### Data Sync Strategy
-- **Unauthenticated**: localStorage only
-- **Authenticated**: Supabase sync via `useDataSync` hook
-- On login, localStorage data migrates to Supabase
+### State Management
+Zustand manages client/UI state; TanStack Query manages server/async data.
+> Full rules: `.rules/state-management-rules.md` — covers store design, persistence, cloud sync, query patterns, and state ownership table.
 
 ### AI Model Configuration (`src/lib/ai.ts`)
 - `modelFast` (gpt-5.4-mini): Dictionary fallback, quick parsing
@@ -185,22 +177,28 @@ GET    /api/tts                            # Text-to-speech audio
 POST   /api/photo-capture                  # Image upload
 ```
 
+## Coding Rules Index
+
+Detailed coding standards are in `.rules/`. Before writing or modifying code, consult the relevant rule file:
+
+| Rule File | Scope | When to Consult |
+|-----------|-------|-----------------|
+| [`.rules/structure-rules.md`](.rules/structure-rules.md) | 项目结构、Feature 模块、文件归属、导入路径、页面/API 路由组织、Store 文件、测试组织、环境变量管理 | 创建文件/目录、决定代码归属、编写 import、新增页面或 API 路由 |
+| [`.rules/naming-rules.md`](.rules/naming-rules.md) | 目录、文件、组件、Hook、Store、变量、常量、data 属性、CSS 命名 | 命名任何标识符：文件、组件、Hook、Store、变量、常量、data 属性 |
+| [`.rules/state-management-rules.md`](.rules/state-management-rules.md) | Zustand Store 设计、持久化、云端同步、TanStack Query 模式、Query Key、状态归属 | 操作 Store、Query、Mutation，或判断状态该放在哪里 |
+| [`.rules/comment-rules.md`](.rules/comment-rules.md) | JSDoc 文件/函数/组件头注释、行内注释、TODO/FIXME 标记、@deprecated | 编写或审查代码注释和文档 |
+| [`.rules/ui-ux-rules.md`](.rules/ui-ux-rules.md) | shadcn/ui 组件选型、Framer Motion 动效、磨砂玻璃、Drawer (Vaul)、Command (CMDK)、Toast (Sonner) | 构建 UI 组件、添加动效、选择 UI 基础组件 |
+
+All rules are **mandatory**. Code must strictly follow every applicable rule file.
+
 ## Code Conventions
 
-- **Path alias**: `@/*` maps to `./src/*`
 - **TypeScript**: Strict mode enabled
 - **Formatting**: Prettier (80 char width, 2-space indent, trailing commas, Tailwind plugin)
 - **Linting**: ESLint 9 flat config with Next.js + strict TypeScript rules
 - **Pre-commit**: Husky runs lint-staged (ESLint fix + Prettier) on `.ts/.tsx/.json` files
-- **Highlighted words** must use `data-word` attribute to sync with the vocab panel
 - **Validation**: Use Zod schemas for API request/response validation
 - **Streaming**: AI operations (grading, review generation) use streaming responses
-- **Project Rules**: All coding rules are defined in `.rules/` directory. Code MUST strictly follow these rules:
-  - [`.rules/comment-rules.md`](.rules/comment-rules.md) — TypeScript 注释规范（Comment conventions）
-  - [`.rules/structure-rules.md`](.rules/structure-rules.md) — 项目结构规范（Structure conventions）
-  - [`.rules/state-management-rules.md`](.rules/state-management-rules.md) — 状态管理规范（State management rules）
-  - [`.rules/naming-rules.md`](.rules/naming-rules.md) — TypeScript 命名规范（Naming conventions）
-  - [`.rules/ui-ux-rules.md`](.rules/ui-ux-rules.md) — UI/UX 规范（UI & UX conventions）
 
 ## Environment Variables
 
@@ -246,15 +244,11 @@ Environment: Ubuntu, Node.js 20, pnpm 10 with dependency caching.
 
 ## AI-Assisted Development (Claude Code)
 
-This project uses [Claude Code](https://claude.ai/code) (Anthropic's Harness AI) as the primary AI-assisted development tool.
+This project uses [Claude Code](https://claude.ai/code) as the primary AI-assisted development tool.
 
 ### Project Memory
 
 This `CLAUDE.md` file serves as Claude Code's project memory — it is automatically loaded at the start of every session to provide full project context. Keep it up to date when architecture, commands, conventions, or dependencies change.
-
-### Project Rules
-
-The `.rules/` directory contains coding conventions that Claude Code must strictly follow during development. New rule files can be added to `.rules/` and referenced from the "Code Conventions" section above.
 
 ### Development Workflow
 
