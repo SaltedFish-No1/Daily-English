@@ -1,5 +1,10 @@
 'use client';
 
+/**
+ * @author SaltedFish-No1
+ * @description 课程文章组件，渲染段落文本并高亮焦点词汇，支持点击查词。
+ */
+
 import React, { useState } from 'react';
 import { buildRenderableTokens } from '@/lib/focus-words';
 import { Button } from '@/components/ui/button';
