@@ -200,6 +200,7 @@ POST   /api/photo-capture                  # Image upload
   - [`.rules/structure-rules.md`](.rules/structure-rules.md) — 项目结构规范（Structure conventions）
   - [`.rules/state-management-rules.md`](.rules/state-management-rules.md) — 状态管理规范（State management rules）
   - [`.rules/naming-rules.md`](.rules/naming-rules.md) — TypeScript 命名规范（Naming conventions）
+  - [`.rules/ui-ux-rules.md`](.rules/ui-ux-rules.md) — UI/UX 规范（UI & UX conventions）
 
 ## Environment Variables
 
