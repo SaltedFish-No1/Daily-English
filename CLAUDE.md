@@ -197,6 +197,7 @@ POST   /api/photo-capture                  # Image upload
 - **Streaming**: AI operations (grading, review generation) use streaming responses
 - **Project Rules**: All coding rules are defined in `.rules/` directory. Code MUST strictly follow these rules:
   - [`.rules/comment-rules.md`](.rules/comment-rules.md) — TypeScript 注释规范（Comment conventions）
+  - [`.rules/structure-rules.md`](.rules/structure-rules.md) — 项目结构规范（Structure conventions）
 
 ## Environment Variables
 
