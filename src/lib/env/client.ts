@@ -8,16 +8,26 @@
 import { z } from 'zod';
 
 /** 客户端环境变量 Zod schema */
-const clientEnvSchema = z.object({
-  /** Supabase 项目 URL */
-  NEXT_PUBLIC_SUPABASE_URL: z.string().min(1),
-  /** Supabase 匿名密钥（回退键） */
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
-  /** Supabase 新版公开密钥（优先使用，可选） */
-  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY: z.string().optional(),
-  /** Sentry DSN（可选，仅 production 启用） */
-  NEXT_PUBLIC_SENTRY_DSN: z.string().optional(),
-});
+const clientEnvSchema = z
+  .object({
+    /** Supabase 项目 URL */
+    NEXT_PUBLIC_SUPABASE_URL: z.string().min(1),
+    /** Supabase 匿名密钥（旧版回退键，与 PUBLISHABLE_DEFAULT_KEY 二选一） */
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1).optional(),
+    /** Supabase 新版公开密钥（优先使用，与 ANON_KEY 二选一） */
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY: z.string().min(1).optional(),
+    /** Sentry DSN（可选，仅 production 启用） */
+    NEXT_PUBLIC_SENTRY_DSN: z.string().optional(),
+  })
+  .refine(
+    (data) =>
+      data.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+      data.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY,
+    {
+      message:
+        'NEXT_PUBLIC_SUPABASE_ANON_KEY 和 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY 至少需要配置一个',
+    }
+  );
 
 /** @description 客户端环境变量解析后的类型 */
 type ClientEnvRaw = z.infer<typeof clientEnvSchema>;
@@ -56,8 +66,7 @@ function parseClientEnv(): ClientEnvRaw {
   return {
     NEXT_PUBLIC_SUPABASE_URL:
       raw.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
-    NEXT_PUBLIC_SUPABASE_ANON_KEY:
-      raw.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder',
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: raw.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY:
       raw.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY,
     NEXT_PUBLIC_SENTRY_DSN: raw.NEXT_PUBLIC_SENTRY_DSN,
@@ -72,11 +81,9 @@ const parsed = parseClientEnv();
  */
 export const clientEnv = {
   ...parsed,
-  /** 优先取 PUBLISHABLE_DEFAULT_KEY，回退到 ANON_KEY */
+  /** 优先取 PUBLISHABLE_DEFAULT_KEY，回退到 ANON_KEY（refine 保证至少有一个） */
   get supabaseAnonKey(): string {
-    return (
-      parsed.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ||
-      parsed.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    );
+    return (parsed.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ||
+      parsed.NEXT_PUBLIC_SUPABASE_ANON_KEY)!;
   },
 };
