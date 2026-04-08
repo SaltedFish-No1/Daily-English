@@ -104,16 +104,22 @@ pnpm test      # 运行 Vitest 单元测试
 │   │   └── writing/[topicId]/     # 写作练习
 │   ├── components/                # 全局组件（导航栏、应用外壳）
 │   ├── features/                  # 按业务划分的页面与组件
+│   │   ├── about/                 # 关于页面
 │   │   ├── auth/                  # 认证（登录表单、用户菜单）
 │   │   ├── home/                  # 首页仪表盘、CEFR 说明
+│   │   ├── intro/                 # 产品介绍页
 │   │   ├── learn/                 # 学习中心
 │   │   ├── lesson/                # 课程（文章、测验、词汇面板）
+│   │   ├── photo-capture/         # 拍照识别（OCR）
 │   │   ├── profile/               # 个人档案
 │   │   ├── reading/               # 阅读练习
+│   │   ├── review/                # AI 复习课程
 │   │   ├── vocab/                 # 生词库
 │   │   └── writing/               # 写作（编辑器、批改报告、话题管理）
 │   ├── hooks/                     # 自定义 Hook
-│   ├── lib/                       # 工具函数与服务集成（Supabase、词典、邮件等）
+│   ├── lib/                       # 工具函数与服务集成（AI、Supabase、词典、邮件等）
+│   │   ├── env/                   # 环境变量配置
+│   │   └── email-templates/       # 邮件模板
 │   ├── store/                     # Zustand 状态管理
 │   └── types/                     # TypeScript 类型定义
 ├── .github/workflows/             # CI 流水线
@@ -154,6 +160,16 @@ pnpm test      # 运行 Vitest 单元测试
 - AI 智能批改，按语法、词汇、连贯性等维度评分
 - 语法错误检测与词汇建议
 - 支持多次提交与历史记录
+
+### AI 复习 `/review`
+
+- AI 生成个性化复习课程
+- 基于间隔重复算法的单词复习
+- 支持滑动复习界面（`/review/swipe`）
+
+### 关于 `/about`
+
+- 产品介绍与项目信息
 
 ### 个人档案 `/profile`
 
@@ -208,6 +224,16 @@ pnpm test      # 运行 Vitest 单元测试
 - 如果课程启用了发音，浏览器需要支持 Web Speech API
 - 生词库页面的数据来源于本地收藏，不会自动扫描所有课程词汇
 - 提交代码时 Husky pre-commit hook 会自动运行 lint-staged 进行代码检查与格式化
+
+## AI 辅助开发
+
+本项目使用 [Claude Code](https://claude.ai/code)（Anthropic Harness AI）进行 AI 辅助开发。
+
+- `CLAUDE.md` 作为项目记忆文件，Claude Code 启动时自动加载项目上下文
+- `.rules/` 目录定义编码规范，AI 编码时严格遵守
+- 以 `claude/` 前缀命名的分支为 AI 辅助开发分支
+- 提交前仍然通过 Husky pre-commit hook 进行代码质量检查
+- `.claude/` 目录用于存放 Claude Code 会话配置（已加入 `.gitignore`）
 
 ## License
 
