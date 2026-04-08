@@ -1,3 +1,7 @@
+/**
+ * @author SaltedFish-No1
+ * @description 课程详情页面，根据 ID 加载课程数据并委托 LessonView 渲染。
+ */
 import { LessonView } from '@/features/lesson/components/LessonView';
 import { LessonListItem } from '@/types/lesson';
 import { getLessonById, getLessonIds } from '@/lib/lessons-db';

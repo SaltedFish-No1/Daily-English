@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description 拍照识词 API：接收手写单词图片，通过视觉模型提取英文单词及释义。
  *   接收 FormData: image (File)
  *   返回 { words: ExtractedWord[] }

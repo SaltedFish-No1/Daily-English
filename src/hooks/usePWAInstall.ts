@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description PWA 安装逻辑 hook：平台检测、beforeinstallprompt 管理与安装对话框状态。
  */
 

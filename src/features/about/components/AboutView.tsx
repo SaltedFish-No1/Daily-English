@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { clientEnv } from '@/lib/env/client';
 
 /**
  * @description 关于页展示元数据结构。
@@ -34,7 +35,7 @@ interface RepoMeta {
 
 /** 关于页静态展示数据 */
 const FALLBACK: RepoMeta = {
-  version: process.env.NEXT_PUBLIC_APP_VERSION ?? '线下版本',
+  version: clientEnv.NEXT_PUBLIC_APP_VERSION ?? '线下版本',
   license: '保留所有权利',
   ownerAvatar: 'https://avatars.githubusercontent.com/u/138401553',
   ownerLogin: 'SaltedFish-No1',

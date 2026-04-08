@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @author SaltedFish-No1
+ * @description 用户个人资料视图，展示学习数据、偏好设置与账户管理。
+ */
 import { useMemo, useState, useRef, useCallback } from 'react';
 import {
   BookOpen,
@@ -30,6 +34,7 @@ import {
   type ExamGoal,
   type DifficultyPref,
 } from '@/store/usePreferenceStore';
+import { Button } from '@/components/ui/button';
 
 const EXAM_GOALS: { value: ExamGoal; label: string }[] = [
   { value: 'ielts', label: '雅思 IELTS' },
@@ -108,7 +113,8 @@ function SettingRow<T extends string | number>({
   const currentLabel = options.find((o) => o.value === value)?.label ?? '';
   return (
     <div>
-      <button
+      <Button
+        variant="ghost"
         onClick={onToggle}
         className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-slate-50"
       >
@@ -122,12 +128,13 @@ function SettingRow<T extends string | number>({
         ) : (
           <ChevronRight size={16} className="text-slate-300" />
         )}
-      </button>
+      </Button>
       {expanded && (
         <div className="flex flex-wrap gap-2 px-4 pt-1 pb-3">
           {options.map((opt) => (
-            <button
+            <Button
               key={String(opt.value)}
+              variant={opt.value === value ? 'default' : 'ghost'}
               onClick={() => onSelect(opt.value)}
               className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
                 opt.value === value
@@ -136,7 +143,7 @@ function SettingRow<T extends string | number>({
               }`}
             >
               {opt.label}
-            </button>
+            </Button>
           ))}
         </div>
       )}
@@ -148,7 +155,8 @@ function SettingRow<T extends string | number>({
 /*  ProfileView                                                        */
 /* ------------------------------------------------------------------ */
 export function ProfileView() {
-  const { savedWords, history, dictionaryCache, wordReviewStates } = useUserStore();
+  const { savedWords, history, dictionaryCache, wordReviewStates } =
+    useUserStore();
   const { user, isGuest, signOut } = useAuthStore();
   const prefs = usePreferenceStore();
 
@@ -230,7 +238,7 @@ export function ProfileView() {
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 pb-24 lg:pb-8">
-      <header className="hidden pt-safe sticky top-0 z-30 border-b border-gray-100 bg-white shadow-sm lg:block">
+      <header className="pt-safe sticky top-0 z-30 hidden border-b border-gray-100 bg-white shadow-sm lg:block">
         <div className="mx-auto max-w-3xl px-5 py-6">
           <h1 className="text-xl font-bold tracking-tight text-slate-900">
             我的
@@ -243,7 +251,8 @@ export function ProfileView() {
         <section className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-4">
             {/* Avatar with upload */}
-            <button
+            <Button
+              variant="ghost"
               onClick={() => fileInputRef.current?.click()}
               className="group relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-emerald-50 ring-2 ring-emerald-200 transition-transform hover:scale-105 active:scale-95"
               title="点击上传头像"
@@ -260,7 +269,7 @@ export function ProfileView() {
               <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
                 <Camera size={18} className="text-white" />
               </div>
-            </button>
+            </Button>
             <input
               ref={fileInputRef}
               type="file"
@@ -282,7 +291,8 @@ export function ProfileView() {
                   className="w-full rounded-lg border border-emerald-300 bg-emerald-50/50 px-2 py-1 text-base font-bold text-slate-900 outline-none focus:ring-2 focus:ring-emerald-400"
                 />
               ) : (
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => {
                     setNicknameDraft(prefs.nickname);
                     setEditingNickname(true);
@@ -291,7 +301,7 @@ export function ProfileView() {
                   title="点击编辑昵称"
                 >
                   {prefs.nickname}
-                </button>
+                </Button>
               )}
 
               {isGuest ? (
@@ -320,7 +330,8 @@ export function ProfileView() {
 
         {/* ── PWA Install Tip ────────────────────────── */}
         {!isStandalone && (
-          <button
+          <Button
+            variant="ghost"
             type="button"
             onClick={handleInstall}
             className="flex w-full items-center gap-3 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-left transition-colors hover:bg-emerald-100 active:scale-[0.99]"
@@ -329,7 +340,7 @@ export function ProfileView() {
             <span className="min-w-0 flex-1 text-sm text-emerald-800">
               将<strong>薄荷外语</strong>安装到桌面，获得更好的使用体验
             </span>
-          </button>
+          </Button>
         )}
 
         {/* ── Stats Grid ────────────────────────────── */}
@@ -468,7 +479,8 @@ export function ProfileView() {
           </div>
           <div className="divide-y divide-slate-100">
             {/* Clear Cache */}
-            <button
+            <Button
+              variant="ghost"
               onClick={handleClearCache}
               className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-slate-50"
             >
@@ -479,7 +491,7 @@ export function ProfileView() {
                 清除词典缓存
               </span>
               <span className="text-xs text-slate-400">{cacheCount} 条</span>
-            </button>
+            </Button>
 
             {/* About */}
             <Link
@@ -497,7 +509,8 @@ export function ProfileView() {
 
             {/* Sign Out */}
             {!isGuest && (
-              <button
+              <Button
+                variant="destructive"
                 onClick={handleSignOut}
                 className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-red-50"
               >
@@ -507,7 +520,7 @@ export function ProfileView() {
                 <span className="flex-1 text-sm font-medium text-red-600">
                   退出登录
                 </span>
-              </button>
+              </Button>
             )}
           </div>
         </section>
@@ -525,15 +538,16 @@ export function ProfileView() {
             </p>
             <div className="flex justify-end gap-2">
               {installDialog.showConfirm && (
-                <button
+                <Button
+                  variant="outline"
                   type="button"
                   onClick={closeInstallDialog}
                   className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50"
                 >
                   取消
-                </button>
+                </Button>
               )}
-              <button
+              <Button
                 type="button"
                 onClick={
                   installDialog.showConfirm
@@ -543,7 +557,7 @@ export function ProfileView() {
                 className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700"
               >
                 {installDialog.showConfirm ? '确认安装' : '知道了'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description 间隔重复算法（简化版 SM-2），适配"阅读复习"场景。
  *
  * 核心流程：

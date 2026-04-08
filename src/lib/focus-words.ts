@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description 重点词分词器：将正文按重点词表拆分为可交互 token 序列。
  */
 
@@ -6,9 +7,13 @@ import { FocusWord } from '@/types/lesson';
 import { normalizeDictionaryQuery } from '@/lib/dictionary';
 
 export interface RenderToken {
+  /** token 类型：纯文本（标点/空格等）或可交互单词 */
   type: 'text' | 'word';
+  /** 原始文本内容 */
   text: string;
+  /** 是否为课程重点词 */
   isFocusWord: boolean;
+  /** 归一化后的查词关键字，仅 type='word' 时存在 */
   query?: string;
 }
 
@@ -56,6 +61,12 @@ const tokenizePlainSegment = (segment: string): RenderToken[] => {
   return tokens;
 };
 
+/**
+ * @description 将重点词列表转换为词形 → 词元的映射表，用于分词时快速查找。
+ *
+ * @param focusWords 课程重点词列表
+ * @returns Map，key 为归一化后的词形变体，value 为对应的词元 key
+ */
 export const createFocusWordMap = (focusWords: FocusWord[]) => {
   const formToKey = new Map<string, string>();
 
@@ -73,8 +84,14 @@ export const createFocusWordMap = (focusWords: FocusWord[]) => {
   return formToKey;
 };
 
-// 两步分词器：先用最长优先的正则按重点词边界断句，再将非重点段拆为单词和间隔。
-// 采用游标递进避免遗漏两个重点词之间的普通文本。
+/**
+ * @description 两步分词器：先用最长优先的正则按重点词边界断句，再将非重点段拆为单词和间隔。
+ *   采用游标递进避免遗漏两个重点词之间的普通文本。
+ *
+ * @param text 待分词的英文段落原文
+ * @param focusWords 课程重点词列表
+ * @returns 可渲染的 token 序列，重点词标记为 isFocusWord=true
+ */
 export const buildRenderableTokens = (
   text: string,
   focusWords: FocusWord[]

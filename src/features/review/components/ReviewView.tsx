@@ -1,17 +1,21 @@
 'use client';
 
 /**
+ * @author SaltedFish-No1
  * @description 复习课程页 — 调用 AI 实时生成文章，生成完成后保存到数据库并跳转到课程页。
  */
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { type GeneratedLesson } from '@/types/review';
 import { parsePartialJson } from 'ai';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Sparkles, RefreshCw, ArrowLeft } from 'lucide-react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
+import { queryKeys } from '@/lib/queryKeys';
 
 interface ReviewViewProps {
   words: string[];
@@ -27,10 +31,13 @@ type GenerationState =
 export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
   const [state, setState] = useState<GenerationState>({ status: 'idle' });
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const hasTriggered = useRef(false);
 
-  const generate = useCallback(async () => {
-    setState({ status: 'generating', progress: null });
-    try {
+  const generateMutation = useMutation({
+    mutationFn: async () => {
+      setState({ status: 'generating', progress: null });
+
       const res = await fetch('/api/review/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -95,21 +102,32 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
         throw new Error(err.error || '保存失败，请重试');
       }
 
-      const { lessonId } = await saveRes.json();
-      router.replace(`/lessons/${lessonId}`);
-    } catch (err) {
+      return saveRes.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.review.lessons(),
+      });
+      router.replace(`/lessons/${data.lessonId}`);
+    },
+    onError: (err) => {
       setState({
         status: 'error',
         message: err instanceof Error ? err.message : '生成失败，请重试',
       });
-    }
-  }, [words, difficulty, router]);
+    },
+  });
+
+  const generate = useCallback(() => {
+    generateMutation.mutate();
+  }, [generateMutation]);
 
   useEffect(() => {
-    if (words.length > 0) {
+    if (words.length > 0 && !hasTriggered.current) {
+      hasTriggered.current = true;
       generate();
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [words, generate]);
 
   // Loading state (generating or saving)
   if (
@@ -211,14 +229,14 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
             <ArrowLeft size={14} />
             返回课程
           </Link>
-          <button
+          <Button
             type="button"
             onClick={generate}
             className="flex items-center gap-1.5 rounded-full bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700"
           >
             <RefreshCw size={14} />
             重新生成
-          </button>
+          </Button>
         </div>
       </div>
     </div>

@@ -1,3 +1,7 @@
+/**
+ * @author SaltedFish-No1
+ * @description 产品介绍页面薄壳，展示薄荷外语产品功能与特色。
+ */
 import { Suspense } from 'react';
 import { IntroView } from '@/features/intro/components/IntroView';
 

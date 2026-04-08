@@ -1,6 +1,7 @@
 'use client';
 
 /**
+ * @author SaltedFish-No1
  * @description 滑动卡片复习入口 — 从 URL query 读取待复习词列表。
  *
  * URL: /review/swipe?words=elaborate,sustainability,incentive

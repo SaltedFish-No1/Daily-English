@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description 复习文章生成 API — 根据用户待复习词汇，AI 实时生成个性化阅读文章 + Quiz。
  *
  * POST /api/review/generate

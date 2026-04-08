@@ -1,6 +1,7 @@
 'use client';
 
 /**
+ * @author SaltedFish-No1
  * @description 课程详情页布局，编排阅读、图表与测验标签页。
  */
 

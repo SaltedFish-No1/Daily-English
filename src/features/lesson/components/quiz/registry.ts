@@ -1,6 +1,7 @@
 'use client';
 
 /**
+ * @author SaltedFish-No1
  * @description 题型视图注册表，将 IELTS 题型映射到渲染组件。
  */
 

@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description Server Component 用 Supabase 客户端 — 通过 next/headers 读取 cookie 获取用户会话。
  *   仅用于 Server Component / Server Action，不可在客户端导入。
  */

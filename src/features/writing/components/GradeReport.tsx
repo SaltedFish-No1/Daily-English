@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @author SaltedFish-No1
+ * @description 写作批改报告组件，展示 AI 批改的详细评分、反馈与改进建议。
+ */
 import { useState } from 'react';
 import {
   AlertCircle,

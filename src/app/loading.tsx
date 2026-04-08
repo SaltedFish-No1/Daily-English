@@ -1,3 +1,7 @@
+/**
+ * @author SaltedFish-No1
+ * @description 全局加载状态回退组件，显示旋转加载动画。
+ */
 export default function Loading() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 p-5">

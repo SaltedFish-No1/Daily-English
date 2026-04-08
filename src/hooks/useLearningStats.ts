@@ -1,3 +1,7 @@
+/**
+ * @author SaltedFish-No1
+ * @description 学习统计 hook，聚合已完成课程、已收藏词汇等学习数据。
+ */
 import { useMemo } from 'react';
 import { useUserStore } from '@/store/useUserStore';
 

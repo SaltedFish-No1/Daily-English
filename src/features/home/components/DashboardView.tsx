@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @author SaltedFish-No1
+ * @description 首页仪表盘视图，展示学习进度统计、每日推荐课程及快捷入口。
+ */
 import React, { useMemo } from 'react';
 import {
   BookOpen,

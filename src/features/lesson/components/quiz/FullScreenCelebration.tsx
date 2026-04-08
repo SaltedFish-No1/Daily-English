@@ -1,6 +1,7 @@
 'use client';
 
 /**
+ * @author SaltedFish-No1
  * @description 满分庆祝动画，使用 canvas-confetti 渲染礼花效果。
  */
 

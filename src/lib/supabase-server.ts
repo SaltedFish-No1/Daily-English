@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description 服务端 Supabase 客户端（Service Role），仅在 Route Handler 中使用。
  *   绕过 RLS，用于写入 dictionary_cache 等公共缓存表。
  */

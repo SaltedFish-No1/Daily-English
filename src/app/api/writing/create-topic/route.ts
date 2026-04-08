@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description 手动创建写作题目（无需上传图片）。
  *   接收 JSON: { gradingCriteria: string, title?: string, writingPrompt: string }
  */

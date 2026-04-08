@@ -1,6 +1,7 @@
 'use client';
 
 /**
+ * @author SaltedFish-No1
  * @description 复习课程入口页 — 从 URL query 读取待复习词列表，调用 AI 生成文章。
  *
  * URL: /review?words=elaborate,sustainability,incentive&difficulty=B1

@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description 获取用户指定复习课程详情。
  *
  * GET /api/review/lessons/:id

@@ -1,6 +1,7 @@
 'use client';
 
 /**
+ * @author SaltedFish-No1
  * @description 答案文本规范化：空白合并、大小写折叠与字数统计。
  */
 

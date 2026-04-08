@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildRenderableTokens, createFocusWordMap } from '@/lib/focusWords';
+import { buildRenderableTokens, createFocusWordMap } from '@/lib/focus-words';
 import { FocusWord } from '@/types/lesson';
 
 const focusWords: FocusWord[] = [

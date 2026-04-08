@@ -1,12 +1,17 @@
 'use client';
 
+/**
+ * @author SaltedFish-No1
+ * @description 拍照识词弹窗组件，支持拍照或上传图片，通过视觉模型提取英文单词。
+ */
 import { useState, useRef, useCallback } from 'react';
 import { Camera, Upload, Loader2, X, Check, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { extractWordsFromPhoto } from '@/features/photo-capture/lib/photoCaptureApi';
-import { PHOTO_CAPTURE_PREFIX } from '@/features/photo-capture/lib/constants';
+import { PHOTO_CAPTURE_PREFIX } from '@/lib/photo-capture';
 import { useUserStore } from '@/store/useUserStore';
 import type { ExtractedWord } from '@/features/photo-capture/types';
+import { Button } from '@/components/ui/button';
 
 interface PhotoCaptureModalProps {
   open: boolean;
@@ -136,13 +141,14 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
               <h2 className="text-lg font-bold text-slate-900">
                 {saved ? '保存成功' : hasExtracted ? '识别结果' : '拍照识词'}
               </h2>
-              <button
+              <Button
+                variant="ghost"
                 onClick={handleClose}
                 disabled={extracting}
                 className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <X size={20} />
-              </button>
+              </Button>
             </div>
 
             {/* Success State */}
@@ -152,12 +158,12 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
                 <p className="text-sm font-semibold text-slate-700">
                   已将 {selectedIndices.size} 个单词保存到生词本
                 </p>
-                <button
+                <Button
                   onClick={handleClose}
                   className="mt-2 rounded-xl bg-emerald-600 px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-200 hover:bg-emerald-700"
                 >
                   完成
-                </button>
+                </Button>
               </div>
             ) : hasExtracted ? (
               /* Phase 3: Review & Save */
@@ -167,8 +173,9 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
                 </p>
                 <div className="mb-4 max-h-72 space-y-2 overflow-y-auto">
                   {extractedWords.map((w, i) => (
-                    <button
+                    <Button
                       key={`${w.word}-${i}`}
+                      variant="ghost"
                       type="button"
                       onClick={() => toggleWord(i)}
                       className={`flex w-full items-start gap-3 rounded-xl border p-3 text-left transition-colors ${
@@ -203,17 +210,17 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
                           </p>
                         )}
                       </div>
-                    </button>
+                    </Button>
                   ))}
                 </div>
-                <button
+                <Button
                   onClick={handleSave}
                   disabled={selectedIndices.size === 0}
                   className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-200 transition-all hover:bg-emerald-700 disabled:opacity-50 disabled:shadow-none"
                 >
                   <Check size={18} />
                   保存 {selectedIndices.size} 个单词到生词本
-                </button>
+                </Button>
               </>
             ) : (
               /* Phase 1 & 2: Upload + Extract */
@@ -240,7 +247,8 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
                         alt="Preview"
                         className="max-h-64 w-full bg-slate-50 object-contain"
                       />
-                      <button
+                      <Button
+                        variant="ghost"
                         onClick={() => {
                           setImageFile(null);
                           setImagePreview(null);
@@ -250,7 +258,7 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
                         className="absolute top-2 right-2 rounded-full bg-black/50 p-1.5 text-white hover:bg-black/70 disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         <X size={14} />
-                      </button>
+                      </Button>
                     </motion.div>
                   ) : (
                     <motion.button
@@ -278,7 +286,7 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
                   </p>
                 )}
 
-                <button
+                <Button
                   onClick={handleExtract}
                   disabled={!imageFile || extracting}
                   className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-200 transition-all hover:bg-emerald-700 disabled:opacity-50 disabled:shadow-none"
@@ -294,7 +302,7 @@ export function PhotoCaptureModal({ open, onClose }: PhotoCaptureModalProps) {
                       识别单词
                     </>
                   )}
-                </button>
+                </Button>
               </>
             )}
             {extracting && (

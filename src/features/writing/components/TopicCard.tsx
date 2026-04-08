@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @author SaltedFish-No1
+ * @description 写作主题卡片组件，展示题目信息、提交次数和最近成绩。
+ */
 import Link from 'next/link';
 import { FileText, Trophy, Hash, ArrowRight } from 'lucide-react';
 import type { WritingTopicWithStats } from '@/types/writing';

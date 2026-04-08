@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @author SaltedFish-No1
+ * @description 写作评分卡片组件，展示各维度得分及总分。
+ */
 import type { WritingGrade, GradingCriteriaDimension } from '@/types/writing';
 
 interface GradeScoreCardProps {

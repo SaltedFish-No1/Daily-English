@@ -16,6 +16,7 @@ import {
   verifyOtp as apiVerifyOtp,
   sendResetLink,
 } from '../lib/authApi';
+import { Button } from '@/components/ui/button';
 
 type Step = 'email' | 'login-password' | 'login-otp' | 'register-verify';
 
@@ -182,13 +183,14 @@ export const EmailLoginForm: React.FC = () => {
         <p className="text-xs text-slate-400">邮箱</p>
         <p className="text-sm font-bold text-slate-700">{email}</p>
       </div>
-      <button
+      <Button
+        variant="ghost"
         type="button"
         onClick={handleChangeEmail}
         className="text-xs font-bold text-emerald-600 transition-colors hover:text-emerald-700"
       >
         更换
-      </button>
+      </Button>
     </div>
   );
 
@@ -209,14 +211,14 @@ export const EmailLoginForm: React.FC = () => {
 
         {error && <p className="text-xs text-red-500">{error}</p>}
 
-        <button
+        <Button
           type="button"
           disabled={loading || !email.trim()}
           onClick={handleContinue}
           className="h-12 w-full rounded-xl bg-emerald-600 text-sm font-bold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
         >
           {loading ? '检查中...' : '继续'}
-        </button>
+        </Button>
       </div>
     );
   }
@@ -241,25 +243,27 @@ export const EmailLoginForm: React.FC = () => {
         {error && <p className="text-xs text-red-500">{error}</p>}
         {message && <p className="text-xs text-emerald-600">{message}</p>}
 
-        <button
+        <Button
           type="button"
           disabled={loading || !password.trim()}
           onClick={handlePasswordLogin}
           className="h-12 w-full rounded-xl bg-emerald-600 text-sm font-bold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
         >
           {loading ? '登录中...' : '登录'}
-        </button>
+        </Button>
 
         <div className="flex items-center justify-between">
-          <button
+          <Button
+            variant="ghost"
             type="button"
             disabled={loading}
             onClick={handleForgotPassword}
             className="text-xs font-bold text-slate-400 transition-colors hover:text-emerald-600 disabled:opacity-50"
           >
             忘记密码？
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
             type="button"
             disabled={loading}
             onClick={async () => {
@@ -269,7 +273,7 @@ export const EmailLoginForm: React.FC = () => {
             className="text-xs font-bold text-slate-400 transition-colors hover:text-emerald-600 disabled:opacity-50"
           >
             使用验证码登录
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -298,25 +302,27 @@ export const EmailLoginForm: React.FC = () => {
 
         {error && <p className="text-xs text-red-500">{error}</p>}
 
-        <button
+        <Button
           type="button"
           disabled={loading || otpCode.length < 6}
           onClick={handleVerifyOtp}
           className="h-12 w-full rounded-xl bg-emerald-600 text-sm font-bold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
         >
           {loading ? '验证中...' : '验证'}
-        </button>
+        </Button>
 
         <div className="flex items-center justify-between">
-          <button
+          <Button
+            variant="ghost"
             type="button"
             disabled={loading || cooldown > 0}
             onClick={handleSendOtp}
             className="text-xs font-bold text-slate-400 transition-colors hover:text-emerald-600 disabled:opacity-50"
           >
             {cooldown > 0 ? `重新发送 (${cooldown}s)` : '重新发送验证码'}
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
             type="button"
             disabled={loading}
             onClick={() => {
@@ -328,7 +334,7 @@ export const EmailLoginForm: React.FC = () => {
             className="text-xs font-bold text-slate-400 transition-colors hover:text-emerald-600 disabled:opacity-50"
           >
             使用密码登录
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -364,23 +370,24 @@ export const EmailLoginForm: React.FC = () => {
 
       {error && <p className="text-xs text-red-500">{error}</p>}
 
-      <button
+      <Button
         type="button"
         disabled={loading || otpCode.length < 6 || password.length < 6}
         onClick={handleVerifyOtp}
         className="h-12 w-full rounded-xl bg-emerald-600 text-sm font-bold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
       >
         {loading ? '创建中...' : '创建账号'}
-      </button>
+      </Button>
 
-      <button
+      <Button
+        variant="ghost"
         type="button"
         disabled={loading || cooldown > 0}
         onClick={handleSendOtp}
         className="w-full text-center text-xs font-bold text-slate-400 transition-colors hover:text-emerald-600 disabled:opacity-50"
       >
         {cooldown > 0 ? `重新发送 (${cooldown}s)` : '重新发送验证码'}
-      </button>
+      </Button>
     </div>
   );
 };

@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description 词典 API 客户端：请求 dictionaryapi.dev 并规范化返回数据。
  */
 
@@ -79,6 +80,12 @@ const pickPreferredAudio = (phonetics: DictionaryPhonetic[]) => {
   return phonetics.find((item) => isString(item.audio))?.audio;
 };
 
+/**
+ * @description 归一化查词输入：去除首尾空白和非字母字符，转为小写。
+ *
+ * @param value 用户输入或正文提取的原始词形
+ * @returns 归一化后的查词关键字，空字符串表示输入无效
+ */
 export const normalizeDictionaryQuery = (value: string) => {
   return value
     .trim()
@@ -86,6 +93,12 @@ export const normalizeDictionaryQuery = (value: string) => {
     .toLowerCase();
 };
 
+/**
+ * @description 将 dictionaryapi.dev 的原始 JSON 响应规范化为 DictionaryEntry 数组。
+ *
+ * @param payload API 返回的原始 JSON 数据
+ * @returns 规范化的词典条目数组，数据无效时返回 null
+ */
 export const mapDictionaryEntries = (
   payload: unknown
 ): DictionaryEntry[] | null => {
@@ -157,6 +170,12 @@ export const mapDictionaryEntries = (
 
 const FETCH_TIMEOUT_MS = 3000;
 
+/**
+ * @description 从 dictionaryapi.dev 查询单词释义，带 3 秒超时。
+ *
+ * @param word 待查询的英文单词
+ * @returns 包含状态和数据的结果对象：success/not_found/error
+ */
 export const fetchDictionaryEntries = async (word: string) => {
   const normalizedWord = normalizeDictionaryQuery(word);
   if (!normalizedWord) {

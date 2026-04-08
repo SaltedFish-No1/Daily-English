@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description TTS 语音生成 API：DB 缓存 → AI SDK TTS → 存入 Supabase Storage。
  *   生成的音频 URL 回填到 dictionary_cache.audio_url。
  */

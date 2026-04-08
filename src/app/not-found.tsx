@@ -1,3 +1,7 @@
+/**
+ * @author SaltedFish-No1
+ * @description 404 页面，当请求路径不存在时显示友好提示。
+ */
 import Link from 'next/link';
 
 export default function NotFound() {

@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @author SaltedFish-No1
+ * @description 全局导航栏组件，包含移动端底部 Tab 栏和桌面端侧边栏。
+ */
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

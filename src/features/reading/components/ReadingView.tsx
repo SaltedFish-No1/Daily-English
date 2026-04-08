@@ -1,6 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+/**
+ * @author SaltedFish-No1
+ * @description 阅读练习视图，展示课程列表并支持按难度筛选。
+ */
+import React, { useState } from 'react';
 import { LessonDifficulty, LessonListItem } from '@/types/lesson';
 import {
   Calendar,
@@ -16,13 +20,13 @@ import {
 import { motion } from 'motion/react';
 import Link from 'next/link';
 import { useUserStore } from '@/store/useUserStore';
-import { supabase } from '@/lib/supabase';
 import {
   CEFRGuideDialog,
   difficultyClassMap,
-} from '@/features/home/components/CEFRGuideDialog';
+} from '@/components/CEFRGuideDialog';
 import { useLearningStats } from '@/hooks/useLearningStats';
 import { useReviewWords } from '@/hooks/useReviewWords';
+import { useReviewLessonsQuery } from '@/features/reading/hooks/useReviewLessonsQuery';
 
 interface ReadingViewProps {
   lessons: LessonListItem[];
@@ -38,28 +42,7 @@ export const ReadingView: React.FC<ReadingViewProps> = ({ lessons }) => {
   const stats = useLearningStats();
   const { dueCount, dueWords } = useReviewWords();
 
-  const [reviewLessons, setReviewLessons] = useState<LessonListItem[]>([]);
-
-  useEffect(() => {
-    let cancelled = false;
-    async function fetchReviewLessons() {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (!session?.access_token) return;
-
-      const res = await fetch('/api/review/lessons?limit=6', {
-        headers: { Authorization: `Bearer ${session.access_token}` },
-      });
-      if (!res.ok || cancelled) return;
-      const json = await res.json();
-      if (!cancelled) setReviewLessons(json.lessons ?? []);
-    }
-    fetchReviewLessons();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const { data: reviewLessons = [] } = useReviewLessonsQuery();
 
   const [difficultyGuide, setDifficultyGuide] = useState<DifficultyGuideState>({
     open: false,

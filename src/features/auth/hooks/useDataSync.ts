@@ -8,7 +8,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
-import { pullCloudDataToLocal } from '@/features/auth/lib/dataMigration';
+import { pullCloudDataToLocal } from '@/features/auth/lib/data-migration';
 import { useUserStore } from '@/store/useUserStore';
 import { usePreferenceStore } from '@/store/usePreferenceStore';
 import { useWritingStore } from '@/store/useWritingStore';

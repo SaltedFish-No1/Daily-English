@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @author SaltedFish-No1
+ * @description 写作题目上传组件，支持图片上传解析或手动输入创建写作题目。
+ */
 import { useState, useRef } from 'react';
 import {
   Camera,
@@ -19,6 +23,7 @@ import {
 } from '@/features/writing/lib/writingApi';
 import type { GradingCriteria, WritingTopic } from '@/types/writing';
 import { useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 
 type InputMode = 'image' | 'manual';
 
@@ -147,12 +152,13 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-bold text-slate-900">新建写作题目</h2>
-          <button
+          <Button
+            variant="ghost"
             onClick={onClose}
             className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100"
           >
             <X size={20} />
-          </button>
+          </Button>
         </div>
 
         {/* Criteria selector */}
@@ -181,7 +187,8 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
 
         {/* Input mode toggle */}
         <div className="mb-4 flex gap-2">
-          <button
+          <Button
+            variant="ghost"
             onClick={() => {
               setInputMode('manual');
               setParsedData(null);
@@ -194,8 +201,9 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
           >
             <Type size={14} />
             手动输入题目
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
             onClick={() => setInputMode('image')}
             className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-semibold transition-all ${
               inputMode === 'image'
@@ -205,7 +213,7 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
           >
             <ImageIcon size={14} />
             拍照上传题目
-          </button>
+          </Button>
         </div>
 
         <AnimatePresence mode="wait">
@@ -277,7 +285,8 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
                       className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100"
                     />
                   </div>
-                  <button
+                  <Button
+                    variant="link"
                     onClick={() => {
                       setParsedData(null);
                       setImageFile(null);
@@ -286,7 +295,7 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
                     className="self-start text-xs font-medium text-violet-600 hover:text-violet-800"
                   >
                     重新上传图片
-                  </button>
+                  </Button>
                 </div>
               ) : (
                 /* Pre-parse: image upload area */
@@ -306,7 +315,8 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
                         alt="Preview"
                         className="max-h-64 w-full bg-slate-50 object-contain"
                       />
-                      <button
+                      <Button
+                        variant="ghost"
                         onClick={() => {
                           setImageFile(null);
                           setImagePreview(null);
@@ -314,10 +324,11 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
                         className="absolute top-2 right-2 rounded-full bg-black/50 p-1.5 text-white hover:bg-black/70"
                       >
                         <X size={14} />
-                      </button>
+                      </Button>
                     </div>
                   ) : (
-                    <button
+                    <Button
+                      variant="ghost"
                       onClick={() => fileInputRef.current?.click()}
                       className="mb-4 flex w-full flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 py-10 text-slate-400 transition-colors hover:border-violet-300 hover:text-violet-500"
                     >
@@ -328,7 +339,7 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
                       <span className="text-sm font-medium">
                         拍照或选择题目图片
                       </span>
-                    </button>
+                    </Button>
                   )}
                 </>
               )}
@@ -372,7 +383,7 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
           <p className="mb-3 text-center text-sm text-red-500">{error}</p>
         )}
 
-        <button
+        <Button
           onClick={handleSubmit}
           disabled={!canSubmit}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 py-3 text-sm font-bold text-white shadow-lg shadow-violet-200 transition-all hover:bg-violet-700 disabled:opacity-50 disabled:shadow-none"
@@ -393,7 +404,7 @@ export function TopicUploader({ onTopicCreated, onClose }: TopicUploaderProps) {
               {inputMode === 'image' && !parsedData ? '开始识别' : '确认提交'}
             </>
           )}
-        </button>
+        </Button>
       </motion.div>
     </motion.div>
   );

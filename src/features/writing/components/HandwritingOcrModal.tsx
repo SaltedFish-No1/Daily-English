@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @author SaltedFish-No1
+ * @description 手写作文 OCR 弹窗组件，支持拍照或上传手写内容并识别为文字。
+ */
 import { useState, useRef, useCallback } from 'react';
 import { Camera, Upload, Loader2, X, PenLine, RotateCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';

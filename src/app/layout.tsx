@@ -1,3 +1,7 @@
+/**
+ * @author SaltedFish-No1
+ * @description 应用根布局，配置全局字体、元数据、Provider 及 AppShell。
+ */
 import type { Metadata, Viewport } from 'next';
 import { Inter, Merriweather, Geist } from 'next/font/google';
 import './globals.css';

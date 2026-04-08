@@ -1,6 +1,7 @@
 'use client';
 
 /**
+ * @author SaltedFish-No1
  * @description Tinder 风格滑动卡片复习 —— 左滑忘记，右滑记住，逐词更新 SM-2。
  */
 

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { buildRenderableTokens } from '@/lib/focusWords';
+import { buildRenderableTokens } from '@/lib/focus-words';
 import { useLessonStore } from '@/store/useLessonStore';
 import { FocusWord, LessonArticle } from '@/types/lesson';
 

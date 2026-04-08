@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description 服务端 API 路由鉴权辅助：从请求 Header 提取 Bearer token 并校验用户身份。
  */
 
@@ -6,6 +7,7 @@ import { NextRequest } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-server';
 
 export interface AuthUser {
+  /** Supabase Auth 用户 ID */
   id: string;
 }
 

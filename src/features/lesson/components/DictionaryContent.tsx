@@ -1,6 +1,7 @@
 'use client';
 
 /**
+ * @author SaltedFish-No1
  * @description 词典查询结果展示组件，处理加载、错误、未找到与成功四种状态。
  */
 

@@ -1,6 +1,7 @@
 'use client';
 
 /**
+ * @author SaltedFish-No1
  * @description 生词本全览页面，展示收藏词汇卡片与出处链接。
  */
 
@@ -11,9 +12,19 @@ import { useSpeech } from '@/hooks/useSpeech';
 
 import { useNow } from '@/hooks/useNow';
 import { getMemoryStrength, WordReviewState } from '@/lib/spaced-repetition';
-import { BookMarked, Volume2, Check, ArrowUpDown, Camera, Layers, BookOpen, ArrowRight } from 'lucide-react';
-import { isPhotoCaptureOccurrence } from '@/features/photo-capture/lib/constants';
+import {
+  BookMarked,
+  Volume2,
+  Check,
+  ArrowUpDown,
+  Camera,
+  Layers,
+  BookOpen,
+  ArrowRight,
+} from 'lucide-react';
+import { isPhotoCaptureOccurrence } from '@/lib/photo-capture';
 import { useReviewWords } from '@/hooks/useReviewWords';
+import { Button } from '@/components/ui/button';
 
 type SortMode = 'recent' | 'urgency' | 'strength';
 
@@ -105,7 +116,7 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
 
   return (
     <div className="min-h-screen bg-slate-50 pb-24 lg:pb-8">
-      <header className="hidden sticky top-0 z-40 border-b border-slate-100 bg-white lg:block">
+      <header className="sticky top-0 z-40 hidden border-b border-slate-100 bg-white lg:block">
         <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-5 py-4">
           <div className="flex items-center gap-2">
             <BookMarked size={18} className="text-emerald-600" />
@@ -164,8 +175,9 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
               { key: 'urgency' as const, label: '复习紧急' },
               { key: 'strength' as const, label: '记忆强度' },
             ].map((opt) => (
-              <button
+              <Button
                 key={opt.key}
+                variant={sortMode === opt.key ? 'default' : 'outline'}
                 type="button"
                 onClick={() => setSortMode(opt.key)}
                 className={`rounded-full px-3 py-1 text-xs font-bold transition-colors ${
@@ -175,7 +187,7 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
                 }`}
               >
                 {opt.label}
-              </button>
+              </Button>
             ))}
           </div>
         )}
@@ -192,7 +204,8 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
                     <h2 className="text-lg font-bold text-slate-900 capitalize">
                       {card.latestSense.headword || card.word}
                     </h2>
-                    <button
+                    <Button
+                      variant="ghost"
                       type="button"
                       onClick={() => {
                         if (card.latestSense.audio) {
@@ -215,8 +228,9 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
                       className="rounded-lg border border-emerald-100 bg-emerald-50 p-1.5 text-emerald-600 transition-colors hover:bg-emerald-100"
                     >
                       <Volume2 size={14} />
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="ghost"
                       type="button"
                       onClick={() => {
                         setPendingRemoveWord(card.word);
@@ -226,7 +240,7 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
                       title="我记住了"
                     >
                       <Check size={14} />
-                    </button>
+                    </Button>
                   </div>
                   <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-bold text-emerald-700">
                     {card.occurrences.length} 个收藏点
@@ -363,7 +377,8 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
                 : `请再次确认：你已经掌握「${pendingRemoveWord}」，并要将它从生词表中移除。`}
             </p>
             <div className="flex justify-end gap-2">
-              <button
+              <Button
+                variant="outline"
                 type="button"
                 onClick={() => {
                   setPendingRemoveWord(null);
@@ -372,17 +387,17 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
                 className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50"
               >
                 取消
-              </button>
+              </Button>
               {doubleCheckStep === 1 ? (
-                <button
+                <Button
                   type="button"
                   onClick={() => setDoubleCheckStep(2)}
                   className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700"
                 >
                   我记住了
-                </button>
+                </Button>
               ) : (
-                <button
+                <Button
                   type="button"
                   onClick={() => {
                     removeWord(pendingRemoveWord);
@@ -392,7 +407,7 @@ export const VocabLibraryView: React.FC<VocabLibraryViewProps> = ({
                   className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700"
                 >
                   确认我已记住
-                </button>
+                </Button>
               )}
             </div>
           </div>

@@ -1,3 +1,7 @@
+/**
+ * @author SaltedFish-No1
+ * @description 拍照识词模块类型定义与 Zod 验证 Schema。
+ */
 import { z } from 'zod';
 
 export const PhotoCaptureResultSchema = z.object({

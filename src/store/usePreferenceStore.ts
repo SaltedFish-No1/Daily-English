@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description 用户偏好持久化状态：头像、昵称、学习设置等。
  *   已登录时自动同步到 Supabase user_preferences 表。
  */
@@ -34,16 +35,27 @@ function syncPreferenceToCloud(partial: Record<string, unknown>) {
 interface PreferenceState {
   /** base64 data URL of user avatar image, or empty string for default */
   avatarUrl: string;
+  /** 用户昵称，默认 '薄荷学员' */
   nickname: string;
+  /** 备考目标，默认 'ielts' */
   examGoal: ExamGoal;
+  /** 学习语言，当前仅支持 'en' */
   learningLang: LearningLang;
+  /** 每日学习课程数目标，默认 1 */
   dailyGoal: number;
+  /** 难度偏好，'auto' 表示由系统根据表现自动调整 */
   difficultyPref: DifficultyPref;
+  /** 更新头像 URL，同步到云端 */
   setAvatarUrl: (url: string) => void;
+  /** 更新昵称，同步到云端 */
   setNickname: (nickname: string) => void;
+  /** 更新备考目标，同步到云端 */
   setExamGoal: (goal: ExamGoal) => void;
+  /** 更新学习语言，同步到云端 */
   setLearningLang: (lang: LearningLang) => void;
+  /** 更新每日学习目标，同步到云端 */
   setDailyGoal: (goal: number) => void;
+  /** 更新难度偏好，同步到云端 */
   setDifficultyPref: (pref: DifficultyPref) => void;
   /** 重置所有偏好到默认值（登出时清理 localStorage） */
   resetStore: () => void;

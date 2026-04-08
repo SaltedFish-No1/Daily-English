@@ -6,6 +6,7 @@
 
 import React from 'react';
 import { LessonDifficulty } from '@/types/lesson';
+import { Button } from '@/components/ui/button';
 
 interface CEFRGuideDialogProps {
   open: boolean;
@@ -304,13 +305,13 @@ export const CEFRGuideDialog: React.FC<CEFRGuideDialogProps> = ({
           </div>
         </div>
         <div className="mt-4 flex justify-end sm:mt-5">
-          <button
+          <Button
             type="button"
             onClick={onClose}
             className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700"
           >
             我知道了
-          </button>
+          </Button>
         </div>
       </div>
     </div>

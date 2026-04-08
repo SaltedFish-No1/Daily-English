@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @author SaltedFish-No1
+ * @description 滑动复习卡片组件，支持左右滑动手势实现"忘记/记住"交互。
+ */
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import {
   motion,
