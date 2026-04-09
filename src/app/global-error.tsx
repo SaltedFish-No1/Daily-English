@@ -3,11 +3,10 @@
 /**
  * @author SaltedFish-No1
  * @description 全局错误边界，捕获根布局级别的致命错误并上报 Sentry。
+ *   使用内联样式和原生 HTML 元素，因为根级崩溃时 CSS/JS 可能未加载。
  */
 import * as Sentry from '@sentry/nextjs';
 import { useEffect } from 'react';
-import { RotateCcw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 export default function GlobalError({
   error,
@@ -32,6 +31,7 @@ export default function GlobalError({
             justifyContent: 'center',
             padding: '20px',
             textAlign: 'center',
+            fontFamily: 'system-ui, -apple-system, sans-serif',
           }}
         >
           <h2
@@ -46,7 +46,7 @@ export default function GlobalError({
           <p style={{ color: '#64748b', marginBottom: '32px' }}>
             加载页面时发生了一些错误。
           </p>
-          <Button
+          <button
             onClick={() => reset()}
             style={{
               display: 'flex',
@@ -59,11 +59,11 @@ export default function GlobalError({
               color: 'white',
               border: 'none',
               cursor: 'pointer',
+              fontSize: '16px',
             }}
           >
-            <RotateCcw size={20} />
-            重试
-          </Button>
+            ↻ 重试
+          </button>
         </div>
       </body>
     </html>

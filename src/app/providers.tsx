@@ -1,6 +1,11 @@
 'use client';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+  QueryCache,
+  MutationCache,
+} from '@tanstack/react-query';
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -45,6 +50,16 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
     () =>
       new QueryClient({
+        queryCache: new QueryCache({
+          onError: (error, query) => {
+            console.error('[QueryCache] Query failed:', query.queryKey, error);
+          },
+        }),
+        mutationCache: new MutationCache({
+          onError: (error) => {
+            console.error('[MutationCache] Mutation failed:', error);
+          },
+        }),
         defaultOptions: {
           queries: {
             staleTime: 60 * 1000,

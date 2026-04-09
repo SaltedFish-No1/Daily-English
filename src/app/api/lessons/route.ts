@@ -22,7 +22,10 @@ export async function GET(req: NextRequest) {
     const result = await getLessons({ page, limit, difficulty, tag, featured });
     return NextResponse.json(result);
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error';
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error('[Lessons] Failed to fetch lessons:', err);
+    return NextResponse.json(
+      { error: 'Failed to fetch lessons' },
+      { status: 500 }
+    );
   }
 }
