@@ -1,10 +1,12 @@
 'use client';
 
 /**
+ * @author SaltedFish-No1
  * @description 判断正误（TRUE/FALSE/NOT GIVEN）题视图。
  */
 
 import React from 'react';
+import { Button } from '@/components/ui/button';
 import { TFNGLabel, TFNGQuestion, YNNGLabel } from '../types';
 
 interface TFNGQuestionViewProps {
@@ -32,9 +34,9 @@ export const TFNGQuestionView: React.FC<TFNGQuestionViewProps> = ({
       </p>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         {options.map((opt) => (
-          <button
+          <Button
             key={opt}
-            type="button"
+            variant="ghost"
             disabled={disabled}
             onClick={() => onChange(opt)}
             className={`rounded-xl border px-4 py-3 text-sm font-bold transition-colors ${
@@ -44,7 +46,7 @@ export const TFNGQuestionView: React.FC<TFNGQuestionViewProps> = ({
             } ${disabled ? 'cursor-not-allowed opacity-60' : ''}`}
           >
             {opt.replace('_', ' ')}
-          </button>
+          </Button>
         ))}
       </div>
     </div>

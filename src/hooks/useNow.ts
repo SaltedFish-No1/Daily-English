@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description React-Compiler-safe hook to get a "now" timestamp.
  *
  * Uses useSyncExternalStore so that Date.now() is read as an external store

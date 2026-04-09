@@ -1,8 +1,13 @@
 'use client';
 
+/**
+ * @author SaltedFish-No1
+ * @description 页面级错误边界，捕获渲染错误并上报 Sentry，提供重试操作。
+ */
 import * as Sentry from '@sentry/nextjs';
 import { useEffect } from 'react';
 import { RotateCcw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function Error({
   error,
@@ -21,13 +26,13 @@ export default function Error({
         Something went wrong!
       </h2>
       <p className="mb-8 max-w-sm text-slate-500">加载页面时发生了一些错误。</p>
-      <button
+      <Button
         onClick={() => reset()}
         className="flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-3 font-bold text-white shadow-lg shadow-emerald-600/20 transition-colors hover:bg-emerald-700"
       >
         <RotateCcw size={20} />
         重试
-      </button>
+      </Button>
     </div>
   );
 }

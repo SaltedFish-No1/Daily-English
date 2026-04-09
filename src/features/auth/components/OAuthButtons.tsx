@@ -1,12 +1,15 @@
+'use client';
+
 /**
  * @author SaltedFish-No1
  * @description OAuth 社交登录按钮组，支持 GitHub 和 Google 登录。
  */
 
-'use client';
-
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import type { OAuthProvider } from '@/types/auth';
 
 const providerConfig: Record<
@@ -58,12 +61,12 @@ const providers: OAuthProvider[] = ['github', 'google'];
  * @return OAuth 按钮组组件。
  */
 export const OAuthButtons: React.FC = () => {
-  const [loading, setLoading] = useState<OAuthProvider | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [loadingProvider, setLoadingProvider] = useState<OAuthProvider | null>(
+    null
+  );
 
   const handleOAuthLogin = async (provider: OAuthProvider) => {
-    setLoading(provider);
-    setError(null);
+    setLoadingProvider(provider);
     const { error: authError } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
@@ -74,9 +77,9 @@ export const OAuthButtons: React.FC = () => {
       },
     });
     if (authError) {
-      setError(authError.message);
+      toast.error(authError.message);
     }
-    setLoading(null);
+    setLoadingProvider(null);
   };
 
   return (
@@ -85,24 +88,23 @@ export const OAuthButtons: React.FC = () => {
         {providers.map((provider) => {
           const config = providerConfig[provider];
           return (
-            <button
+            <Button
               key={provider}
-              type="button"
-              disabled={loading !== null}
+              variant="outline"
+              disabled={loadingProvider !== null}
               onClick={() => handleOAuthLogin(provider)}
               className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 transition-colors hover:border-emerald-200 hover:bg-emerald-50 disabled:opacity-50"
             >
-              {loading === provider ? (
-                <span className="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-emerald-600" />
+              {loadingProvider === provider ? (
+                <Spinner size="sm" />
               ) : (
                 config.icon
               )}
               {config.label}
-            </button>
+            </Button>
           );
         })}
       </div>
-      {error && <p className="text-center text-xs text-red-500">{error}</p>}
     </div>
   );
 };

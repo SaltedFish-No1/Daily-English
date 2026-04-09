@@ -1,6 +1,7 @@
 'use client';
 
 /**
+ * @author SaltedFish-No1
  * @description 课程面包屑导航组件。
  */
 

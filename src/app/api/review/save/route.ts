@@ -1,4 +1,7 @@
 /**
+ * @author SaltedFish-No1
+ * @description 复习课程保存 API，将流式生成的复习课程持久化到数据库。
+ *
  * POST /api/review/save
  * Body: { lesson: GeneratedLesson, words: string[], difficulty: string }
  * Response: { lessonId: string }

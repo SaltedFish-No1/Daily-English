@@ -1,3 +1,7 @@
+/**
+ * @author SaltedFish-No1
+ * @description 课程列表 API，支持分页、难度、标签等筛选条件。
+ */
 import { NextRequest, NextResponse } from 'next/server';
 import { getLessons } from '@/lib/lessons-db';
 

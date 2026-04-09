@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description 课程数据访问层 — 供 Server Component 和 API route 共用。
  *
  *   规范化表结构：lessons + lesson_paragraphs + lesson_focus_words + lesson_quiz_questions
@@ -78,18 +79,31 @@ function toYyyyMmDd(input: string | null | undefined): string | undefined {
 // ---------------------------------------------------------------------------
 
 interface GetLessonsOptions {
+  /** 按 CEFR 难度筛选 */
   difficulty?: string;
+  /** 按标签筛选 */
   tag?: string;
+  /** 按精选状态筛选 */
   featured?: boolean;
+  /** 页码（从 1 开始），默认 1 */
   page?: number;
+  /** 每页条数，默认 50 */
   limit?: number;
 }
 
 interface GetLessonsResult {
+  /** 当前页的课程列表 */
   lessons: LessonListItem[];
+  /** 符合筛选条件的总数 */
   total: number;
 }
 
+/**
+ * @description 查询已发布的课程列表（支持分页和筛选），自动兼容 Legacy 表结构。
+ *
+ * @param opts 分页与筛选选项
+ * @returns 课程列表和总数
+ */
 export async function getLessons(
   opts: GetLessonsOptions = {}
 ): Promise<GetLessonsResult> {
@@ -179,6 +193,13 @@ export async function getLessons(
 // Detail — assemble LessonData from 4 tables
 // ---------------------------------------------------------------------------
 
+/**
+ * @description 根据 ID 获取课程完整数据（从 4 张子表拼装），自动兼容 Legacy 表结构。
+ *
+ * @param id 课程 UUID
+ * @param userId 当前用户 ID，传入时允许查看该用户的未发布课程
+ * @returns 完整的 LessonData，未找到返回 null
+ */
 export async function getLessonById(
   id: string,
   userId?: string
@@ -365,6 +386,11 @@ export async function getLessonById(
 // Helpers
 // ---------------------------------------------------------------------------
 
+/**
+ * @description 获取所有已发布课程的 ID 列表（按创建时间倒序），用于静态路径生成。
+ *
+ * @returns 课程 ID 数组
+ */
 export async function getLessonDates(): Promise<string[]> {
   const { data, error } = await supabaseAdmin
     .from('lessons')
@@ -385,6 +411,11 @@ export async function getLessonDates(): Promise<string[]> {
   return legacyData.map((row) => row.id);
 }
 
+/**
+ * @description 获取所有已发布课程的 ID 列表（按创建时间倒序）。
+ *
+ * @returns 课程 ID 数组
+ */
 export async function getLessonIds(): Promise<string[]> {
   const { data, error } = await supabaseAdmin
     .from('lessons')
@@ -642,6 +673,11 @@ export async function getReviewLessonById(
 // Title map
 // ---------------------------------------------------------------------------
 
+/**
+ * @description 构建课程 ID/date → 标题的映射表，用于在不加载完整数据时显示课程标题。
+ *
+ * @returns 映射对象，key 同时包含 id 和 date 两种入口
+ */
 export async function getLessonTitleMap(): Promise<Record<string, string>> {
   const { data, error } = await supabaseAdmin
     .from('lessons')

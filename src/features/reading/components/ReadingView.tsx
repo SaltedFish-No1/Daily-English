@@ -1,6 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+/**
+ * @author SaltedFish-No1
+ * @description 阅读练习视图，展示课程列表并支持按难度筛选。
+ */
+import React, { useState } from 'react';
 import { LessonDifficulty, LessonListItem } from '@/types/lesson';
 import {
   Calendar,
@@ -16,13 +20,14 @@ import {
 import { motion } from 'motion/react';
 import Link from 'next/link';
 import { useUserStore } from '@/store/useUserStore';
-import { supabase } from '@/lib/supabase';
 import {
   CEFRGuideDialog,
   difficultyClassMap,
-} from '@/features/home/components/CEFRGuideDialog';
+} from '@/components/CEFRGuideDialog';
 import { useLearningStats } from '@/hooks/useLearningStats';
 import { useReviewWords } from '@/hooks/useReviewWords';
+import { useReviewLessonsQuery } from '@/features/reading/hooks/useReviewLessonsQuery';
+import { StatsCardSkeleton } from '@/components/skeletons/StatsCardSkeleton';
 
 interface ReadingViewProps {
   lessons: LessonListItem[];
@@ -38,28 +43,8 @@ export const ReadingView: React.FC<ReadingViewProps> = ({ lessons }) => {
   const stats = useLearningStats();
   const { dueCount, dueWords } = useReviewWords();
 
-  const [reviewLessons, setReviewLessons] = useState<LessonListItem[]>([]);
-
-  useEffect(() => {
-    let cancelled = false;
-    async function fetchReviewLessons() {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (!session?.access_token) return;
-
-      const res = await fetch('/api/review/lessons?limit=6', {
-        headers: { Authorization: `Bearer ${session.access_token}` },
-      });
-      if (!res.ok || cancelled) return;
-      const json = await res.json();
-      if (!cancelled) setReviewLessons(json.lessons ?? []);
-    }
-    fetchReviewLessons();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const { data: reviewLessons = [], isPending: isReviewPending } =
+    useReviewLessonsQuery();
 
   const [difficultyGuide, setDifficultyGuide] = useState<DifficultyGuideState>({
     open: false,
@@ -197,7 +182,19 @@ export const ReadingView: React.FC<ReadingViewProps> = ({ lessons }) => {
         )}
 
         {/* Review History */}
-        {reviewLessons.length > 0 && (
+        {isReviewPending ? (
+          <section className="mb-8">
+            <div className="mb-4 flex items-center gap-2">
+              <History size={16} className="text-slate-500" />
+              <h2 className="text-sm font-bold tracking-widest text-slate-500 uppercase">
+                复习文章历史
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <StatsCardSkeleton count={3} />
+            </div>
+          </section>
+        ) : reviewLessons.length > 0 ? (
           <section className="mb-8">
             <div className="mb-4 flex items-center gap-2">
               <History size={16} className="text-slate-500" />
@@ -255,7 +252,7 @@ export const ReadingView: React.FC<ReadingViewProps> = ({ lessons }) => {
               })}
             </div>
           </section>
-        )}
+        ) : null}
 
         {/* Lesson Cards */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3">

@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @author SaltedFish-No1
+ * @description 写作批改报告组件，展示 AI 批改的详细评分、反馈与改进建议。
+ */
 import { useState } from 'react';
 import {
   AlertCircle,
@@ -11,6 +15,7 @@ import {
   ChevronUp,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Button } from '@/components/ui/button';
 import { GradeScoreCard } from './GradeScoreCard';
 import type { WritingGrade, GradingCriteriaDimension } from '@/types/writing';
 
@@ -30,25 +35,26 @@ function CollapsibleSection({
   defaultOpen?: boolean;
   children: React.ReactNode;
 }) {
-  const [open, setOpen] = useState(defaultOpen);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   return (
     <div className="rounded-2xl border border-slate-100 bg-white shadow-sm">
-      <button
-        onClick={() => setOpen(!open)}
+      <Button
+        variant="ghost"
+        onClick={() => setIsOpen(!isOpen)}
         className="flex w-full items-center justify-between p-4"
       >
         <span className="flex items-center gap-2 text-sm font-bold text-slate-900">
           <Icon size={16} />
           {title}
         </span>
-        {open ? (
+        {isOpen ? (
           <ChevronUp size={16} className="text-slate-400" />
         ) : (
           <ChevronDown size={16} className="text-slate-400" />
         )}
-      </button>
+      </Button>
       <AnimatePresence>
-        {open && (
+        {isOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}

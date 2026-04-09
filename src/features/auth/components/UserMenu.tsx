@@ -1,14 +1,15 @@
+'use client';
+
 /**
  * @author SaltedFish-No1
  * @description Header 用户菜单组件：已登录时显示头像与登出下拉菜单，
  *   未登录时显示"登录"按钮链接到登录页。
  */
 
-'use client';
-
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { LogIn, LogOut, User as UserIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/store/useAuthStore';
 
 /**
@@ -18,13 +19,13 @@ import { useAuthStore } from '@/store/useAuthStore';
  */
 export const UserMenu: React.FC = () => {
   const { user, isLoading, isGuest, signOut } = useAuthStore();
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setOpen(false);
+        setIsOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -57,9 +58,9 @@ export const UserMenu: React.FC = () => {
 
   return (
     <div ref={menuRef} className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
+      <Button
+        variant="ghost"
+        onClick={() => setIsOpen(!isOpen)}
         className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border-2 border-emerald-200 bg-emerald-50 transition-colors hover:border-emerald-400"
       >
         {avatarUrl ? (
@@ -71,9 +72,9 @@ export const UserMenu: React.FC = () => {
         ) : (
           <UserIcon size={16} className="text-emerald-600" />
         )}
-      </button>
+      </Button>
 
-      {open && (
+      {isOpen && (
         <div className="absolute top-full right-0 z-50 mt-2 w-48 rounded-xl border border-slate-100 bg-white py-2 shadow-lg">
           <div className="border-b border-slate-100 px-4 py-2">
             <p className="truncate text-sm font-bold text-slate-900">
@@ -83,10 +84,10 @@ export const UserMenu: React.FC = () => {
               <p className="truncate text-xs text-slate-400">{user.email}</p>
             )}
           </div>
-          <button
-            type="button"
+          <Button
+            variant="ghost"
             onClick={async () => {
-              setOpen(false);
+              setIsOpen(false);
               await signOut();
               window.location.href = '/login';
             }}
@@ -94,7 +95,7 @@ export const UserMenu: React.FC = () => {
           >
             <LogOut size={14} />
             退出登录
-          </button>
+          </Button>
         </div>
       )}
     </div>

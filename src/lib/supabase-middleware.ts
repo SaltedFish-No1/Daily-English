@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description 为 Next.js middleware 创建 Supabase 服务端客户端。
  *   使用 @supabase/ssr 的 createServerClient，通过 cookie 读写会话信息。
  */

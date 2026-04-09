@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @author SaltedFish-No1
+ * @description 用户个人资料视图，展示学习数据、偏好设置与账户管理。
+ */
 import { useMemo, useState, useRef, useCallback } from 'react';
 import {
   BookOpen,
@@ -20,7 +24,9 @@ import {
   User,
   CircleCheckBig,
   Download,
+  Loader2,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import Link from 'next/link';
 import { useUserStore } from '@/store/useUserStore';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -30,6 +36,9 @@ import {
   type ExamGoal,
   type DifficultyPref,
 } from '@/store/usePreferenceStore';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { PWAInstallDialog } from '@/components/PWAInstallDialog';
 
 const EXAM_GOALS: { value: ExamGoal; label: string }[] = [
   { value: 'ielts', label: '雅思 IELTS' },
@@ -108,7 +117,8 @@ function SettingRow<T extends string | number>({
   const currentLabel = options.find((o) => o.value === value)?.label ?? '';
   return (
     <div>
-      <button
+      <Button
+        variant="ghost"
         onClick={onToggle}
         className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-slate-50"
       >
@@ -122,12 +132,13 @@ function SettingRow<T extends string | number>({
         ) : (
           <ChevronRight size={16} className="text-slate-300" />
         )}
-      </button>
+      </Button>
       {expanded && (
         <div className="flex flex-wrap gap-2 px-4 pt-1 pb-3">
           {options.map((opt) => (
-            <button
+            <Button
               key={String(opt.value)}
+              variant={opt.value === value ? 'default' : 'ghost'}
               onClick={() => onSelect(opt.value)}
               className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
                 opt.value === value
@@ -136,7 +147,7 @@ function SettingRow<T extends string | number>({
               }`}
             >
               {opt.label}
-            </button>
+            </Button>
           ))}
         </div>
       )}
@@ -148,13 +159,18 @@ function SettingRow<T extends string | number>({
 /*  ProfileView                                                        */
 /* ------------------------------------------------------------------ */
 export function ProfileView() {
-  const { savedWords, history, dictionaryCache, wordReviewStates } = useUserStore();
+  const { savedWords, history, dictionaryCache, wordReviewStates } =
+    useUserStore();
   const { user, isGuest, signOut } = useAuthStore();
   const prefs = usePreferenceStore();
 
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
-  const [editingNickname, setEditingNickname] = useState(false);
+  const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [nicknameDraft, setNicknameDraft] = useState(prefs.nickname);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  const [isSavingNickname, setIsSavingNickname] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const {
     isStandalone,
@@ -194,11 +210,15 @@ export function ProfileView() {
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
+      setIsUploading(true);
       try {
         const dataUrl = await compressImage(file);
         prefs.setAvatarUrl(dataUrl);
+        toast.success('头像更新成功');
       } catch {
-        console.error('Failed to process avatar image');
+        toast.error('头像更新失败');
+      } finally {
+        setIsUploading(false);
       }
       // reset so same file can be re-selected
       e.target.value = '';
@@ -208,29 +228,49 @@ export function ProfileView() {
 
   const handleNicknameSubmit = () => {
     const trimmed = nicknameDraft.trim();
-    if (trimmed) prefs.setNickname(trimmed);
-    else setNicknameDraft(prefs.nickname);
-    setEditingNickname(false);
+    setIsSavingNickname(true);
+    try {
+      if (trimmed) {
+        prefs.setNickname(trimmed);
+        toast.success('昵称已更新');
+      } else {
+        setNicknameDraft(prefs.nickname);
+      }
+    } finally {
+      setIsSavingNickname(false);
+      setIsEditingNickname(false);
+    }
   };
 
   const handleClearCache = () => {
     if (
       confirm('确定要清除词典缓存吗？共 ' + cacheCount + ' 条记录将被清除。')
     ) {
-      useUserStore.setState({ dictionaryCache: {} });
+      setIsClearing(true);
+      try {
+        useUserStore.setState({ dictionaryCache: {} });
+        toast.success('缓存已清除');
+      } finally {
+        setIsClearing(false);
+      }
     }
   };
 
   const handleSignOut = async () => {
     if (confirm('确定要退出登录吗？')) {
-      await signOut();
-      window.location.href = '/login';
+      setIsSigningOut(true);
+      try {
+        await signOut();
+        window.location.href = '/login';
+      } finally {
+        setIsSigningOut(false);
+      }
     }
   };
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 pb-24 lg:pb-8">
-      <header className="hidden pt-safe sticky top-0 z-30 border-b border-gray-100 bg-white shadow-sm lg:block">
+      <header className="pt-safe sticky top-0 z-30 hidden border-b border-gray-100 bg-white shadow-sm lg:block">
         <div className="mx-auto max-w-3xl px-5 py-6">
           <h1 className="text-xl font-bold tracking-tight text-slate-900">
             我的
@@ -243,12 +283,16 @@ export function ProfileView() {
         <section className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-4">
             {/* Avatar with upload */}
-            <button
+            <Button
+              variant="ghost"
               onClick={() => fileInputRef.current?.click()}
-              className="group relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-emerald-50 ring-2 ring-emerald-200 transition-transform hover:scale-105 active:scale-95"
+              disabled={isUploading}
+              className="group relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-emerald-50 ring-2 ring-emerald-200 transition-transform hover:scale-105 active:scale-95 disabled:opacity-60"
               title="点击上传头像"
             >
-              {prefs.avatarUrl ? (
+              {isUploading ? (
+                <Loader2 size={24} className="animate-spin text-emerald-500" />
+              ) : prefs.avatarUrl ? (
                 <img
                   src={prefs.avatarUrl}
                   alt="头像"
@@ -257,10 +301,12 @@ export function ProfileView() {
               ) : (
                 <User size={28} className="text-emerald-400" />
               )}
-              <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
-                <Camera size={18} className="text-white" />
-              </div>
-            </button>
+              {!isUploading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
+                  <Camera size={18} className="text-white" />
+                </div>
+              )}
+            </Button>
             <input
               ref={fileInputRef}
               type="file"
@@ -271,27 +317,29 @@ export function ProfileView() {
 
             <div className="min-w-0 flex-1">
               {/* Nickname */}
-              {editingNickname ? (
-                <input
+              {isEditingNickname ? (
+                <Input
                   value={nicknameDraft}
                   onChange={(e) => setNicknameDraft(e.target.value)}
                   onBlur={handleNicknameSubmit}
                   onKeyDown={(e) => e.key === 'Enter' && handleNicknameSubmit()}
                   maxLength={20}
                   autoFocus
-                  className="w-full rounded-lg border border-emerald-300 bg-emerald-50/50 px-2 py-1 text-base font-bold text-slate-900 outline-none focus:ring-2 focus:ring-emerald-400"
+                  disabled={isSavingNickname}
+                  className="w-full rounded-lg border border-emerald-300 bg-emerald-50/50 px-2 py-1 text-base font-bold text-slate-900 outline-none focus:ring-2 focus:ring-emerald-400 disabled:opacity-60"
                 />
               ) : (
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => {
                     setNicknameDraft(prefs.nickname);
-                    setEditingNickname(true);
+                    setIsEditingNickname(true);
                   }}
                   className="text-left text-base font-bold text-slate-900 transition-colors hover:text-emerald-700"
                   title="点击编辑昵称"
                 >
                   {prefs.nickname}
-                </button>
+                </Button>
               )}
 
               {isGuest ? (
@@ -320,7 +368,8 @@ export function ProfileView() {
 
         {/* ── PWA Install Tip ────────────────────────── */}
         {!isStandalone && (
-          <button
+          <Button
+            variant="ghost"
             type="button"
             onClick={handleInstall}
             className="flex w-full items-center gap-3 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-left transition-colors hover:bg-emerald-100 active:scale-[0.99]"
@@ -329,7 +378,7 @@ export function ProfileView() {
             <span className="min-w-0 flex-1 text-sm text-emerald-800">
               将<strong>薄荷外语</strong>安装到桌面，获得更好的使用体验
             </span>
-          </button>
+          </Button>
         )}
 
         {/* ── Stats Grid ────────────────────────────── */}
@@ -468,18 +517,24 @@ export function ProfileView() {
           </div>
           <div className="divide-y divide-slate-100">
             {/* Clear Cache */}
-            <button
+            <Button
+              variant="ghost"
               onClick={handleClearCache}
-              className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-slate-50"
+              disabled={isClearing}
+              className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-slate-50 disabled:opacity-50"
             >
               <span className="text-slate-400">
-                <Trash2 size={18} />
+                {isClearing ? (
+                  <Loader2 size={18} className="animate-spin" />
+                ) : (
+                  <Trash2 size={18} />
+                )}
               </span>
               <span className="flex-1 text-sm font-medium text-slate-700">
                 清除词典缓存
               </span>
               <span className="text-xs text-slate-400">{cacheCount} 条</span>
-            </button>
+            </Button>
 
             {/* About */}
             <Link
@@ -497,57 +552,37 @@ export function ProfileView() {
 
             {/* Sign Out */}
             {!isGuest && (
-              <button
+              <Button
+                variant="destructive"
                 onClick={handleSignOut}
-                className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-red-50"
+                disabled={isSigningOut}
+                className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-red-50 disabled:opacity-50"
               >
                 <span className="text-red-400">
-                  <LogOut size={18} />
+                  {isSigningOut ? (
+                    <Loader2 size={18} className="animate-spin" />
+                  ) : (
+                    <LogOut size={18} />
+                  )}
                 </span>
                 <span className="flex-1 text-sm font-medium text-red-600">
-                  退出登录
+                  {isSigningOut ? '退出中...' : '退出登录'}
                 </span>
-              </button>
+              </Button>
             )}
           </div>
         </section>
       </main>
 
       {/* PWA Install Dialog */}
-      {installDialog.open && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/40 p-5">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl">
-            <h3 className="mb-2 text-base font-bold text-slate-900">
-              {installDialog.title}
-            </h3>
-            <p className="mb-5 text-sm leading-relaxed text-slate-600">
-              {installDialog.message}
-            </p>
-            <div className="flex justify-end gap-2">
-              {installDialog.showConfirm && (
-                <button
-                  type="button"
-                  onClick={closeInstallDialog}
-                  className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50"
-                >
-                  取消
-                </button>
-              )}
-              <button
-                type="button"
-                onClick={
-                  installDialog.showConfirm
-                    ? confirmInstall
-                    : closeInstallDialog
-                }
-                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700"
-              >
-                {installDialog.showConfirm ? '确认安装' : '知道了'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <PWAInstallDialog
+        open={installDialog.open}
+        title={installDialog.title}
+        message={installDialog.message}
+        showConfirm={installDialog.showConfirm}
+        onConfirm={confirmInstall}
+        onClose={closeInstallDialog}
+      />
     </div>
   );
 }

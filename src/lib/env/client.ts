@@ -18,6 +18,8 @@ const clientEnvSchema = z
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY: z.string().min(1).optional(),
     /** Sentry DSN（可选，仅 production 启用） */
     NEXT_PUBLIC_SENTRY_DSN: z.string().optional(),
+    /** 应用版本号（可选，由 CI/CD 注入） */
+    NEXT_PUBLIC_APP_VERSION: z.string().optional(),
   })
   .refine(
     (data) =>
@@ -45,6 +47,7 @@ function parseClientEnv(): ClientEnvRaw {
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY:
       process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY,
     NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
+    NEXT_PUBLIC_APP_VERSION: process.env.NEXT_PUBLIC_APP_VERSION,
   };
 
   const result = clientEnvSchema.safeParse(raw);

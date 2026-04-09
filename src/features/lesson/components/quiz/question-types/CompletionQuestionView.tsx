@@ -1,11 +1,13 @@
 'use client';
 
 /**
+ * @author SaltedFish-No1
  * @description 填空题视图，将 contentTemplate 中的 {{id}} 解析为输入框。
  */
 
 import React, { useMemo } from 'react';
 import { CompletionQuestion } from '../types';
+import { Input } from '@/components/ui/input';
 
 interface CompletionQuestionViewProps {
   question: CompletionQuestion;
@@ -79,7 +81,7 @@ export const CompletionQuestionView: React.FC<CompletionQuestionViewProps> = ({
                 : '';
             return (
               <span key={idx} className="mx-1 inline-flex flex-col">
-                <input
+                <Input
                   value={v}
                   disabled={disabled}
                   onChange={(e) =>

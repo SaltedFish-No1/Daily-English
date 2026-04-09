@@ -1,6 +1,7 @@
 'use client';
 
 /**
+ * @author SaltedFish-No1
  * @description 复习课程入口页 — 从 URL query 读取待复习词列表，调用 AI 生成文章。
  *
  * URL: /review?words=elaborate,sustainability,incentive&difficulty=B1
@@ -9,6 +10,7 @@
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { ReviewView } from '@/features/review/components/ReviewView';
+import { Spinner } from '@/components/ui/spinner';
 
 function ReviewContent() {
   const searchParams = useSearchParams();
@@ -20,25 +22,6 @@ function ReviewContent() {
     .map((w) => w.trim())
     .filter(Boolean);
 
-  if (words.length === 0) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
-        <div className="text-center">
-          <p className="text-lg font-bold text-slate-900">没有待复习的词汇</p>
-          <p className="mt-1 text-sm text-slate-500">
-            收藏生词后，系统会根据遗忘曲线安排复习
-          </p>
-          <a
-            href="/reading"
-            className="mt-4 inline-block rounded-full bg-emerald-600 px-6 py-2 text-sm font-bold text-white hover:bg-emerald-700"
-          >
-            去阅读
-          </a>
-        </div>
-      </div>
-    );
-  }
-
   return <ReviewView words={words} difficulty={difficulty} />;
 }
 
@@ -47,7 +30,7 @@ export default function ReviewPage() {
     <Suspense
       fallback={
         <div className="flex min-h-screen items-center justify-center bg-slate-50">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-200 border-t-emerald-600" />
+          <Spinner size="md" />
         </div>
       }
     >

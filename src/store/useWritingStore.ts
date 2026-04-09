@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description 写作练习客户端状态：计时器与草稿持久化。
  *   已登录时自动同步草稿到 Supabase writing_drafts 表。
  */
@@ -42,18 +43,29 @@ function syncDraftToCloudDebounced() {
 
 interface WritingState {
   // Timer (not persisted — ephemeral session state)
+  /** 计时器累计秒数（非持久化，刷新页面归零） */
   timerSeconds: number;
-  timerRunning: boolean;
+  /** 计时器是否正在运行 */
+  isTimerRunning: boolean;
+  /** 开始计时 */
   startTimer: () => void;
+  /** 暂停计时 */
   stopTimer: () => void;
+  /** 重置计时器为 0 并停止 */
   resetTimer: () => void;
+  /** 计时器每秒 tick，仅在运行状态下累加 */
   tickTimer: () => void;
 
   // Draft (persisted — survives page refresh)
+  /** 当前正在编辑的题目 ID，null 表示未选择题目 */
   currentTopicId: string | null;
+  /** 当前草稿文本内容 */
   currentDraftText: string;
+  /** 设置当前题目，同时同步草稿到云端 */
   setCurrentTopic: (topicId: string | null) => void;
+  /** 更新草稿文本，防抖 2 秒后同步到云端 */
   setDraftText: (text: string) => void;
+  /** 清空草稿和计时器，同步到云端 */
   clearDraft: () => void;
   /** 重置所有写作状态（登出时清理 localStorage） */
   resetStore: () => void;
@@ -63,16 +75,18 @@ export const useWritingStore = create<WritingState>()(
   persist(
     (set) => ({
       timerSeconds: 0,
-      timerRunning: false,
+      isTimerRunning: false,
       currentTopicId: null,
       currentDraftText: '',
 
-      startTimer: () => set({ timerRunning: true }),
-      stopTimer: () => set({ timerRunning: false }),
-      resetTimer: () => set({ timerSeconds: 0, timerRunning: false }),
+      startTimer: () => set({ isTimerRunning: true }),
+      stopTimer: () => set({ isTimerRunning: false }),
+      resetTimer: () => set({ timerSeconds: 0, isTimerRunning: false }),
       tickTimer: () =>
         set((state) =>
-          state.timerRunning ? { timerSeconds: state.timerSeconds + 1 } : state
+          state.isTimerRunning
+            ? { timerSeconds: state.timerSeconds + 1 }
+            : state
         ),
 
       setCurrentTopic: (topicId) => {
@@ -88,7 +102,7 @@ export const useWritingStore = create<WritingState>()(
           currentTopicId: null,
           currentDraftText: '',
           timerSeconds: 0,
-          timerRunning: false,
+          isTimerRunning: false,
         });
         syncDraftToCloud();
       },
@@ -97,7 +111,7 @@ export const useWritingStore = create<WritingState>()(
           currentTopicId: null,
           currentDraftText: '',
           timerSeconds: 0,
-          timerRunning: false,
+          isTimerRunning: false,
         }),
     }),
     {

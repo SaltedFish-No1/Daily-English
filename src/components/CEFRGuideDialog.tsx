@@ -1,11 +1,21 @@
 'use client';
 
 /**
+ * @author SaltedFish-No1
  * @description CEFR 等级说明弹窗，含金字塔可视化与能力矩阵。
  */
 
 import React from 'react';
 import { LessonDifficulty } from '@/types/lesson';
+import { Button } from '@/components/ui/button';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerFooter,
+} from '@/components/ui/drawer';
 
 interface CEFRGuideDialogProps {
   open: boolean;
@@ -181,95 +191,114 @@ export const CEFRGuideDialog: React.FC<CEFRGuideDialogProps> = ({
   difficulty,
   onClose,
 }) => {
-  if (!open || difficulty === null) return null;
+  if (difficulty === null) return null;
   const capabilityItems = capabilityMatrixMap[difficulty].items;
   const primaryItems = capabilityItems.slice(0, 2);
   const secondaryItems = capabilityItems.slice(2);
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-end justify-center bg-slate-900/40 p-0 sm:items-center sm:p-5">
-      <div className="max-h-[88vh] w-full overflow-y-auto rounded-t-2xl bg-white p-4 shadow-2xl sm:max-h-none sm:max-w-2xl sm:rounded-2xl sm:p-6">
-        <div className="mb-3 sm:mb-5">
-          <h3 className="text-base font-bold text-slate-900 sm:text-xl">
-            CEFR 分级说明
-          </h3>
-          <p className="mt-1 text-xs leading-relaxed text-slate-600 sm:text-sm">
-            当前课程等级：
-            <span
-              className={`ml-2 rounded-full px-2 py-0.5 text-xs font-bold ${difficultyClassMap[difficulty]}`}
-            >
-              {difficulty} · {difficultyLabelMap[difficulty]}
-            </span>
-          </p>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-[220px_1fr] sm:gap-5">
-          <div className="hidden rounded-xl border border-slate-100 bg-slate-50 p-3 sm:block">
-            <p className="mb-3 text-xs font-bold tracking-widest text-slate-500 uppercase">
-              CEFR 金字塔
-            </p>
-            <div className="flex flex-col items-center gap-1.5">
-              {cefrPyramidRows.map(({ level, widthClassName }) => (
-                <div
-                  key={level}
-                  className={`flex h-8 items-center justify-center rounded-md text-xs font-bold ${widthClassName} ${difficultyClassMap[level]} ${
-                    level === difficulty
-                      ? 'ring-2 ring-emerald-300 ring-offset-1'
-                      : ''
-                  }`}
+    <Drawer open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
+      <DrawerContent className="max-h-[88vh]">
+        <div className="overflow-y-auto p-4 sm:p-6">
+          <DrawerHeader className="p-0 pb-3 sm:pb-5">
+            <DrawerTitle className="text-base font-bold text-slate-900 sm:text-xl">
+              CEFR 分级说明
+            </DrawerTitle>
+            <DrawerDescription asChild>
+              <p className="mt-1 text-xs leading-relaxed text-slate-600 sm:text-sm">
+                当前课程等级：
+                <span
+                  className={`ml-2 rounded-full px-2 py-0.5 text-xs font-bold ${difficultyClassMap[difficulty]}`}
                 >
-                  {level} · {difficultyLabelMap[level]}
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="rounded-xl border border-slate-100 bg-slate-50 p-3 sm:hidden">
-            <p className="text-[11px] font-bold tracking-widest text-slate-500 uppercase">
-              当前分级位置
-            </p>
-            <p className="mt-1 text-sm font-semibold text-slate-800">
-              {difficulty} · {difficultyLabelMap[difficulty]}
-            </p>
-            <details className="mt-2">
-              <summary className="cursor-pointer text-xs font-semibold text-emerald-700">
-                查看六级阶梯
-              </summary>
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                {cefrPyramidRows.map(({ level }) => (
-                  <span
+                  {difficulty} · {difficultyLabelMap[difficulty]}
+                </span>
+              </p>
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="grid gap-3 sm:grid-cols-[220px_1fr] sm:gap-5">
+            <div className="hidden rounded-xl border border-slate-100 bg-slate-50 p-3 sm:block">
+              <p className="mb-3 text-xs font-bold tracking-widest text-slate-500 uppercase">
+                CEFR 金字塔
+              </p>
+              <div className="flex flex-col items-center gap-1.5">
+                {cefrPyramidRows.map(({ level, widthClassName }) => (
+                  <div
                     key={level}
-                    className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${difficultyClassMap[level]}`}
+                    className={`flex h-8 items-center justify-center rounded-md text-xs font-bold ${widthClassName} ${difficultyClassMap[level]} ${
+                      level === difficulty
+                        ? 'ring-2 ring-emerald-300 ring-offset-1'
+                        : ''
+                    }`}
                   >
-                    {level}
-                  </span>
+                    {level} · {difficultyLabelMap[level]}
+                  </div>
                 ))}
               </div>
-            </details>
-          </div>
-          <div className="space-y-3 rounded-xl border border-slate-100 p-4 text-sm leading-relaxed text-slate-600">
-            <p>
-              <strong className="font-bold text-slate-800">CEFR</strong>{' '}
-              是国际通用的语言能力框架，将能力划分为 A1 到 C2 六个等级。
-            </p>
-            <p>{capabilityMatrixMap[difficulty].profile}</p>
-            <div className="grid gap-2">
-              {primaryItems.map(({ dimension, description }) => (
-                <article
-                  key={dimension}
-                  className="rounded-lg border border-slate-100 bg-slate-50 p-3"
-                >
-                  <p className="text-xs font-bold tracking-widest text-slate-500 uppercase">
-                    {dimension}
-                  </p>
-                  <p className="mt-1 text-sm leading-relaxed text-slate-700">
-                    {description}
-                  </p>
-                </article>
-              ))}
-              <details className="sm:hidden">
+            </div>
+            <div className="rounded-xl border border-slate-100 bg-slate-50 p-3 sm:hidden">
+              <p className="text-[11px] font-bold tracking-widest text-slate-500 uppercase">
+                当前分级位置
+              </p>
+              <p className="mt-1 text-sm font-semibold text-slate-800">
+                {difficulty} · {difficultyLabelMap[difficulty]}
+              </p>
+              <details className="mt-2">
                 <summary className="cursor-pointer text-xs font-semibold text-emerald-700">
-                  查看完整能力矩阵
+                  查看六级阶梯
                 </summary>
-                <div className="mt-2 grid gap-2">
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {cefrPyramidRows.map(({ level }) => (
+                    <span
+                      key={level}
+                      className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${difficultyClassMap[level]}`}
+                    >
+                      {level}
+                    </span>
+                  ))}
+                </div>
+              </details>
+            </div>
+            <div className="space-y-3 rounded-xl border border-slate-100 p-4 text-sm leading-relaxed text-slate-600">
+              <p>
+                <strong className="font-bold text-slate-800">CEFR</strong>{' '}
+                是国际通用的语言能力框架，将能力划分为 A1 到 C2 六个等级。
+              </p>
+              <p>{capabilityMatrixMap[difficulty].profile}</p>
+              <div className="grid gap-2">
+                {primaryItems.map(({ dimension, description }) => (
+                  <article
+                    key={dimension}
+                    className="rounded-lg border border-slate-100 bg-slate-50 p-3"
+                  >
+                    <p className="text-xs font-bold tracking-widest text-slate-500 uppercase">
+                      {dimension}
+                    </p>
+                    <p className="mt-1 text-sm leading-relaxed text-slate-700">
+                      {description}
+                    </p>
+                  </article>
+                ))}
+                <details className="sm:hidden">
+                  <summary className="cursor-pointer text-xs font-semibold text-emerald-700">
+                    查看完整能力矩阵
+                  </summary>
+                  <div className="mt-2 grid gap-2">
+                    {secondaryItems.map(({ dimension, description }) => (
+                      <article
+                        key={dimension}
+                        className="rounded-lg border border-slate-100 bg-slate-50 p-3"
+                      >
+                        <p className="text-xs font-bold tracking-widest text-slate-500 uppercase">
+                          {dimension}
+                        </p>
+                        <p className="mt-1 text-sm leading-relaxed text-slate-700">
+                          {description}
+                        </p>
+                      </article>
+                    ))}
+                  </div>
+                </details>
+                <div className="hidden sm:grid sm:gap-2">
                   {secondaryItems.map(({ dimension, description }) => (
                     <article
                       key={dimension}
@@ -284,35 +313,20 @@ export const CEFRGuideDialog: React.FC<CEFRGuideDialogProps> = ({
                     </article>
                   ))}
                 </div>
-              </details>
-              <div className="hidden sm:grid sm:gap-2">
-                {secondaryItems.map(({ dimension, description }) => (
-                  <article
-                    key={dimension}
-                    className="rounded-lg border border-slate-100 bg-slate-50 p-3"
-                  >
-                    <p className="text-xs font-bold tracking-widest text-slate-500 uppercase">
-                      {dimension}
-                    </p>
-                    <p className="mt-1 text-sm leading-relaxed text-slate-700">
-                      {description}
-                    </p>
-                  </article>
-                ))}
               </div>
             </div>
           </div>
+          <DrawerFooter className="flex-row justify-end p-0 pt-4 sm:pt-5">
+            <Button
+              type="button"
+              onClick={onClose}
+              className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700"
+            >
+              我知道了
+            </Button>
+          </DrawerFooter>
         </div>
-        <div className="mt-4 flex justify-end sm:mt-5">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700"
-          >
-            我知道了
-          </button>
-        </div>
-      </div>
-    </div>
+      </DrawerContent>
+    </Drawer>
   );
 };

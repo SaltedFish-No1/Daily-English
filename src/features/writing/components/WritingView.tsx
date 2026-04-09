@@ -1,40 +1,31 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+/**
+ * @author SaltedFish-No1
+ * @description 写作练习主视图，展示写作题目列表和题目上传入口。
+ */
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { PenLine, Plus, Loader2, ArrowLeft, BookOpen } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { PenLine, Plus, ArrowLeft, BookOpen } from 'lucide-react';
+import { motion } from 'motion/react';
 
 import { TopicCard } from './TopicCard';
 import { TopicUploader } from './TopicUploader';
-import { fetchTopics } from '@/features/writing/lib/writingApi';
+import { TopicCardSkeleton } from '@/components/skeletons/TopicCardSkeleton';
+import { useWritingTopicsQuery } from '@/features/writing/hooks/useWritingTopicsQuery';
 import { useAuthStore } from '@/store/useAuthStore';
-import type { WritingTopicWithStats, WritingTopic } from '@/types/writing';
+import { Button } from '@/components/ui/button';
+import type { WritingTopic } from '@/types/writing';
 
 export function WritingView() {
   const router = useRouter();
-  const { user, isLoading: authLoading } = useAuthStore();
-  const [topics, setTopics] = useState<WritingTopicWithStats[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { user, isLoading: isAuthLoading } = useAuthStore();
   const [showUploader, setShowUploader] = useState(false);
 
-  const loadTopics = useCallback(async () => {
-    if (!user) return;
-    setLoading(true);
-    try {
-      const list = await fetchTopics();
-      setTopics(list);
-    } catch (err) {
-      console.error('Failed to load topics:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, [user]);
+  const { data: topics = [], isLoading: isTopicsLoading } =
+    useWritingTopicsQuery();
 
-  useEffect(() => {
-    if (!authLoading && user) loadTopics();
-    if (!authLoading && !user) setLoading(false);
-  }, [authLoading, user, loadTopics]);
+  const isLoading = isAuthLoading || (!!user && isTopicsLoading);
 
   function handleTopicCreated(topic: WritingTopic) {
     setShowUploader(false);
@@ -42,19 +33,19 @@ export function WritingView() {
   }
 
   // Not logged in
-  if (!authLoading && !user) {
+  if (!isAuthLoading && !user) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-5">
         <PenLine size={48} className="mb-4 text-violet-300" />
         <p className="text-center text-sm text-slate-500">
           登录后即可使用写作练习功能
         </p>
-        <button
+        <Button
           onClick={() => router.push('/login')}
           className="mt-4 rounded-xl bg-violet-600 px-6 py-2.5 text-sm font-bold text-white"
         >
           去登录
-        </button>
+        </Button>
       </div>
     );
   }
@@ -65,12 +56,13 @@ export function WritingView() {
       <header className="pt-safe sticky top-0 z-30 hidden border-b border-gray-100 bg-white shadow-sm lg:block">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3 sm:px-5 sm:py-5">
           <div className="flex items-center gap-2 sm:gap-3">
-            <button
+            <Button
+              variant="ghost"
               onClick={() => router.push('/learn')}
               className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100"
             >
               <ArrowLeft size={20} />
-            </button>
+            </Button>
             <div>
               <h1 className="text-lg font-bold tracking-tight text-slate-900 sm:text-xl">
                 写作练习
@@ -103,11 +95,8 @@ export function WritingView() {
         </motion.button>
 
         {/* Topic list */}
-        {loading ? (
-          <div className="flex flex-col items-center gap-3 py-16 text-slate-400">
-            <Loader2 size={32} className="animate-spin" />
-            <span className="text-sm">加载中...</span>
-          </div>
+        {isLoading ? (
+          <TopicCardSkeleton count={3} />
         ) : topics.length === 0 ? (
           <div className="flex flex-col items-center gap-3 py-16 text-slate-400">
             <BookOpen size={40} className="text-slate-200" />
@@ -131,14 +120,11 @@ export function WritingView() {
       </main>
 
       {/* Uploader modal */}
-      <AnimatePresence>
-        {showUploader && (
-          <TopicUploader
-            onTopicCreated={handleTopicCreated}
-            onClose={() => setShowUploader(false)}
-          />
-        )}
-      </AnimatePresence>
+      <TopicUploader
+        open={showUploader}
+        onTopicCreated={handleTopicCreated}
+        onClose={() => setShowUploader(false)}
+      />
     </div>
   );
 }

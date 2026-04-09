@@ -1,6 +1,7 @@
 'use client';
 
 /**
+ * @author SaltedFish-No1
  * @description 测验引擎组件，管理答题流程、评分与成绩回顾。
  */
 
@@ -9,6 +10,7 @@ import { LessonQuiz } from '@/types/lesson';
 import { ArrowRight, RotateCcw, Layers } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'motion/react';
+import { Button } from '@/components/ui/button';
 import { QuestionRenderer } from './quiz/QuestionRenderer';
 import { FullScreenCelebration } from './quiz/FullScreenCelebration';
 import {
@@ -196,20 +198,22 @@ export const Quiz: React.FC<QuizProps> = ({
               做题记录与解析
             </h2>
             <div className="flex items-center gap-2">
-              <button
+              <Button
+                variant="outline"
                 onClick={() =>
                   setRationaleLang(rationaleLang === 'en' ? 'zh' : 'en')
                 }
                 className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-bold text-slate-600 transition-colors hover:bg-slate-50"
               >
                 {rationaleLang === 'en' ? '中' : 'En'}
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="outline"
                 onClick={() => setShowReview(false)}
                 className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 transition-colors hover:bg-slate-50"
               >
                 返回成绩
-              </button>
+              </Button>
             </div>
           </div>
           <div className="space-y-4">
@@ -327,19 +331,20 @@ export const Quiz: React.FC<QuizProps> = ({
           )}
 
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <button
+            <Button
+              variant="outline"
               onClick={() => setShowReview(true)}
               className="rounded-xl border border-slate-200 px-6 py-3 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50"
             >
               查看做题记录与解析
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={handleRestart}
               className="flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-3 font-bold text-white shadow-lg shadow-emerald-600/20 transition-colors hover:bg-emerald-700"
             >
               <RotateCcw size={20} />
               {labels.retakeButtonLabel}
-            </button>
+            </Button>
           </div>
         </div>
       </>
@@ -406,14 +411,15 @@ export const Quiz: React.FC<QuizProps> = ({
                 {currentGrade.score}/{currentGrade.maxScore}
               </span>
             </h4>
-            <button
+            <Button
+              variant="ghost"
               onClick={() =>
                 setRationaleLang(rationaleLang === 'en' ? 'zh' : 'en')
               }
               className="rounded bg-white/50 px-2 py-1 text-xs font-medium transition-colors hover:bg-white/80"
             >
               {rationaleLang === 'en' ? '中' : 'En'}
-            </button>
+            </Button>
           </div>
           {(() => {
             const row = reviewRows.find(
@@ -435,7 +441,7 @@ export const Quiz: React.FC<QuizProps> = ({
       )}
 
       <div className="flex justify-end">
-        <button
+        <Button
           onClick={currentGrade ? handleNext : handleSubmit}
           disabled={!currentGrade && isAnswerEmpty(currentAnswer)}
           className={`flex items-center gap-2 rounded-xl px-8 py-3 font-bold transition-all ${
@@ -450,7 +456,7 @@ export const Quiz: React.FC<QuizProps> = ({
               : labels.nextButtonLabel
             : labels.submitButtonLabel}
           <ArrowRight size={20} />
-        </button>
+        </Button>
       </div>
     </div>
   );

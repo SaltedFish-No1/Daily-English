@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description 统一词典查询 API：DB 缓存 → dictionaryapi.dev → AI 生成。
  *   所有成功结果写入 Supabase dictionary_cache，下次直接返回。
  */

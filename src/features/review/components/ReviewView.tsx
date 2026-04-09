@@ -1,17 +1,25 @@
 'use client';
 
 /**
+ * @author SaltedFish-No1
  * @description 复习课程页 — 调用 AI 实时生成文章，生成完成后保存到数据库并跳转到课程页。
  */
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { type GeneratedLesson } from '@/types/review';
 import { parsePartialJson } from 'ai';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { Sparkles, RefreshCw, ArrowLeft } from 'lucide-react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { Button } from '@/components/ui/button';
+import { queryKeys } from '@/lib/queryKeys';
+import {
+  generateReviewLesson,
+  saveReviewLesson,
+} from '@/features/review/lib/reviewApi';
 
 interface ReviewViewProps {
   words: string[];
@@ -25,22 +33,18 @@ type GenerationState =
   | { status: 'error'; message: string };
 
 export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
-  const [state, setState] = useState<GenerationState>({ status: 'idle' });
+  const [generationState, setGenerationState] = useState<GenerationState>({
+    status: 'idle',
+  });
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const hasTriggered = useRef(false);
 
-  const generate = useCallback(async () => {
-    setState({ status: 'generating', progress: null });
-    try {
-      const res = await fetch('/api/review/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ words, difficulty }),
-      });
+  const generateMutation = useMutation({
+    mutationFn: async () => {
+      setGenerationState({ status: 'generating', progress: null });
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || `HTTP ${res.status}`);
-      }
+      const res = await generateReviewLesson(words, difficulty);
 
       const reader = res.body!.getReader();
       const decoder = new TextDecoder();
@@ -53,7 +57,7 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
 
         const { value: partial } = await parsePartialJson(accumulated);
         if (partial != null) {
-          setState({
+          setGenerationState({
             status: 'generating',
             progress: partial as Partial<GeneratedLesson>,
           });
@@ -73,52 +77,66 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
       }
 
       // Save to database and redirect to the persisted lesson page.
-      setState({ status: 'saving' });
+      setGenerationState({ status: 'saving' });
 
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      const saveRes = await fetch('/api/review/save', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(session?.access_token
-            ? { Authorization: `Bearer ${session.access_token}` }
-            : {}),
-        },
-        body: JSON.stringify({ lesson: finalObject, words, difficulty }),
+      return saveReviewLesson(finalObject, words, difficulty);
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.review.lessons(),
       });
-
-      if (!saveRes.ok) {
-        const err = await saveRes.json().catch(() => ({}));
-        throw new Error(err.error || '保存失败，请重试');
-      }
-
-      const { lessonId } = await saveRes.json();
-      router.replace(`/lessons/${lessonId}`);
-    } catch (err) {
-      setState({
+      router.replace(`/lessons/${data.lessonId}`);
+    },
+    onError: (err) => {
+      const message = err instanceof Error ? err.message : '生成失败，请重试';
+      toast.error(message);
+      setGenerationState({
         status: 'error',
-        message: err instanceof Error ? err.message : '生成失败，请重试',
+        message,
       });
-    }
-  }, [words, difficulty, router]);
+    },
+  });
+
+  const generate = useCallback(() => {
+    generateMutation.mutate();
+  }, [generateMutation]);
 
   useEffect(() => {
-    if (words.length > 0) {
+    if (words.length > 0 && !hasTriggered.current) {
+      hasTriggered.current = true;
       generate();
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [words, generate]);
+
+  // 无复习词时显示空状态
+  if (words.length === 0) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <div className="text-center">
+          <p className="text-lg font-bold text-slate-900">没有待复习的词汇</p>
+          <p className="mt-1 text-sm text-slate-500">
+            收藏生词后，系统会根据遗忘曲线安排复习
+          </p>
+          <Link
+            href="/reading"
+            className="mt-4 inline-block rounded-full bg-emerald-600 px-6 py-2 text-sm font-bold text-white hover:bg-emerald-700"
+          >
+            去阅读
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   // Loading state (generating or saving)
   if (
-    state.status === 'idle' ||
-    state.status === 'generating' ||
-    state.status === 'saving'
+    generationState.status === 'idle' ||
+    generationState.status === 'generating' ||
+    generationState.status === 'saving'
   ) {
-    const progress = state.status === 'generating' ? state.progress : null;
-    const isSaving = state.status === 'saving';
+    const progress =
+      generationState.status === 'generating' ? generationState.progress : null;
+    const isSaving = generationState.status === 'saving';
 
     // Calculate real progress based on which schema fields have arrived
     const progressSteps = [
@@ -202,7 +220,7 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
           <Sparkles size={32} className="text-red-500" />
         </div>
         <h2 className="mb-2 text-lg font-bold text-slate-900">生成失败</h2>
-        <p className="mb-6 text-sm text-slate-500">{state.message}</p>
+        <p className="mb-6 text-sm text-slate-500">{generationState.message}</p>
         <div className="flex justify-center gap-3">
           <Link
             href="/reading"
@@ -211,14 +229,14 @@ export function ReviewView({ words, difficulty = 'B1' }: ReviewViewProps) {
             <ArrowLeft size={14} />
             返回课程
           </Link>
-          <button
+          <Button
             type="button"
             onClick={generate}
             className="flex items-center gap-1.5 rounded-full bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700"
           >
             <RefreshCw size={14} />
             重新生成
-          </button>
+          </Button>
         </div>
       </div>
     </div>

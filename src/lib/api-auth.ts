@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description API 路由鉴权辅助：优先从 cookie 读取 Supabase session，
  *   回退到 Authorization Bearer token（兼容 writing 模块的 authFetch）。
  */

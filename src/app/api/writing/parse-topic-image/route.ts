@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description 上传写作题目图片 → 视觉模型提取题目文字 → 返回提取结果（不写入数据库）。
  *   接收 FormData: image (File)
  *   返回 { imageUrl: string, extraction: { title, writingPrompt, wordLimit } }

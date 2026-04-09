@@ -1,3 +1,7 @@
+/**
+ * @author SaltedFish-No1
+ * @description Next.js 路由中间件，处理鉴权路由保护与 Supabase 会话刷新。
+ */
 import { NextResponse, type NextRequest } from 'next/server';
 import { createSupabaseMiddlewareClient } from '@/lib/supabase-middleware';
 

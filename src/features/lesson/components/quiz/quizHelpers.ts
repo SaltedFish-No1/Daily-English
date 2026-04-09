@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description 测验纯函数工具：总分计算、空答案检测与评分分发。
  */
 

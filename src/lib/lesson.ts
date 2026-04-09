@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description 课程 JSON 数据校验与 schema 迁移。
  */
 
@@ -97,7 +98,13 @@ const isFocusWord = (value: unknown): value is FocusWord => {
   return true;
 };
 
-// 防御性校验链：先迁移 schema 至当前版本，再逐字段验证，首次失败即返回 null（fail-fast）。
+/**
+ * @description 防御性校验链：先迁移 schema 至当前版本，再逐字段验证，首次失败即返回 null（fail-fast）。
+ *   包括 meta 字段完整性、段落 HTML 注入检测、重点词唯一性等检查。
+ *
+ * @param value 待校验的课程 JSON 数据（任意类型）
+ * @returns 校验通过返回类型安全的 LessonData，失败返回 null
+ */
 export const validateLessonData = (value: unknown): LessonData | null => {
   if (!isRecord(value)) return null;
 

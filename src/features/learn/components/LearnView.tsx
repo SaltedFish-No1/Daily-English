@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @author SaltedFish-No1
+ * @description 学习中心视图，展示各学习模块入口（阅读、写作、复习等）。
+ */
 import Link from 'next/link';
 import {
   Headphones,

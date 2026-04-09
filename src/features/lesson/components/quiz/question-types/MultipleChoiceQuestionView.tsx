@@ -1,10 +1,12 @@
 'use client';
 
 /**
+ * @author SaltedFish-No1
  * @description 单选/多选题视图。
  */
 
 import React from 'react';
+import { Button } from '@/components/ui/button';
 import { MultipleChoiceQuestion } from '../types';
 
 interface MultipleChoiceQuestionViewProps {
@@ -28,9 +30,9 @@ export const MultipleChoiceQuestionView: React.FC<
       {question.options.map((opt, idx) => {
         const selected = value.includes(opt.id);
         return (
-          <button
+          <Button
             key={opt.id}
-            type="button"
+            variant="ghost"
             disabled={disabled}
             onClick={() => {
               if (isMulti) {
@@ -59,7 +61,7 @@ export const MultipleChoiceQuestionView: React.FC<
             <span className="text-sm font-medium text-slate-700 sm:text-base">
               {opt.text}
             </span>
-          </button>
+          </Button>
         );
       })}
       {question.selectionMode === 'multiple' && (

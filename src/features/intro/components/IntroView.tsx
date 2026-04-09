@@ -1,5 +1,9 @@
 'use client';
 
+/**
+ * @author SaltedFish-No1
+ * @description 产品介绍页视图，展示薄荷外语功能亮点与注册引导。
+ */
 import React from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';

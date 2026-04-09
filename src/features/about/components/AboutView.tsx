@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { clientEnv } from '@/lib/env/client';
 
 /**
  * @description 关于页展示元数据结构。
@@ -34,7 +35,7 @@ interface RepoMeta {
 
 /** 关于页静态展示数据 */
 const FALLBACK: RepoMeta = {
-  version: process.env.NEXT_PUBLIC_APP_VERSION ?? '线下版本',
+  version: clientEnv.NEXT_PUBLIC_APP_VERSION ?? '线下版本',
   license: '保留所有权利',
   ownerAvatar: 'https://avatars.githubusercontent.com/u/138401553',
   ownerLogin: 'SaltedFish-No1',
@@ -77,7 +78,7 @@ const createParticles = (): Particle[] =>
 export function AboutView() {
   const repo = FALLBACK;
   const [, setTapCount] = useState(0);
-  const [easterEgg, setEasterEgg] = useState(false);
+  const [isEasterEgg, setIsEasterEgg] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -86,7 +87,7 @@ export function AboutView() {
    * @returns void
    */
   const handleLeafTap = useCallback(() => {
-    if (easterEgg) return;
+    if (isEasterEgg) return;
 
     if (timerRef.current) clearTimeout(timerRef.current);
 
@@ -94,15 +95,15 @@ export function AboutView() {
       const next = prev + 1;
       if (next >= 5) {
         setParticles(createParticles());
-        setEasterEgg(true);
-        setTimeout(() => setEasterEgg(false), 2500);
+        setIsEasterEgg(true);
+        setTimeout(() => setIsEasterEgg(false), 2500);
         return 0;
       }
       return next;
     });
 
     timerRef.current = setTimeout(() => setTapCount(0), 400);
-  }, [easterEgg]);
+  }, [isEasterEgg]);
 
   const infoItems = [
     { label: '版本', value: repo.version },
@@ -113,7 +114,7 @@ export function AboutView() {
   return (
     <div className="bg-background/90 min-h-screen pb-[calc(7rem+env(safe-area-inset-bottom))]">
       {/* Header */}
-      <header className="bg-background/85 sticky top-0 z-30 flex items-center gap-3 border-b px-4 py-3.5 backdrop-blur-md">
+      <header className="sticky top-0 z-30 flex items-center gap-3 border-b bg-white/70 px-4 py-3.5 backdrop-blur-md">
         <Link
           href="/profile"
           className="hover:bg-muted flex h-8 w-8 items-center justify-center rounded-full transition-colors"
@@ -149,7 +150,7 @@ export function AboutView() {
               className="h-20 w-20 rounded-3xl bg-emerald-50/90 text-emerald-500 hover:bg-emerald-100/80"
             >
               <motion.div
-                animate={easterEgg ? { rotate: 360, scale: [1, 1.3, 1] } : {}}
+                animate={isEasterEgg ? { rotate: 360, scale: [1, 1.3, 1] } : {}}
                 transition={{ duration: 0.8, ease: 'easeInOut' }}
               >
                 <Leaf
@@ -162,7 +163,7 @@ export function AboutView() {
 
             {/* Easter egg particles */}
             <AnimatePresence>
-              {easterEgg &&
+              {isEasterEgg &&
                 particles.map((p) => (
                   <motion.div
                     key={p.id}

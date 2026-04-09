@@ -1,6 +1,7 @@
 'use client';
 
 /**
+ * @author SaltedFish-No1
  * @description Tinder 风格滑动卡片复习 —— 左滑忘记，右滑记住，逐词更新 SM-2。
  */
 
@@ -15,6 +16,7 @@ import {
   RotateCcw,
   Eye,
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useUserStore, type VocabOccurrence } from '@/store/useUserStore';
 import { useSpeech } from '@/hooks/useSpeech';
 import { getMemoryStrength } from '@/lib/spaced-repetition';
@@ -186,6 +188,26 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
     [speak]
   );
 
+  // 无复习词时显示空状态
+  if (words.length === 0) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <div className="text-center">
+          <p className="text-lg font-bold text-slate-900">没有待复习的词汇</p>
+          <p className="mt-1 text-sm text-slate-500">
+            收藏生词后，系统会根据遗忘曲线安排复习
+          </p>
+          <Link
+            href="/reading"
+            className="mt-4 inline-block rounded-full bg-emerald-600 px-6 py-2 text-sm font-bold text-white hover:bg-emerald-700"
+          >
+            去阅读
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   // ----- Finished Summary -----
   if (isFinished) {
     const remembered = results.filter((r) => r.remembered).length;
@@ -236,7 +258,8 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
 
           <div className="flex gap-3">
             {forgot > 0 && (
-              <button
+              <Button
+                variant="outline"
                 onClick={() => {
                   const forgotWordKeys = results
                     .filter((r) => !r.remembered)
@@ -257,7 +280,7 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
               >
                 <RotateCcw size={16} />
                 复习忘记的 ({forgot})
-              </button>
+              </Button>
             )}
             <Link
               href="/reading"
@@ -348,7 +371,8 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
               )}
 
               {/* Audio button */}
-              <button
+              <Button
+                variant="ghost"
                 className="absolute top-5 right-5 rounded-full p-2 text-slate-300 transition-colors hover:bg-slate-50 hover:text-slate-500"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -356,7 +380,7 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
                 }}
               >
                 <Volume2 size={20} />
-              </button>
+              </Button>
 
               <AnimatePresence mode="wait" initial={false}>
                 {!isFlipped ? (
@@ -428,7 +452,8 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
           {/* Forgot (left swipe) */}
           <motion.button
             onClick={() => cardRef.current?.swipeLeft()}
-            className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-red-200 bg-white text-red-500 shadow-md transition-all hover:border-red-300 hover:bg-red-50"
+            disabled={isAnimating}
+            className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-red-200 bg-white text-red-500 shadow-md transition-all hover:border-red-300 hover:bg-red-50 disabled:opacity-30 disabled:hover:bg-white"
             whileTap={{ scale: 0.9 }}
           >
             <X size={28} strokeWidth={3} />
@@ -437,7 +462,8 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
           {/* Remembered (right swipe) */}
           <motion.button
             onClick={() => cardRef.current?.swipeRight()}
-            className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-emerald-200 bg-white text-emerald-500 shadow-md transition-all hover:border-emerald-300 hover:bg-emerald-50"
+            disabled={isAnimating}
+            className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-emerald-200 bg-white text-emerald-500 shadow-md transition-all hover:border-emerald-300 hover:bg-emerald-50 disabled:opacity-30 disabled:hover:bg-white"
             whileTap={{ scale: 0.9 }}
           >
             <Check size={28} strokeWidth={3} />

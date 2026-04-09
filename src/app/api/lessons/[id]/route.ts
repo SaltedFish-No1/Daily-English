@@ -1,3 +1,7 @@
+/**
+ * @author SaltedFish-No1
+ * @description 课程详情 API，根据课程 ID 返回完整课程数据。
+ */
 import { NextRequest, NextResponse } from 'next/server';
 import { getLessonById } from '@/lib/lessons-db';
 import { requireApiAuth } from '@/lib/api-auth';

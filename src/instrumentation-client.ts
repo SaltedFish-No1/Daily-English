@@ -1,3 +1,7 @@
+/**
+ * @author SaltedFish-No1
+ * @description 客户端 Instrumentation 入口，初始化 Sentry 浏览器端错误监控。
+ */
 import * as Sentry from '@sentry/nextjs';
 import { clientEnv } from '@/lib/env/client';
 

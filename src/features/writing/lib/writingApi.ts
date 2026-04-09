@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description 写作模块客户端 API 调用封装。
  */
 
@@ -32,6 +33,11 @@ async function authFetch(url: string, init?: RequestInit): Promise<Response> {
   });
 }
 
+/**
+ * @description 获取所有评分标准列表（无需鉴权）。
+ *
+ * @returns 评分标准数组
+ */
 export async function fetchCriteria(): Promise<GradingCriteria[]> {
   const res = await fetch('/api/writing/criteria');
   if (!res.ok) throw new Error('Failed to fetch criteria');
@@ -39,6 +45,11 @@ export async function fetchCriteria(): Promise<GradingCriteria[]> {
   return json.criteria;
 }
 
+/**
+ * @description 获取当前用户的写作题目列表（含提交统计）。
+ *
+ * @returns 带统计信息的写作题目数组
+ */
 export async function fetchTopics(): Promise<WritingTopicWithStats[]> {
   const res = await authFetch('/api/writing/topics');
   if (!res.ok) throw new Error('Failed to fetch topics');
@@ -46,6 +57,12 @@ export async function fetchTopics(): Promise<WritingTopicWithStats[]> {
   return json.topics;
 }
 
+/**
+ * @description 上传题目图片并通过 AI 识别提取写作题目信息。
+ *
+ * @param image 题目图片文件
+ * @returns 上传后的图片 URL 和 AI 提取的题目结构
+ */
 export async function parseTopicImage(
   image: File
 ): Promise<{ imageUrl: string; extraction: TopicExtraction }> {
@@ -63,6 +80,12 @@ export async function parseTopicImage(
   return res.json();
 }
 
+/**
+ * @description 手动创建写作题目。
+ *
+ * @param params 题目参数：评分标准 ID、标题、写作提示、图片 URL、字数限制
+ * @returns 创建成功的写作题目对象
+ */
 export async function createTopicManual(params: {
   gradingCriteria: string;
   title: string | null;
@@ -83,6 +106,12 @@ export async function createTopicManual(params: {
   return json.topic;
 }
 
+/**
+ * @description 获取指定题目的所有提交记录及对应评分。
+ *
+ * @param topicId 写作题目 ID
+ * @returns 提交列表和评分映射（key 为 submissionId）
+ */
 export async function fetchSubmissions(topicId: string): Promise<{
   submissions: WritingSubmission[];
   grades: Record<string, WritingGrade>;
@@ -94,6 +123,12 @@ export async function fetchSubmissions(topicId: string): Promise<{
   return res.json();
 }
 
+/**
+ * @description 提交键盘输入的作文。
+ *
+ * @param params 提交参数：题目 ID、作文内容、写作用时（秒）
+ * @returns 创建成功的提交记录
+ */
 export async function submitWriting(params: {
   topicId: string;
   content: string;
@@ -112,6 +147,12 @@ export async function submitWriting(params: {
   return json.submission;
 }
 
+/**
+ * @description 上传手写作文图片并通过 AI OCR 识别为文本。
+ *
+ * @param image 手写作文图片文件
+ * @returns 识别出的文本内容
+ */
 export async function recognizeHandwriting(image: File): Promise<string> {
   const formData = new FormData();
   formData.append('image', image);
@@ -128,6 +169,14 @@ export async function recognizeHandwriting(image: File): Promise<string> {
   return json.text;
 }
 
+/**
+ * @description 提交手写作文（图片 + OCR 识别），通过 FormData 上传。
+ *
+ * @param topicId 写作题目 ID
+ * @param image 手写作文图片文件
+ * @param timeSpentSeconds 写作用时（秒）
+ * @returns 创建成功的提交记录
+ */
 export async function submitHandwritten(
   topicId: string,
   image: File,

@@ -1,7 +1,12 @@
 'use client';
 
+/**
+ * @author SaltedFish-No1
+ * @description 写作编辑器组件，提供文本输入区域和字数统计功能。
+ */
 import { useCallback } from 'react';
 import { useWritingStore } from '@/store/useWritingStore';
+import { Textarea } from '@/components/ui/textarea';
 
 interface WritingEditorProps {
   wordLimit?: number | null;
@@ -15,7 +20,7 @@ function countWords(text: string): number {
 }
 
 export function WritingEditor({ wordLimit }: WritingEditorProps) {
-  const { currentDraftText, setDraftText, timerRunning, startTimer } =
+  const { currentDraftText, setDraftText, isTimerRunning, startTimer } =
     useWritingStore();
 
   const wordCount = countWords(currentDraftText);
@@ -24,16 +29,16 @@ export function WritingEditor({ wordLimit }: WritingEditorProps) {
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setDraftText(e.target.value);
-      if (!timerRunning && e.target.value.trim().length > 0) {
+      if (!isTimerRunning && e.target.value.trim().length > 0) {
         startTimer();
       }
     },
-    [setDraftText, timerRunning, startTimer]
+    [setDraftText, isTimerRunning, startTimer]
   );
 
   return (
     <div className="flex flex-1 flex-col">
-      <textarea
+      <Textarea
         value={currentDraftText}
         onChange={handleChange}
         placeholder="Start writing your answer here..."

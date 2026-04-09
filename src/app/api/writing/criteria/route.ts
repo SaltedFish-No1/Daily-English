@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description 获取所有可用的写作评分标准列表。
  */
 

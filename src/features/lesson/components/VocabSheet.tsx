@@ -6,10 +6,9 @@ import { useLessonStore } from '@/store/useLessonStore';
 import { useUserStore } from '@/store/useUserStore';
 import { useSpeech } from '@/hooks/useSpeech';
 import { LessonSpeech } from '@/types/lesson';
-import { X } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
 import { DictionaryContent } from './DictionaryContent';
 import { fetchTTSAudioUrl } from '@/lib/tts-fallback';
+import { Drawer, DrawerContent } from '@/components/ui/drawer';
 
 interface VocabSheetProps {
   speech: LessonSpeech;
@@ -133,6 +132,24 @@ export const VocabSheet: React.FC<VocabSheetProps> = ({ speech }) => {
     });
   };
 
+  const dictionaryContentEl = (
+    <DictionaryContent
+      queryWord={queryWord}
+      selectedSurface={selectedSurface}
+      isFocusWord={selectedWordContext?.isFocusWord ?? false}
+      currentRecord={currentRecord}
+      primaryEntry={primaryEntry}
+      preferredPhonetic={preferredPhonetic}
+      flattenedMeanings={flattenedMeanings}
+      isSavedAtCurrentPoint={isSavedAtCurrentPoint}
+      speechEnabled={speech.enabled}
+      onSave={handleSave}
+      onSpeak={handleSpeak}
+      onRetry={() => void fetchDictionaryRecord(queryWord, true)}
+      speak={speak}
+    />
+  );
+
   if (!selectedWordContext) {
     return (
       <div className="hidden rounded-2xl border border-emerald-100 bg-slate-50/50 p-8 lg:block">
@@ -155,57 +172,23 @@ export const VocabSheet: React.FC<VocabSheetProps> = ({ speech }) => {
 
   return (
     <>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={handleClose}
-            className="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-sm lg:hidden"
-          />
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ y: '100%' }}
-            animate={{ y: 0 }}
-            exit={{ y: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="pb-safe fixed inset-x-0 bottom-0 z-[70] rounded-t-3xl bg-white shadow-2xl lg:static lg:block lg:rounded-none lg:bg-transparent lg:shadow-none"
-          >
-            <div className="relative h-[70vh] max-h-[85vh] overflow-y-auto p-6 pt-14 lg:h-auto lg:max-h-none lg:rounded-2xl lg:border lg:border-emerald-100 lg:bg-slate-50/50 lg:pt-8">
-              {/* Drag Handle */}
-              <div className="absolute top-3 left-1/2 h-1.5 w-12 -translate-x-1/2 rounded-full bg-slate-200 lg:hidden" />
-
-              <button
-                type="button"
-                onClick={handleClose}
-                className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-700 active:scale-95 lg:hidden"
-              >
-                <X size={18} />
-              </button>
-              <DictionaryContent
-                queryWord={queryWord}
-                selectedSurface={selectedSurface}
-                isFocusWord={selectedWordContext?.isFocusWord ?? false}
-                currentRecord={currentRecord}
-                primaryEntry={primaryEntry}
-                preferredPhonetic={preferredPhonetic}
-                flattenedMeanings={flattenedMeanings}
-                isSavedAtCurrentPoint={isSavedAtCurrentPoint}
-                speechEnabled={speech.enabled}
-                onSave={handleSave}
-                onSpeak={handleSpeak}
-                onRetry={() => void fetchDictionaryRecord(queryWord, true)}
-                speak={speak}
-              />
+      {/* Mobile: Vaul Drawer */}
+      <div className="lg:hidden">
+        <Drawer open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+          <DrawerContent className="max-h-[85vh]">
+            <div className="overflow-y-auto p-6 pt-4">
+              {dictionaryContentEl}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </DrawerContent>
+        </Drawer>
+      </div>
+
+      {/* Desktop: Static sidebar panel */}
+      <div className="hidden lg:block">
+        <div className="relative h-auto rounded-2xl border border-emerald-100 bg-slate-50/50 p-6 pt-8">
+          {dictionaryContentEl}
+        </div>
+      </div>
     </>
   );
 };

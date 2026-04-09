@@ -1,4 +1,5 @@
 /**
+ * @author SaltedFish-No1
  * @description 集中式 AI 模型配置 — 统一管理模型实例、中间件和 structuredOutputs。
  *
  * 所有 API 路由应从此模块导入模型，禁止直接调用 openai()。

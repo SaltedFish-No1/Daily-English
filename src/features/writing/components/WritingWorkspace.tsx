@@ -1,6 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+/**
+ * @author SaltedFish-No1
+ * @description 写作工作区组件，集成编辑器、计时器、提交批改及成绩报告。
+ */
+import { useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   ArrowLeft,
@@ -14,6 +18,7 @@ import {
   History,
   Trophy,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'motion/react';
 import { WritingTimerDisplay, WritingTimerControls } from './WritingTimer';
 import { WritingEditor } from './WritingEditor';
@@ -21,16 +26,15 @@ import { GradeReport } from './GradeReport';
 import { HandwritingOcrModal } from './HandwritingOcrModal';
 import { useWritingStore } from '@/store/useWritingStore';
 import { useAuthStore } from '@/store/useAuthStore';
-import {
-  submitWriting,
-  gradeSubmission,
-  fetchCriteria,
-  fetchSubmissions,
-} from '@/features/writing/lib/writingApi';
-import { supabase } from '@/lib/supabase';
+import { useWritingTopicsQuery } from '@/features/writing/hooks/useWritingTopicsQuery';
+import { useWritingSubmissionsQuery } from '@/features/writing/hooks/useWritingSubmissionsQuery';
+import { useWritingCriteriaQuery } from '@/features/writing/hooks/useWritingCriteriaQuery';
+import { useSubmitEssayMutation } from '@/features/writing/hooks/useSubmitEssayMutation';
+import { gradeSubmission } from '@/features/writing/lib/writingApi';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import type {
   WritingTopic,
-  WritingSubmission,
   WritingGrade,
   WritingGradeResult,
   GradingCriteriaDimension,
@@ -53,77 +57,48 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
     clearDraft,
     resetTimer,
     stopTimer,
-    timerRunning,
+    isTimerRunning,
     startTimer,
   } = useWritingStore();
 
-  const [topic, setTopic] = useState<WritingTopic | null>(null);
-  const [dimensions, setDimensions] = useState<GradingCriteriaDimension[]>([]);
+  // --- TanStack Query hooks ---
+  const { data: allTopics = [] } = useWritingTopicsQuery();
+  const { data: submissionsData, isLoading: isSubmissionsLoading } =
+    useWritingSubmissionsQuery(topicId);
+  const { data: criteriaList = [] } = useWritingCriteriaQuery();
+  const submitMutation = useSubmitEssayMutation();
+
+  // 从 topics 列表中查找当前题目
+  const topic: WritingTopic | undefined = useMemo(
+    () => allTopics.find((t) => t.id === topicId),
+    [allTopics, topicId]
+  );
+
+  // 从 criteria 列表中匹配当前题目的评分维度
+  const dimensions: GradingCriteriaDimension[] = useMemo(() => {
+    if (!topic) return [];
+    const crit = criteriaList.find((c) => c.id === topic.gradingCriteria);
+    return crit?.dimensions ?? [];
+  }, [topic, criteriaList]);
+
+  // 历史提交数据
+  const pastSubmissions = submissionsData?.submissions ?? [];
+  const pastGrades = submissionsData?.grades ?? {};
+  const submissionCount = pastSubmissions.length;
+
+  // --- 本地 UI 状态 ---
   const [phase, setPhase] = useState<Phase>('writing');
-  const [submission, setSubmission] = useState<WritingSubmission | null>(null);
   const [grade, setGrade] = useState<WritingGrade | null>(null);
   const [partialGrade, setPartialGrade] =
     useState<Partial<WritingGradeResult> | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [submissionCount, setSubmissionCount] = useState(0);
-  const [ocrModalOpen, setOcrModalOpen] = useState(false);
-  const [pastSubmissions, setPastSubmissions] = useState<WritingSubmission[]>(
-    []
-  );
-  const [pastGrades, setPastGrades] = useState<Record<string, WritingGrade>>(
-    {}
-  );
+  const [isOcrModalOpen, setIsOcrModalOpen] = useState(false);
 
-  // Load topic data
-  useEffect(() => {
-    async function load() {
-      if (!user) return;
-
-      const token = (await supabase.auth.getSession()).data.session
-        ?.access_token;
-      if (!token) return;
-
-      // Fetch topic
-      const topicRes = await fetch(`/api/writing/topics`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!topicRes.ok) {
-        setLoading(false);
-        return;
-      }
-      const { topics } = await topicRes.json();
-      const found = topics.find(
-        (t: WritingTopic & { submissionCount: number }) => t.id === topicId
-      );
-      if (!found) {
-        setLoading(false);
-        return;
-      }
-      setTopic(found);
-      setSubmissionCount(found.submissionCount ?? 0);
-
-      // Fetch criteria dimensions
-      const criteriaList = await fetchCriteria();
-      const crit = criteriaList.find((c) => c.id === found.gradingCriteria);
-      if (crit) setDimensions(crit.dimensions);
-
-      // Fetch past submissions
-      try {
-        const { submissions: subs, grades: gds } =
-          await fetchSubmissions(topicId);
-        setPastSubmissions(subs);
-        setPastGrades(gds);
-        setSubmissionCount(subs.length);
-      } catch {
-        // Non-fatal — past submissions simply won't show
-      }
-
-      setCurrentTopic(topicId);
-      setLoading(false);
-    }
-    load();
-  }, [topicId, user, setCurrentTopic]);
+  // 初始化 currentTopic（仅在 topic 加载完成后）
+  const isLoading = !user || (!topic && !isSubmissionsLoading);
+  if (topic && phase === 'writing') {
+    // 确保 store 中的 currentTopicId 与当前路由一致
+    setCurrentTopic(topicId);
+  }
 
   const wordCount = currentDraftText
     .trim()
@@ -132,18 +107,15 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
 
   const handleSubmit = useCallback(async () => {
     if (!topic || wordCount === 0) return;
-    setError(null);
     setPhase('submitting');
     stopTimer();
 
     try {
-      const sub = await submitWriting({
+      const sub = await submitMutation.mutateAsync({
         topicId: topic.id,
         content: currentDraftText.trim(),
         timeSpentSeconds: timerSeconds,
       });
-      setSubmission(sub);
-      setSubmissionCount((c) => c + 1);
 
       // Auto-grade with streaming progress
       setPhase('grading');
@@ -154,40 +126,59 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
       setGrade(gradeResult);
       setPhase('report');
       clearDraft();
-
-      // Append to history so it shows immediately
-      setPastSubmissions((prev) => [...prev, sub]);
-      setPastGrades((prev) => ({ ...prev, [sub.id]: gradeResult }));
     } catch (err) {
-      setError(err instanceof Error ? err.message : '提交失败');
+      toast.error(err instanceof Error ? err.message : '提交失败');
       setPhase('writing');
     }
-  }, [topic, currentDraftText, timerSeconds, wordCount, stopTimer, clearDraft]);
+  }, [
+    topic,
+    currentDraftText,
+    timerSeconds,
+    wordCount,
+    stopTimer,
+    clearDraft,
+    submitMutation,
+  ]);
 
   const handleOcrFill = useCallback(
     (text: string) => {
       setDraftText(text);
-      setOcrModalOpen(false);
-      if (!timerRunning && text.trim().length > 0) {
+      setIsOcrModalOpen(false);
+      if (!isTimerRunning && text.trim().length > 0) {
         startTimer();
       }
     },
-    [setDraftText, timerRunning, startTimer]
+    [setDraftText, setIsOcrModalOpen, isTimerRunning, startTimer]
   );
 
   const handleNewAttempt = useCallback(() => {
     setPhase('writing');
     setGrade(null);
-    setSubmission(null);
-    setError(null);
     resetTimer();
     setCurrentTopic(topicId);
   }, [resetTimer, setCurrentTopic, topicId]);
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
-        <Loader2 size={32} className="animate-spin text-violet-400" />
+      <div className="min-h-screen bg-slate-50 px-5 pt-6">
+        <div className="mx-auto max-w-3xl">
+          {/* Header skeleton */}
+          <div className="mb-5 flex items-center gap-3">
+            <Skeleton className="h-8 w-8 rounded-lg" />
+            <Skeleton className="h-5 w-40" />
+          </div>
+          {/* Topic prompt skeleton */}
+          <div className="mb-4 rounded-2xl border border-violet-100 bg-violet-50/30 p-4">
+            <Skeleton className="mb-2 h-4 w-20" />
+            <Skeleton className="mb-1 h-3.5 w-full" />
+            <Skeleton className="mb-1 h-3.5 w-full" />
+            <Skeleton className="h-3.5 w-2/3" />
+          </div>
+          {/* Editor skeleton */}
+          <Skeleton className="mb-4 h-48 w-full rounded-2xl" />
+          {/* Submit button skeleton */}
+          <Skeleton className="h-12 w-full rounded-xl" />
+        </div>
       </div>
     );
   }
@@ -196,15 +187,19 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-slate-50 px-5">
         <p className="text-sm text-slate-500">题目未找到</p>
-        <button
+        <Button
+          variant="link"
           onClick={() => router.push('/writing')}
           className="text-sm font-bold text-violet-600"
         >
           返回列表
-        </button>
+        </Button>
       </div>
     );
   }
+
+  // 当前提交对象（submit mutation 的返回值）
+  const currentSubmission = submitMutation.data ?? null;
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 pb-24 lg:pb-8">
@@ -213,12 +208,13 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
         <div className="mx-auto max-w-3xl px-4 py-3 sm:px-5 sm:py-4">
           {/* Row 1: Back + Title + Timer display */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <button
+            <Button
+              variant="ghost"
               onClick={() => router.push('/writing')}
               className="shrink-0 rounded-lg p-1.5 text-slate-400 hover:bg-slate-100"
             >
               <ArrowLeft size={20} />
-            </button>
+            </Button>
             <h1 className="min-w-0 flex-1 truncate text-sm font-bold text-slate-900">
               {topic.title ?? '写作练习'}
             </h1>
@@ -276,28 +272,38 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
               className="flex flex-col gap-4"
             >
               <div className="flex justify-end">
-                <button
-                  onClick={() => setOcrModalOpen(true)}
+                <Button
+                  variant="outline"
+                  onClick={() => setIsOcrModalOpen(true)}
                   className="flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100"
                 >
                   <Camera size={14} />
                   手写识别
-                </button>
+                </Button>
               </div>
               <WritingEditor wordLimit={topic.wordLimit} />
 
-              {error && (
-                <p className="text-center text-sm text-red-500">{error}</p>
-              )}
-
-              <button
+              <Button
                 onClick={handleSubmit}
-                disabled={wordCount === 0}
+                disabled={
+                  wordCount === 0 ||
+                  submitMutation.isPending ||
+                  phase !== 'writing'
+                }
                 className="flex items-center justify-center gap-2 rounded-xl bg-violet-600 py-3 text-sm font-bold text-white shadow-lg shadow-violet-200 transition-all hover:bg-violet-700 disabled:opacity-50 disabled:shadow-none"
               >
-                <Send size={16} />
-                提交并 AI 批改
-              </button>
+                {submitMutation.isPending ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    提交中...
+                  </>
+                ) : (
+                  <>
+                    <Send size={16} />
+                    提交并 AI 批改
+                  </>
+                )}
+              </Button>
             </motion.div>
           )}
 
@@ -353,7 +359,7 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
               <GradeReport grade={grade} dimensions={dimensions} />
 
               {/* View original text */}
-              {submission && (
+              {currentSubmission && (
                 <details className="rounded-2xl border border-slate-100 bg-white shadow-sm">
                   <summary className="flex cursor-pointer items-center gap-2 p-4 text-sm font-bold text-slate-900">
                     <Eye size={16} />
@@ -361,12 +367,12 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
                   </summary>
                   <div className="border-t border-slate-50 p-4">
                     <p className="text-xs leading-relaxed whitespace-pre-wrap text-slate-600">
-                      {submission.content}
+                      {currentSubmission.content}
                     </p>
                     <p className="mt-2 text-[10px] text-slate-400">
-                      {submission.wordCount} 词 ·{' '}
-                      {submission.timeSpentSeconds
-                        ? `${Math.floor(submission.timeSpentSeconds / 60)} 分钟`
+                      {currentSubmission.wordCount} 词 ·{' '}
+                      {currentSubmission.timeSpentSeconds
+                        ? `${Math.floor(currentSubmission.timeSpentSeconds / 60)} 分钟`
                         : ''}
                     </p>
                   </div>
@@ -374,13 +380,14 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
               )}
 
               {/* New attempt */}
-              <button
+              <Button
+                variant="outline"
                 onClick={handleNewAttempt}
                 className="flex items-center justify-center gap-2 rounded-xl border-2 border-violet-200 py-3 text-sm font-bold text-violet-600 transition-all hover:bg-violet-50"
               >
                 <PenLine size={16} />
                 再写一次
-              </button>
+              </Button>
             </motion.div>
           )}
         </AnimatePresence>
@@ -464,8 +471,8 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
       </main>
 
       <HandwritingOcrModal
-        open={ocrModalOpen}
-        onClose={() => setOcrModalOpen(false)}
+        open={isOcrModalOpen}
+        onClose={() => setIsOcrModalOpen(false)}
         onFillText={handleOcrFill}
         hasExistingText={currentDraftText.trim().length > 0}
       />
