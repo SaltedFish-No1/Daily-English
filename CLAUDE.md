@@ -188,6 +188,7 @@ Detailed coding standards are in `.rules/`. Before writing or modifying code, co
 | [`.rules/state-management-rules.md`](.rules/state-management-rules.md) | Zustand Store 设计、持久化、云端同步、TanStack Query 模式、Query Key、状态归属 | 操作 Store、Query、Mutation，或判断状态该放在哪里 |
 | [`.rules/comment-rules.md`](.rules/comment-rules.md) | JSDoc 文件/函数/组件头注释、行内注释、TODO/FIXME 标记、@deprecated | 编写或审查代码注释和文档 |
 | [`.rules/ui-ux-rules.md`](.rules/ui-ux-rules.md) | shadcn/ui 组件选型、Framer Motion 动效、磨砂玻璃、Drawer (Vaul)、Command (CMDK)、Toast (Sonner) | 构建 UI 组件、添加动效、选择 UI 基础组件 |
+| [`.rules/error-handling-rules.md`](.rules/error-handling-rules.md) | API 错误响应、try-catch 结构、请求校验、鉴权错误、客户端 API 封装、组件错误状态、错误边界、流式错误、日志规范、Sentry 集成、优雅降级、用户友好消息 | 编写 API 路由、处理异步操作、添加错误边界、集成 Sentry、设计客户端错误处理 |
 
 All rules are **mandatory**. Code must strictly follow every applicable rule file.
 
