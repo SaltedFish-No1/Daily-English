@@ -99,7 +99,7 @@ export async function requireApiAuthWithLimits(
     };
   }
 
-  // 4. 每日配额检查（缓存 + DB）
+  // 4. 每日 token 配额检查（缓存 + DB）
   const quotaResult = await checkDailyQuota(auth.user.id, routeKey, tier);
   if (!quotaResult.allowed) {
     return {
@@ -107,8 +107,8 @@ export async function requireApiAuthWithLimits(
         {
           error: '今日用量已达上限，请明天再试或升级套餐',
           quota: {
-            current: quotaResult.currentCalls,
-            max: quotaResult.maxCalls,
+            currentTokens: quotaResult.currentTokens,
+            maxTokens: quotaResult.maxTokens,
           },
         },
         { status: 429 }
@@ -116,7 +116,7 @@ export async function requireApiAuthWithLimits(
     };
   }
 
-  // 5. 预记录调用次数（fire-and-forget）
+  // 5. 预记录调用次数（fire-and-forget，用于产品分析）
   recordUsage(auth.user.id, routeKey);
 
   return { user: auth.user, tier };
@@ -166,8 +166,8 @@ export async function getAuthUserWithLimits(
         {
           error: '今日用量已达上限，请明天再试或升级套餐',
           quota: {
-            current: quotaResult.currentCalls,
-            max: quotaResult.maxCalls,
+            currentTokens: quotaResult.currentTokens,
+            maxTokens: quotaResult.maxTokens,
           },
         },
         { status: 429 }
