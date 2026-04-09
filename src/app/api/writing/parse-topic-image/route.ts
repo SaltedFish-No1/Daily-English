@@ -9,15 +9,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateObject } from 'ai';
 import { supabaseAdmin } from '@/lib/supabase-server';
 import { modelVision } from '@/lib/ai';
-import { getAuthUser } from '@/lib/auth-helper';
+import { getAuthUserWithLimits } from '@/lib/api-auth';
+import { setUsageContext, clearUsageContext } from '@/lib/ai-middleware';
 import { TopicExtractionSchema } from '@/types/writing';
 
 export async function POST(request: NextRequest) {
-  // 1. Auth
-  const user = await getAuthUser(request);
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  // 1. Auth + 限流
+  const auth = await getAuthUserWithLimits(
+    request,
+    'writing-parse-topic-image'
+  );
+  if ('error' in auth) return auth.error;
+  const user = auth.user;
+  setUsageContext(user.id, 'writing-parse-topic-image');
 
   // 2. Parse FormData
   let formData: FormData;
@@ -81,6 +85,7 @@ export async function POST(request: NextRequest) {
     });
     extraction = object;
   } catch (error) {
+    clearUsageContext();
     console.error('[Writing] Vision model error:', error);
     return NextResponse.json(
       { error: 'Failed to extract topic from image' },

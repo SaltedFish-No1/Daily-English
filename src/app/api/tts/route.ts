@@ -9,10 +9,10 @@ import { experimental_generateSpeech as generateSpeech } from 'ai';
 import { supabaseAdmin } from '@/lib/supabase-server';
 import { normalizeDictionaryQuery } from '@/lib/dictionary';
 import { modelSpeech } from '@/lib/ai';
-import { requireApiAuth } from '@/lib/api-auth';
+import { requireApiAuthWithLimits } from '@/lib/api-auth';
 
 export async function POST(request: NextRequest) {
-  const auth = await requireApiAuth(request);
+  const auth = await requireApiAuthWithLimits(request, 'tts');
   if ('error' in auth) return auth.error;
 
   let body: { word?: string };

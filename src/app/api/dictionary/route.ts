@@ -9,7 +9,8 @@ import { generateObject } from 'ai';
 import { z } from 'zod';
 import { modelFast } from '@/lib/ai';
 import { supabaseAdmin } from '@/lib/supabase-server';
-import { requireApiAuth } from '@/lib/api-auth';
+import { requireApiAuthWithLimits } from '@/lib/api-auth';
+import { setUsageContext } from '@/lib/ai-middleware';
 import {
   fetchDictionaryEntries,
   normalizeDictionaryQuery,
@@ -150,8 +151,9 @@ Rules:
 }
 
 export async function POST(request: NextRequest) {
-  const auth = await requireApiAuth(request);
+  const auth = await requireApiAuthWithLimits(request, 'dictionary');
   if ('error' in auth) return auth.error;
+  setUsageContext(auth.user.id, 'dictionary');
 
   let body: { word?: string };
   try {

@@ -35,4 +35,7 @@ export const queryKeys = {
   dictionary: {
     lookup: (word: string) => ['dictionary', word] as const,
   },
+  usage: {
+    today: () => ['usage', 'today'] as const,
+  },
 } as const;

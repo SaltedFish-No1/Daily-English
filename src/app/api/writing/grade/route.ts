@@ -7,7 +7,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { streamObject } from 'ai';
 import { supabaseAdmin } from '@/lib/supabase-server';
 import { modelPower } from '@/lib/ai';
-import { getAuthUser } from '@/lib/auth-helper';
+import { getAuthUserWithLimits } from '@/lib/api-auth';
+import { setUsageContext } from '@/lib/ai-middleware';
 import {
   WritingGradeSchema,
   mapWritingGradeRow,
@@ -15,10 +16,10 @@ import {
 } from '@/types/writing';
 
 export async function POST(request: NextRequest) {
-  const user = await getAuthUser(request);
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const auth = await getAuthUserWithLimits(request, 'writing-grade');
+  if ('error' in auth) return auth.error;
+  const user = auth.user;
+  setUsageContext(user.id, 'writing-grade');
 
   let body: { submissionId?: string };
   try {
