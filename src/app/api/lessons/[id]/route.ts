@@ -35,7 +35,10 @@ export async function GET(
     }
     return NextResponse.json(lesson);
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown error';
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error('[LessonDetail] Failed to fetch lesson:', err);
+    return NextResponse.json(
+      { error: 'Failed to fetch lesson' },
+      { status: 500 }
+    );
   }
 }
