@@ -5,7 +5,7 @@
  * @description Tinder 风格滑动卡片复习 —— 左滑忘记，右滑记住，逐词更新 SM-2。
  */
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   Volume2,
@@ -20,6 +20,10 @@ import { Button } from '@/components/ui/button';
 import { useUserStore, type VocabOccurrence } from '@/store/useUserStore';
 import { useSpeech } from '@/hooks/useSpeech';
 import { getMemoryStrength } from '@/lib/spaced-repetition';
+import type {
+  DictionaryMeaning,
+  DictionaryCacheRecord,
+} from '@/types/dictionary';
 import type { WordReviewState } from '@/lib/spaced-repetition';
 import { SwipeCard, type SwipeCardRef } from './SwipeCard';
 import Link from 'next/link';
@@ -33,6 +37,8 @@ interface ReviewWord {
   headword?: string;
   pos?: string;
   def?: string;
+  defZh?: string;
+  meanings?: DictionaryMeaning[];
   phonetic?: string;
   audio?: string;
   reviewState?: WordReviewState;
@@ -59,7 +65,8 @@ const EXIT_X = 600;
 function buildReviewWords(
   words: string[],
   savedWords: Record<string, VocabOccurrence[]>,
-  reviewStates: Record<string, WordReviewState>
+  reviewStates: Record<string, WordReviewState>,
+  dictionaryCache: Record<string, DictionaryCacheRecord>
 ): ReviewWord[] {
   return words.map((w) => {
     const key = w.trim().toLowerCase();
@@ -67,13 +74,27 @@ function buildReviewWords(
     const latest =
       occurrences.length > 0 ? occurrences[occurrences.length - 1] : null;
     const sense = latest?.senseSnapshot;
+
+    // 从 dictionaryCache 获取完整释义数据
+    const cacheRecord = dictionaryCache[key];
+    const entry =
+      cacheRecord?.status === 'success' && cacheRecord.data?.[0]
+        ? cacheRecord.data[0]
+        : null;
+
+    // defZh：优先 senseSnapshot，其次从缓存第一条释义取
+    const defZh =
+      sense?.defZh ?? entry?.meanings?.[0]?.definitions?.[0]?.definitionZh;
+
     return {
       word: key,
-      headword: sense?.headword,
+      headword: sense?.headword ?? entry?.word,
       pos: sense?.pos,
       def: sense?.def,
-      phonetic: sense?.phonetic,
-      audio: sense?.audio,
+      defZh,
+      meanings: entry?.meanings,
+      phonetic: sense?.phonetic ?? entry?.phonetic,
+      audio: sense?.audio ?? entry?.audio,
       reviewState: reviewStates[key],
     };
   });
@@ -94,12 +115,28 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
   const savedWords = useUserStore((s) => s.savedWords);
   const wordReviewStates = useUserStore((s) => s.wordReviewStates);
   const updateWordReview = useUserStore((s) => s.updateWordReview);
+  const dictionaryCache = useUserStore((s) => s.dictionaryCache);
+  const fetchDictionaryRecord = useUserStore((s) => s.fetchDictionaryRecord);
 
   const { speak } = useSpeech();
 
   const [reviewWords, setReviewWords] = useState(() =>
-    buildReviewWords(words, savedWords, wordReviewStates)
+    buildReviewWords(words, savedWords, wordReviewStates, dictionaryCache)
   );
+
+  // 预加载所有复习词的词典缓存，确保丰富释义可用
+  useEffect(() => {
+    words.forEach((w) => fetchDictionaryRecord(w.trim().toLowerCase()));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 词典缓存更新后重新构建 reviewWords 以填充 meanings
+  useEffect(() => {
+    setReviewWords(
+      buildReviewWords(words, savedWords, wordReviewStates, dictionaryCache)
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dictionaryCache]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [history, setHistory] = useState<SwipeRecord[]>([]);
@@ -188,6 +225,15 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
     [speak]
   );
 
+  // ----- 切词自动发音 -----
+  useEffect(() => {
+    if (currentWord) {
+      const timer = setTimeout(() => playAudio(currentWord), 300);
+      return () => clearTimeout(timer);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentIndex]);
+
   // 无复习词时显示空状态
   if (words.length === 0) {
     return (
@@ -268,7 +314,8 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
                     buildReviewWords(
                       forgotWordKeys,
                       savedWords,
-                      wordReviewStates
+                      wordReviewStates,
+                      dictionaryCache
                     )
                   );
                   setCurrentIndex(0);
@@ -332,14 +379,26 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
       {/* Card area */}
       <div className="flex flex-1 items-center justify-center px-6 sm:px-4">
         <div className="relative h-[420px] w-full max-w-[320px] sm:max-w-sm">
-          {/* Show next card underneath (preview) */}
+          {/* Show next card underneath (preview with word content) */}
           {currentIndex + 1 < reviewWords.length && (
             <motion.div
               className="absolute inset-0 rounded-3xl border border-slate-100 bg-white shadow-sm"
               style={{ zIndex: 0 }}
               initial={{ scale: 0.95, opacity: 0.6 }}
               animate={{ scale: 0.95, opacity: 0.6 }}
-            />
+            >
+              <div className="flex h-full flex-col items-center justify-center">
+                <h1 className="text-2xl font-black text-slate-300">
+                  {reviewWords[currentIndex + 1].headword ??
+                    reviewWords[currentIndex + 1].word}
+                </h1>
+                {reviewWords[currentIndex + 1].phonetic && (
+                  <p className="mt-1 text-xs text-slate-200">
+                    {reviewWords[currentIndex + 1].phonetic}
+                  </p>
+                )}
+              </div>
+            </motion.div>
           )}
 
           {/* Active card — key changes on index so React remounts */}
@@ -410,23 +469,76 @@ export function SwipeReviewView({ words }: SwipeReviewViewProps) {
                   /* ---- Back: Definition ---- */
                   <motion.div
                     key="back"
-                    className="flex flex-col items-center px-2"
+                    className="flex w-full flex-col items-center px-1"
                     initial={{ rotateY: 90, opacity: 0 }}
                     animate={{ rotateY: 0, opacity: 1 }}
                     exit={{ rotateY: -90, opacity: 0 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                   >
-                    <h1 className="mb-2 text-2xl font-black text-slate-900">
+                    <h1 className="mb-1 text-2xl font-black text-slate-900">
                       {currentWord!.headword ?? currentWord!.word}
                     </h1>
-                    {currentWord!.pos && (
-                      <span className="mb-3 rounded-full bg-emerald-50 px-3 py-0.5 text-xs font-semibold text-emerald-700">
-                        {currentWord!.pos}
-                      </span>
+                    {currentWord!.phonetic && (
+                      <p className="mb-2 text-xs text-slate-400">
+                        {currentWord!.phonetic}
+                      </p>
                     )}
-                    <p className="mt-2 text-center text-base leading-relaxed text-slate-600">
-                      {currentWord!.def ?? '暂无释义'}
-                    </p>
+
+                    {/* 可滚动释义区域 */}
+                    <div
+                      className="mt-1 max-h-[260px] w-full overflow-y-auto px-2"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {currentWord!.meanings &&
+                      currentWord!.meanings.length > 0 ? (
+                        /* 丰富释义：按词性分组，最多 2 组 */
+                        <div className="space-y-3">
+                          {currentWord!.meanings.slice(0, 2).map((m, mi) => (
+                            <div key={mi}>
+                              {m.partOfSpeech && (
+                                <span className="inline-block rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
+                                  {m.partOfSpeech}
+                                </span>
+                              )}
+                              {m.definitions.slice(0, 2).map((d, di) => (
+                                <div key={di} className="mt-1.5">
+                                  <p className="text-sm leading-relaxed text-slate-700">
+                                    {d.definition}
+                                  </p>
+                                  {d.definitionZh && (
+                                    <p className="mt-0.5 text-sm text-slate-500">
+                                      {d.definitionZh}
+                                    </p>
+                                  )}
+                                  {d.example && (
+                                    <p className="mt-1 text-xs leading-relaxed text-slate-400 italic">
+                                      &ldquo;{d.example}&rdquo;
+                                    </p>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        /* 回退：senseSnapshot 基础释义 */
+                        <div className="text-center">
+                          {currentWord!.pos && (
+                            <span className="mb-2 inline-block rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
+                              {currentWord!.pos}
+                            </span>
+                          )}
+                          <p className="text-sm leading-relaxed text-slate-700">
+                            {currentWord!.def ?? '暂无释义'}
+                          </p>
+                          {currentWord!.defZh && (
+                            <p className="mt-1 text-sm text-slate-500">
+                              {currentWord!.defZh}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
