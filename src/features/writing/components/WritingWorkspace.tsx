@@ -6,41 +6,33 @@
  */
 import { useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import {
   ArrowLeft,
   Send,
   Loader2,
   FileText,
-  Eye,
-  PenLine,
   Hash,
   Camera,
   History,
   Trophy,
+  ArrowRight,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'motion/react';
 import { WritingTimerDisplay, WritingTimerControls } from './WritingTimer';
 import { WritingEditor } from './WritingEditor';
-import { GradeReport } from './GradeReport';
 import { HandwritingOcrModal } from './HandwritingOcrModal';
 import { useWritingStore } from '@/store/useWritingStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useWritingTopicsQuery } from '@/features/writing/hooks/useWritingTopicsQuery';
 import { useWritingSubmissionsQuery } from '@/features/writing/hooks/useWritingSubmissionsQuery';
-import { useWritingCriteriaQuery } from '@/features/writing/hooks/useWritingCriteriaQuery';
 import { useSubmitEssayMutation } from '@/features/writing/hooks/useSubmitEssayMutation';
-import { gradeSubmission } from '@/features/writing/lib/writingApi';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import type {
-  WritingTopic,
-  WritingGrade,
-  WritingGradeResult,
-  GradingCriteriaDimension,
-} from '@/types/writing';
+import type { WritingTopic } from '@/types/writing';
 
-type Phase = 'writing' | 'submitting' | 'grading' | 'report';
+type Phase = 'writing' | 'submitting';
 
 interface WritingWorkspaceProps {
   topicId: string;
@@ -55,7 +47,6 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
     setCurrentTopic,
     setDraftText,
     clearDraft,
-    resetTimer,
     stopTimer,
     isTimerRunning,
     startTimer,
@@ -65,7 +56,6 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
   const { data: allTopics = [] } = useWritingTopicsQuery();
   const { data: submissionsData, isLoading: isSubmissionsLoading } =
     useWritingSubmissionsQuery(topicId);
-  const { data: criteriaList = [] } = useWritingCriteriaQuery();
   const submitMutation = useSubmitEssayMutation();
 
   // 从 topics 列表中查找当前题目
@@ -74,13 +64,6 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
     [allTopics, topicId]
   );
 
-  // 从 criteria 列表中匹配当前题目的评分维度
-  const dimensions: GradingCriteriaDimension[] = useMemo(() => {
-    if (!topic) return [];
-    const crit = criteriaList.find((c) => c.id === topic.gradingCriteria);
-    return crit?.dimensions ?? [];
-  }, [topic, criteriaList]);
-
   // 历史提交数据
   const pastSubmissions = submissionsData?.submissions ?? [];
   const pastGrades = submissionsData?.grades ?? {};
@@ -88,9 +71,6 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
 
   // --- 本地 UI 状态 ---
   const [phase, setPhase] = useState<Phase>('writing');
-  const [grade, setGrade] = useState<WritingGrade | null>(null);
-  const [partialGrade, setPartialGrade] =
-    useState<Partial<WritingGradeResult> | null>(null);
   const [isOcrModalOpen, setIsOcrModalOpen] = useState(false);
 
   // 初始化 currentTopic（仅在 topic 加载完成后）
@@ -117,15 +97,8 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
         timeSpentSeconds: timerSeconds,
       });
 
-      // Auto-grade with streaming progress
-      setPhase('grading');
-      setPartialGrade(null);
-      const gradeResult = await gradeSubmission(sub.id, (partial) => {
-        setPartialGrade(partial);
-      });
-      setGrade(gradeResult);
-      setPhase('report');
       clearDraft();
+      router.push(`/writing/${topicId}/grade/${sub.id}`);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : '提交失败');
       setPhase('writing');
@@ -138,6 +111,8 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
     stopTimer,
     clearDraft,
     submitMutation,
+    router,
+    topicId,
   ]);
 
   const handleOcrFill = useCallback(
@@ -150,13 +125,6 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
     },
     [setDraftText, setIsOcrModalOpen, isTimerRunning, startTimer]
   );
-
-  const handleNewAttempt = useCallback(() => {
-    setPhase('writing');
-    setGrade(null);
-    resetTimer();
-    setCurrentTopic(topicId);
-  }, [resetTimer, setCurrentTopic, topicId]);
 
   if (isLoading) {
     return (
@@ -197,9 +165,6 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
       </div>
     );
   }
-
-  // 当前提交对象（submit mutation 的返回值）
-  const currentSubmission = submitMutation.data ?? null;
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 pb-24 lg:pb-8">
@@ -307,8 +272,8 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
             </motion.div>
           )}
 
-          {/* Submitting / Grading phase */}
-          {(phase === 'submitting' || phase === 'grading') && (
+          {/* Submitting phase */}
+          {phase === 'submitting' && (
             <motion.div
               key="loading"
               initial={{ opacity: 0, y: 12 }}
@@ -319,75 +284,7 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
               <div className="relative">
                 <Loader2 size={40} className="animate-spin text-violet-400" />
               </div>
-              <p className="text-sm font-medium text-slate-600">
-                {phase === 'submitting' ? '提交中...' : 'AI 批改中，请稍候...'}
-              </p>
-              {phase === 'grading' && partialGrade && (
-                <div className="w-full max-w-xs space-y-2">
-                  {partialGrade.overallScore != null && (
-                    <p className="text-center text-lg font-bold text-violet-600">
-                      {partialGrade.overallScore} 分
-                    </p>
-                  )}
-                  <div className="flex flex-wrap justify-center gap-1.5 text-[10px] text-slate-400">
-                    {partialGrade.overallComment && <span>总评 ✓</span>}
-                    {partialGrade.dimensionScores && <span>维度分数 ✓</span>}
-                    {partialGrade.grammarErrors && <span>语法分析 ✓</span>}
-                    {partialGrade.vocabularySuggestions && (
-                      <span>词汇建议 ✓</span>
-                    )}
-                    {partialGrade.modelAnswer && <span>范文 ✓</span>}
-                  </div>
-                </div>
-              )}
-              {phase === 'grading' && !partialGrade && (
-                <p className="text-xs text-slate-400">
-                  正在分析语法、词汇与结构
-                </p>
-              )}
-            </motion.div>
-          )}
-
-          {/* Report phase */}
-          {phase === 'report' && grade && (
-            <motion.div
-              key="report"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col gap-4"
-            >
-              <GradeReport grade={grade} dimensions={dimensions} />
-
-              {/* View original text */}
-              {currentSubmission && (
-                <details className="rounded-2xl border border-slate-100 bg-white shadow-sm">
-                  <summary className="flex cursor-pointer items-center gap-2 p-4 text-sm font-bold text-slate-900">
-                    <Eye size={16} />
-                    查看原文
-                  </summary>
-                  <div className="border-t border-slate-50 p-4">
-                    <p className="text-xs leading-relaxed whitespace-pre-wrap text-slate-600">
-                      {currentSubmission.content}
-                    </p>
-                    <p className="mt-2 text-[10px] text-slate-400">
-                      {currentSubmission.wordCount} 词 ·{' '}
-                      {currentSubmission.timeSpentSeconds
-                        ? `${Math.floor(currentSubmission.timeSpentSeconds / 60)} 分钟`
-                        : ''}
-                    </p>
-                  </div>
-                </details>
-              )}
-
-              {/* New attempt */}
-              <Button
-                variant="outline"
-                onClick={handleNewAttempt}
-                className="flex items-center justify-center gap-2 rounded-xl border-2 border-violet-200 py-3 text-sm font-bold text-violet-600 transition-all hover:bg-violet-50"
-              >
-                <PenLine size={16} />
-                再写一次
-              </Button>
+              <p className="text-sm font-medium text-slate-600">提交中...</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -406,63 +303,52 @@ export function WritingWorkspace({ topicId }: WritingWorkspaceProps) {
                 .map((sub) => {
                   const g = pastGrades[sub.id];
                   return (
-                    <details
+                    <Link
                       key={sub.id}
-                      className="rounded-2xl border border-slate-100 bg-white shadow-sm"
+                      href={`/writing/${topicId}/grade/${sub.id}`}
+                      className="group flex items-center gap-3 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm transition-all hover:shadow-md active:scale-[0.98]"
                     >
-                      <summary className="flex cursor-pointer items-center gap-3 p-4">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-violet-50 text-xs font-bold text-violet-600">
-                          #{sub.attemptNumber}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs font-medium text-slate-700">
-                              第 {sub.attemptNumber} 次
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-violet-50 text-xs font-bold text-violet-600">
+                        #{sub.attemptNumber}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium text-slate-700">
+                            第 {sub.attemptNumber} 次
+                          </span>
+                          {g && (
+                            <span className="flex items-center gap-1 text-xs font-bold text-amber-600">
+                              <Trophy size={12} />
+                              {g.overallScore}
                             </span>
-                            {g && (
-                              <span className="flex items-center gap-1 text-xs font-bold text-amber-600">
-                                <Trophy size={12} />
-                                {g.overallScore}
+                          )}
+                        </div>
+                        <div className="mt-0.5 flex items-center gap-2 text-[10px] text-slate-400">
+                          <span>{sub.wordCount} 词</span>
+                          {sub.timeSpentSeconds != null &&
+                            sub.timeSpentSeconds > 0 && (
+                              <span>
+                                {Math.floor(sub.timeSpentSeconds / 60)} 分钟
                               </span>
                             )}
-                          </div>
-                          <div className="mt-0.5 flex items-center gap-2 text-[10px] text-slate-400">
-                            <span>{sub.wordCount} 词</span>
-                            {sub.timeSpentSeconds != null &&
-                              sub.timeSpentSeconds > 0 && (
-                                <span>
-                                  {Math.floor(sub.timeSpentSeconds / 60)} 分钟
-                                </span>
-                              )}
-                            <span>
-                              {new Date(sub.createdAt).toLocaleDateString(
-                                'zh-CN',
-                                {
-                                  month: 'short',
-                                  day: 'numeric',
-                                  hour: '2-digit',
-                                  minute: '2-digit',
-                                }
-                              )}
-                            </span>
-                          </div>
+                          <span>
+                            {new Date(sub.createdAt).toLocaleDateString(
+                              'zh-CN',
+                              {
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              }
+                            )}
+                          </span>
                         </div>
-                      </summary>
-                      <div className="space-y-3 border-t border-slate-50 p-4">
-                        {/* Original text */}
-                        <div>
-                          <p className="mb-1 flex items-center gap-1 text-xs font-bold text-slate-600">
-                            <Eye size={12} />
-                            原文
-                          </p>
-                          <p className="text-xs leading-relaxed whitespace-pre-wrap text-slate-500">
-                            {sub.content}
-                          </p>
-                        </div>
-                        {/* Grade report */}
-                        {g && <GradeReport grade={g} dimensions={dimensions} />}
                       </div>
-                    </details>
+                      <ArrowRight
+                        size={16}
+                        className="shrink-0 text-slate-300 transition-transform group-hover:translate-x-1 group-hover:text-violet-500"
+                      />
+                    </Link>
                   );
                 })}
             </div>
