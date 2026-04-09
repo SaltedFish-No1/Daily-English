@@ -81,7 +81,7 @@ REQUIREMENTS:
 4. PARAGRAPHS: Each paragraph needs an id (p1, p2, ...), English text (en), and Chinese translation (zh). The Chinese translation should be natural and accurate.
 5. FOCUS WORDS: List each target vocabulary word with its key and common forms (e.g., key: "sustain", forms: ["sustain", "sustained", "sustaining", "sustainability"]).
 6. QUIZ: Generate 5-8 quiz questions that test comprehension AND vocabulary knowledge. Use a mix of these types:
-   - "completion" (subtype: "summary" or "sentence"): Fill-in-the-blank using target words. Use "___BLANK_1___", "___BLANK_2___" etc as placeholders in contentTemplate.
+   - "completion" (subtype: "summary" or "sentence"): Fill-in-the-blank using target words. In contentTemplate, use {{blankId}} as placeholders where each blankId matches the corresponding blank object's id field (e.g., if blanks are [{id:"b1",...},{id:"b2",...}], then contentTemplate should contain "{{b1}}" and "{{b2}}").
    - "multiple_choice" (selectionMode: "single"): 4 options, test word meaning in context.
    - "tfng" (mode: "TFNG"): True/False/Not Given statements about the article.
    At least 3 questions should directly test the target vocabulary words.
