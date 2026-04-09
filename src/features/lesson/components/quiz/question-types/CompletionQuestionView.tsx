@@ -8,6 +8,7 @@
 import React, { useMemo } from 'react';
 import { CompletionQuestion } from '../types';
 import { Input } from '@/components/ui/input';
+import { normalizeCompletionTemplate } from './normalizeCompletionTemplate';
 
 interface CompletionQuestionViewProps {
   question: CompletionQuestion;
@@ -33,31 +34,37 @@ export const CompletionQuestionView: React.FC<CompletionQuestionViewProps> = ({
     }, {});
   }, [question.blanks]);
 
+  const normalizedTemplate = useMemo(
+    () =>
+      normalizeCompletionTemplate(question.contentTemplate, question.blanks),
+    [question.contentTemplate, question.blanks]
+  );
+
   const parts = useMemo(() => {
     const out: Array<
       { type: 'text'; value: string } | { type: 'blank'; id: string }
     > = [];
     let lastIndex = 0;
-    for (const match of question.contentTemplate.matchAll(tokenRegex)) {
+    for (const match of normalizedTemplate.matchAll(tokenRegex)) {
       const idx = match.index ?? 0;
       const id = match[1].trim();
       if (idx > lastIndex) {
         out.push({
           type: 'text',
-          value: question.contentTemplate.slice(lastIndex, idx),
+          value: normalizedTemplate.slice(lastIndex, idx),
         });
       }
       out.push({ type: 'blank', id });
       lastIndex = idx + match[0].length;
     }
-    if (lastIndex < question.contentTemplate.length) {
+    if (lastIndex < normalizedTemplate.length) {
       out.push({
         type: 'text',
-        value: question.contentTemplate.slice(lastIndex),
+        value: normalizedTemplate.slice(lastIndex),
       });
     }
     return out;
-  }, [question.contentTemplate]);
+  }, [normalizedTemplate]);
 
   return (
     <div className="space-y-3">
