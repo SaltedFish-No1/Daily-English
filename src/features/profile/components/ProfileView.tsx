@@ -39,6 +39,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { PWAInstallDialog } from '@/components/PWAInstallDialog';
+import { UsageCard } from './UsageCard';
 
 const EXAM_GOALS: { value: ExamGoal; label: string }[] = [
   { value: 'ielts', label: '雅思 IELTS' },
@@ -420,6 +421,9 @@ export function ProfileView() {
             <p className="text-[11px] font-bold text-slate-400">平均分数</p>
           </div>
         </section>
+
+        {/* ── Usage Card ─────────────────────────────── */}
+        {!isGuest && <UsageCard />}
 
         {/* ── Learning Settings ─────────────────────── */}
         <section className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">

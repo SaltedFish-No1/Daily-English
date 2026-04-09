@@ -9,6 +9,8 @@ import { z } from 'zod';
 import { modelVision } from '@/lib/ai';
 import { supabaseAdmin } from '@/lib/supabase-server';
 import { getAuthUser } from '@/lib/auth-helper';
+import { getAuthUserWithLimits } from '@/lib/api-auth';
+import { setUsageContext, clearUsageContext } from '@/lib/ai-middleware';
 import { mapWritingSubmissionRow } from '@/types/writing';
 
 function countWords(text: string): number {
@@ -19,12 +21,24 @@ function countWords(text: string): number {
 }
 
 export async function POST(request: NextRequest) {
-  const user = await getAuthUser(request);
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const contentType = request.headers.get('content-type') ?? '';
+  const isHandwritten = contentType.includes('multipart/form-data');
+
+  // 手写模式使用视觉模型 → 需要配额检查；纯文本模式 → 仅鉴权
+  let user: { id: string };
+  if (isHandwritten) {
+    const auth = await getAuthUserWithLimits(request, 'writing-submit-vision');
+    if ('error' in auth) return auth.error;
+    user = auth.user;
+    setUsageContext(user.id, 'writing-submit-vision');
+  } else {
+    const authUser = await getAuthUser(request);
+    if (!authUser) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    user = authUser;
   }
 
-  const contentType = request.headers.get('content-type') ?? '';
   let topicId: string;
   let content: string;
   let timeSpentSeconds: number | null = null;
@@ -104,6 +118,7 @@ export async function POST(request: NextRequest) {
       });
       content = object.extractedText;
     } catch (error) {
+      clearUsageContext();
       console.error('[Writing] OCR error:', error);
       return NextResponse.json(
         { error: 'Failed to extract text from image' },

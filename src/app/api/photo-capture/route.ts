@@ -9,11 +9,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateObject } from 'ai';
 import { modelVision } from '@/lib/ai';
 import { PhotoCaptureResultSchema } from '@/features/photo-capture/types';
-import { requireApiAuth } from '@/lib/api-auth';
+import { requireApiAuthWithLimits } from '@/lib/api-auth';
+import { setUsageContext, clearUsageContext } from '@/lib/ai-middleware';
 
 export async function POST(request: NextRequest) {
-  const auth = await requireApiAuth(request);
+  const auth = await requireApiAuthWithLimits(request, 'photo-capture');
   if ('error' in auth) return auth.error;
+  setUsageContext(auth.user.id, 'photo-capture');
 
   let formData: FormData;
   try {
@@ -54,6 +56,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ words: object.words });
   } catch (error) {
+    clearUsageContext();
     console.error('[PhotoCapture] Vision model error:', error);
     return NextResponse.json(
       { error: 'Failed to extract words from image' },

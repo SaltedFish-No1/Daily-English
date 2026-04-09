@@ -7,13 +7,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateObject } from 'ai';
 import { z } from 'zod';
 import { modelFast } from '@/lib/ai';
-import { getAuthUser } from '@/lib/auth-helper';
+import { getAuthUserWithLimits } from '@/lib/api-auth';
+import { setUsageContext, clearUsageContext } from '@/lib/ai-middleware';
 
 export async function POST(request: NextRequest) {
-  const user = await getAuthUser(request);
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const auth = await getAuthUserWithLimits(request, 'writing-ocr');
+  if ('error' in auth) return auth.error;
+  const user = auth.user;
+  setUsageContext(user.id, 'writing-ocr');
 
   const formData = await request.formData();
   const imageFile = formData.get('image') as File | null;
@@ -55,6 +56,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ text: object.extractedText });
   } catch (error) {
+    clearUsageContext();
     console.error('[Writing OCR] Error:', error);
     return NextResponse.json(
       { error: 'Failed to extract text from image' },

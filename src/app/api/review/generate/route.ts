@@ -10,7 +10,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { streamObject } from 'ai';
 import { modelPower } from '@/lib/ai';
-import { requireApiAuth } from '@/lib/api-auth';
+import { requireApiAuthWithLimits } from '@/lib/api-auth';
+import { setUsageContext, clearUsageContext } from '@/lib/ai-middleware';
 import { GeneratedLessonSchema } from '@/types/review';
 
 // ---------------------------------------------------------------------------
@@ -41,8 +42,9 @@ function pickTopic(): string {
 // ---------------------------------------------------------------------------
 
 export async function POST(request: NextRequest) {
-  const auth = await requireApiAuth(request);
+  const auth = await requireApiAuthWithLimits(request, 'review-generate');
   if ('error' in auth) return auth.error;
+  setUsageContext(auth.user.id, 'review-generate');
 
   let body: { words?: string[]; difficulty?: string };
   try {
@@ -94,6 +96,7 @@ Return valid JSON matching the schema exactly.`,
 
     return result.toTextStreamResponse();
   } catch (error) {
+    clearUsageContext();
     console.error('[ReviewGenerate] AI generation failed:', error);
     return NextResponse.json(
       { error: 'AI generation failed' },
