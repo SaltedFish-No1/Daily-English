@@ -63,9 +63,9 @@ async function getDailyUsage(userId: string): Promise<CachedQuota> {
 // ---------------------------------------------------------------------------
 
 /**
- * 检查用户今日是否仍有配额可用。
+ * 检查用户今日 token 配额是否仍有剩余。
  * @param userId 用户 ID
- * @param routeKey 路由键名
+ * @param routeKey 路由键名（保留参数以便未来扩展）
  * @param tier 用户等级
  */
 export async function checkDailyQuota(
@@ -76,18 +76,11 @@ export async function checkDailyQuota(
   const config = TIER_LIMITS[tier];
   const usage = await getDailyUsage(userId);
 
-  const currentCalls = usage.calls[routeKey] ?? 0;
-  const maxCalls = config.daily[routeKey];
   const currentTokens = usage.totalTokens;
   const maxTokens = config.dailyTokenLimit;
 
-  const callsOk = currentCalls < maxCalls;
-  const tokensOk = currentTokens < maxTokens;
-
   return {
-    allowed: callsOk && tokensOk,
-    currentCalls,
-    maxCalls,
+    allowed: currentTokens < maxTokens,
     currentTokens,
     maxTokens,
   };
@@ -133,24 +126,23 @@ export function recordUsage(
 // ---------------------------------------------------------------------------
 
 /**
- * 获取用户今日各路由的用量摘要。
+ * 获取用户今日各路由的用量摘要（调用次数用于分析展示，不作限制）。
  */
 export async function getUserDailyUsageSummary(
   userId: string,
   tier: UserTier
 ): Promise<{
-  routes: Record<string, { calls: number; maxCalls: number }>;
+  routes: Record<string, { calls: number }>;
   totalTokens: number;
   maxTokens: number;
 }> {
   const config = TIER_LIMITS[tier];
   const usage = await getDailyUsage(userId);
 
-  const routes: Record<string, { calls: number; maxCalls: number }> = {};
+  const routes: Record<string, { calls: number }> = {};
   for (const key of ALL_ROUTE_KEYS) {
     routes[key] = {
       calls: usage.calls[key] ?? 0,
-      maxCalls: config.daily[key],
     };
   }
 

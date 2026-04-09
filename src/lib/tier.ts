@@ -2,12 +2,7 @@
  * @description 用户等级配置 — 定义各等级的 API 调用限额，提供带缓存的等级查询。
  */
 
-import type {
-  UserTier,
-  TierLimitsMap,
-  RouteKey,
-  TierLimitConfig,
-} from '@/types/usage';
+import type { UserTier, TierLimitsMap, RouteKey } from '@/types/usage';
 import { supabaseAdmin } from '@/lib/supabase-server';
 
 // ---------------------------------------------------------------------------
@@ -17,43 +12,25 @@ import { supabaseAdmin } from '@/lib/supabase-server';
 export const TIER_LIMITS: TierLimitsMap = {
   free: {
     ratePerMinute: 20,
-    daily: {
-      'review-generate': 3,
-      'writing-grade': 5,
-      'writing-ocr': 10,
-      'writing-parse-topic-image': 5,
-      'writing-submit-vision': 5,
-      'photo-capture': 10,
-      dictionary: 50,
-      tts: 100,
-    },
     dailyTokenLimit: 200_000,
   },
   pro: {
     ratePerMinute: 60,
-    daily: {
-      'review-generate': 20,
-      'writing-grade': 30,
-      'writing-ocr': 50,
-      'writing-parse-topic-image': 30,
-      'writing-submit-vision': 30,
-      'photo-capture': 50,
-      dictionary: 500,
-      tts: 500,
-    },
     dailyTokenLimit: 2_000_000,
   },
 };
 
-/** 所有受限路由键 */
-export const ALL_ROUTE_KEYS: RouteKey[] = Object.keys(
-  TIER_LIMITS.free.daily
-) as RouteKey[];
-
-/** 获取指定等级的限额配置 */
-export function getTierConfig(tier: UserTier): TierLimitConfig {
-  return TIER_LIMITS[tier];
-}
+/** 所有路由键（用于用量记录与分析） */
+export const ALL_ROUTE_KEYS: RouteKey[] = [
+  'review-generate',
+  'writing-grade',
+  'writing-ocr',
+  'writing-parse-topic-image',
+  'writing-submit-vision',
+  'photo-capture',
+  'dictionary',
+  'tts',
+];
 
 // ---------------------------------------------------------------------------
 // 带 TTL 缓存的用户等级查询

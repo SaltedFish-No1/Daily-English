@@ -5,7 +5,7 @@
 /** 用户等级 */
 export type UserTier = 'free' | 'pro';
 
-/** 路由限额键名 */
+/** 路由键名（用于用量记录与分析） */
 export type RouteKey =
   | 'review-generate'
   | 'writing-grade'
@@ -16,15 +16,10 @@ export type RouteKey =
   | 'dictionary'
   | 'tts';
 
-/** 单个路由的每日限额配置 */
-export type DailyRouteLimits = Record<RouteKey, number>;
-
 /** 单个等级的完整限额配置 */
 export interface TierLimitConfig {
   /** 每分钟最大请求数 */
   ratePerMinute: number;
-  /** 各路由每日调用上限 */
-  daily: DailyRouteLimits;
   /** 每日 AI token 总量上限（input + output） */
   dailyTokenLimit: number;
 }
@@ -41,19 +36,16 @@ export interface RateLimitResult {
   remaining: number;
 }
 
-/** 每日配额检查结果 */
+/** 每日配额检查结果（仅基于 token） */
 export interface QuotaCheckResult {
   allowed: boolean;
-  currentCalls: number;
-  maxCalls: number;
   currentTokens: number;
   maxTokens: number;
 }
 
-/** 单个路由的用量摘要 */
+/** 单个路由的用量摘要（仅记录调用次数，用于分析） */
 export interface RouteUsageSummary {
   calls: number;
-  maxCalls: number;
 }
 
 /** GET /api/usage 响应体 */

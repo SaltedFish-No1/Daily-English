@@ -1,7 +1,8 @@
 'use client';
 
 /**
- * @description 用量卡片 — 展示当前等级、今日各 AI 路由剩余次数与 token 用量。
+ * @description 用量卡片 — 展示当前等级与今日 token 配额使用情况，
+ *   附带各功能调用次数概览（仅展示，不作限制）。
  */
 
 import { Zap, Crown, Loader2 } from 'lucide-react';
@@ -32,23 +33,6 @@ const DISPLAY_ORDER: RouteKey[] = [
   'writing-submit-vision',
 ];
 
-function ProgressBar({ current, max }: { current: number; max: number }) {
-  const pct = max > 0 ? Math.min((current / max) * 100, 100) : 0;
-  const isHigh = pct >= 80;
-  const isFull = pct >= 100;
-
-  return (
-    <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
-      <div
-        className={`h-full rounded-full transition-all ${
-          isFull ? 'bg-red-400' : isHigh ? 'bg-amber-400' : 'bg-emerald-400'
-        }`}
-        style={{ width: `${pct}%` }}
-      />
-    </div>
-  );
-}
-
 function formatTokens(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
   if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K`;
@@ -70,11 +54,22 @@ export function UsageCard() {
 
   const { tier, today } = data;
   const isPro = tier === 'pro';
+  const pct =
+    today.maxTokens > 0
+      ? Math.min((today.totalTokens / today.maxTokens) * 100, 100)
+      : 0;
+  const isFull = pct >= 100;
+  const isHigh = pct >= 80;
+
+  // 今日有调用记录的路由
+  const activeRoutes = DISPLAY_ORDER.filter(
+    (key) => (today.routes[key]?.calls ?? 0) > 0
+  );
 
   return (
     <section className="rounded-2xl border border-slate-100 bg-white shadow-sm">
       {/* Header */}
-      <div className="flex items-center gap-2 px-5 pt-5 pb-3">
+      <div className="flex items-center gap-2 px-5 pt-5 pb-4">
         {isPro ? (
           <Crown size={18} className="text-amber-500" />
         ) : (
@@ -90,37 +85,43 @@ export function UsageCard() {
         </span>
       </div>
 
-      {/* Route usage rows */}
-      <div className="space-y-3 px-5 pb-4">
-        {DISPLAY_ORDER.map((key) => {
-          const route = today.routes[key];
-          if (!route) return null;
-          return (
-            <div key={key}>
-              <div className="mb-1 flex items-center justify-between">
-                <span className="text-xs text-slate-500">
-                  {ROUTE_LABELS[key]}
-                </span>
-                <span className="text-xs font-medium text-slate-700">
-                  {route.calls}/{route.maxCalls}
-                </span>
-              </div>
-              <ProgressBar current={route.calls} max={route.maxCalls} />
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Token usage */}
-      <div className="border-t border-slate-100 px-5 py-3">
-        <div className="mb-1 flex items-center justify-between">
-          <span className="text-xs text-slate-500">Token 用量</span>
+      {/* Token quota — primary indicator */}
+      <div className="px-5 pb-4">
+        <div className="mb-2 flex items-baseline justify-between">
+          <span className="text-xs font-medium text-slate-500">Token 配额</span>
           <span className="text-xs font-medium text-slate-700">
             {formatTokens(today.totalTokens)}/{formatTokens(today.maxTokens)}
           </span>
         </div>
-        <ProgressBar current={today.totalTokens} max={today.maxTokens} />
+        <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+          <div
+            className={`h-full rounded-full transition-all ${
+              isFull ? 'bg-red-400' : isHigh ? 'bg-amber-400' : 'bg-emerald-400'
+            }`}
+            style={{ width: `${pct}%` }}
+          />
+        </div>
       </div>
+
+      {/* Route call counts — informational summary */}
+      {activeRoutes.length > 0 && (
+        <div className="border-t border-slate-100 px-5 py-3">
+          <p className="mb-2 text-[11px] font-medium text-slate-400">
+            今日功能使用
+          </p>
+          <div className="flex flex-wrap gap-x-4 gap-y-1">
+            {activeRoutes.map((key) => (
+              <span key={key} className="text-xs text-slate-500">
+                {ROUTE_LABELS[key]}{' '}
+                <span className="font-medium text-slate-700">
+                  {today.routes[key]?.calls ?? 0}
+                </span>
+                <span className="text-slate-300"> 次</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }
