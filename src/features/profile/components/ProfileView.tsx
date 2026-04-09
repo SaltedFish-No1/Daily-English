@@ -25,6 +25,7 @@ import {
   CircleCheckBig,
   Download,
   Loader2,
+  MessageSquare,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
@@ -39,6 +40,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { PWAInstallDialog } from '@/components/PWAInstallDialog';
+import { FeedbackDrawer } from '@/features/feedback/components/FeedbackDrawer';
 import { UsageCard } from './UsageCard';
 
 const EXAM_GOALS: { value: ExamGoal; label: string }[] = [
@@ -172,6 +174,7 @@ export function ProfileView() {
   const [isClearing, setIsClearing] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [isSavingNickname, setIsSavingNickname] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const {
     isStandalone,
@@ -540,6 +543,21 @@ export function ProfileView() {
               <span className="text-xs text-slate-400">{cacheCount} 条</span>
             </Button>
 
+            {/* Feedback */}
+            <Button
+              variant="ghost"
+              onClick={() => setFeedbackOpen(true)}
+              className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-slate-50"
+            >
+              <span className="text-slate-400">
+                <MessageSquare size={18} />
+              </span>
+              <span className="flex-1 text-sm font-medium text-slate-700">
+                意见反馈
+              </span>
+              <ChevronRight size={16} className="text-slate-300" />
+            </Button>
+
             {/* About */}
             <Link
               href="/about"
@@ -577,6 +595,12 @@ export function ProfileView() {
           </div>
         </section>
       </main>
+
+      {/* Feedback Drawer */}
+      <FeedbackDrawer
+        open={feedbackOpen}
+        onClose={() => setFeedbackOpen(false)}
+      />
 
       {/* PWA Install Dialog */}
       <PWAInstallDialog
