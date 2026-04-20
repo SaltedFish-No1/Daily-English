@@ -9,6 +9,8 @@ import Providers from './providers';
 import { AppShell } from '@/components/AppShell';
 import { cn } from '@/lib/utils';
 import { Toaster } from 'sonner';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Analytics } from '@vercel/analytics/next';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
